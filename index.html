@@ -82,18 +82,22 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.8s cubic-bezier(0.8, 0, 0.2, 1) 2s; /* Delays transform until assembly phase */
+            width: 1em;
+            height: 1em;
+            transition: transform 0.8s cubic-bezier(0.8, 0, 0.2, 1) 2s;
         }
 
         .l-svg {
-            width: 1.2em;
-            height: 1.2em;
+            width: 100%;
+            height: 100%;
         }
 
         .l-stroke {
             fill: none;
             stroke: var(--white);
-            stroke-width: 1.5px;
+            stroke-width: 15px;
+            stroke-linejoin: miter;
+            stroke-linecap: square;
             stroke-dasharray: 400;
             stroke-dashoffset: 400;
             animation: drawStroke 1.5s forwards linear;
@@ -123,10 +127,10 @@
             transition: max-width 0.8s cubic-bezier(0.8, 0, 0.2, 1) 2s, 
                         opacity 0.6s ease-out 2s,
                         transform 0.8s cubic-bezier(0.8, 0, 0.2, 1) 2s;
-            transform: translateX(20px) scale(0.9); /* Starts at scale 0.9 to match L when it scales down */
+            transform: translateX(20px) scale(0.9);
         }
 
-        /* Assembly Trigger (at 2.0s via JavaScript class) */
+        /* Assembly Trigger */
         #wordmark.assembled .l-container {
             transform: translateX(-0.1em) scale(0.9);
         }
@@ -209,10 +213,8 @@
         <div id="wordmark">
             <div class="l-container">
                 <svg class="l-svg" viewBox="0 0 100 100">
-                    <!-- Drawing stroke -->
-                    <path class="l-stroke" d="M35 25 V75 H65" />
-                    <!-- Final solid fill -->
-                    <path class="l-fill-path" d="M35 25 V75 H65 V70 H40 V25 Z" />
+                    <path class="l-stroke" d="M22.5 15 V72.5 H70" />
+                    <path class="l-fill-path" d="M15 15 V80 H70 V65 H30 V15 Z" />
                 </svg>
             </div>
             <div class="ab0-container">AB-0</div>
@@ -243,10 +245,6 @@
             const uiStatus = document.getElementById('ui-status');
             const uiTerminal = document.getElementById('ui-terminal');
 
-            // Timeline:
-            // 0.0s: L starts drawing (CSS animation)
-            // 1.5s: L fills in (CSS animation)
-            
             // 2.0s: Assemble wordmark
             setTimeout(() => {
                 wordmark.classList.add('assembled');
