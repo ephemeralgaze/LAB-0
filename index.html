@@ -103,10 +103,6 @@ body, html {
   will-change: clip-path;
 }
 
-#wordmark.assembled {
-  transform: scale(3);
-}
-
 #wordmark.assembled .ab0-reveal {
   clip-path: inset(0 0 0 0) !important;
 }
@@ -157,13 +153,15 @@ body, html {
     opacity: 0;
     visibility: hidden;
     transition: clip-path 0.8s var(--ease), opacity 0.4s var(--ease), visibility 0.4s var(--ease);
+    display: inline-flex;
+    align-items: baseline;
   }
 
   #wordmark.docked {
     transform: translate(calc(-50vw + 40px + 0.5em), calc(-50vh + 40px + 0.4em)) scale(0.8);
   }
 
-  /* Reveal AB-[phone] smoothly WITHOUT pushing 'L' */
+  /* Reveal AB-phone smoothly WITHOUT pushing 'L' */
   #wordmark.docked-final .ab0-reveal {
     opacity: 1;
     visibility: visible;
@@ -611,11 +609,10 @@ body, html {
 <div class="stage">
 <div id="wordmark">
 <a id="nav-home" class="menu-item" style="font-family:inherit; font-size:inherit; letter-spacing:inherit; margin:0; padding:0; text-transform: none;">
-  <span class="l-char">L</span><span class="ab0-reveal">AB-</span>
-  <svg class="mobile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+  <span class="l-char">L</span><span class="ab0-reveal">AB-<svg class="mobile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
     <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
     <line x1="12" y1="18" x2="12" y2="18"></line>
-  </svg>
+  </svg></span>
 </a>
 <div class="menu-items" id="menu">
 <a id="projects-trigger" class="menu-item">PROJECTS</a>
@@ -784,7 +781,7 @@ body, html {
   function draw(time) {
     ctx.clearRect(0, 0, width, height);
     
-    dots.forEach(dot => {
+    dots.forEach(function(dot) {
       const opacity = (Math.sin(time * 0.001 * dot.freq * 100 + dot.phase) * 0.5 + 0.5) * dot.maxOpacity;
       ctx.beginPath();
       ctx.arc(dot.x, dot.y, DOT_RADIUS, 0, Math.PI * 2);
@@ -800,7 +797,7 @@ body, html {
   requestAnimationFrame(draw);
 })();
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", function() {
   const wordmark = document.getElementById("wordmark");
   const grid = document.getElementById("grid");
   const menu = document.getElementById("menu");
@@ -817,7 +814,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const mAboutTrigger = document.getElementById("m-about-trigger");
 
   // Phase 1: Startup (0s-3.5s) - Only 'L' visible and centered (default scale 3.33)
-  // No initial "assembled" trigger for desktop-only clip-path logic if we want to keep it simple
   
   // Phase 2: At 3.5s, dock 'L' to the top-right corner
   setTimeout(function() { 
@@ -835,7 +831,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (wordmark && window.innerWidth <= 768) {
         wordmark.classList.add("docked-final");
     } else if (wordmark) {
-        // Desktop reveal
         wordmark.classList.add("assembled");
     }
   }, 4700);
