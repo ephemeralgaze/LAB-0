@@ -700,13 +700,13 @@ document.addEventListener("DOMContentLoaded", () => {
   function updateLog() {
     const now = new Date();
     const timestamp = now.toISOString().replace('T', ' ').split('.')[0];
-    log.innerHTML = \`
+    log.innerHTML = `
       SYS_INIT_OK: TRUE<br>
       PIPELINE: DX12_HLSL<br>
       SHADERS: VOID.HLSL // ATTRACTOR.HLSL<br>
-      LOG_TIME: \${timestamp}<br>
+      LOG_TIME: ${timestamp}<br>
       SYS_AMBIENT_KERN: OK
-    \`;
+    `;
   }
   updateLog();
   setInterval(updateLog, 1000);
