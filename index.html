@@ -130,54 +130,6 @@
             opacity: 1;
         }
 
-        .coords-tracker {
-            bottom: 60px;
-            left: 60px;
-            font-size: 0.7rem;
-            letter-spacing: 0.1em;
-        }
-
-        .system-status {
-            top: 60px;
-            right: 60px;
-            display: flex;
-            align-items: center;
-            font-size: 0.7rem;
-            letter-spacing: 0.1em;
-        }
-
-        .dot-matrix {
-            width: 6px;
-            height: 6px;
-            background: var(--white);
-            margin-right: 10px;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 0.2; transform: scale(0.8); }
-            50% { opacity: 1; transform: scale(1.1); }
-        }
-
-        .terminal-log {
-            bottom: 60px;
-            right: 60px;
-            text-align: right;
-            font-size: 0.7rem;
-            line-height: 1.5;
-        }
-
-        .terminal-log span {
-            display: block;
-            color: rgba(255, 255, 255, 0.4);
-        }
-
-        .terminal-log .ready {
-            color: var(--white);
-            font-weight: bold;
-            margin-top: 4px;
-        }
-
     </style>
 </head>
 <body>
@@ -188,29 +140,10 @@
         <div id="wordmark">L<span class="ab0-reveal">AB-0</span></div>
     </div>
 
-    <!-- UI Overlays -->
-    <div class="ui-element coords-tracker" id="ui-coords">
-        X-0000 // Y-0000
-    </div>
-
-    <div class="ui-element system-status" id="ui-status">
-        <div class="dot-matrix"></div>
-        SYSTEM ACTIVE // LOGGED
-    </div>
-
-    <div class="ui-element terminal-log" id="ui-terminal">
-        <span>BUFF_OVR: CLEAR</span>
-        <span>LINK: ESTABLISHED</span>
-        <span class="ready">SYSTEM READY</span>
-    </div>
-
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const wordmark = document.getElementById('wordmark');
             const grid = document.getElementById('grid');
-            const uiCoords = document.getElementById('ui-coords');
-            const uiStatus = document.getElementById('ui-status');
-            const uiTerminal = document.getElementById('ui-terminal');
 
             // 1.5s: Start Assembly (Static reveal)
             setTimeout(() => {
@@ -225,17 +158,7 @@
             // 4.7s: UI Fade-in
             setTimeout(() => {
                 grid.classList.add('ui-visible');
-                uiCoords.classList.add('ui-visible');
-                uiStatus.classList.add('ui-visible');
-                uiTerminal.classList.add('ui-visible');
             }, 4700);
-
-            // Cursor Coordinate Tracker
-            window.addEventListener('mousemove', (e) => {
-                const x = e.clientX.toString().padStart(4, '0');
-                const y = e.clientY.toString().padStart(4, '0');
-                uiCoords.innerText = `X-${x} // Y-${y}`;
-            });
         });
     </script>
 </body>
