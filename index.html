@@ -154,6 +154,9 @@ body, html {
     width: auto;
     clip-path: inset(0 100% 0 0) !important;
     white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: clip-path 0.8s var(--ease), opacity 0.4s var(--ease), visibility 0.4s var(--ease);
   }
 
   #wordmark.docked {
@@ -162,8 +165,9 @@ body, html {
 
   /* Reveal AB-[phone] smoothly WITHOUT pushing 'L' */
   #wordmark.docked-final .ab0-reveal {
+    opacity: 1;
+    visibility: visible;
     clip-path: inset(0 0 0 0) !important;
-    transition: clip-path 0.8s var(--ease);
   }
 
   #wordmark.docked-final .mobile-icon {
