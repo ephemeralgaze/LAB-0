@@ -45,19 +45,24 @@
             z-index: 5;
         }
 
-        /* Intro Sequence */
+        /* 
+           The Stage: Standard Centering.
+           The #wordmark is child of this, so it stays centered via flex.
+        */
         .stage {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
+            position: fixed;
+            inset: 0;
             display: flex;
             justify-content: center;
             align-items: center;
+            z-index: 100;
+            pointer-events: none;
         }
 
         /* 
-           Static Wordmark Implementation.
-           Centered statically using calc/transform for the intro phases.
+           Cohesive Wordmark Block.
+           Statically centered via parent flexbox. 
+           No custom translate(calc()) offsets.
         */
         #wordmark {
             display: flex;
@@ -65,47 +70,44 @@
             font-family: var(--font-header);
             font-weight: 700;
             font-size: 1.5rem;
-            position: fixed;
-            top: 60px;
-            left: 60px;
-            transform-origin: top left;
             white-space: nowrap;
-            z-index: 100;
-            
-            /* 
-               Initial & Assembled State: "LAB-0" is statically centered.
-               Full width is ~3.8em. Center is at 1.9em.
-               Intro scale is 3x.
-            */
-            transform: translate(calc(50vw - 60px - 1.9em), calc(50vh - 60px - 0.4em)) scale(3);
-            transition: transform 1.2s cubic-bezier(0.8, 0, 0.2, 1);
-        }
-
-        .l {
-            display: inline-block;
-        }
-
-        /* 
-           Simple Sliding Mask Reveal.
-        */
-        .ab0-container {
-            display: inline-block;
-            margin-left: 0.1em;
             letter-spacing: 0.1em;
-            overflow: hidden;
-            /* Mask logic: initially reveal 0% (hidden) */
+            
+            /* Initial Scale for intro */
+            transform: scale(3.3333);
+            transition: transform 1.2s cubic-bezier(0.8, 0, 0.2, 1),
+                        top 1.2s cubic-bezier(0.8, 0, 0.2, 1),
+                        left 1.2s cubic-bezier(0.8, 0, 0.2, 1);
+        }
+
+        /*
+           The reveal part (AB-0).
+           Occupies layout space but is visually masked.
+        */
+        .ab0-reveal {
+            display: inline-block;
             clip-path: inset(0 100% 0 0);
             transition: clip-path 1.2s cubic-bezier(0.8, 0, 0.2, 1);
         }
 
-        #wordmark.assembled .ab0-container {
-            /* Mask logic: reveal 100% */
+        #wordmark.assembled {
+            transform: scale(3);
+        }
+
+        #wordmark.assembled .ab0-reveal {
             clip-path: inset(0 0 0 0);
         }
 
-        /* State 2: Docked. */
+        /* 
+           State 2: Docking.
+           Since #wordmark is in a flex stage, we use position: fixed + top/left 
+           for the docking transition to break from center.
+        */
         #wordmark.docked {
-            transform: translate(0, 0) scale(1);
+            position: fixed;
+            top: 60px;
+            left: 60px;
+            transform: scale(1);
         }
 
         /* UI Elements */
@@ -177,10 +179,7 @@
     <div class="ui-grid" id="grid"></div>
 
     <div class="stage">
-        <div id="wordmark">
-            <span class="l">L</span>
-            <div class="ab0-container">AB-0</div>
-        </div>
+        <div id="wordmark">L<span class="ab0-reveal">AB-0</span></div>
     </div>
 
     <!-- UI Overlays -->
@@ -207,7 +206,7 @@
             const uiStatus = document.getElementById('ui-status');
             const uiTerminal = document.getElementById('ui-terminal');
 
-            // 1.5s: Start Assembly (Simple Sliding Mask)
+            // 1.5s: Start Assembly (Static reveal)
             setTimeout(() => {
                 wordmark.classList.add('assembled');
             }, 1500);
