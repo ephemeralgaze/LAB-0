@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LAB-0 | Mobile</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+<script>
+(function() {
+  var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  if (!isMobile && window.innerWidth >= 768) {
+    window.location.replace("index.html");
+  }
+})();
+</script>
+<style>
+:root {
+  --bg-color: #050505;
+  --overlay-bg: rgba(5, 5, 5, 0.7);
+  --white: #ffffff;
+  --grid-color: rgba(255, 255, 255, 0.1);
+  --font-header: "Syncopate", sans-serif;
+  --font-body: "Space Grotesk", sans-serif;
+  --font-mono: "Space Mono", monospace;
+  --ease: cubic-bezier(0.8, 0, 0.2, 1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, html {
+  width: 100%;
+  height: 100%;
+  background-color: var(--bg-color);
+  color: var(--white);
+  overflow: hidden;
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Canvas Layer */
+#dot-matrix-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  width: 100%;
+  height: 100%;
+}
+
+/* Background Overlay */
+#bg-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--overlay-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* 1px Grid Borders */
+.ui-grid {
+  position: fixed;
+  inset: 0;
+  border: none;
+  margin: 10px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1s ease-out;
+  z-index: 5;
+}
+
+/* NAVIGATION LAYER */
+.stage {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+#wordmark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-header);
+  font-weight: 700;
+  font-size: 1.5rem;
+  /* CRITICAL: Lock physical bounds to prevent translate(0, -50%) shifts */
+  height: 24px;
+  line-height: 24px;
+  white-space: nowrap;
+  letter-spacing: 0;
+  transform: translate(-50%, -50%) scale(3.3333);
+  transition: transform 1.2s var(--ease), top 1.2s var(--ease), left 1.2s var(--ease), opacity 0.8s ease;
+  will-change: transform, top, left;
+  opacity: 1;
+  width: auto;
+  overflow: visible;
+}
+
+.l-char {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  line-height: 24px;
+}
+
+.ab0-reveal {
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  clip-path: inset(0 100% 0 0) !important;
+  opacity: 0;
+  visibility: hidden;
+  transition: clip-path 1.2s var(--ease), opacity 0.6s var(--ease), visibility 0.4s var(--ease);
+  will-change: clip-path;
+  height: 24px;
+  line-height: 24px;
+}
+
+#wordmark.docked {
+  top: 37px;
+  left: 30px;
+  transform: translate(0, -50%) scale(0.85);
+  pointer-events: auto;
+}
+
+#wordmark.docked-final .ab0-reveal {
+  opacity: 1 !important;
+  visibility: visible !important;
+  clip-path: inset(0 0 0 0) !important;
+}
+
+.mobile-icon {
+  width: 1.1em;
+  height: 1.1em;
+  margin-left: 0.08em;
+  flex-shrink: 0;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  fill: none;
+  display: block;
+}
+
+/* MOBILE HEADER */
+#mobile-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 74px;
+  background: #050505;
+  z-index: 10002;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.6s var(--ease), visibility 0.6s var(--ease);
+}
+
+#mobile-header.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+#mobile-header::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  background: linear-gradient(to bottom, #050505 0%, rgba(5, 5, 5, 0) 100%);
+  pointer-events: none;
+}
+
+/* SpaceX-style Hamburger Menu */
+.hamburger {
+  position: fixed;
+  top: 0;
+  right: 30px;
+  width: 24px;
+  height: 74px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10003;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1s ease-out;
+}
+
+.hamburger.ui-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.hamburger-inner {
+  width: 100%;
+  height: 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.hamburger span {
+  display: block;
+  width: 100%;
+  height: 1px;
+  background-color: var(--white);
+  border-radius: 0;
+  transition: transform 0.4s var(--ease), opacity 0.4s var(--ease);
+}
+
+.hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+/* Mobile Nav Drawer */
+.mobile-nav-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-color);
+  z-index: 10001;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  transform: translateX(100%);
+  transition: transform 0.6s var(--ease);
+  pointer-events: auto;
+}
+
+.mobile-nav-overlay.open {
+  transform: translateX(0);
+}
+
+.mobile-menu-item {
+  font-family: var(--font-header);
+  font-size: 1.2rem;
+  letter-spacing: 0.3em;
+  color: var(--white);
+  text-decoration: none;
+  text-transform: uppercase;
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+}
+
+.mobile-menu-item.active { opacity: 1; }
+
+.ui-visible { opacity: 1 !important; }
+
+/* OVERLAY STYLES */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: #050505;
+  z-index: 200;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 1.2s var(--ease), visibility 1.2s var(--ease);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow-y: auto;
+}
+
+.overlay.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.overlay-frame {
+  position: absolute;
+  inset: 20px;
+  border: none;
+  pointer-events: none;
+}
+
+.coord {
+  position: absolute;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.1em;
+}
+.coord-tl { top: -20px; left: 0; }
+.coord-br { bottom: -20px; right: 0; }
+
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+  width: 100%;
+  padding: 114px 30px 60px;
+  pointer-events: auto;
+}
+
+.col-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 30px;
+}
+
+.avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 6px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.username {
+  font-family: var(--font-header);
+  font-size: 1.1rem;
+  letter-spacing: 0.3em;
+  color: var(--white);
+  text-transform: lowercase;
+}
+
+.col-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+}
+
+/* PROJECTS SPECIFIC STYLES */
+#projects-overlay .content-grid {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+}
+
+.project-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.project-entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);
+  cursor: pointer;
+  opacity: 0.5;
+}
+
+.project-entry.selected {
+  opacity: 1;
+  transform: scale(1.02);
+}
+
+.project-entry:last-child { border-bottom: none; }
+
+.project-info {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.project-id {
+  font-size: 0.55rem;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.project-name {
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  transition: font-size 0.4s var(--ease);
+}
+
+.project-entry.selected .project-name { font-size: 0.95rem; }
+
+.status-tag {
+  font-size: 0.55rem;
+  padding: 2px 6px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.spec-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.video-container {
+  width: 100%;
+  aspect-ratio: 16/9;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.video-container video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.video-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
+  z-index: 1;
+}
+
+/* Playback Control Bar */
+.playback-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.p-btn {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.5);
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: all 0.3s var(--ease);
+  letter-spacing: 0.1em;
+  border-radius: 0;
+}
+
+.p-btn:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+  color: var(--white);
+}
+
+.p-btn.play-pause {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.play-pause svg {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+  transition: transform 0.4s var(--ease);
+}
+
+.play-pause .pause-icon { display: none; }
+.play-pause.playing .play-icon { display: none; }
+.play-pause.playing .pause-icon { display: block; }
+
+.spec-details {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 8px;
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.spec-label { color: rgba(255, 255, 255, 0.3); }
+.spec-value { color: var(--white); }
+
+/* Common Info Item */
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.info-icon {
+  width: 16px;
+  height: 16px;
+  opacity: 0.8;
+  flex-shrink: 0;
+}
+
+.info-label {
+  width: 80px;
+  font-size: 0.55rem;
+  color: rgba(255, 255, 255, 0.3);
+  text-transform: uppercase;
+}
+
+.info-value {
+  color: var(--white);
+  text-transform: uppercase;
+}
+
+/* Mailto Styling */
+.mail-link {
+  color: var(--white);
+  text-decoration: none;
+  word-break: break-all;
+  transition: opacity 0.3s ease;
+}
+
+.mail-link:hover {
+  opacity: 0.8;
+}
+</style>
+</head>
+<body>
+
+<div id="mobile-header"></div>
+<canvas id="dot-matrix-canvas"></canvas>
+<div id="bg-overlay"></div>
+<div class="ui-grid" id="grid"></div>
+
+<div class="hamburger" id="hamburger">
+  <div class="hamburger-inner">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<div class="mobile-nav-overlay" id="mobile-nav">
+  <a class="mobile-menu-item" id="m-nav-home">HOME</a>
+  <a class="mobile-menu-item" id="m-projects-trigger">PROJECTS</a>
+  <a class="mobile-menu-item" id="m-about-trigger">ABOUT</a>
+</div>
+
+<div class="stage">
+<div id="wordmark">
+<a id="nav-home" class="menu-item" style="font-family:inherit; font-size:inherit; letter-spacing:inherit; margin:0; padding:0; text-transform: none; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; color: inherit; text-decoration: none;">
+  <span class="l-char">L</span><span class="ab0-reveal">AB-<svg class="mobile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+    <line x1="12" y1="18" x2="12" y2="18"></line>
+  </svg></span>
+</a>
+</div>
+</div>
+
+<!-- ABOUT OVERLAY -->
+<div id="about-overlay" class="overlay">
+<div class="overlay-frame">
+<span class="coord coord-tl">[0000, 0000]</span>
+<span class="coord coord-br">[0000, 0000]</span>
+</div>
+<div class="content-grid">
+  <div class="col-left">
+    <div class="avatar">
+      <img src="https://avatars.githubusercontent.com/u/291265014?v=4" alt="ephemeralgaze">
+    </div>
+    <div class="username">ephemeralgaze</div>
+  </div>
+  <div class="col-right">
+    <div class="info-item">
+      <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M22 10v6M2 10v6M12 4L2 10l10 6 10-6-10-6zM12 18v-6" />
+      </svg>
+      <span class="info-label">Education</span>
+      <span class="info-value">Undergrad / Game Dev</span>
+    </div>
+    <div class="info-item">
+      <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="12" cy="12" r="10" />
+        <polyline points="12 6 12 12 16 14" />
+      </svg>
+      <span class="info-label">Age</span>
+      <span class="info-value">21</span>
+    </div>
+    <div class="info-item">
+      <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+        <polyline points="22,6 12,13 2,6" />
+      </svg>
+      <span class="info-label">Contact</span>
+      <span class="info-value" style="text-transform: none;"><a href="mailto:ephemeralgaze24@gmail.com" class="mail-link">ephemeralgaze24@gmail.com</a></span>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- PROJECTS OVERLAY -->
+<div id="projects-overlay" class="overlay">
+<div class="overlay-frame">
+<span class="coord coord-tl">[1111, 1111]</span>
+<span class="coord coord-br">[9999, 9999]</span>
+</div>
+<div class="content-grid">
+  <div class="col-left" style="align-items: flex-start; justify-content: flex-start; padding: 15px;">
+    <div class="project-list" id="p-list">
+      <div class="project-entry selected" data-project="void">
+        <div class="project-info">
+          <span class="project-id">[01]</span>
+          <span class="project-name">VOID</span>
+        </div>
+        <span class="status-tag">ACTIVE</span>
+      </div>
+      <div class="project-entry" data-project="attractor">
+        <div class="project-info">
+          <span class="project-id">[02]</span>
+          <span class="project-name">ATTRACTOR</span>
+        </div>
+        <span class="status-tag">ACTIVE</span>
+      </div>
+      <div class="project-entry" data-project="horizon">
+        <div class="project-info">
+          <span class="project-id">[03]</span>
+          <span class="project-name">HORIZON</span>
+        </div>
+        <span class="status-tag">STANDBY</span>
+      </div>
+      <div class="project-entry" data-project="quantum">
+        <div class="project-info">
+          <span class="project-id">[04]</span>
+          <span class="project-name">QUANTUM</span>
+        </div>
+        <span class="status-tag">ACTIVE</span>
+      </div>
+      <div class="project-entry" data-project="chroma">
+        <div class="project-info">
+          <span class="project-id">[05]</span>
+          <span class="project-name">CHROMA</span>
+        </div>
+        <span class="status-tag">DRAFT</span>
+      </div>
+    </div>
+  </div>
+  <div class="col-right">
+    <div class="spec-panel">
+      <div class="video-container" id="v-container">
+        <video id="p-video" playsinline muted loop></video>
+      </div>
+      
+      <div class="playback-bar">
+        <button class="p-btn" id="p-rewind">STEP-</button>
+        <button class="p-btn play-pause" id="play-pause">
+          <svg class="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          <svg class="pause-icon" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+        </button>
+        <button class="p-btn" id="p-forward">STEP+</button>
+      </div>
+
+      <div class="spec-details" id="p-specs">
+        <span class="spec-label">Pipeline:</span><span class="spec-value" id="s-pipeline">---</span>
+        <span class="spec-label">Complexity:</span><span class="spec-value" id="s-complexity">---</span>
+        <span class="spec-label">Buffers:</span><span class="spec-value" id="s-buffers">---</span>
+        <span class="spec-label">Status:</span><span class="spec-value" id="s-status">---</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+(function() {
+  const canvas = document.getElementById("dot-matrix-canvas");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  let dots = [];
+  let width, height, dpr;
+
+  const GRID_SIZE = 30;
+  const DOT_RADIUS = 1.2;
+
+  function init() {
+    dpr = window.devicePixelRatio || 1;
+    width = window.innerWidth;
+    height = window.innerHeight;
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    ctx.scale(dpr, dpr);
+    
+    dots = [];
+    const cols = Math.ceil(width / GRID_SIZE);
+    const rows = Math.ceil(height / GRID_SIZE);
+
+    for (let i = 0; i < cols; i++) {
+      for (let j = 0; j < rows; j++) {
+        dots.push({
+          x: i * GRID_SIZE + GRID_SIZE / 2,
+          y: j * GRID_SIZE + GRID_SIZE / 2,
+          phase: Math.random() * Math.PI * 2,
+          freq: 0.02 + Math.random() * 0.03,
+          maxOpacity: 0.05 + Math.random() * 0.55
+        });
+      }
+    }
+  }
+
+  function draw(time) {
+    ctx.clearRect(0, 0, width, height);
+    
+    dots.forEach(function(dot) {
+      const opacity = (Math.sin(time * 0.001 * dot.freq * 100 + dot.phase) * 0.5 + 0.5) * dot.maxOpacity;
+      ctx.beginPath();
+      ctx.arc(dot.x, dot.y, DOT_RADIUS, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(255, 255, 255, " + opacity.toFixed(3) + ")";
+      ctx.fill();
+    });
+
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener("resize", init);
+  init();
+  requestAnimationFrame(draw);
+})();
+
+document.addEventListener("DOMContentLoaded", function() {
+  const wordmark = document.getElementById("wordmark");
+  const grid = document.getElementById("grid");
+  const navHome = document.getElementById("nav-home");
+  const aboutOverlay = document.getElementById("about-overlay");
+  const projectsOverlay = document.getElementById("projects-overlay");
+
+  const hamburger = document.getElementById("hamburger");
+  const mobileNav = document.getElementById("mobile-nav");
+  const mNavHome = document.getElementById("m-nav-home");
+  const mProjectsTrigger = document.getElementById("m-projects-trigger");
+  const mAboutTrigger = document.getElementById("m-about-trigger");
+  const mobileHeader = document.getElementById("mobile-header");
+
+  const pVideo = document.getElementById("p-video");
+  const playBtn = document.getElementById("play-pause");
+  const rewindBtn = document.getElementById("p-rewind");
+  const forwardBtn = document.getElementById("p-forward");
+  
+  const sPipeline = document.getElementById("s-pipeline");
+  const sComplexity = document.getElementById("s-complexity");
+  const sBuffers = document.getElementById("s-buffers");
+  const sStatus = document.getElementById("s-status");
+
+  const projectData = {
+    void: {
+      video: "",
+      pipeline: "HLSL / Compute",
+      complexity: "12.4M Particles",
+      buffers: "Structured / UAV",
+      status: "STABLE"
+    },
+    attractor: {
+      video: "",
+      pipeline: "GLSL / Vertex",
+      complexity: "Lorenz / 60FPS",
+      buffers: "VBO / VAO",
+      status: "OPTIMIZING"
+    },
+    horizon: {
+      video: "",
+      pipeline: "PBR / Raycast",
+      complexity: "Dynamic SDF",
+      buffers: "GBuffer / Depth",
+      status: "STANDBY"
+    },
+    quantum: {
+      video: "",
+      pipeline: "VFX / Compute",
+      complexity: "Q-Field Sim",
+      buffers: "Atomic / SSBO",
+      status: "ACTIVE"
+    },
+    chroma: {
+      video: "",
+      pipeline: "Post / Kernel",
+      complexity: "Multi-Pass LUT",
+      buffers: "Ping-Pong / FBO",
+      status: "DRAFT"
+    }
+  };
+
+  const updateProjectMedia = function(projectId) {
+    const data = projectData[projectId];
+    if (!data) return;
+    
+    if (pVideo) {
+      pVideo.pause();
+      pVideo.src = data.video;
+      pVideo.load();
+      playBtn.classList.remove("playing");
+    }
+    
+    if (sPipeline) sPipeline.innerText = data.pipeline;
+    if (sComplexity) sComplexity.innerText = data.complexity;
+    if (sBuffers) sBuffers.innerText = data.buffers;
+    if (sStatus) sStatus.innerText = data.status;
+  };
+
+  // Mobile Sequence
+  setTimeout(function() { 
+    if (wordmark) wordmark.classList.add("docked");
+  }, 3500);
+
+  // Use transitionend to ensure the docked transition is 100% complete before revealing the rest
+  if (wordmark) {
+    wordmark.addEventListener("transitionend", function(e) {
+      // Only fire when the main transform transition to docked state is finished
+      if (e.propertyName === "top" || e.propertyName === "transform") {
+        if (wordmark.classList.contains("docked") && !wordmark.classList.contains("docked-final")) {
+          if (grid) grid.classList.add("ui-visible");
+          if (hamburger) hamburger.classList.add("ui-visible");
+          wordmark.classList.add("docked-final");
+        }
+      }
+    });
+  }
+
+  const navItems = [navHome, mNavHome, mProjectsTrigger, mAboutTrigger];
+
+  const setActiveNav = function(activeEl) {
+    navItems.forEach(function(item) { if (item) item.classList.remove("active"); });
+    if (activeEl) activeEl.classList.add("active");
+  };
+
+  setActiveNav(navHome);
+
+  const switchPage = function(pageId, triggerEl) {
+    setActiveNav(triggerEl);
+    if (aboutOverlay) aboutOverlay.classList.remove("active");
+    if (projectsOverlay) projectsOverlay.classList.remove("active");
+    if (mobileHeader) mobileHeader.classList.remove("active");
+
+    if (pageId === "about") {
+      if (aboutOverlay) aboutOverlay.classList.add("active");
+      if (mobileHeader) mobileHeader.classList.add("active");
+    } else if (pageId === "projects") {
+      if (projectsOverlay) projectsOverlay.classList.add("active");
+      if (mobileHeader) mobileHeader.classList.add("active");
+      updateProjectMedia("void");
+    }
+    if (hamburger) hamburger.classList.remove("open");
+    if (mobileNav) mobileNav.classList.remove("open");
+  };
+
+  if (hamburger) {
+    hamburger.addEventListener("click", function() {
+      hamburger.classList.toggle("open");
+      mobileNav.classList.toggle("open");
+    });
+  }
+
+  if (navHome) navHome.addEventListener("click", function(e) { e.stopPropagation(); switchPage("home", navHome); });
+  if (mAboutTrigger) mAboutTrigger.addEventListener("click", function() { switchPage("about", mAboutTrigger); });
+  if (mProjectsTrigger) mProjectsTrigger.addEventListener("click", function() { switchPage("projects", mProjectsTrigger); });
+  if (mNavHome) mNavHome.addEventListener("click", function() { switchPage("home", mNavHome); });
+
+  const projectEntries = document.querySelectorAll(".project-entry");
+  projectEntries.forEach(function(entry) {
+    entry.addEventListener("click", function() {
+      projectEntries.forEach(function(e) { e.classList.remove("selected"); });
+      entry.classList.add("selected");
+      const pid = entry.getAttribute("data-project");
+      updateProjectMedia(pid);
+    });
+  });
+
+  if (playBtn && pVideo) {
+    playBtn.addEventListener("click", function() {
+      if (pVideo.paused) {
+        pVideo.play();
+        playBtn.classList.add("playing");
+      } else {
+        pVideo.pause();
+        playBtn.classList.remove("playing");
+      }
+    });
+  }
+
+  const FPS = 30;
+  if (rewindBtn && pVideo) {
+    rewindBtn.addEventListener("click", function() {
+      pVideo.pause();
+      playBtn.classList.remove("playing");
+      pVideo.currentTime = Math.max(0, pVideo.currentTime - (1 / FPS));
+    });
+  }
+
+  if (forwardBtn && pVideo) {
+    forwardBtn.addEventListener("click", function() {
+      pVideo.pause();
+      playBtn.classList.remove("playing");
+      pVideo.currentTime = Math.min(pVideo.duration || 0, pVideo.currentTime + (1 / FPS));
+    });
+  }
+});
+</script>
+</body>
+</html>
