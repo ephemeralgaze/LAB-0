@@ -46,13 +46,14 @@ body, html {
   z-index: 5;
 }
 
+/* NAVIGATION LAYER - HIGHEST Z-INDEX */
 .stage {
   position: fixed;
   inset: 0;
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 100;
+  z-index: 9999; /* Ensure it's on the very top */
   pointer-events: none;
 }
 
@@ -102,7 +103,6 @@ body, html {
   transition: opacity 1s var(--ease);
 }
 
-/* Visible when wordmark is docked and UI grid is visible (stable phase) */
 #wordmark.docked .menu-items.visible {
   pointer-events: auto;
   opacity: 1;
@@ -118,6 +118,7 @@ body, html {
   text-transform: uppercase;
   transition: opacity 0.3s ease;
   cursor: pointer;
+  pointer-events: auto; /* Ensure clickable */
 }
 
 .menu-item:hover {
@@ -126,12 +127,24 @@ body, html {
 
 .ui-visible { opacity: 1; }
 
-/* ABOUT OVERLAY STYLES */
+/* NAV BACKGROUND PANEL - "黑底" */
+#nav-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 85px; /* Aligned with docking height + small margin below buttons */
+  background: var(--bg-color);
+  z-index: 9998; /* Just below navigation buttons */
+  pointer-events: none;
+}
+
+/* OVERLAY STYLES */
 #about-overlay {
   position: fixed;
   inset: 0;
   background: var(--bg-color);
-  z-index: 200;
+  z-index: 200; /* Stays below navigation */
   opacity: 0;
   pointer-events: none;
   transition: opacity 1.2s var(--ease);
@@ -212,7 +225,7 @@ body, html {
   font-size: 1.4rem;
   letter-spacing: 0.3em;
   color: var(--white);
-  /* text-transform: uppercase; */
+  text-transform: lowercase; /* Ensure strictly lowercase */
 }
 
 .col-right {
@@ -258,9 +271,13 @@ body, html {
 
 <div class="ui-grid" id="grid"></div>
 
+<!-- NAVIGATION BACKGROUND - "黑底" -->
+<div id="nav-bg"></div>
+
+<!-- NAVIGATION LAYER -->
 <div class="stage">
 <div id="wordmark">
-L<span class="ab0-reveal">AB-0</span>
+<a id="nav-home" class="menu-item" style="font-family:inherit; font-size:inherit; letter-spacing:inherit; margin:0; padding:0; text-transform: none;">L<span class="ab0-reveal">AB-0</span></a>
 <div class="menu-items" id="menu">
 <a class="menu-item">PROJECTS</a>
 <a id="about-trigger" class="menu-item">ABOUT</a>
@@ -311,7 +328,8 @@ L<span class="ab0-reveal">AB-0</span>
       <span class="info-value" style="text-transform: none;">zgnx4ndcq5@privaterelay.appleid.com</span>
     </div>
   </div>
-</div></div></div></div>
+</div>
+</div>
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
@@ -319,6 +337,7 @@ const wordmark = document.getElementById("wordmark");
 const grid = document.getElementById("grid");
 const menu = document.getElementById("menu");
 const aboutTrigger = document.getElementById("about-trigger");
+const navHome = document.getElementById("nav-home");
 const aboutOverlay = document.getElementById("about-overlay");
 const coordDisplay = document.getElementById("coord-display");
 
@@ -338,14 +357,26 @@ grid.classList.add("ui-visible");
 menu.classList.add("visible");
 }, 4700);
 
-// About Overlay Toggle
+// Page Switching Logic
+const switchPage = (pageId) => {
+  if (pageId === 'about') {
+    aboutOverlay.classList.add("active");
+  } else {
+    aboutOverlay.classList.remove("active");
+  }
+};
+
+// Only explicit clicks on nav buttons switch pages
 aboutTrigger.addEventListener("click", (e) => {
-e.stopPropagation();
-aboutOverlay.classList.add("active");
+  e.preventDefault();
+  e.stopPropagation();
+  switchPage('about');
 });
 
-aboutOverlay.addEventListener("click", () => {
-aboutOverlay.classList.remove("active");
+navHome.addEventListener("click", (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  switchPage('home');
 });
 
 // Dynamic Coordinates
