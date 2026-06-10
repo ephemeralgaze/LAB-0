@@ -153,7 +153,8 @@
             /* Initial state for entry animation */
             opacity: 0;
             transform: translateX(-10px);
-            transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+            /* COMPRESS DURATION: 0.8s -> 0.65s (~18% faster) */
+            transition: opacity 0.65s var(--ease), transform 0.65s var(--ease);
             will-change: opacity, transform;
         }
 
@@ -162,6 +163,7 @@
         }
 
         /* Staggered transition delays for each arrow */
+        /* COMPRESS STAGGER: 0.15s intervals -> 0.12s intervals (~18% faster) */
         .arrows-container.visible .arrow-svg:nth-child(1) {
             opacity: 1;
             transform: translateX(0);
@@ -171,13 +173,13 @@
         .arrows-container.visible .arrow-svg:nth-child(2) {
             opacity: 1;
             transform: translateX(0);
-            transition-delay: 0.15s;
+            transition-delay: 0.12s;
         }
 
         .arrows-container.visible .arrow-svg:nth-child(3) {
             opacity: 1;
             transform: translateX(0);
-            transition-delay: 0.3s;
+            transition-delay: 0.24s;
         }
 
     </style>
