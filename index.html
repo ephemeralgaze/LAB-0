@@ -34,12 +34,12 @@ body, html {
   -webkit-font-smoothing: antialiased;
 }
 
-/* BACKGROUND CANVAS - LOWEST LAYER */
+/* BACKGROUND CANVAS - RAISED Z-INDEX TO ENSURE VISIBILITY */
 #visualizer {
   position: fixed;
   inset: 0;
-  z-index: 0;
-  background: var(--bg-color);
+  z-index: 1;
+  background: transparent;
   opacity: 0;
   transition: opacity 1s var(--ease);
   pointer-events: none;
@@ -674,8 +674,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const draw = (time) => {
     if (!isEnabled) return;
     
-    ctx.fillStyle = '#050505';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    // Clear with transparency or a light alpha to allow layering if needed
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     const spacing = 30;
     const rows = Math.ceil(canvas.height / spacing);
@@ -700,7 +700,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         const size = 1.5 + intensity * 6;
-        ctx.fillStyle = `rgba(255, 255, 255, ${0.15 + intensity * 0.7})`;
+        // Increased base opacity from 0.15 to 0.3
+        ctx.fillStyle = `rgba(255, 255, 255, ${0.3 + intensity * 0.6})`;
         ctx.beginPath();
         ctx.arc(x, y, size / 2, 0, Math.PI * 2);
         ctx.fill();
