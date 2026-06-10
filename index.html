@@ -70,20 +70,19 @@
             left: 60px;
             transform-origin: top left;
             /* 
-               Initial state: L only, centered at x=0.44em.
-               translate(-0.44em, -50%) offsets the origin to the visual center of the 'L'.
+               Initial state: L only, centered at x=0.29em (half of ~0.58em width).
             */
-            transform: translate(calc(50vw - 60px), calc(50vh - 60px)) scale(3.3333) translate(-0.44em, -50%);
+            transform: translate(calc(50vw - 60px), calc(50vh - 60px)) scale(3.3333) translate(-0.29em, -50%);
             transition: transform 1.2s cubic-bezier(0.8, 0, 0.2, 1);
             z-index: 100;
         }
 
-        /* SVG L Animation */
+        /* SVG L Animation using <text> for perfect parity */
         .l-container {
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 1em;
+            width: 0.58em; /* Match visual width of 'L' */
             height: 1em;
             transition: transform 0.8s cubic-bezier(0.8, 0, 0.2, 1);
         }
@@ -91,41 +90,38 @@
         .l-svg {
             width: 100%;
             height: 100%;
+            overflow: visible;
         }
 
-        .l-stroke {
+        .l-glyph {
             fill: none;
             stroke: var(--white);
-            stroke-width: 18px;
+            stroke-width: 2.5; /* Outlining the font glyph */
             stroke-linejoin: miter;
             stroke-linecap: butt;
-            stroke-dasharray: 400;
-            stroke-dashoffset: 400;
-            animation: drawStroke 1.5s forwards linear, fadeOut 0.3s forwards 1.5s;
+            stroke-dasharray: 600;
+            stroke-dashoffset: 600;
+            animation: drawStroke 1.5s forwards linear, fadeToFill 0.3s forwards 1.5s;
+            font-family: var(--font-header);
+            font-weight: 700;
+            font-size: 100px;
         }
 
         @keyframes drawStroke {
             to { stroke-dashoffset: 0; }
         }
 
-        @keyframes fadeOut {
-            to { opacity: 0; }
-        }
-
-        .l-fill-path {
-            fill: var(--white);
-            opacity: 0;
-            animation: fadeInFill 0.3s forwards 1.5s ease-out;
-        }
-
-        @keyframes fadeInFill {
-            to { opacity: 1; }
+        @keyframes fadeToFill {
+            to { 
+                fill: var(--white);
+                stroke-width: 0;
+            }
         }
 
         /* Assembly Logic */
         .ab0-container {
             position: absolute;
-            left: 0.8em;
+            left: 0.58em; /* Exactly after the 'L' width */
             display: flex;
             align-items: center;
             white-space: nowrap;
@@ -163,10 +159,11 @@
 
         /* 
            State 1: Assembled Center.
-           Visual center calculated at 2.075em for LAB-0 string.
+           Visual center for LAB-0 calculated precisely.
+           L(0.58) + Spacing(0.1) + AB-0 (~3.1) = ~3.78em total. Center ~1.89em.
         */
         #wordmark.assembled {
-            transform: translate(calc(50vw - 60px), calc(50vh - 60px)) scale(3) translate(-2.075em, -50%);
+            transform: translate(calc(50vw - 60px), calc(50vh - 60px)) scale(3) translate(-1.89em, -50%);
         }
 
         #wordmark.assembled .l-container {
@@ -255,9 +252,8 @@
     <div class="stage">
         <div id="wordmark">
             <div class="l-container">
-                <svg class="l-svg" viewBox="0 0 100 100">
-                    <path class="l-stroke" d="M24 10 V72 H73" />
-                    <path class="l-fill-path" d="M15 10 V80 H73 V64 H33 V10 Z" />
+                <svg class="l-svg" viewBox="0 0 58 100">
+                    <text x="0" y="80" class="l-glyph">L</text>
                 </svg>
             </div>
             <div class="ab0-container">
