@@ -116,7 +116,7 @@ body, html {
 
 .ui-visible { opacity: 1; }
 
-/* NAV BACKGROUND PANEL - "黑底" */
+/* NAV BACKGROUND PANEL - \"黑底\" */
 #nav-bg {
   position: fixed;
   top: 0;
@@ -269,7 +269,7 @@ body, html {
   letter-spacing: 0.2em;
   margin-right: 25px;
   text-transform: uppercase;
-  transition: opacity 0.2s ease, filter 0.2s ease;
+  transition: opacity 0.15s ease-out, filter 0.15s ease-out;
   cursor: pointer;
   pointer-events: auto;
   opacity: 0.75; /* Strictly 0.75 for inactive */
@@ -279,8 +279,9 @@ body, html {
   opacity: 1 !important;
   color: #FFFFFF !important;
   animation: nav-breath 3s ease-in-out infinite;
+  animation-delay: 0.45s; /* Delay breathing until transition finishes */
   pointer-events: none; /* Disable clicking active tab */
-  transition: opacity 0.35s ease, filter 0.35s ease;
+  transition: opacity 0.45s cubic-bezier(0.25, 1, 0.5, 1), filter 0.45s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 </style>
@@ -289,7 +290,7 @@ body, html {
 
 <div class="ui-grid" id="grid"></div>
 
-<!-- NAVIGATION BACKGROUND - "黑底" -->
+<!-- NAVIGATION BACKGROUND - \"黑底\" -->
 <div id="nav-bg"></div>
 
 <!-- NAVIGATION LAYER -->
