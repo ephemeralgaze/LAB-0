@@ -70,10 +70,10 @@
             left: 60px;
             transform-origin: top left;
             /* 
-               Initial state: translate to viewport center and scale to match 5rem (5 / 1.5 = 3.3333)
-               The inner translate(-50%, -50%) perfectly offsets the scaled container to be centered.
+               Initial state: L only, centered at x=0.44em.
+               translate(-0.44em, -50%) offsets the origin to the visual center of the 'L'.
             */
-            transform: translate(calc(50vw - 60px), calc(50vh - 60px)) scale(3.3333) translate(-50%, -50%);
+            transform: translate(calc(50vw - 60px), calc(50vh - 60px)) scale(3.3333) translate(-0.44em, -50%);
             transition: transform 1.2s cubic-bezier(0.8, 0, 0.2, 1);
             z-index: 100;
         }
@@ -96,32 +96,36 @@
         .l-stroke {
             fill: none;
             stroke: var(--white);
-            stroke-width: 18.5px;
+            stroke-width: 18px;
             stroke-linejoin: miter;
-            stroke-linecap: square;
+            stroke-linecap: butt;
             stroke-dasharray: 400;
             stroke-dashoffset: 400;
-            animation: drawStroke 1.5s forwards linear;
+            animation: drawStroke 1.5s forwards linear, fadeOut 0.3s forwards 1.5s;
         }
 
         @keyframes drawStroke {
             to { stroke-dashoffset: 0; }
         }
 
+        @keyframes fadeOut {
+            to { opacity: 0; }
+        }
+
         .l-fill-path {
             fill: var(--white);
             opacity: 0;
-            animation: fadeInFill 0.5s forwards 1.5s ease-out;
+            animation: fadeInFill 0.3s forwards 1.5s ease-out;
         }
 
         @keyframes fadeInFill {
             to { opacity: 1; }
         }
 
-        /* Assembly Logic (AB-0 absolute positioned to prevent center-point recalculations) */
+        /* Assembly Logic */
         .ab0-container {
             position: absolute;
-            left: 1em;
+            left: 0.8em;
             display: flex;
             align-items: center;
             white-space: nowrap;
@@ -158,11 +162,11 @@
         }
 
         /* 
-           State 1: L shifts left & scales to 0.9 of large size (3.3333 * 0.9 = 3)
-           AB-0 expands synchronously.
+           State 1: Assembled Center.
+           Visual center calculated at 2.075em for LAB-0 string.
         */
         #wordmark.assembled {
-            transform: translate(calc(50vw - 60px), calc(50vh - 60px)) scale(3) translate(calc(-50% - 1.490em), -50%);
+            transform: translate(calc(50vw - 60px), calc(50vh - 60px)) scale(3) translate(-2.075em, -50%);
         }
 
         #wordmark.assembled .l-container {
@@ -170,8 +174,7 @@
         }
 
         /* 
-           State 2: Smooth Dock to (60px, 60px) at original 1.5rem size (scale 1).
-           Everything transitions purely on transform.
+           State 2: Dock to corner.
         */
         #wordmark.docked {
             transform: translate(0, 0) scale(1) translate(0, 0);
@@ -253,8 +256,8 @@
         <div id="wordmark">
             <div class="l-container">
                 <svg class="l-svg" viewBox="0 0 100 100">
-                    <path class="l-stroke" d="M20 15 V85 H75" />
-                    <path class="l-fill-path" d="M11 15 V90 H80 V72 H29 V15 Z" />
+                    <path class="l-stroke" d="M24 10 V72 H73" />
+                    <path class="l-fill-path" d="M15 10 V80 H73 V64 H33 V10 Z" />
                 </svg>
             </div>
             <div class="ab0-container">
@@ -290,17 +293,17 @@
             const uiStatus = document.getElementById('ui-status');
             const uiTerminal = document.getElementById('ui-terminal');
 
-            // 2.0s: L shifts left AND AB-0 begins stretching out simultaneously
+            // 2.0s: Start Assembly
             setTimeout(() => {
                 wordmark.classList.add('assembled');
             }, 2000);
 
-            // 4.0s: Smooth continuous scale and translate to corner (no teleportation)
+            // 4.0s: Start Docking
             setTimeout(() => {
                 wordmark.classList.add('docked');
             }, 4000);
 
-            // 5.2s: UI elements fade in after docking completes
+            // 5.2s: UI Fade-in
             setTimeout(() => {
                 grid.classList.add('ui-visible');
                 uiCoords.classList.add('ui-visible');
