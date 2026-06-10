@@ -10,6 +10,7 @@
 <style>
 :root {
   --bg-color: #050505;
+  --overlay-bg: rgba(5, 5, 5, 0.7);
   --white: #ffffff;
   --grid-color: rgba(255, 255, 255, 0.1);
   --font-header: "Syncopate", sans-serif;
@@ -34,6 +35,27 @@ body, html {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Canvas Layer */
+#dot-matrix-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  width: 100%;
+  height: 100%;
+}
+
+/* Background Overlay for Glass Effect */
+#bg-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--overlay-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 1;
+  pointer-events: none;
+}
+
 /* 1px Grid Borders */
 .ui-grid {
   position: fixed;
@@ -46,7 +68,7 @@ body, html {
   z-index: 5;
 }
 
-/* NAVIGATION LAYER - HIGHEST Z-INDEX */
+/* NAVIGATION LAYER */
 .stage {
   position: fixed;
   inset: 0;
@@ -80,7 +102,6 @@ body, html {
   will-change: clip-path;
 }
 
-/* State: Assembled */
 #wordmark.assembled {
   transform: scale(3);
 }
@@ -89,13 +110,11 @@ body, html {
   clip-path: inset(0 0 0 0) !important;
 }
 
-/* State: Docked */
 #wordmark.docked {
   transform: translate(calc(-50vw + 60px + 1.9em), calc(-50vh + 45px + 0.4em)) scale(1);
   pointer-events: auto;
 }
 
-/* Fixed Menu Items Architecture */
 .menu-items {
   position: absolute;
   left: 100%;
@@ -114,37 +133,36 @@ body, html {
   opacity: 1;
 }
 
+.menu-item {
+  color: var(--white);
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  margin-right: 25px;
+  text-transform: uppercase;
+  transition: opacity 0.15s ease-out;
+  cursor: pointer;
+  pointer-events: auto;
+  opacity: 0.75;
+}
+
 .menu-item:hover {
-  opacity: 0.7;
+  opacity: 1;
+}
+
+.menu-item.active {
+  opacity: 1;
+  pointer-events: none;
 }
 
 .ui-visible { opacity: 1 !important; }
-
-/* NAV BACKGROUND PANEL */
-#nav-bg {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 85px;
-  background: rgba(5, 5, 5, 0.4);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  z-index: 9998;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 1s var(--ease);
-}
-
-#nav-bg.visible {
-  opacity: 1;
-}
 
 /* OVERLAY STYLES */
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(5, 5, 5, 0.7);
+  background: var(--overlay-bg);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   z-index: 200;
@@ -239,158 +257,6 @@ body, html {
   font-family: var(--font-mono);
 }
 
-/* PROJECTS SPECIFIC STYLES */
-#projects-overlay .content-grid {
-  font-family: var(--font-mono);
-  text-transform: uppercase;
-}
-
-.project-list {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  width: 100%;
-}
-
-.project-entry {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);
-  cursor: pointer;
-  opacity: 0.5;
-}
-
-.project-entry.selected {
-  opacity: 1;
-  transform: scale(1.02);
-}
-
-.project-entry:last-child {
-  border-bottom: none;
-}
-
-.project-info {
-  display: flex;
-  align-items: baseline;
-  gap: 15px;
-}
-
-.project-id {
-  font-size: 0.6rem;
-  color: rgba(255, 255, 255, 0.3);
-}
-
-.project-name {
-  font-size: 0.9rem;
-  letter-spacing: 0.15em;
-  transition: font-size 0.4s var(--ease);
-}
-
-.project-entry.selected .project-name {
-  font-size: 1.05rem;
-}
-
-.status-tag {
-  font-size: 0.6rem;
-  padding: 3px 8px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.spec-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.video-container {
-  width: 100%;
-  aspect-ratio: 16/9;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  position: relative;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.02);
-}
-
-.video-container::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: 
-    linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
-  background-size: 20px 20px;
-}
-
-/* Playback Control Bar */
-.playback-bar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 10px 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.p-btn {
-  background: none;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.5);
-  font-family: var(--font-mono);
-  font-size: 0.55rem;
-  padding: 6px 10px;
-  cursor: pointer;
-  transition: all 0.3s var(--ease);
-  letter-spacing: 0.1em;
-}
-
-.p-btn:hover {
-  border-color: rgba(255, 255, 255, 0.4);
-  color: var(--white);
-}
-
-.p-btn.play-pause {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-}
-
-.play-pause svg {
-  width: 16px;
-  height: 16px;
-  fill: currentColor;
-  transition: transform 0.4s var(--ease);
-}
-
-.play-pause .pause-icon { display: none; }
-.play-pause.playing .play-icon { display: none; }
-.play-pause.playing .pause-icon { display: block; }
-
-.spec-details {
-  display: grid;
-  grid-template-columns: 100px 1fr;
-  gap: 10px;
-  font-size: 0.7rem;
-  color: rgba(255, 255, 255, 0.5);
-}
-
-.spec-label {
-  color: rgba(255, 255, 255, 0.3);
-}
-
-.spec-value {
-  color: var(--white);
-}
-
-/* Common Info Item */
 .info-item {
   display: flex;
   align-items: center;
@@ -420,58 +286,13 @@ body, html {
   color: var(--white);
   text-transform: uppercase;
 }
-
-/* Navigation Active States */
-@keyframes nav-breath {
-  0%, 100% { opacity: 1; filter: brightness(1.2); }
-  50% { opacity: 0.85; filter: brightness(1); }
-}
-
-.menu-item {
-  color: var(--white);
-  text-decoration: none;
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.2em;
-  margin-right: 25px;
-  text-transform: uppercase;
-  transition: opacity 0.15s ease-out, filter 0.15s ease-out;
-  cursor: pointer;
-  pointer-events: auto;
-  opacity: 0.75;
-}
-
-.menu-item.active {
-  opacity: 1 !important;
-  color: #FFFFFF !important;
-  animation: nav-breath 3s ease-in-out infinite;
-  animation-delay: 0.45s;
-  pointer-events: none;
-  transition: opacity 0.45s cubic-bezier(0.25, 1, 0.5, 1), filter 0.45s cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-/* Noise Diagnostics Panel */
-#noise-log {
-  position: fixed;
-  bottom: 40px;
-  left: 40px;
-  font-family: var(--font-mono);
-  font-size: 9px;
-  color: rgba(255, 255, 255, 0.3);
-  line-height: 1.5;
-  text-transform: uppercase;
-  z-index: 10;
-  pointer-events: none;
-}
-
 </style>
 </head>
 <body>
 
-<canvas id="webgl-noise" style="position: fixed; inset: 0; z-index: 1; pointer-events: none; width: 100vw; height: 100vh;"></canvas>
-
+<canvas id="dot-matrix-canvas"></canvas>
+<div id="bg-overlay"></div>
 <div class="ui-grid" id="grid"></div>
-<div id="nav-bg"></div>
 
 <div class="stage">
 <div id="wordmark">
@@ -483,9 +304,6 @@ body, html {
 </div>
 </div>
 
-<div id="noise-log"></div>
-
-<!-- ABOUT OVERLAY -->
 <div id="about-overlay" class="overlay">
 <div class="overlay-frame">
 <span class="coord coord-tl">[0000, 0000]</span>
@@ -530,194 +348,100 @@ body, html {
 </div>
 </div>
 
-<!-- PROJECTS OVERLAY -->
-<div id="projects-overlay" class="overlay">
-<div class="overlay-frame">
-<span class="coord coord-tl">[1111, 1111]</span>
-<span class="coord coord-br">[9999, 9999]</span>
-</div>
-<svg class="reticle" viewBox="0 0 40 40">
-<line x1="20" y1="0" x2="20" y2="40" stroke="white" stroke-width="1"/>
-<line x1="0" y1="20" x2="40" y2="20" stroke="white" stroke-width="1"/>
-</svg>
-<div class="content-grid">
-  <div class="col-left" style="align-items: flex-start; justify-content: flex-start; padding: 20px;">
-    <div class="project-list" id="p-list">
-      <div class="project-entry selected">
-        <div class="project-info">
-          <span class="project-id">[01]</span>
-          <span class="project-name">NAME</span>
-        </div>
-        <span class="status-tag">ACTIVE</span>
-      </div>
-      <div class="project-entry">
-        <div class="project-info">
-          <span class="project-id">[02]</span>
-          <span class="project-name">NAME</span>
-        </div>
-        <span class="status-tag">STANDBY</span>
-      </div>
-      <div class="project-entry">
-        <div class="project-info">
-          <span class="project-id">[03]</span>
-          <span class="project-name">NAME</span>
-        </div>
-        <span class="status-tag">STANDBY</span>
-      </div>
-      <div class="project-entry">
-        <div class="project-info">
-          <span class="project-id">[04]</span>
-          <span class="project-name">NAME</span>
-        </div>
-        <span class="status-tag">STANDBY</span>
-      </div>
-      <div class="project-entry">
-        <div class="project-info">
-          <span class="project-id">[05]</span>
-          <span class="project-name">NAME</span>
-        </div>
-        <span class="status-tag">STANDBY</span>
-      </div>
-    </div>
-  </div>
-  <div class="col-right">
-    <div class="spec-panel">
-      <div class="video-container"></div>
-      
-      <div class="playback-bar">
-        <button class="p-btn"><-1S</button>
-        <button class="p-btn"><-1F</button>
-        <button class="p-btn play-pause" id="play-pause">
-          <svg class="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-          <svg class="pause-icon" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-        </button>
-        <button class="p-btn">+1F</button>
-        <button class="p-btn">+1S</button>
-      </div>
-
-      <div class="spec-details">
-        <span class="spec-label">Pipeline:</span><span class="spec-value">DirectX 12 / HLSL</span>
-        <span class="spec-label">Complexity:</span><span class="spec-value">8.4M Traces/s</span>
-        <span class="spec-label">Buffers:</span><span class="spec-value">Compute / G-Buffer</span>
-        <span class="spec-label">Status:</span><span class="spec-value">Optimizing Kernels</span>
-      </div>
-    </div>
-  </div>
-</div>
-</div>
-
 <script>
+(function() {
+  const canvas = document.getElementById('dot-matrix-canvas');
+  const ctx = canvas.getContext('2d');
+  let dots = [];
+  let width, height, dpr;
+
+  const GRID_SIZE = 30;
+  const DOT_RADIUS = 1.2;
+
+  function init() {
+    dpr = window.devicePixelRatio || 1;
+    width = window.innerWidth;
+    height = window.innerHeight;
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    ctx.scale(dpr, dpr);
+    
+    dots = [];
+    const cols = Math.ceil(width / GRID_SIZE);
+    const rows = Math.ceil(height / GRID_SIZE);
+
+    for (let i = 0; i < cols; i++) {
+      for (let j = 0; j < rows; j++) {
+        dots.push({
+          x: i * GRID_SIZE + GRID_SIZE / 2,
+          y: j * GRID_SIZE + GRID_SIZE / 2,
+          phase: Math.random() * Math.PI * 2,
+          freq: 0.02 + Math.random() * 0.03,
+          maxOpacity: 0.05 + Math.random() * 0.55
+        });
+      }
+    }
+  }
+
+  function draw(time) {
+    ctx.clearRect(0, 0, width, height);
+    
+    dots.forEach(dot => {
+      const opacity = (Math.sin(time * 0.001 * dot.freq * 100 + dot.phase) * 0.5 + 0.5) * dot.maxOpacity;
+      ctx.beginPath();
+      ctx.arc(dot.x, dot.y, DOT_RADIUS, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(255, 255, 255, " + opacity.toFixed(3) + ")";
+      ctx.fill();
+    });
+
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize', init);
+  init();
+  requestAnimationFrame(draw);
+})();
+
 document.addEventListener("DOMContentLoaded", () => {
-const wordmark = document.getElementById("wordmark");
-const grid = document.getElementById("grid");
-const menu = document.getElementById("menu");
-const navBg = document.getElementById("nav-bg");
-const aboutTrigger = document.getElementById("about-trigger");
-const projectsTrigger = document.getElementById("projects-trigger");
-const navHome = document.getElementById("nav-home");
-const aboutOverlay = document.getElementById("about-overlay");
-const projectsOverlay = document.getElementById("projects-overlay");
+  const wordmark = document.getElementById("wordmark");
+  const grid = document.getElementById("grid");
+  const menu = document.getElementById("menu");
+  const aboutTrigger = document.getElementById("about-trigger");
+  const navHome = document.getElementById("nav-home");
+  const aboutOverlay = document.getElementById("about-overlay");
 
-if (!wordmark) return;
+  setTimeout(() => { if (wordmark) wordmark.classList.add("assembled"); }, 1500);
+  setTimeout(() => { if (wordmark) wordmark.classList.add("docked"); }, 3500);
+  setTimeout(() => {
+    if (grid) grid.classList.add("ui-visible");
+    if (menu) menu.classList.add("visible");
+  }, 4700);
 
-wordmark.classList.remove("assembled", "docked");
-
-setTimeout(() => wordmark.classList.add("assembled"), 1500);
-setTimeout(() => {
-  wordmark.classList.add("docked");
-  if (navBg) navBg.classList.add("visible");
-}, 3500);
-setTimeout(() => {
-  if (grid) grid.classList.add("ui-visible");
-  if (menu) menu.classList.add("visible");
-}, 4700);
-
-const navItems = [navHome, projectsTrigger, aboutTrigger];
-const setActiveNav = (activeEl) => {
-  navItems.forEach(item => { if (item) item.classList.remove("active"); });
-  if (activeEl) activeEl.classList.add("active");
-};
-setActiveNav(navHome);
-
-const switchPage = (pageId, triggerEl) => {
-  setActiveNav(triggerEl);
-  if (aboutOverlay) aboutOverlay.classList.remove("active");
-  if (projectsOverlay) projectsOverlay.classList.remove("active");
-  if (pageId === 'about' && aboutOverlay) aboutOverlay.classList.add("active");
-  else if (pageId === 'projects' && projectsOverlay) projectsOverlay.classList.add("active");
-};
-
-if (aboutTrigger) aboutTrigger.addEventListener("click", (e) => { e.stopPropagation(); switchPage('about', aboutTrigger); });
-if (projectsTrigger) projectsTrigger.addEventListener("click", (e) => { e.stopPropagation(); switchPage('projects', projectsTrigger); });
-if (navHome) navHome.addEventListener("click", (e) => { e.stopPropagation(); switchPage('home', navHome); });
-
-document.querySelectorAll('.project-entry').forEach(entry => {
-  entry.addEventListener('click', () => {
-    document.querySelectorAll('.project-entry').forEach(e => e.classList.remove('selected'));
-    entry.classList.add('selected');
-  });
-});
-
-const playBtn = document.getElementById('play-pause');
-if (playBtn) playBtn.addEventListener('click', () => playBtn.classList.toggle('playing'));
-
-// WebGL Ambient Noise Implementation
-const canvas = document.getElementById("webgl-noise");
-const gl = canvas.getContext("webgl");
-if (gl) {
-  const vsSource = "attribute vec2 position; void main() { gl_Position = vec4(position, 0.0, 1.0); }";
-  const fsSource = "precision highp float; uniform float u_time; uniform vec2 u_resolution; float random(vec2 st) { return fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 43758.5453123); } void main() { vec2 st = gl_FragCoord.xy / u_resolution.xy; float n = random(st + u_time * 0.05); float grain = (n - 0.5) * 0.035; vec3 color = vec3(0.0196) + grain; gl_FragColor = vec4(color, 1.0); }";
-
-  const createShader = (gl, type, source) => {
-    const shader = gl.createShader(type);
-    gl.shaderSource(shader, source);
-    gl.compileShader(shader);
-    return shader;
+  const switchPage = (pageId) => {
+    if (pageId === 'about') {
+      if (aboutOverlay) aboutOverlay.classList.add("active");
+      if (aboutTrigger) aboutTrigger.classList.add("active");
+      if (navHome) navHome.classList.remove("active");
+    } else {
+      if (aboutOverlay) aboutOverlay.classList.remove("active");
+      if (aboutTrigger) aboutTrigger.classList.remove("active");
+      if (navHome) navHome.classList.add("active");
+    }
   };
 
-  const program = gl.createProgram();
-  gl.attachShader(program, createShader(gl, gl.VERTEX_SHADER, vsSource));
-  gl.attachShader(program, createShader(gl, gl.FRAGMENT_SHADER, fsSource));
-  gl.linkProgram(program);
-  gl.useProgram(program);
+  if (aboutTrigger) {
+    aboutTrigger.addEventListener("click", (e) => {
+      e.preventDefault();
+      switchPage('about');
+    });
+  }
 
-  const buffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]), gl.STATIC_DRAW);
-
-  const posLoc = gl.getAttribLocation(program, "position");
-  gl.enableVertexAttribArray(posLoc);
-  gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
-
-  const timeLoc = gl.getUniformLocation(program, "u_time");
-  const resLoc = gl.getUniformLocation(program, "u_resolution");
-
-  const resize = () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    gl.viewport(0, 0, canvas.width, canvas.height);
-    gl.uniform2f(resLoc, canvas.width, canvas.height);
-  };
-  window.addEventListener("resize", resize);
-  resize();
-
-  const render = (t) => {
-    gl.uniform1f(timeLoc, t * 0.001);
-    gl.drawArrays(gl.TRIANGLES, 0, 6);
-    requestAnimationFrame(render);
-  };
-  requestAnimationFrame(render);
-}
-
-// Noise Diagnostics
-const noiseLog = document.getElementById("noise-log");
-const updateLog = () => {
-  const ts = new Date().toISOString().replace("T", " ").split(".")[0];
-  noiseLog.innerHTML = "SYS_KERNEL: OK<br>PIPELINE: WEBGL_2.0<br>AMBIENT_NOISE: RUNNING<br>LOG_TIME: " + ts;
-};
-updateLog();
-setInterval(updateLog, 1000);
-
+  if (navHome) {
+    navHome.addEventListener("click", (e) => {
+      e.preventDefault();
+      switchPage('home');
+    });
+  }
 });
 </script>
 </body>
