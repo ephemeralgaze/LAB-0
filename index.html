@@ -115,13 +115,47 @@ body, html {
   pointer-events: auto;
 }
 
+/* Mobile Icon (Phone) */
+.mobile-icon {
+  display: none;
+  width: 14px;
+  height: 14px;
+  margin-left: 0.2em;
+  vertical-align: baseline;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
+}
+
 /* MOBILE NAV OVERRIDES */
 @media (max-width: 768px) {
+  #wordmark.assembled .ab0-reveal {
+    clip-path: inset(0 100% 0 0) !important; /* Hide AB-0 in center on mobile */
+  }
+  
   #wordmark.docked {
     transform: translate(calc(-50vw + 40px + 1.9em), calc(-50vh + 40px + 0.4em)) scale(0.8);
   }
+
+  /* Transition text to 'Lab-' on mobile docking completion */
+  #wordmark.docked-final .l-char {
+    display: none;
+  }
+  #wordmark.docked-final .mobile-reveal {
+    display: inline-flex;
+    align-items: baseline;
+  }
+  #wordmark.docked-final .mobile-icon {
+    display: inline-block;
+  }
+
   .ui-grid { margin: 10px; }
   .menu-items { display: none !important; }
+}
+
+.mobile-reveal {
+  display: none;
+  text-transform: none;
 }
 
 .menu-items {
@@ -555,7 +589,13 @@ body, html {
 
 <div class="stage">
 <div id="wordmark">
-<a id="nav-home" class="menu-item" style="font-family:inherit; font-size:inherit; letter-spacing:inherit; margin:0; padding:0; text-transform: none;">L<span class="ab0-reveal">AB-0</span></a>
+<a id="nav-home" class="menu-item" style="font-family:inherit; font-size:inherit; letter-spacing:inherit; margin:0; padding:0; text-transform: none;">
+  <span class="l-char">L</span><span class="mobile-reveal">Lab-</span><span class="ab0-reveal">AB-0</span>
+  <svg class="mobile-icon" viewBox="0 0 24 24">
+    <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+    <line x1="12" y1="18" x2="12" y2="18"></line>
+  </svg>
+</a>
 <div class="menu-items" id="menu">
 <a id="projects-trigger" class="menu-item">PROJECTS</a>
 <a id="about-trigger" class="menu-item">ABOUT</a>
@@ -756,7 +796,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const mAboutTrigger = document.getElementById("m-about-trigger");
 
   setTimeout(() => { if (wordmark) wordmark.classList.add("assembled"); }, 1500);
-  setTimeout(() => { if (wordmark) wordmark.classList.add("docked"); }, 3500);
+  setTimeout(() => { 
+    if (wordmark) {
+      wordmark.classList.add("docked");
+      // Add final mobile transition class after docking completes (1.2s transition)
+      if (window.innerWidth <= 768) {
+        setTimeout(() => {
+          wordmark.classList.add("docked-final");
+        }, 1200);
+      }
+    }
+  }, 3500);
   setTimeout(() => {
     if (grid) grid.classList.add("ui-visible");
     if (hamburger) hamburger.classList.add("ui-visible");
