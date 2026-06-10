@@ -9,8 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
 <script>
 (function() {
-  var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-  if (isMobile || window.innerWidth < 768) {
+  if (window.innerWidth < 768) {
     window.location.replace("mobile.html");
   }
 })();
@@ -668,19 +667,14 @@ document.addEventListener("DOMContentLoaded", function() {
   const aboutOverlay = document.getElementById("about-overlay");
   const projectsOverlay = document.getElementById("projects-overlay");
 
-  // Phase 1: Startup (0s-1.5s) - Only "L" visible and centered
-  
-  // Phase 2: At 1.5s, expand to "LAB-monitor" while still centered
   setTimeout(function() {
     if (wordmark) wordmark.classList.add("assembled");
   }, 1500);
 
-  // Phase 3: At 3.5s, dock to the corner
   setTimeout(function() { 
     if (wordmark) wordmark.classList.add("docked");
   }, 3500);
 
-  // Phase 4: At 4.7s, reveal the rest of the UI (grid, menu)
   setTimeout(function() {
     if (grid) grid.classList.add("ui-visible");
     if (menu) menu.classList.add("visible");
