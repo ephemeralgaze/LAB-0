@@ -6,17 +6,16 @@
     <title>LAB-0</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500&family=Space+Mono&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-color: #050505;
-            --text-primary: #ffffff;
-            --text-secondary: rgba(255, 255, 255, 0.5);
-            --border-color: rgba(255, 255, 255, 0.1);
-            --font-header: 'Syncopate', sans-serif;
-            --font-body: 'Space Grotesk', sans-serif;
-            --font-mono: 'Space Mono', monospace;
-            --transition-main: 1.5s cubic-bezier(0.77, 0, 0.175, 1);
+            --text-color: #ffffff;
+            --accent-color: #ffffff;
+            --grid-color: rgba(255, 255, 255, 0.1);
+            --syncopate: 'Syncopate', sans-serif;
+            --space-grotesk: 'Space Grotesk', sans-serif;
+            --space-mono: 'Space Mono', monospace;
         }
 
         * {
@@ -25,197 +24,281 @@
             box-sizing: border-box;
         }
 
-        body {
+        body, html {
+            width: 100%;
+            height: 100%;
             background-color: var(--bg-color);
-            color: var(--text-primary);
-            font-family: var(--font-body);
-            height: 100vh;
-            width: 100vw;
+            color: var(--text-color);
             overflow: hidden;
+            font-family: var(--space-grotesk);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Grid Background */
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 1px solid var(--grid-color);
+            pointer-events: none;
+            opacity: 0;
+            z-index: 10;
+        }
+
+        .grid-line-h {
+            position: absolute;
+            width: 100%;
+            height: 1px;
+            background: var(--grid-color);
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .grid-line-v {
+            position: absolute;
+            height: 100%;
+            width: 1px;
+            background: var(--grid-color);
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* Intro Sequence Container */
+        .stage {
             display: flex;
             justify-content: center;
             align-items: center;
+            width: 100vw;
+            height: 100vh;
+            position: relative;
         }
 
-        /* --- Loading State --- */
-        #loader-container {
+        .wordmark-container {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            gap: 20px;
-            transition: transform var(--transition-main), top var(--transition-main), left var(--transition-main);
-            position: absolute;
-            z-index: 100;
-        }
-
-        .lab-text {
-            font-family: var(--font-header);
+            font-family: var(--syncopate);
             font-weight: 700;
-            font-size: clamp(2rem, 5vw, 4rem);
-            letter-spacing: 2em; /* Initial tracking */
-            text-indent: 2em;    /* Center tracking */
-            opacity: 0;
-            animation: loadIn 3s var(--transition-main) forwards;
-        }
-
-        .loading-line {
-            width: 0;
-            height: 1px;
-            background: var(--text-primary);
-            animation: lineExpand 2.5s var(--transition-main) forwards 0.5s;
-        }
-
-        /* --- Animations --- */
-        @keyframes loadIn {
-            0% { opacity: 0; letter-spacing: 2em; text-indent: 2em; }
-            100% { opacity: 1; letter-spacing: 0.5em; text-indent: 0.5em; }
-        }
-
-        @keyframes lineExpand {
-            0% { width: 0; opacity: 0; }
-            20% { opacity: 1; }
-            100% { width: 200px; opacity: 1; }
-        }
-
-        /* --- Docked State --- */
-        #loader-container.docked {
-            top: 2rem;
-            left: 2rem;
-            transform: translate(0, 0) scale(0.4);
-            transform-origin: top left;
-            align-items: flex-start;
-        }
-
-        #loader-container.docked .loading-line {
-            display: none;
-        }
-
-        /* --- UI Elements --- */
-        #interface {
+            font-size: 5rem;
+            letter-spacing: -0.05em;
             position: absolute;
-            inset: 0;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 2s ease 1s;
-            border: 1px solid var(--border-color);
-            margin: 1rem;
+            transition: all 0.8s cubic-bezier(0.85, 0, 0.15, 1);
+            z-index: 50;
         }
 
-        #interface.visible {
+        .wordmark-container.docked {
+            top: 40px;
+            left: 40px;
+            font-size: 1.5rem;
+            letter-spacing: 0.1em;
+            transform: translate(0, 0);
+        }
+
+        /* SVG L Animation */
+        .l-stroke {
+            fill: transparent;
+            stroke: white;
+            stroke-width: 1px;
+            stroke-dasharray: 500;
+            stroke-dashoffset: 500;
+            animation: drawL 1.5s forwards cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes drawL {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        .l-fill {
+            fill: white;
+            opacity: 0;
+            animation: fillL 0.5s forwards 1.5s ease-in-out;
+        }
+
+        @keyframes fillL {
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Sliding LAB-0 Assembly */
+        .l-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.8s cubic-bezier(0.85, 0, 0.15, 1) 2s;
+        }
+
+        .wordmark-container.assembled .l-wrapper {
+            transform: translateX(-0.1em);
+        }
+
+        .ab0-wrapper {
+            display: inline-block;
+            max-width: 0;
+            overflow: hidden;
+            white-space: nowrap;
+            opacity: 0;
+            transition: max-width 0.8s cubic-bezier(0.85, 0, 0.15, 1) 2.0s, 
+                        opacity 0.5s ease 2.1s,
+                        transform 0.8s cubic-bezier(0.85, 0, 0.15, 1) 2.0s;
+            transform: translateX(0.5em);
+        }
+
+        .wordmark-container.assembled .ab0-wrapper {
+            max-width: 1000px; 
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* UI Elements Fade-in */
+        .ui-element {
+            opacity: 0;
+            transition: opacity 1s ease-in-out 4.3s;
+            position: fixed;
+            z-index: 20;
+        }
+
+        .ui-visible {
             opacity: 1;
         }
 
-        .coordinates {
-            position: absolute;
-            bottom: 2rem;
-            left: 2rem;
-            font-family: var(--font-mono);
-            font-size: 10px;
+        .grid-visible {
+            opacity: 1;
+            transition: opacity 1.5s ease-in-out 4s;
+        }
+
+        /* Cursor Tracker */
+        .cursor-tracker {
+            bottom: 40px;
+            left: 40px;
+            font-family: var(--space-mono);
+            font-size: 0.75rem;
             text-transform: uppercase;
-            letter-spacing: 0.2em;
-            color: var(--text-secondary);
+        }
+
+        /* System State Indicator */
+        .system-state {
+            top: 40px;
+            right: 40px;
+            display: flex;
+            align-items: center;
+            font-family: var(--space-mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.1em;
         }
 
         .dot-matrix {
-            position: absolute;
-            bottom: 2rem;
-            right: 2rem;
-            display: grid;
-            grid-template-columns: repeat(4, 4px);
-            gap: 4px;
+            width: 8px;
+            height: 8px;
+            background-color: #fff;
+            border-radius: 50%;
+            margin-right: 12px;
+            animation: pulse 2s infinite ease-in-out;
         }
 
-        .dot {
-            width: 2px;
-            height: 2px;
-            background: var(--text-primary);
-            opacity: 0.3;
+        @keyframes pulse {
+            0% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.1); }
+            100% { opacity: 0.3; transform: scale(0.8); }
         }
 
-        .dot.blink {
-            animation: blink 2s infinite;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 1; }
-        }
-
-        /* --- Status Log --- */
-        .status-logs {
-            position: absolute;
-            top: 2rem;
-            right: 2rem;
-            font-family: var(--font-mono);
-            font-size: 10px;
+        /* Terminal Console */
+        .terminal {
+            bottom: 40px;
+            right: 40px;
             text-align: right;
-            color: var(--text-secondary);
+            font-family: var(--space-mono);
+            font-size: 0.75rem;
+            line-height: 1.6;
+        }
+
+        .terminal span {
+            display: block;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .terminal .status-ready {
+            color: #fff;
+            font-weight: bold;
         }
 
     </style>
 </head>
 <body>
 
-    <div id="loader-container">
-        <div class="lab-text">LAB-0</div>
-        <div class="loading-line"></div>
+    <div class="grid-overlay" id="grid">
+        <div class="grid-line-h"></div>
+        <div class="grid-line-v"></div>
     </div>
 
-    <div id="interface">
-        <div class="status-logs">
-            SYS: ACTIVE<br>
-            NET: ENCRYPTED<br>
-            FARADAY: ENABLED
+    <div class="stage">
+        <div class="wordmark-container" id="wordmark">
+            <div class="l-wrapper">
+                <svg width="1em" height="1em" viewBox="0 0 100 100">
+                    <path class="l-stroke" d="M35 25 V75 H65" />
+                    <path class="l-fill" d="M35 25 V75 H65 V70 H40 V25 Z" />
+                </svg>
+            </div>
+            <div class="ab0-wrapper">AB-0</div>
         </div>
+    </div>
 
-        <div class="coordinates" id="coord-tracker">
-            LAT: 34.0522 N / LONG: 118.2437 W
-        </div>
+    <!-- UI Components -->
+    <div class="ui-element cursor-tracker" id="ui-coords">
+        X: 0000 // Y: 0000
+    </div>
 
-        <div class="dot-matrix">
-            <div class="dot blink"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
-            <div class="dot blink" style="animation-delay: 0.5s"></div>
-            <div class="dot"></div>
-            <div class="dot blink" style="animation-delay: 1.2s"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
-        </div>
+    <div class="ui-element system-state" id="ui-state">
+        <div class="dot-matrix"></div>
+        SYSTEM ACTIVE // STABLE
+    </div>
+
+    <div class="ui-element terminal" id="ui-terminal">
+        <span>INITIALIZING KERNEL...</span>
+        <span>AUTH_TOKEN: 0x0LAB0</span>
+        <span class="status-ready">SYSTEM READY</span>
     </div>
 
     <script>
-        window.addEventListener('DOMContentLoaded', () => {
-            const loader = document.getElementById('loader-container');
-            const ui = document.getElementById('interface');
-            const coords = document.getElementById('coord-tracker');
+        document.addEventListener('DOMContentLoaded', () => {
+            const wordmark = document.getElementById('wordmark');
+            const grid = document.getElementById('grid');
+            const uiElements = document.querySelectorAll('.ui-element');
+            const coordsDisplay = document.getElementById('ui-coords');
 
-            // 1. Initial positioning
-            const centerX = window.innerWidth / 2;
-            const centerY = window.innerHeight / 2;
-            
-            loader.style.top = `${centerY}px`;
-            loader.style.left = `${centerX}px`;
-            loader.style.transform = 'translate(-50%, -50%)';
+            // Initial Centering
+            wordmark.style.top = '50%';
+            wordmark.style.left = '50%';
+            wordmark.style.transform = 'translate(-50%, -50%)';
 
-            // 2. Sequence
+            // Phase 2: Assembly (at 2.0s)
             setTimeout(() => {
-                // Dock to top-left
-                loader.classList.add('docked');
-                
-                // Show UI
-                setTimeout(() => {
-                    ui.classList.add('visible');
-                }, 1000);
+                wordmark.classList.add('assembled');
+            }, 2000);
+
+            // Phase 3: Docking (at 3.5s)
+            setTimeout(() => {
+                wordmark.classList.add('docked');
+                // Remove the manual centering to let .docked styles take over
+                wordmark.style.top = '';
+                wordmark.style.left = '';
+                wordmark.style.transform = '';
+            }, 3500);
+
+            // Phase 4: UI Fade-in (at 4.0s - 4.3s)
+            setTimeout(() => {
+                grid.classList.add('grid-visible');
+                uiElements.forEach(el => el.classList.add('ui-visible'));
             }, 4000);
 
-            // 3. Live terminal aesthetic (coordinates tracker)
+            // Coordinate Tracker Logic
             window.addEventListener('mousemove', (e) => {
-                if (ui.classList.contains('visible')) {
-                    const x = e.clientX.toString().padStart(4, '0');
-                    const y = e.clientY.toString().padStart(4, '0');
-                    coords.innerText = `X-${x} // Y-${y} // STABLE`;
-                }
+                const x = String(Math.round(e.clientX)).padStart(4, '0');
+                const y = String(Math.round(e.clientY)).padStart(4, '0');
+                coordsDisplay.innerText = `X: ${x} // Y: ${y}`;
             });
         });
     </script>
