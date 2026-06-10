@@ -353,7 +353,7 @@ body, html {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 8px;
+  gap: 12px;
   font-family: var(--font-mono);
 }
 
@@ -495,7 +495,7 @@ body, html {
 
 .play-pause .pause-icon { display: none; }
 .play-pause.playing .play-icon { display: none; }
-.play-pause.playing .pause-icon { display: block; }
+.play-pause.playing .pause-icon { block; }
 
 .spec-details {
   display: grid;
@@ -511,12 +511,12 @@ body, html {
 /* Common Info Item */
 .info-item {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 15px;
   color: rgba(255, 255, 255, 0.7);
   font-size: 0.75rem;
   letter-spacing: 0.1em;
-  padding: 4px 0;
+  padding: 6px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
 }
 
@@ -525,18 +525,22 @@ body, html {
   height: 16px;
   opacity: 0.8;
   flex-shrink: 0;
+  margin-top: 2px;
 }
 
 .info-label {
-  width: 80px;
+  width: 85px;
   font-size: 0.55rem;
   color: rgba(255, 255, 255, 0.3);
   text-transform: uppercase;
+  flex-shrink: 0;
+  margin-top: 3px;
 }
 
 .info-value {
   color: var(--white);
   text-transform: uppercase;
+  flex: 1;
 }
 
 /* Mailto Styling */
@@ -544,11 +548,7 @@ body, html {
   color: var(--white);
   text-decoration: none;
   word-break: break-all;
-  transition: opacity 0.3s ease;
-}
-
-.mail-link:hover {
-  opacity: 0.8;
+  text-transform: none;
 }
 </style>
 </head>
@@ -619,7 +619,7 @@ body, html {
         <polyline points="22,6 12,13 2,6" />
       </svg>
       <span class="info-label">Contact</span>
-      <span class="info-value" style="text-transform: none;"><a href="mailto:ephemeralgaze24@gmail.com" class="mail-link">ephemeralgaze24@gmail.com</a></span>
+      <span class="info-value"><a href="mailto:zgnx4ndcq5@privaterelay.appleid.com" class="mail-link">zgnx4ndcq5@privaterelay.appleid.com</a></span>
     </div>
   </div>
 </div>
@@ -678,12 +678,14 @@ body, html {
       </div>
       
       <div class="playback-bar">
-        <button class="p-btn" id="p-rewind">STEP-</button>
+        <button class="p-btn" id="p-back-1s">-1S</button>
+        <button class="p-btn" id="p-back-1f">-1F</button>
         <button class="p-btn play-pause" id="play-pause">
           <svg class="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
           <svg class="pause-icon" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
         </button>
-        <button class="p-btn" id="p-forward">STEP+</button>
+        <button class="p-btn" id="p-fwd-1f">+1F</button>
+        <button class="p-btn" id="p-fwd-1s">+1S</button>
       </div>
 
       <div class="spec-details" id="p-specs">
@@ -768,8 +770,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
   const pVideo = document.getElementById("p-video");
   const playBtn = document.getElementById("play-pause");
-  const rewindBtn = document.getElementById("p-rewind");
-  const forwardBtn = document.getElementById("p-forward");
+  const bBack1s = document.getElementById("p-back-1s");
+  const bBack1f = document.getElementById("p-back-1f");
+  const bFwd1f = document.getElementById("p-fwd-1f");
+  const bFwd1s = document.getElementById("p-fwd-1s");
   
   const sPipeline = document.getElementById("s-pipeline");
   const sComplexity = document.getElementById("s-complexity");
@@ -912,19 +916,28 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
   const FPS = 30;
-  if (rewindBtn && pVideo) {
-    rewindBtn.addEventListener("click", function() {
+  if (bBack1s && pVideo) {
+    bBack1s.addEventListener("click", function() {
+      pVideo.currentTime = Math.max(0, pVideo.currentTime - 1);
+    });
+  }
+  if (bBack1f && pVideo) {
+    bBack1f.addEventListener("click", function() {
       pVideo.pause();
       playBtn.classList.remove("playing");
       pVideo.currentTime = Math.max(0, pVideo.currentTime - (1 / FPS));
     });
   }
-
-  if (forwardBtn && pVideo) {
-    forwardBtn.addEventListener("click", function() {
+  if (bFwd1f && pVideo) {
+    bFwd1f.addEventListener("click", function() {
       pVideo.pause();
       playBtn.classList.remove("playing");
       pVideo.currentTime = Math.min(pVideo.duration || 0, pVideo.currentTime + (1 / FPS));
+    });
+  }
+  if (bFwd1s && pVideo) {
+    bFwd1s.addEventListener("click", function() {
+      pVideo.currentTime = Math.min(pVideo.duration || 0, pVideo.currentTime + 1);
     });
   }
 });
