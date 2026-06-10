@@ -61,7 +61,7 @@
         */
         #wordmark {
             display: flex;
-            align-items: baseline; /* Align children on the text baseline */
+            align-items: baseline;
             font-family: var(--font-header);
             font-weight: 700;
             font-size: 1.5rem;
@@ -70,34 +70,33 @@
             left: 60px;
             transform-origin: top left;
             /* 
-               Initial state: L only, centered.
-               We use translate(-50%, -50%) for the most robust centering.
+               Initial state: L only, centered at viewport.
+               Using em-based translate to keep the L visually static during expansion.
             */
-            transform: translate(calc(50vw - 60px), calc(50vh - 60px)) scale(3.3333) translate(-50%, -50%);
+            transform: translate(calc(50vw - 60px), calc(50vh - 60px)) scale(3.3333) translate(-0.29em, -50%);
             transition: transform 1.2s cubic-bezier(0.8, 0, 0.2, 1);
             z-index: 100;
         }
 
-        /* SVG L Animation using <text> for perfect parity */
+        /* SVG L Animation using <text> with standard baseline alignment */
         .l-container {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 0.6em; /* Approximate width of 'L' to maintain structure */
+            align-items: baseline;
+            width: 0.58em; /* Exact advance width for Syncopate Bold 'L' */
             height: 1em;
             transition: transform 0.8s cubic-bezier(0.8, 0, 0.2, 1);
         }
 
         .l-svg {
-            width: 100%;
-            height: 100%;
+            width: 1em;
+            height: 1em;
             overflow: visible;
         }
 
         .l-glyph {
             fill: none;
             stroke: var(--white);
-            stroke-width: 2.5px;
+            stroke-width: 6px; /* Heavy stroke to match Bold weight */
             stroke-linejoin: miter;
             stroke-linecap: butt;
             stroke-dasharray: 600;
@@ -106,6 +105,7 @@
             font-family: var(--font-header);
             font-weight: 700;
             font-size: 100px;
+            dominant-baseline: alphabetic;
         }
 
         @keyframes drawStroke {
@@ -128,7 +128,7 @@
             transition: opacity 0.4s ease-out;
             pointer-events: none;
             letter-spacing: 0.1em;
-            margin-left: 0.1em; /* Standard geometric spacing */
+            margin-left: 0.1em;
         }
 
         #wordmark.assembled .ab0-container {
@@ -159,11 +159,10 @@
 
         /* 
            State 1: Assembled Center.
-           Simplest centering: the wordmark expands naturally in the flex container,
-           and we use translate(-50%, -50%) to keep the resulting box centered.
+           Visual center calculated to keep the 'L' static while AB-0 expands.
         */
         #wordmark.assembled {
-            transform: translate(calc(50vw - 60px), calc(50vh - 60px)) scale(3) translate(-50%, -50%);
+            transform: translate(calc(50vw - 60px), calc(50vh - 60px)) scale(3) translate(-1.89em, -50%);
         }
 
         #wordmark.assembled .l-container {
@@ -252,8 +251,8 @@
     <div class="stage">
         <div id="wordmark">
             <div class="l-container">
-                <svg class="l-svg" viewBox="0 0 100 100">
-                    <text x="50" y="80" text-anchor="middle" class="l-glyph">L</text>
+                <svg class="l-svg" viewBox="0 0 58 100">
+                    <text x="0" y="80" class="l-glyph">L</text>
                 </svg>
             </div>
             <div class="ab0-container">
