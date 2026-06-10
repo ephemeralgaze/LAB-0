@@ -34,17 +34,6 @@ body, html {
   -webkit-font-smoothing: antialiased;
 }
 
-/* BACKGROUND CANVAS - RAISED Z-INDEX TO ENSURE VISIBILITY */
-#visualizer {
-  position: fixed;
-  inset: 0;
-  z-index: 1;
-  background: transparent;
-  opacity: 0;
-  transition: opacity 1s var(--ease);
-  pointer-events: none;
-}
-
 /* 1px Grid Borders */
 .ui-grid {
   position: fixed;
@@ -382,49 +371,6 @@ body, html {
   color: var(--white);
 }
 
-/* AUDIO TOGGLE STYLES */
-.audio-ctrl {
-  margin-top: 10px;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  padding: 15px 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.audio-label {
-  font-size: 0.6rem;
-  color: rgba(255, 255, 255, 0.3);
-  letter-spacing: 0.15em;
-}
-
-.toggle-group {
-  display: flex;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-}
-
-.tgl-btn {
-  background: none;
-  border: none;
-  color: rgba(255, 255, 255, 0.3);
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  padding: 4px 12px;
-  cursor: pointer;
-  transition: all 0.3s var(--ease);
-  letter-spacing: 0.1em;
-}
-
-.tgl-btn.active {
-  background: var(--white);
-  color: var(--bg-color);
-  opacity: 1;
-}
-
-.tgl-btn:not(.active):hover {
-  color: var(--white);
-}
-
 /* Common Info Item */
 .info-item {
   display: flex;
@@ -488,7 +434,6 @@ body, html {
 </head>
 <body>
 
-<canvas id="visualizer"></canvas>
 <div class="ui-grid" id="grid"></div>
 <div id="nav-bg"></div>
 
@@ -610,14 +555,6 @@ body, html {
         <span class="spec-label">Buffers:</span><span class="spec-value">Compute / G-Buffer</span>
         <span class="spec-label">Status:</span><span class="spec-value">Optimizing Kernels</span>
       </div>
-
-      <div class="audio-ctrl">
-        <span class="audio-label">SPECTRUM:</span>
-        <div class="toggle-group">
-          <button id="audio-off" class="tgl-btn active">OFF</button>
-          <button id="audio-on" class="tgl-btn">ON</button>
-        </div>
-      </div>
     </div>
   </div>
 </div>
@@ -633,110 +570,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const navHome = document.getElementById("nav-home");
   const aboutOverlay = document.getElementById("about-overlay");
   const projectsOverlay = document.getElementById("projects-overlay");
-
-  // Visualizer Logic
-  const canvas = document.getElementById('visualizer');
-  const ctx = canvas.getContext('2d');
-  const audioOn = document.getElementById('audio-on');
-  const audioOff = document.getElementById('audio-off');
-
-  let audioCtx, analyser, dataArray, source;
-  let isEnabled = false;
-  let animationId;
-
-  const resize = () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  };
-  window.addEventListener('resize', resize);
-  resize();
-
-  const initAudio = async () => {
-    if (audioCtx) {
-      if (audioCtx.state === 'suspended') {
-        await audioCtx.resume();
-      }
-      return;
-    }
-    try {
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      analyser = audioCtx.createAnalyser();
-      analyser.fftSize = 256;
-      source = audioCtx.createMediaStreamSource(stream);
-      source.connect(analyser);
-      dataArray = new Uint8Array(analyser.frequencyBinCount);
-    } catch (e) {
-      console.warn("Audio access denied", e);
-    }
-  };
-
-  const draw = (time) => {
-    if (!isEnabled) return;
-    
-    // Clear with transparency or a light alpha to allow layering if needed
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    const spacing = 30;
-    const rows = Math.ceil(canvas.height / spacing);
-    const cols = Math.ceil(canvas.width / spacing);
-
-    if (analyser && audioCtx.state === 'running') {
-      analyser.getByteFrequencyData(dataArray);
-    }
-
-    for (let i = 0; i < rows; i++) {
-      for (let j = 0; j < cols; j++) {
-        const x = j * spacing + spacing / 2;
-        const y = i * spacing + spacing / 2;
-        
-        let intensity = 0;
-        if (analyser && audioCtx.state === 'running') {
-          const index = Math.floor((j / cols) * dataArray.length);
-          intensity = (dataArray[index] / 255) * (1 - Math.abs(i / rows - 0.5) * 2);
-        } else {
-          // Ambient fallback
-          intensity = (Math.sin(time * 0.002 + j * 0.2) + 1) * 0.5 * (Math.cos(time * 0.001 + i * 0.1) + 1) * 0.3;
-        }
-
-        const size = 1.5 + intensity * 6;
-        // Increased base opacity from 0.15 to 0.3
-        ctx.fillStyle = `rgba(255, 255, 255, ${0.3 + intensity * 0.6})`;
-        ctx.beginPath();
-        ctx.arc(x, y, size / 2, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
-    animationId = requestAnimationFrame(draw);
-  };
-
-  const toggleAudio = async (on) => {
-    isEnabled = on;
-    if (on) {
-      audioOn.classList.add('active');
-      audioOff.classList.remove('active');
-      canvas.style.opacity = '1';
-      await initAudio();
-      if (!animationId) draw(performance.now());
-    } else {
-      audioOn.classList.remove('active');
-      audioOff.classList.add('active');
-      canvas.style.opacity = '0';
-      if (animationId) {
-        cancelAnimationFrame(animationId);
-        animationId = null;
-      }
-    }
-  };
-
-  audioOn.addEventListener('click', (e) => {
-    e.preventDefault();
-    toggleAudio(true);
-  });
-  audioOff.addEventListener('click', (e) => {
-    e.preventDefault();
-    toggleAudio(false);
-  });
 
   // Sequence Animations
   setTimeout(() => wordmark.classList.add("assembled"), 1500);
