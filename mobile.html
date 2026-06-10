@@ -315,7 +315,7 @@ body, html {
   grid-template-columns: 1fr;
   gap: 40px;
   width: 100%;
-  padding: 114px 40px 60px;
+  padding: 114px 30px 60px;
   pointer-events: auto;
 }
 
@@ -324,17 +324,17 @@ body, html {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 30px;
+  gap: 20px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  padding-bottom: 40px;
+  padding-bottom: 30px;
 }
 
 .avatar {
-  width: 160px;
-  height: 160px;
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 8px;
+  padding: 6px;
   background: rgba(255, 255, 255, 0.05);
 }
 
@@ -347,7 +347,7 @@ body, html {
 
 .username {
   font-family: var(--font-header);
-  font-size: 1.4rem;
+  font-size: 1.1rem;
   letter-spacing: 0.3em;
   color: var(--white);
   text-transform: lowercase;
@@ -357,7 +357,7 @@ body, html {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 25px;
+  gap: 15px;
   font-family: var(--font-mono);
 }
 
@@ -370,7 +370,7 @@ body, html {
 .project-list {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 10px;
   width: 100%;
 }
 
@@ -378,7 +378,7 @@ body, html {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 0;
+  padding: 10px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);
   cursor: pointer;
@@ -395,25 +395,25 @@ body, html {
 .project-info {
   display: flex;
   align-items: baseline;
-  gap: 15px;
+  gap: 12px;
 }
 
 .project-id {
-  font-size: 0.6rem;
+  font-size: 0.55rem;
   color: rgba(255, 255, 255, 0.3);
 }
 
 .project-name {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   letter-spacing: 0.15em;
   transition: font-size 0.4s var(--ease);
 }
 
-.project-entry.selected .project-name { font-size: 1.05rem; }
+.project-entry.selected .project-name { font-size: 0.95rem; }
 
 .status-tag {
-  font-size: 0.6rem;
-  padding: 3px 8px;
+  font-size: 0.55rem;
+  padding: 2px 6px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: rgba(255, 255, 255, 0.7);
 }
@@ -421,7 +421,7 @@ body, html {
 .spec-panel {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 15px;
 }
 
 .video-container {
@@ -457,7 +457,7 @@ body, html {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  padding: 10px 0;
+  padding: 8px 0;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
@@ -467,7 +467,7 @@ body, html {
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: rgba(255, 255, 255, 0.5);
   font-family: var(--font-mono);
-  font-size: 0.55rem;
+  font-size: 0.5rem;
   padding: 6px 10px;
   cursor: pointer;
   transition: all 0.3s var(--ease);
@@ -481,8 +481,8 @@ body, html {
 }
 
 .p-btn.play-pause {
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -491,8 +491,8 @@ body, html {
 }
 
 .play-pause svg {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   fill: currentColor;
   transition: transform 0.4s var(--ease);
 }
@@ -503,9 +503,9 @@ body, html {
 
 .spec-details {
   display: grid;
-  grid-template-columns: 100px 1fr;
-  gap: 10px;
-  font-size: 0.7rem;
+  grid-template-columns: 80px 1fr;
+  gap: 8px;
+  font-size: 0.65rem;
   color: rgba(255, 255, 255, 0.5);
 }
 
@@ -516,24 +516,24 @@ body, html {
 .info-item {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 15px;
   color: rgba(255, 255, 255, 0.7);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   letter-spacing: 0.1em;
-  padding: 10px 0;
+  padding: 8px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
 }
 
 .info-icon {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   opacity: 0.8;
   flex-shrink: 0;
 }
 
 .info-label {
-  width: 100px;
-  font-size: 0.6rem;
+  width: 80px;
+  font-size: 0.55rem;
   color: rgba(255, 255, 255, 0.3);
   text-transform: uppercase;
 }
@@ -599,7 +599,7 @@ body, html {
         <path d="M22 10v6M2 10v6M12 4L2 10l10 6 10-6-10-6zM12 18v-6" />
       </svg>
       <span class="info-label">Education</span>
-      <span class="info-value">Undergraduate / Game Dev</span>
+      <span class="info-value">Undergrad / Game Dev</span>
     </div>
     <div class="info-item">
       <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -615,7 +615,7 @@ body, html {
         <polyline points="22,6 12,13 2,6" />
       </svg>
       <span class="info-label">Contact</span>
-      <span class="info-value" style="text-transform: none;">zgnx4ndcq5@privaterelay.appleid.com</span>
+      <span class="info-value" style="text-transform: none;">zgnx4ndcq5@privaterelay...</span>
     </div>
   </div>
 </div>
@@ -632,7 +632,7 @@ body, html {
 <line x1="0" y1="20" x2="40" y2="20" stroke="white" stroke-width="1"/>
 </svg>
 <div class="content-grid">
-  <div class="col-left" style="align-items: flex-start; justify-content: flex-start; padding: 20px;">
+  <div class="col-left" style="align-items: flex-start; justify-content: flex-start; padding: 15px;">
     <div class="project-list" id="p-list">
       <div class="project-entry selected" data-project="void">
         <div class="project-info">
@@ -655,6 +655,20 @@ body, html {
         </div>
         <span class="status-tag">STANDBY</span>
       </div>
+      <div class="project-entry" data-project="quantum">
+        <div class="project-info">
+          <span class="project-id">[04]</span>
+          <span class="project-name">QUANTUM</span>
+        </div>
+        <span class="status-tag">ACTIVE</span>
+      </div>
+      <div class="project-entry" data-project="chroma">
+        <div class="project-info">
+          <span class="project-id">[05]</span>
+          <span class="project-name">CHROMA</span>
+        </div>
+        <span class="status-tag">DRAFT</span>
+      </div>
     </div>
   </div>
   <div class="col-right">
@@ -664,12 +678,12 @@ body, html {
       </div>
       
       <div class="playback-bar">
-        <button class="p-btn" id="p-rewind">-1S</button>
+        <button class="p-btn" id="p-rewind">STEP-</button>
         <button class="p-btn play-pause" id="play-pause">
           <svg class="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
           <svg class="pause-icon" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
         </button>
-        <button class="p-btn" id="p-forward">+1S</button>
+        <button class="p-btn" id="p-forward">STEP+</button>
       </div>
 
       <div class="spec-details" id="p-specs">
@@ -741,8 +755,6 @@ body, html {
 document.addEventListener("DOMContentLoaded", function() {
   const wordmark = document.getElementById("wordmark");
   const grid = document.getElementById("grid");
-  const aboutTrigger = document.getElementById("about-trigger");
-  const projectsTrigger = document.getElementById("projects-trigger");
   const navHome = document.getElementById("nav-home");
   const aboutOverlay = document.getElementById("about-overlay");
   const projectsOverlay = document.getElementById("projects-overlay");
@@ -785,6 +797,20 @@ document.addEventListener("DOMContentLoaded", function() {
       complexity: "Dynamic SDF",
       buffers: "GBuffer / Depth",
       status: "STANDBY"
+    },
+    quantum: {
+      video: "",
+      pipeline: "VFX / Compute",
+      complexity: "Q-Field Sim",
+      buffers: "Atomic / SSBO",
+      status: "ACTIVE"
+    },
+    chroma: {
+      video: "",
+      pipeline: "Post / Kernel",
+      complexity: "Multi-Pass LUT",
+      buffers: "Ping-Pong / FBO",
+      status: "DRAFT"
     }
   };
 
@@ -877,15 +903,20 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   }
 
+  const FPS = 30;
   if (rewindBtn && pVideo) {
     rewindBtn.addEventListener("click", function() {
-      pVideo.currentTime = Math.max(0, pVideo.currentTime - 1);
+      pVideo.pause();
+      playBtn.classList.remove("playing");
+      pVideo.currentTime = Math.max(0, pVideo.currentTime - (1 / FPS));
     });
   }
 
   if (forwardBtn && pVideo) {
     forwardBtn.addEventListener("click", function() {
-      pVideo.currentTime = Math.min(pVideo.duration || 0, pVideo.currentTime + 1);
+      pVideo.pause();
+      playBtn.classList.remove("playing");
+      pVideo.currentTime = Math.min(pVideo.duration || 0, pVideo.currentTime + (1 / FPS));
     });
   }
 });
