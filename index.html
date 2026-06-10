@@ -235,17 +235,17 @@
                 arrows.classList.add('visible');
             }, 4700);
 
-            // --- Ripple Dot Matrix Background ---
+            // --- Luminous Dot Matrix Background ---
             const canvas = document.getElementById('wave-canvas');
             const ctx = canvas.getContext('2d', { alpha: true });
             
             let width, height;
             let dots = [];
             const spacing = 50;
-            const dotSize = 1.1;
-            const waveAmplitude = 25;
-            const waveFrequency = 0.015; // frequency of the ripple
-            const speed = 4; // speed of the outward propagation
+            const baseDotSize = 1.0;
+            const waveFrequency = 0.015; 
+            const speed = 4;
+            const waveAmplitude = 0.45; // amplitude of opacity/size modulation
             let time = 0;
 
             function resize() {
@@ -256,15 +256,14 @@
 
             function initDots() {
                 dots = [];
-                // Slightly overshoot bounds to ensure full coverage during wave motion
-                const cols = Math.ceil(width / spacing) + 2;
-                const rows = Math.ceil(height / spacing) + 2;
+                const cols = Math.ceil(width / spacing) + 1;
+                const rows = Math.ceil(height / spacing) + 1;
                 
-                for (let i = -1; i < cols; i++) {
-                    for (let j = -1; j < rows; j++) {
+                for (let i = 0; i < cols; i++) {
+                    for (let j = 0; j < rows; j++) {
                         dots.push({
-                            ox: i * spacing,
-                            oy: j * spacing
+                            x: i * spacing,
+                            y: j * spacing
                         });
                     }
                 }
@@ -280,26 +279,28 @@
                 for (let i = 0; i < dots.length; i++) {
                     const dot = dots[i];
                     
-                    // Math: Calculate distance 'd' from bottom-center
-                    const dx = dot.ox - originX;
-                    const dy = dot.oy - originY;
+                    // Math: Distance 'd' from bottom-center
+                    const dx = dot.x - originX;
+                    const dy = dot.y - originY;
                     const d = Math.sqrt(dx * dx + dy * dy);
                     
-                    // Propagation: sine wave traveling outwards
-                    // Height offset as a function of (d - time * speed)
+                    // Wave Propagation (Brightness/Opacity/Size modulation)
+                    // The wave travels outwards from bottom-center
                     const wave = Math.sin((d - time * speed) * waveFrequency);
-                    const offset = wave * waveAmplitude;
                     
-                    // Perspective-like shift: apply offset to Y
-                    const finalX = dot.ox;
-                    const finalY = dot.oy + offset;
+                    // Base opacity depends on distance to fade out towards edges
+                    const distFade = Math.max(0, 1 - d / (width * 1.5));
+                    
+                    // Luminous wave: modulated opacity and size
+                    // Wave goes from -amplitude to +amplitude, centered around a base
+                    const intensity = (wave * waveAmplitude) + 0.5;
+                    const finalOpacity = Math.max(0.05, intensity * distFade * 0.8);
+                    const finalSize = baseDotSize * (1 + intensity * 0.5);
 
-                    // Visuals: Sharp white dots with distance-based opacity
-                    const opacity = Math.max(0.1, 0.4 * (1 - d / (width * 1.2)));
-                    ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+                    ctx.fillStyle = `rgba(255, 255, 255, ${finalOpacity})`;
                     
                     ctx.beginPath();
-                    ctx.arc(finalX, finalY, dotSize, 0, Math.PI * 2);
+                    ctx.arc(dot.x, dot.y, finalSize, 0, Math.PI * 2);
                     ctx.fill();
                 }
                 
