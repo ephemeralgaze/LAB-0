@@ -63,9 +63,9 @@
         /* 
            Cohesive Wordmark Block.
            Statically centered via parent flexbox. 
-           No custom translate(calc()) offsets.
         */
         #wordmark {
+            position: relative; /* Anchor for absolute arrows */
             display: flex;
             align-items: baseline;
             font-family: var(--font-header);
@@ -103,15 +103,14 @@
         /* 
            State 2: Docking.
            Transitions from 0,0 to the corner.
-           Corner is at top 60, left 60.
+           Corner is at top 45, left 60.
            Viewport Center is 50vw, 50vh.
-           We translate from center (0,0) to the target coordinates.
         */
         #wordmark.docked {
             /* 
-               Shift from center back to the top-left (60, 60).
-               50vw/50vh is center. 
-               Translation = Target - Current(Center).
+               Vertical target adjusted to 45px (moving it 15px higher from 60px).
+               Horizontal target remains 60px.
+               1.9em and 0.4em are adjustments for visual alignment.
             */
             transform: translate(calc(-50vw + 60px + 1.9em), calc(-50vh + 45px + 0.4em)) scale(1);
         }
@@ -130,37 +129,66 @@
             opacity: 1;
         }
 
-        /* Arrows Styling */
+        /* Arrows Styling (Restored from Backup2/851b6a89) */
         .arrows-container {
+            /* 
+               ABSOLUTE POSITIONING FIX:
+               By setting position: absolute, the arrows container 
+               no longer takes up space in the #wordmark flex container.
+               This ensures the text 'LAB-0' is perfectly centered in the beginning.
+            */
+            position: absolute;
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
             display: inline-flex;
-            margin-left: 4px;
+            align-items: center;
+            margin-left: 10px; /* Gap from the '0' */
+            height: 1em;
+        }
+
+        .arrow-svg {
+            width: 14px;
+            height: 14px;
+            margin-right: -6px; /* Tight aggressive overlap */
+            display: block;
+            fill: none;
+            stroke: var(--white);
+            stroke-width: 2.5;
+            stroke-linecap: square;
+            stroke-linejoin: miter;
+            stroke-miterlimit: 10; /* Razor-sharp vertex */
+            
+            /* Initial state for entry animation */
             opacity: 0;
             transform: translateX(-10px);
-            transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+            /* COMPRESS DURATION: 0.65s (~18% faster) */
+            transition: opacity 0.65s var(--ease), transform 0.65s var(--ease);
             will-change: opacity, transform;
         }
 
-        .arrows-container.visible {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        .arrow {
-            font-family: var(--font-mono);
-            font-weight: 400;
-            font-size: 0.9em;
-            margin-right: -4px; /* Tight spacing */
-            color: var(--white);
-            display: inline-block;
-        }
-
-        .arrow:last-child {
+        .arrow-svg:last-child {
             margin-right: 0;
         }
 
-        /* Staggered transition for arrows if desired, 
-           but the container-level fade handles the core requirement smoothly. 
-        */
+        /* Staggered transition delays (Restored from Backup2/851b6a89) */
+        .arrows-container.visible .arrow-svg:nth-child(1) {
+            opacity: 1;
+            transform: translateX(0);
+            transition-delay: 0s;
+        }
+
+        .arrows-container.visible .arrow-svg:nth-child(2) {
+            opacity: 1;
+            transform: translateX(0);
+            transition-delay: 0.12s;
+        }
+
+        .arrows-container.visible .arrow-svg:nth-child(3) {
+            opacity: 1;
+            transform: translateX(0);
+            transition-delay: 0.24s;
+        }
 
     </style>
 </head>
@@ -172,9 +200,9 @@
         <div id="wordmark">
             L<span class="ab0-reveal">AB-0</span>
             <span class="arrows-container" id="arrows">
-                <span class="arrow">></span>
-                <span class="arrow">></span>
-                <span class="arrow">></span>
+                <svg class="arrow-svg" viewBox="0 0 24 24"><path d="M4 4l12 8-12 8" /></svg>
+                <svg class="arrow-svg" viewBox="0 0 24 24"><path d="M4 4l12 8-12 8" /></svg>
+                <svg class="arrow-svg" viewBox="0 0 24 24"><path d="M4 4l12 8-12 8" /></svg>
             </span>
         </div>
     </div>
@@ -185,19 +213,17 @@
             const grid = document.getElementById('grid');
             const arrows = document.getElementById('arrows');
 
-            // 1.5s: Start Assembly (Static reveal)
+            // 1.5s: Start Assembly
             setTimeout(() => {
                 wordmark.classList.add('assembled');
             }, 1500);
 
-            // 3.5s: Start Docking (Smooth transition to corner)
-            // Duration is 1.2s, so it finishes at 4.7s.
+            // 3.5s: Start Docking
             setTimeout(() => {
                 wordmark.classList.add('docked');
             }, 3500);
 
             // 4.7s: UI Fade-in & Arrows Reveal
-            // This syncs with the exact end of the docking transition (3.5 + 1.2 = 4.7)
             setTimeout(() => {
                 grid.classList.add('ui-visible');
                 arrows.classList.add('visible');
