@@ -177,7 +177,7 @@ body, html {
   pointer-events: none;
 }
 
-/* SpaceX-style Hamburger Menu - Refined with sharp X animation */
+/* SpaceX-style Hamburger Menu */
 .hamburger {
   position: fixed;
   top: 30px;
@@ -204,23 +204,13 @@ body, html {
   width: 100%;
   height: 1px;
   background-color: var(--white);
+  border-radius: 0;
   transition: transform 0.4s var(--ease), opacity 0.4s var(--ease);
-  border-radius: 0; /* Forced sharp corners */
 }
 
-/* Sharp X Animation */
-.hamburger.open span:nth-child(1) {
-  transform: translateY(6.5px) rotate(45deg);
-}
-
-.hamburger.open span:nth-child(2) {
-  opacity: 0;
-  transform: scaleX(0);
-}
-
-.hamburger.open span:nth-child(3) {
-  transform: translateY(-6.5px) rotate(-45deg);
-}
+.hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
 
 /* Mobile Nav Drawer */
 .mobile-nav-overlay {
@@ -429,6 +419,13 @@ body, html {
   background: rgba(255, 255, 255, 0.02);
 }
 
+.video-container video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
 .video-container::before {
   content: '';
   position: absolute;
@@ -437,6 +434,7 @@ body, html {
     linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
   background-size: 20px 20px;
+  z-index: 1;
 }
 
 /* Playback Control Bar */
@@ -460,6 +458,7 @@ body, html {
   cursor: pointer;
   transition: all 0.3s var(--ease);
   letter-spacing: 0.1em;
+  border-radius: 0;
 }
 
 .p-btn:hover {
@@ -619,38 +618,24 @@ body, html {
 <div class="content-grid">
   <div class="col-left" style="align-items: flex-start; justify-content: flex-start; padding: 20px;">
     <div class="project-list" id="p-list">
-      <div class="project-entry selected">
+      <div class="project-entry selected" data-project="void">
         <div class="project-info">
           <span class="project-id">[01]</span>
-          <span class="project-name">NAME</span>
+          <span class="project-name">VOID</span>
         </div>
         <span class="status-tag">ACTIVE</span>
       </div>
-      <div class="project-entry">
+      <div class="project-entry" data-project="attractor">
         <div class="project-info">
           <span class="project-id">[02]</span>
-          <span class="project-name">NAME</span>
+          <span class="project-name">ATTRACTOR</span>
         </div>
-        <span class="status-tag">STANDBY</span>
+        <span class="status-tag">ACTIVE</span>
       </div>
-      <div class="project-entry">
+      <div class="project-entry" data-project="horizon">
         <div class="project-info">
           <span class="project-id">[03]</span>
-          <span class="project-name">NAME</span>
-        </div>
-        <span class="status-tag">STANDBY</span>
-      </div>
-      <div class="project-entry">
-        <div class="project-info">
-          <span class="project-id">[04]</span>
-          <span class="project-name">NAME</span>
-        </div>
-        <span class="status-tag">STANDBY</span>
-      </div>
-      <div class="project-entry">
-        <div class="project-info">
-          <span class="project-id">[05]</span>
-          <span class="project-name">NAME</span>
+          <span class="project-name">HORIZON</span>
         </div>
         <span class="status-tag">STANDBY</span>
       </div>
@@ -658,24 +643,24 @@ body, html {
   </div>
   <div class="col-right">
     <div class="spec-panel">
-      <div class="video-container"></div>
+      <div class="video-container" id="v-container">
+        <video id="p-video" playsinline muted loop></video>
+      </div>
       
       <div class="playback-bar">
-        <button class="p-btn"><-1S</button>
-        <button class="p-btn"><-1F</button>
+        <button class="p-btn" id="p-rewind">-1S</button>
         <button class="p-btn play-pause" id="play-pause">
           <svg class="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
           <svg class="pause-icon" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
         </button>
-        <button class="p-btn">+1F</button>
-        <button class="p-btn">+1S</button>
+        <button class="p-btn" id="p-forward">+1S</button>
       </div>
 
-      <div class="spec-details">
-        <span class="spec-label">Pipeline:</span><span class="spec-value">DirectX 12 / HLSL</span>
-        <span class="spec-label">Complexity:</span><span class="spec-value">8.4M Traces/s</span>
-        <span class="spec-label">Buffers:</span><span class="spec-value">Compute / G-Buffer</span>
-        <span class="spec-label">Status:</span><span class="spec-value">Optimizing Kernels</span>
+      <div class="spec-details" id="p-specs">
+        <span class="spec-label">Pipeline:</span><span class="spec-value" id="s-pipeline">---</span>
+        <span class="spec-label">Complexity:</span><span class="spec-value" id="s-complexity">---</span>
+        <span class="spec-label">Buffers:</span><span class="spec-value" id="s-buffers">---</span>
+        <span class="spec-label">Status:</span><span class="spec-value" id="s-status">---</span>
       </div>
     </div>
   </div>
@@ -753,7 +738,58 @@ document.addEventListener("DOMContentLoaded", function() {
   const mAboutTrigger = document.getElementById("m-about-trigger");
   const mobileHeader = document.getElementById("mobile-header");
 
-  // Mobile Sequence: L centered -> slides to dock -> reveal suffix
+  const pVideo = document.getElementById("p-video");
+  const playBtn = document.getElementById("play-pause");
+  const rewindBtn = document.getElementById("p-rewind");
+  const forwardBtn = document.getElementById("p-forward");
+  
+  const sPipeline = document.getElementById("s-pipeline");
+  const sComplexity = document.getElementById("s-complexity");
+  const sBuffers = document.getElementById("s-buffers");
+  const sStatus = document.getElementById("s-status");
+
+  const projectData = {
+    void: {
+      video: "",
+      pipeline: "HLSL / Compute",
+      complexity: "12.4M Particles",
+      buffers: "Structured / UAV",
+      status: "STABLE"
+    },
+    attractor: {
+      video: "",
+      pipeline: "GLSL / Vertex",
+      complexity: "Lorenz / 60FPS",
+      buffers: "VBO / VAO",
+      status: "OPTIMIZING"
+    },
+    horizon: {
+      video: "",
+      pipeline: "PBR / Raycast",
+      complexity: "Dynamic SDF",
+      buffers: "GBuffer / Depth",
+      status: "STANDBY"
+    }
+  };
+
+  const updateProjectMedia = function(projectId) {
+    const data = projectData[projectId];
+    if (!data) return;
+    
+    if (pVideo) {
+      pVideo.pause();
+      pVideo.src = data.video;
+      pVideo.load();
+      playBtn.classList.remove("playing");
+    }
+    
+    if (sPipeline) sPipeline.innerText = data.pipeline;
+    if (sComplexity) sComplexity.innerText = data.complexity;
+    if (sBuffers) sBuffers.innerText = data.buffers;
+    if (sStatus) sStatus.innerText = data.status;
+  };
+
+  // Mobile Sequence
   setTimeout(function() { 
     if (wordmark) wordmark.classList.add("docked");
   }, 3500);
@@ -785,6 +821,7 @@ document.addEventListener("DOMContentLoaded", function() {
     } else if (pageId === "projects") {
       if (projectsOverlay) projectsOverlay.classList.add("active");
       if (mobileHeader) mobileHeader.classList.add("active");
+      updateProjectMedia("void");
     }
     if (hamburger) hamburger.classList.remove("open");
     if (mobileNav) mobileNav.classList.remove("open");
@@ -807,13 +844,32 @@ document.addEventListener("DOMContentLoaded", function() {
     entry.addEventListener("click", function() {
       projectEntries.forEach(function(e) { e.classList.remove("selected"); });
       entry.classList.add("selected");
+      const pid = entry.getAttribute("data-project");
+      updateProjectMedia(pid);
     });
   });
 
-  const playBtn = document.getElementById("play-pause");
-  if (playBtn) {
+  if (playBtn && pVideo) {
     playBtn.addEventListener("click", function() {
-      playBtn.classList.toggle("playing");
+      if (pVideo.paused) {
+        pVideo.play();
+        playBtn.classList.add("playing");
+      } else {
+        pVideo.pause();
+        playBtn.classList.remove("playing");
+      }
+    });
+  }
+
+  if (rewindBtn && pVideo) {
+    rewindBtn.addEventListener("click", function() {
+      pVideo.currentTime = Math.max(0, pVideo.currentTime - 1);
+    });
+  }
+
+  if (forwardBtn && pVideo) {
+    forwardBtn.addEventListener("click", function() {
+      pVideo.currentTime = Math.min(pVideo.duration || 0, pVideo.currentTime + 1);
     });
   }
 });
