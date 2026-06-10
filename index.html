@@ -235,22 +235,31 @@
                 arrows.classList.add('visible');
             }, 4700);
 
-            // --- Luminous Dot Matrix Background ---
+            // --- Luminous Wave Dot Matrix Background ---
             const canvas = document.getElementById('wave-canvas');
             const ctx = canvas.getContext('2d', { alpha: true });
             
             let width, height;
             let dots = [];
-            const spacing = 50;
-            const baseDotSize = 1.0;
-            const waveFrequency = 0.015; 
-            const speed = 4;
-            const waveAmplitude = 0.45; // amplitude of opacity/size modulation
+            
+            // Requirements: Density doubled ("halve spacing")
+            // Spacing reduced from 50px to 25px.
+            const spacing = 25; 
+            const baseDotSize = 0.8;
+            const waveOpacityAmplitude = 0.35;
+            const waveSizeAmplitude = 0.6;
+            const wavelength = 80; // Distance between peaks
+            const speed = 4; // Outward propagation speed
             let time = 0;
 
             function resize() {
-                width = canvas.width = window.innerWidth;
-                height = canvas.height = window.innerHeight;
+                // High-DPI support for ultra-crisp visuals
+                const dpr = window.devicePixelRatio || 1;
+                width = window.innerWidth;
+                height = window.innerHeight;
+                canvas.width = width * dpr;
+                canvas.height = height * dpr;
+                ctx.scale(dpr, dpr);
                 initDots();
             }
 
@@ -284,23 +293,21 @@
                     const dy = dot.y - originY;
                     const d = Math.sqrt(dx * dx + dy * dy);
                     
-                    // Wave Propagation (Brightness/Opacity/Size modulation)
-                    // The wave travels outwards from bottom-center
-                    const wave = Math.sin((d - time * speed) * waveFrequency);
+                    // Requirement: Luminous Wave Propagation (modulate opacity/size only)
+                    // Static coordinates: dot.x and dot.y are used directly for rendering.
+                    const wave = Math.sin(d / wavelength - (time * speed) / wavelength);
                     
-                    // Base opacity depends on distance to fade out towards edges
-                    const distFade = Math.max(0, 1 - d / (width * 1.5));
-                    
-                    // Luminous wave: modulated opacity and size
-                    // Wave goes from -amplitude to +amplitude, centered around a base
-                    const intensity = (wave * waveAmplitude) + 0.5;
-                    const finalOpacity = Math.max(0.05, intensity * distFade * 0.8);
-                    const finalSize = baseDotSize * (1 + intensity * 0.5);
+                    // Calculate modulated visuals
+                    const opacity = Math.max(0.05, 0.15 + wave * waveOpacityAmplitude);
+                    const currentSize = baseDotSize + (wave + 1) * waveSizeAmplitude;
 
-                    ctx.fillStyle = `rgba(255, 255, 255, ${finalOpacity})`;
+                    // Apply distance-based falloff to keep it subtle near edges
+                    const falloff = Math.max(0, 1 - d / (Math.max(width, height) * 1.5));
+                    
+                    ctx.fillStyle = `rgba(255, 255, 255, ${opacity * falloff})`;
                     
                     ctx.beginPath();
-                    ctx.arc(dot.x, dot.y, finalSize, 0, Math.PI * 2);
+                    ctx.arc(dot.x, dot.y, currentSize, 0, Math.PI * 2);
                     ctx.fill();
                 }
                 
