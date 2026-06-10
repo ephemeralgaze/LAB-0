@@ -234,8 +234,8 @@
             // Configuration
             const spacing = 26; 
             const baseDotSize = 0.6;
-            const pulseOpacity = 0.15;
-            const pulseSize = 0.8;
+            const pulseOpacity = 0.20;
+            const pulseSize = 1.0;
             
             // Timing & Geometry
             const cycleDuration = 10; // Slower frequency: 10 seconds per cycle
@@ -285,7 +285,7 @@
                     const distFromWave = Math.abs(d - waveRadius);
                     const intensity = Math.exp(-Math.pow(distFromWave, 2) / 15000);
                     
-                    const opacity = Math.max(0.04, intensity * pulseOpacity);
+                    const opacity = Math.max(0.05, intensity * pulseOpacity);
                     const currentSize = baseDotSize + (intensity * pulseSize);
                     const edgeFalloff = Math.max(0, 1 - d / (Math.max(width, height) * 2.5));
                     
