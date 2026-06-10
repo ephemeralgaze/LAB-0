@@ -55,17 +55,26 @@
             align-items: center;
         }
 
+        /* 
+           Using fixed positioning at final coordinates (60px, 60px) and font-size (1.5rem).
+           All intro states are rendered by translating from this origin using pure GPU-accelerated transforms.
+        */
         #wordmark {
             display: flex;
             align-items: center;
             font-family: var(--font-header);
             font-weight: 700;
-            font-size: 5rem;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            transition: transform 1s cubic-bezier(0.8, 0, 0.2, 1), font-size 1s cubic-bezier(0.8, 0, 0.2, 1);
+            font-size: 1.5rem;
+            position: fixed;
+            top: 60px;
+            left: 60px;
+            transform-origin: top left;
+            /* 
+               Initial state: translate to viewport center and scale to match 5rem (5 / 1.5 = 3.3333)
+               The inner translate(-50%, -50%) perfectly offsets the scaled container to be centered.
+            */
+            transform: translate(calc(50vw - 60px), calc(50vh - 60px)) scale(3.3333) translate(-50%, -50%);
+            transition: transform 1.2s cubic-bezier(0.8, 0, 0.2, 1);
             z-index: 100;
         }
 
@@ -109,7 +118,7 @@
             to { opacity: 1; }
         }
 
-        /* Assembly Logic */
+        /* Assembly Logic (AB-0 absolute positioned to prevent center-point recalculations) */
         .ab0-container {
             position: absolute;
             left: 1em;
@@ -117,13 +126,11 @@
             align-items: center;
             white-space: nowrap;
             opacity: 0;
-            transform: scale(0.9);
-            transform-origin: left center;
-            transition: opacity 0.5s ease-out;
+            transition: opacity 0.4s ease-out;
             pointer-events: none;
         }
 
-        #wordmark.shifted .ab0-container {
+        #wordmark.assembled .ab0-container {
             opacity: 1;
         }
 
@@ -133,46 +140,44 @@
             max-width: 0;
             opacity: 0;
             transform: scaleX(0) skewX(-15deg);
-            transform-origin: left;
-            transition: max-width 0.6s cubic-bezier(0.8, 0, 0.2, 1),
+            transform-origin: left center;
+            transition: max-width 0.8s cubic-bezier(0.8, 0, 0.2, 1),
                         opacity 0.4s ease-out,
-                        transform 0.6s cubic-bezier(0.8, 0, 0.2, 1);
-            transition-delay: calc(var(--index) * 0.18s);
+                        transform 0.8s cubic-bezier(0.8, 0, 0.2, 1);
+            transition-delay: calc(var(--index) * 0.12s);
             white-space: nowrap;
             overflow: hidden;
             vertical-align: middle;
         }
 
-        #wordmark.revealed .char-wrapper {
+        #wordmark.assembled .char-wrapper {
             max-width: 1.2em;
             opacity: 1;
             transform: scaleX(1) skewX(0deg);
         }
 
-        /* Shift L left and scale to 0.9 */
-        #wordmark.shifted {
-            transform: translate(calc(-50% - 1.1em), -50%);
+        /* 
+           State 1: L shifts left & scales to 0.9 of large size (3.3333 * 0.9 = 3)
+           AB-0 expands synchronously.
+        */
+        #wordmark.assembled {
+            transform: translate(calc(50vw - 60px), calc(50vh - 60px)) scale(3) translate(calc(-50% - 1.1em), -50%);
         }
 
-        #wordmark.shifted .l-container {
+        #wordmark.assembled .l-container {
             transform: scale(0.9);
         }
 
-        /* Docking Style */
+        /* 
+           State 2: Smooth Dock to (60px, 60px) at original 1.5rem size (scale 1).
+           Everything transitions purely on transform.
+        */
         #wordmark.docked {
-            top: 60px;
-            left: 60px;
-            font-size: 1.5rem;
-            transform: translate(0, 0);
+            transform: translate(0, 0) scale(1) translate(0, 0);
         }
 
         #wordmark.docked .l-container {
             transform: scale(1);
-        }
-
-        #wordmark.docked .ab0-container {
-            transform: scale(1);
-            opacity: 1;
         }
 
         /* UI Elements */
@@ -284,22 +289,17 @@
             const uiStatus = document.getElementById('ui-status');
             const uiTerminal = document.getElementById('ui-terminal');
 
-            // 2.0s: Shift L left
+            // 2.0s: L shifts left AND AB-0 begins stretching out simultaneously
             setTimeout(() => {
-                wordmark.classList.add('shifted');
+                wordmark.classList.add('assembled');
             }, 2000);
 
-            // 2.8s: Reveal AB-0 characters one-by-one
-            setTimeout(() => {
-                wordmark.classList.add('revealed');
-            }, 2800);
-
-            // 4.2s: Dock to corner
+            // 4.0s: Smooth continuous scale and translate to corner (no teleportation)
             setTimeout(() => {
                 wordmark.classList.add('docked');
-            }, 4200);
+            }, 4000);
 
-            // 5.2s: UI elements fade in after docking is complete
+            // 5.2s: UI elements fade in after docking completes
             setTimeout(() => {
                 grid.classList.add('ui-visible');
                 uiCoords.classList.add('ui-visible');
