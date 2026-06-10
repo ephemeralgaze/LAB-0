@@ -34,21 +34,6 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        #matrix-canvas {
-            position: fixed;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 2s var(--ease);
-        }
-
-        #matrix-canvas.visible {
-            opacity: 1;
-        }
-
         /* 1px Grid Borders */
         .ui-grid {
             position: fixed;
@@ -144,7 +129,6 @@
 </head>
 <body>
 
-    <canvas id="matrix-canvas"></canvas>
     <div class="ui-grid" id="grid"></div>
 
     <div class="stage">
@@ -162,77 +146,6 @@
             const wordmark = document.getElementById('wordmark');
             const grid = document.getElementById('grid');
             const menu = document.getElementById('menu');
-            const canvas = document.getElementById('matrix-canvas');
-            const ctx = canvas.getContext('2d');
-
-            let width, height;
-            const dotSpacing = 30;
-            const dots = [];
-
-            function resize() {
-                width = window.innerWidth;
-                height = window.innerHeight;
-                canvas.width = width * window.devicePixelRatio;
-                canvas.height = height * window.devicePixelRatio;
-                canvas.style.width = width + 'px';
-                canvas.style.height = height + 'px';
-                ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-                
-                dots.length = 0;
-                for (let x = 0; x < width; x += dotSpacing) {
-                    for (let y = 0; y < height; y += dotSpacing) {
-                        dots.push({ x, y });
-                    }
-                }
-            }
-
-            function draw(time) {
-                ctx.clearRect(0, 0, width, height);
-                
-                const cycle = 10000; // 10s cycle
-                const t = (time % cycle) / cycle;
-                
-                // Origin fixed at bottom center + 200px offset
-                const originX = width / 2;
-                const originY = height + 200;
-                
-                // Elliptical parameters
-                const stretchFactor = 0.4; // horizontal stretch
-                const maxRadius = Math.sqrt(Math.pow(width, 2) + Math.pow(height + 200, 2)) * 1.5;
-                const pulseOpacityPeak = 0.50; // Increased peak opacity for "brighter" effect
-
-                dots.forEach(dot => {
-                    const dx = dot.x - originX;
-                    const dy = dot.y - originY;
-                    
-                    // Elliptical distance calculation
-                    const dist = Math.sqrt(Math.pow(dx * stretchFactor, 2) + Math.pow(dy, 2));
-                    
-                    // Gaussian marquee/sweeping wave calculation
-                    // The wave sweeps across the radius range continuously
-                    const wavePos = t * maxRadius;
-                    const spread = 600; // Wider spread for a smoother "flow"
-                    const intensity = Math.exp(-Math.pow(dist - wavePos, 2) / (2 * Math.pow(spread, 2)));
-                    
-                    if (intensity > 0.01) {
-                        const size = 1 + intensity * 2.5;
-                        const opacity = 0.05 + (pulseOpacityPeak - 0.05) * intensity;
-                        ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
-                        ctx.beginPath();
-                        ctx.arc(dot.x, dot.y, size / 2, 0, Math.PI * 2);
-                        ctx.fill();
-                    } else {
-                        ctx.fillStyle = 'rgba(255, 255, 255, 0.05)'; // Base faint dots
-                        ctx.fillRect(dot.x, dot.y, 1, 1);
-                    }
-                });
-
-                requestAnimationFrame(draw);
-            }
-
-            window.addEventListener('resize', resize);
-            resize();
-            requestAnimationFrame(draw);
 
             // 1.5s: Start Assembly
             setTimeout(() => {
@@ -244,11 +157,10 @@
                 wordmark.classList.add('docked');
             }, 3500);
 
-            // 4.7s: UI Grid Fade-in, Menu Reveal & Matrix Canvas Fade-in
+            // 4.7s: UI Grid Fade-in & Menu Reveal
             setTimeout(() => {
                 grid.classList.add('ui-visible');
                 menu.classList.add('visible');
-                canvas.classList.add('visible');
             }, 4700);
         });
     </script>
