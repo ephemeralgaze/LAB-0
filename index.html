@@ -242,7 +242,14 @@ body, html {
   justify-content: space-between;
   padding: 12px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  transition: opacity 0.3s var(--ease);
+  transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);
+  cursor: pointer;
+  opacity: 0.5;
+}
+
+.project-entry.selected {
+  opacity: 1;
+  transform: scale(1.02);
 }
 
 .project-entry:last-child {
@@ -263,6 +270,11 @@ body, html {
 .project-name {
   font-size: 0.9rem;
   letter-spacing: 0.15em;
+  transition: font-size 0.4s var(--ease);
+}
+
+.project-entry.selected .project-name {
+  font-size: 1.05rem;
 }
 
 .status-tag {
@@ -275,8 +287,76 @@ body, html {
 .spec-panel {
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 20px;
 }
+
+.video-container {
+  width: 100%;
+  aspect-ratio: 16/9;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.video-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Playback Control Bar */
+.playback-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.p-btn {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.5);
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: all 0.3s var(--ease);
+  letter-spacing: 0.1em;
+}
+
+.p-btn:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+  color: var(--white);
+}
+
+.p-btn.play-pause {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.play-pause svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+  transition: transform 0.4s var(--ease);
+}
+
+.play-pause .pause-icon { display: none; }
+.play-pause.playing .play-icon { display: none; }
+.play-pause.playing .pause-icon { display: block; }
 
 .spec-details {
   display: grid;
@@ -292,36 +372,6 @@ body, html {
 
 .spec-value {
   color: var(--white);
-}
-
-.wireframe-preview {
-  width: 100%;
-  aspect-ratio: 16/9;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  position: relative;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.02);
-}
-
-.wireframe-preview::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: 
-    linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
-  background-size: 20px 20px;
-}
-
-.wireframe-preview::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 60%;
-  height: 60%;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  transform: translate(-50%, -50%) rotate(45deg);
 }
 
 /* Common Info Item */
@@ -458,25 +508,39 @@ body, html {
 </svg>
 <div class="content-grid">
   <div class="col-left" style="align-items: flex-start; justify-content: flex-start; padding: 20px;">
-    <div class="project-list">
-      <div class="project-entry">
+    <div class="project-list" id="p-list">
+      <div class="project-entry selected">
         <div class="project-info">
           <span class="project-id">[01]</span>
-          <span class="project-name">LAB-0</span>
+          <span class="project-name">NAME</span>
         </div>
         <span class="status-tag">ACTIVE</span>
       </div>
       <div class="project-entry">
         <div class="project-info">
           <span class="project-id">[02]</span>
-          <span class="project-name">VOID</span>
+          <span class="project-name">NAME</span>
         </div>
-        <span class="status-tag">COMPILING</span>
+        <span class="status-tag">STANDBY</span>
       </div>
       <div class="project-entry">
         <div class="project-info">
           <span class="project-id">[03]</span>
-          <span class="project-name">ATTRACTOR</span>
+          <span class="project-name">NAME</span>
+        </div>
+        <span class="status-tag">STANDBY</span>
+      </div>
+      <div class="project-entry">
+        <div class="project-info">
+          <span class="project-id">[04]</span>
+          <span class="project-name">NAME</span>
+        </div>
+        <span class="status-tag">STANDBY</span>
+      </div>
+      <div class="project-entry">
+        <div class="project-info">
+          <span class="project-id">[05]</span>
+          <span class="project-name">NAME</span>
         </div>
         <span class="status-tag">STANDBY</span>
       </div>
@@ -484,7 +548,19 @@ body, html {
   </div>
   <div class="col-right">
     <div class="spec-panel">
-      <div class="wireframe-preview"></div>
+      <div class="video-container"></div>
+      
+      <div class="playback-bar">
+        <button class="p-btn"><-1S</button>
+        <button class="p-btn"><-1F</button>
+        <button class="p-btn play-pause" id="play-pause">
+          <svg class="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          <svg class="pause-icon" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+        </button>
+        <button class="p-btn">+1F</button>
+        <button class="p-btn">+1S</button>
+      </div>
+
       <div class="spec-details">
         <span class="spec-label">Pipeline:</span><span class="spec-value">DirectX 12 / HLSL</span>
         <span class="spec-label">Complexity:</span><span class="spec-value">8.4M Traces/s</span>
@@ -541,7 +617,6 @@ setActiveNav(navHome);
 const switchPage = (pageId, triggerEl) => {
   setActiveNav(triggerEl);
   
-  // Hide all overlays
   aboutOverlay.classList.remove("active");
   projectsOverlay.classList.remove("active");
   
@@ -565,6 +640,21 @@ projectsTrigger.addEventListener("click", (e) => {
 navHome.addEventListener("click", (e) => {
   e.stopPropagation();
   switchPage('home', navHome);
+});
+
+// Projects Item Click Logic
+const projectEntries = document.querySelectorAll('.project-entry');
+projectEntries.forEach(entry => {
+  entry.addEventListener('click', () => {
+    projectEntries.forEach(e => e.classList.remove('selected'));
+    entry.classList.add('selected');
+  });
+});
+
+// Playback Toggle
+const playBtn = document.getElementById('play-pause');
+playBtn.addEventListener('click', () => {
+  playBtn.classList.toggle('playing');
 });
 
 });
