@@ -194,13 +194,21 @@ body, html {
     top: 50%;
     transform: translateY(-50%);
     width: auto;
-    clip-path: inset(0 100% 0 0) !important;
+    clip-path: inset(0 100% 0 0);
     white-space: nowrap;
     opacity: 0;
     visibility: hidden;
     transition: clip-path 1.2s var(--ease), opacity 0.6s var(--ease), visibility 0.4s var(--ease);
     display: inline-flex;
     align-items: center;
+  }
+
+  /* Reveal AB-phone sequence strictly via assembled or docked-final */
+  #wordmark.assembled .ab0-reveal,
+  #wordmark.docked-final .ab0-reveal {
+    opacity: 1;
+    visibility: visible;
+    clip-path: inset(0 0 0 0);
   }
 
   .desktop-icon {
@@ -215,21 +223,18 @@ body, html {
     transform: translate(calc(-50vw + 30px + 0.5ch), calc(-50vh + 37px)) scale(0.85);
   }
 
-  /* Reveal AB-phone sequence strictly via parent clip-path */
-  #wordmark.docked-final .ab0-reveal {
-    opacity: 1;
-    visibility: visible;
-    clip-path: inset(0 0 0 0) !important;
-  }
-
   .ui-grid { margin: 10px; }
   .menu-items { display: none !important; }
 
   .overlay {
-    top: 74px;
-    height: calc(100dvh - 74px);
+    top: 0;
+    height: 100dvh;
     background: #050505 !important;
     align-items: flex-start;
+  }
+
+  .overlay .content-grid {
+    padding-top: 114px; /* 74px header + 40px gradient space */
   }
 }
 
