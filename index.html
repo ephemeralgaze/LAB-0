@@ -39,7 +39,7 @@ body, html {
 #dot-matrix-canvas {
   position: fixed;
   inset: 0;
-  z-index: 2; /* Increased z-index to be above background overlay */
+  z-index: 2;
   pointer-events: none;
   width: 100%;
   height: 100%;
@@ -115,6 +115,15 @@ body, html {
   pointer-events: auto;
 }
 
+/* MOBILE NAV OVERRIDES */
+@media (max-width: 768px) {
+  #wordmark.docked {
+    transform: translate(calc(-50vw + 30px + 1.9em), calc(-50vh + 30px + 0.4em)) scale(0.8);
+  }
+  .ui-grid { margin: 10px; }
+  .menu-items { display: none; }
+}
+
 .menu-items {
   position: absolute;
   left: 100%;
@@ -132,6 +141,70 @@ body, html {
   pointer-events: auto;
   opacity: 1;
 }
+
+/* SpaceX-style Hamburger Menu */
+.hamburger {
+  position: fixed;
+  top: 30px;
+  right: 30px;
+  width: 24px;
+  height: 14px;
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  z-index: 10001;
+  pointer-events: auto;
+}
+
+.hamburger span {
+  display: block;
+  width: 100%;
+  height: 1px;
+  background-color: var(--white);
+  transition: transform 0.4s var(--ease), opacity 0.4s var(--ease);
+}
+
+.hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+@media (max-width: 768px) {
+  .hamburger { display: flex; }
+}
+
+/* Mobile Nav Drawer */
+.mobile-nav-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-color);
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  transform: translateX(100%);
+  transition: transform 0.6s var(--ease);
+  pointer-events: auto;
+}
+
+.mobile-nav-overlay.open {
+  transform: translateX(0);
+}
+
+.mobile-menu-item {
+  font-family: var(--font-header);
+  font-size: 1.2rem;
+  letter-spacing: 0.3em;
+  color: var(--white);
+  text-decoration: none;
+  text-transform: uppercase;
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+}
+
+.mobile-menu-item.active { opacity: 1; }
 
 /* Navigation Item Styles */
 @keyframes nav-breath {
@@ -153,9 +226,7 @@ body, html {
   opacity: 0.75;
 }
 
-.menu-item:hover {
-  opacity: 1;
-}
+.menu-item:hover { opacity: 1; }
 
 .menu-item.active {
   opacity: 1 !important;
@@ -163,7 +234,6 @@ body, html {
   animation: nav-breath 3s ease-in-out infinite;
   animation-delay: 0.45s;
   pointer-events: none;
-  transition: opacity 0.45s cubic-bezier(0.25, 1, 0.5, 1), filter 0.45s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .ui-visible { opacity: 1 !important; }
@@ -182,6 +252,7 @@ body, html {
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow-y: auto;
 }
 
 .overlay.active {
@@ -194,6 +265,10 @@ body, html {
   inset: 40px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  .overlay-frame { inset: 20px; }
 }
 
 .coord {
@@ -226,6 +301,14 @@ body, html {
   pointer-events: auto;
 }
 
+@media (max-width: 768px) {
+  .content-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding: 100px 40px 60px;
+  }
+}
+
 .col-left {
   display: flex;
   flex-direction: column;
@@ -233,6 +316,10 @@ body, html {
   justify-content: center;
   gap: 30px;
   border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+@media (max-width: 768px) {
+  .col-left { border-right: none; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 40px; }
 }
 
 .avatar {
@@ -296,9 +383,7 @@ body, html {
   transform: scale(1.02);
 }
 
-.project-entry:last-child {
-  border-bottom: none;
-}
+.project-entry:last-child { border-bottom: none; }
 
 .project-info {
   display: flex;
@@ -317,9 +402,7 @@ body, html {
   transition: font-size 0.4s var(--ease);
 }
 
-.project-entry.selected .project-name {
-  font-size: 1.05rem;
-}
+.project-entry.selected .project-name { font-size: 1.05rem; }
 
 .status-tag {
   font-size: 0.6rem;
@@ -410,13 +493,8 @@ body, html {
   color: rgba(255, 255, 255, 0.5);
 }
 
-.spec-label {
-  color: rgba(255, 255, 255, 0.3);
-}
-
-.spec-value {
-  color: var(--white);
-}
+.spec-label { color: rgba(255, 255, 255, 0.3); }
+.spec-value { color: var(--white); }
 
 /* Common Info Item */
 .info-item {
@@ -455,6 +533,18 @@ body, html {
 <canvas id="dot-matrix-canvas"></canvas>
 <div id="bg-overlay"></div>
 <div class="ui-grid" id="grid"></div>
+
+<div class="hamburger" id="hamburger">
+  <span></span>
+  <span></span>
+  <span></span>
+</div>
+
+<div class="mobile-nav-overlay" id="mobile-nav">
+  <a class="mobile-menu-item" id="m-nav-home">HOME</a>
+  <a class="mobile-menu-item" id="m-projects-trigger">PROJECTS</a>
+  <a class="mobile-menu-item" id="m-about-trigger">ABOUT</a>
+</div>
 
 <div class="stage">
 <div id="wordmark">
@@ -652,7 +742,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const aboutOverlay = document.getElementById("about-overlay");
   const projectsOverlay = document.getElementById("projects-overlay");
 
-  // Keep current fixed intro animation timings
+  const hamburger = document.getElementById("hamburger");
+  const mobileNav = document.getElementById("mobile-nav");
+  const mNavHome = document.getElementById("m-nav-home");
+  const mProjectsTrigger = document.getElementById("m-projects-trigger");
+  const mAboutTrigger = document.getElementById("m-about-trigger");
+
   setTimeout(() => { if (wordmark) wordmark.classList.add("assembled"); }, 1500);
   setTimeout(() => { if (wordmark) wordmark.classList.add("docked"); }, 3500);
   setTimeout(() => {
@@ -660,54 +755,43 @@ document.addEventListener("DOMContentLoaded", () => {
     if (menu) menu.classList.add("visible");
   }, 4700);
 
-  const navItems = [navHome, projectsTrigger, aboutTrigger];
+  const navItems = [navHome, projectsTrigger, aboutTrigger, mNavHome, mProjectsTrigger, mAboutTrigger];
 
   const setActiveNav = (activeEl) => {
-    navItems.forEach(item => {
-      if (item) item.classList.remove("active");
-    });
+    navItems.forEach(item => { if (item) item.classList.remove("active"); });
     if (activeEl) activeEl.classList.add("active");
   };
 
-  // Set default active (Home)
   setActiveNav(navHome);
 
-  // Keep current page switching logic with correct transparency & layering
   const switchPage = (pageId, triggerEl) => {
     setActiveNav(triggerEl);
-    
     if (aboutOverlay) aboutOverlay.classList.remove("active");
     if (projectsOverlay) projectsOverlay.classList.remove("active");
-    
     if (pageId === 'about') {
       if (aboutOverlay) aboutOverlay.classList.add("active");
     } else if (pageId === 'projects') {
       if (projectsOverlay) projectsOverlay.classList.add("active");
     }
+    if (hamburger) hamburger.classList.remove("open");
+    if (mobileNav) mobileNav.classList.remove("open");
   };
 
-  if (aboutTrigger) {
-    aboutTrigger.addEventListener("click", (e) => {
-      e.stopPropagation();
-      switchPage('about', aboutTrigger);
+  if (hamburger) {
+    hamburger.addEventListener("click", () => {
+      hamburger.classList.toggle("open");
+      mobileNav.classList.toggle("open");
     });
   }
 
-  if (projectsTrigger) {
-    projectsTrigger.addEventListener("click", (e) => {
-      e.stopPropagation();
-      switchPage('projects', projectsTrigger);
-    });
-  }
+  if (aboutTrigger) aboutTrigger.addEventListener("click", (e) => { e.stopPropagation(); switchPage('about', aboutTrigger); });
+  if (projectsTrigger) projectsTrigger.addEventListener("click", (e) => { e.stopPropagation(); switchPage('projects', projectsTrigger); });
+  if (navHome) navHome.addEventListener("click", (e) => { e.stopPropagation(); switchPage('home', navHome); });
 
-  if (navHome) {
-    navHome.addEventListener("click", (e) => {
-      e.stopPropagation();
-      switchPage('home', navHome);
-    });
-  }
+  if (mAboutTrigger) mAboutTrigger.addEventListener("click", () => switchPage('about', mAboutTrigger));
+  if (mProjectsTrigger) mProjectsTrigger.addEventListener("click", () => switchPage('projects', mProjectsTrigger));
+  if (mNavHome) mNavHome.addEventListener("click", () => switchPage('home', mNavHome));
 
-  // Projects Item Click Logic
   const projectEntries = document.querySelectorAll('.project-entry');
   projectEntries.forEach(entry => {
     entry.addEventListener('click', () => {
@@ -716,7 +800,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Playback Toggle
   const playBtn = document.getElementById('play-pause');
   if (playBtn) {
     playBtn.addEventListener('click', () => {
