@@ -447,6 +447,47 @@ body, html {
   z-index: 1;
 }
 
+/* NO SIGNAL Overlay */
+.no-signal-overlay {
+  position: absolute;
+  inset: 0;
+  background: #0a0a0a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease;
+}
+
+.no-signal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.no-signal-text {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  color: #fff;
+  letter-spacing: 0.2em;
+  margin-bottom: 10px;
+  animation: blink 1.5s step-end infinite;
+}
+
+.no-signal-sub {
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  color: rgba(255, 255, 255, 0.3);
+  letter-spacing: 0.1em;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
 /* Playback Control Bar */
 .playback-bar {
   display: flex;
@@ -675,6 +716,10 @@ body, html {
     <div class="spec-panel">
       <div class="video-container" id="v-container">
         <video id="p-video" playsinline muted loop></video>
+        <div class="no-signal-overlay" id="no-signal">
+          <div class="no-signal-text">[ NO SIGNAL ]</div>
+          <div class="no-signal-sub">WAITING FOR DATA...</div>
+        </div>
       </div>
       
       <div class="playback-bar">
@@ -769,6 +814,7 @@ document.addEventListener("DOMContentLoaded", function() {
   const mobileHeader = document.getElementById("mobile-header");
 
   const pVideo = document.getElementById("p-video");
+  const noSignal = document.getElementById("no-signal");
   const playBtn = document.getElementById("play-pause");
   const bBack1s = document.getElementById("p-back-1s");
   const bBack1f = document.getElementById("p-back-1f");
@@ -782,7 +828,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   const projectData = {
     void: {
-      video: "",
+      video: "void.mov",
       pipeline: "HLSL / Compute",
       complexity: "12.4M Particles",
       buffers: "Structured / UAV",
@@ -824,8 +870,14 @@ document.addEventListener("DOMContentLoaded", function() {
     
     if (pVideo) {
       pVideo.pause();
-      pVideo.src = data.video;
-      pVideo.load();
+      if (data.video && data.video !== "") {
+        if (noSignal) noSignal.classList.remove("active");
+        pVideo.src = data.video + "#t=0.001";
+        pVideo.load();
+      } else {
+        if (noSignal) noSignal.classList.add("active");
+        pVideo.src = "";
+      }
       playBtn.classList.remove("playing");
     }
     
@@ -834,6 +886,12 @@ document.addEventListener("DOMContentLoaded", function() {
     if (sBuffers) sBuffers.innerText = data.buffers;
     if (sStatus) sStatus.innerText = data.status;
   };
+
+  if (pVideo) {
+    pVideo.onerror = function() {
+      if (noSignal) noSignal.classList.add("active");
+    };
+  }
 
   // Mobile Sequence
   setTimeout(function() { 
