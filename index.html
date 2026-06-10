@@ -99,11 +99,12 @@
             padding-left: 25px;
             pointer-events: none;
             opacity: 0;
+            /* Delay set to 1.2s to wait for docking, or triggered by class */
             transition: opacity 1s var(--ease);
         }
 
-        /* Visible when wordmark is docked */
-        #wordmark.docked .menu-items {
+        /* Visible when wordmark is docked and UI grid is visible (stable phase) */
+        #wordmark.docked .menu-items.visible {
             pointer-events: auto;
             opacity: 1;
         }
@@ -134,7 +135,7 @@
     <div class="stage">
         <div id="wordmark">
             L<span class="ab0-reveal">AB-0</span>
-            <div class="menu-items">
+            <div class="menu-items" id="menu">
                 <a href="#projects" class="menu-item">PROJECTS</a>
                 <a href="#about" class="menu-item">ABOUT</a>
             </div>
@@ -145,6 +146,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             const wordmark = document.getElementById('wordmark');
             const grid = document.getElementById('grid');
+            const menu = document.getElementById('menu');
 
             // 1.5s: Start Assembly
             setTimeout(() => {
@@ -156,9 +158,10 @@
                 wordmark.classList.add('docked');
             }, 3500);
 
-            // 4.7s: UI Grid Fade-in
+            // 4.7s: UI Grid Fade-in & Menu Reveal (Matching UI stable phase)
             setTimeout(() => {
                 grid.classList.add('ui-visible');
+                menu.classList.add('visible');
             }, 4700);
         });
     </script>
