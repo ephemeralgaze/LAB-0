@@ -194,7 +194,7 @@ body, html {
     top: 50%;
     transform: translateY(-50%);
     width: auto;
-    clip-path: inset(0 100% 0 0);
+    clip-path: inset(0 100% 0 0) !important;
     white-space: nowrap;
     opacity: 0;
     visibility: hidden;
@@ -203,12 +203,17 @@ body, html {
     align-items: center;
   }
 
-  /* Reveal AB-phone sequence strictly via assembled or docked-final */
-  #wordmark.assembled .ab0-reveal,
+  /* CRITICAL: ON MOBILE, DO NOT REVEAL VIA .assembled. ONLY REVEAL VIA .docked-final. */
+  #wordmark.assembled .ab0-reveal {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    clip-path: inset(0 100% 0 0) !important;
+  }
+
   #wordmark.docked-final .ab0-reveal {
-    opacity: 1;
-    visibility: visible;
-    clip-path: inset(0 0 0 0);
+    opacity: 1 !important;
+    visibility: visible !important;
+    clip-path: inset(0 0 0 0) !important;
   }
 
   .desktop-icon {
