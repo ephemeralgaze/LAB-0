@@ -83,6 +83,7 @@ body, html {
   position: relative;
   display: flex;
   align-items: baseline;
+  justify-content: center;
   font-family: var(--font-header);
   font-weight: 700;
   font-size: 1.5rem;
@@ -117,45 +118,45 @@ body, html {
 
 /* Mobile Icon (Phone) */
 .mobile-icon {
-  display: none;
   width: 14px;
   height: 14px;
   margin-left: 0.2em;
   vertical-align: baseline;
   stroke: currentColor;
-  stroke-width: 2;
+  stroke-width: 2.5;
   fill: none;
+  display: inline-block;
+  opacity: 0;
+  transition: opacity 0.4s var(--ease);
 }
 
 /* MOBILE NAV OVERRIDES */
 @media (max-width: 768px) {
+  #wordmark {
+    width: 2ch; /* Forced width of initial 'L' plus letter-spacing for centering */
+    overflow: visible;
+  }
+
   #wordmark.assembled .ab0-reveal {
-    clip-path: inset(0 100% 0 0) !important; /* Hide AB-0 in center on mobile */
+    clip-path: inset(0 100% 0 0) !important; /* Keep AB-0 hidden in center */
   }
   
   #wordmark.docked {
     transform: translate(calc(-50vw + 40px + 1.9em), calc(-50vh + 40px + 0.4em)) scale(0.8);
+    width: auto;
   }
 
-  /* Transition text to 'Lab-' on mobile docking completion */
-  #wordmark.docked-final .l-char {
-    display: none;
+  /* Transition text to 'LAB-' with Phone Icon via sliding mask */
+  #wordmark.docked-final .ab0-reveal {
+    clip-path: inset(0 0 0 0) !important;
   }
-  #wordmark.docked-final .mobile-reveal {
-    display: inline-flex;
-    align-items: baseline;
-  }
+
   #wordmark.docked-final .mobile-icon {
-    display: inline-block;
+    opacity: 1;
   }
 
   .ui-grid { margin: 10px; }
   .menu-items { display: none !important; }
-}
-
-.mobile-reveal {
-  display: none;
-  text-transform: none;
 }
 
 .menu-items {
@@ -590,8 +591,8 @@ body, html {
 <div class="stage">
 <div id="wordmark">
 <a id="nav-home" class="menu-item" style="font-family:inherit; font-size:inherit; letter-spacing:inherit; margin:0; padding:0; text-transform: none;">
-  <span class="l-char">L</span><span class="mobile-reveal">Lab-</span><span class="ab0-reveal">AB-0</span>
-  <svg class="mobile-icon" viewBox="0 0 24 24">
+  <span class="l-char">L</span><span class="ab0-reveal">AB-</span>
+  <svg class="mobile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
     <line x1="12" y1="18" x2="12" y2="18"></line>
   </svg>
@@ -799,7 +800,6 @@ document.addEventListener("DOMContentLoaded", () => {
   setTimeout(() => { 
     if (wordmark) {
       wordmark.classList.add("docked");
-      // Add final mobile transition class after docking completes (1.2s transition)
       if (window.innerWidth <= 768) {
         setTimeout(() => {
           wordmark.classList.add("docked-final");
