@@ -96,7 +96,7 @@
         .l-stroke {
             fill: none;
             stroke: var(--white);
-            stroke-width: 15px;
+            stroke-width: 18.5px;
             stroke-linejoin: miter;
             stroke-linecap: square;
             stroke-dasharray: 400;
@@ -128,6 +128,7 @@
             opacity: 0;
             transition: opacity 0.4s ease-out;
             pointer-events: none;
+            letter-spacing: 0.1em;
         }
 
         #wordmark.assembled .ab0-container {
@@ -151,7 +152,7 @@
         }
 
         #wordmark.assembled .char-wrapper {
-            max-width: 1.2em;
+            max-width: 1.5em;
             opacity: 1;
             transform: scaleX(1) skewX(0deg);
         }
@@ -161,7 +162,7 @@
            AB-0 expands synchronously.
         */
         #wordmark.assembled {
-            transform: translate(calc(50vw - 60px), calc(50vh - 60px)) scale(3) translate(calc(-50% - 1.1em), -50%);
+            transform: translate(calc(50vw - 60px), calc(50vh - 60px)) scale(3) translate(calc(-50% - 1.490em), -50%);
         }
 
         #wordmark.assembled .l-container {
@@ -252,8 +253,8 @@
         <div id="wordmark">
             <div class="l-container">
                 <svg class="l-svg" viewBox="0 0 100 100">
-                    <path class="l-stroke" d="M22.5 15 V72.5 H70" />
-                    <path class="l-fill-path" d="M15 15 V80 H70 V65 H30 V15 Z" />
+                    <path class="l-stroke" d="M20 15 V85 H75" />
+                    <path class="l-fill-path" d="M11 15 V90 H80 V72 H29 V15 Z" />
                 </svg>
             </div>
             <div class="ab0-container">
