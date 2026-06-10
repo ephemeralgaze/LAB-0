@@ -235,17 +235,17 @@
                 arrows.classList.add('visible');
             }, 4700);
 
-            // --- Wave Dot Matrix Background ---
+            // --- Ripple Dot Matrix Background ---
             const canvas = document.getElementById('wave-canvas');
             const ctx = canvas.getContext('2d', { alpha: true });
             
             let width, height;
             let dots = [];
-            const spacing = 45;
-            const dotSize = 1.2;
-            const waveAmplitude = 30;
-            const waveFrequency = 0.002;
-            const speed = 0.001;
+            const spacing = 50;
+            const dotSize = 1.1;
+            const waveAmplitude = 25;
+            const waveFrequency = 0.015; // frequency of the ripple
+            const speed = 4; // speed of the outward propagation
             let time = 0;
 
             function resize() {
@@ -256,14 +256,13 @@
 
             function initDots() {
                 dots = [];
-                const cols = Math.ceil(width / spacing) + 1;
-                const rows = Math.ceil(height / spacing) + 1;
+                // Slightly overshoot bounds to ensure full coverage during wave motion
+                const cols = Math.ceil(width / spacing) + 2;
+                const rows = Math.ceil(height / spacing) + 2;
                 
-                for (let i = 0; i < cols; i++) {
-                    for (let j = 0; j < rows; j++) {
+                for (let i = -1; i < cols; i++) {
+                    for (let j = -1; j < rows; j++) {
                         dots.push({
-                            x: i * spacing,
-                            y: j * spacing,
                             ox: i * spacing,
                             oy: j * spacing
                         });
@@ -272,22 +271,31 @@
             }
 
             function animate() {
-                time += speed * 60; // normalization for 60fps
+                time += 1; 
                 ctx.clearRect(0, 0, width, height);
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
                 
+                const originX = width / 2;
+                const originY = height;
+
                 for (let i = 0; i < dots.length; i++) {
                     const dot = dots[i];
-                    // Create a 3D-like wave effect using x and y coordinates
-                    const dist = Math.sqrt(Math.pow(dot.ox - width / 2, 2) + Math.pow(dot.oy - height / 2, 2));
-                    const angle = dist * waveFrequency - (time * 0.05);
                     
-                    const offset = Math.sin(angle) * waveAmplitude;
-                    const finalX = dot.ox + Math.cos(angle) * (waveAmplitude * 0.5);
+                    // Math: Calculate distance 'd' from bottom-center
+                    const dx = dot.ox - originX;
+                    const dy = dot.oy - originY;
+                    const d = Math.sqrt(dx * dx + dy * dy);
+                    
+                    // Propagation: sine wave traveling outwards
+                    // Height offset as a function of (d - time * speed)
+                    const wave = Math.sin((d - time * speed) * waveFrequency);
+                    const offset = wave * waveAmplitude;
+                    
+                    // Perspective-like shift: apply offset to Y
+                    const finalX = dot.ox;
                     const finalY = dot.oy + offset;
 
-                    // Fade dots based on distance from center for a "floating" feel
-                    const opacity = Math.max(0.1, 0.5 - (dist / (width * 0.8)));
+                    // Visuals: Sharp white dots with distance-based opacity
+                    const opacity = Math.max(0.1, 0.4 * (1 - d / (width * 1.2)));
                     ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
                     
                     ctx.beginPath();
