@@ -283,6 +283,24 @@ body, html {
   animation: nav-breath 3s ease-in-out infinite;
   pointer-events: none; /* Disable clicking active tab */
 }
+
+/* Navigation Active States */
+@keyframes nav-breath {
+  0%, 100% { opacity: 1; filter: brightness(1.2); }
+  50% { opacity: 0.85; filter: brightness(1); }
+}
+
+.menu-item {
+  opacity: 0.9;
+  transition: opacity 0.3s ease, filter 0.3s ease;
+}
+
+.menu-item.active {
+  opacity: 1 !important;
+  color: #FFFFFF !important;
+  animation: nav-breath 3s ease-in-out infinite;
+  pointer-events: none;
+}
 </style>
 </head>
 <body>
