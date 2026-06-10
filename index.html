@@ -147,6 +147,14 @@ body, html {
   background: #050505;
   z-index: 9998;
   display: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.6s var(--ease), visibility 0.6s var(--ease);
+}
+
+#mobile-header.active {
+  opacity: 1;
+  visibility: visible;
 }
 
 #mobile-header::after {
@@ -867,6 +875,7 @@ document.addEventListener("DOMContentLoaded", function() {
   const mNavHome = document.getElementById("m-nav-home");
   const mProjectsTrigger = document.getElementById("m-projects-trigger");
   const mAboutTrigger = document.getElementById("m-about-trigger");
+  const mobileHeader = document.getElementById("mobile-header");
 
   // Phase 1: Startup (0s-1.5s) - Only \"L\" visible and centered (default scale 3.33)
   
@@ -909,10 +918,14 @@ document.addEventListener("DOMContentLoaded", function() {
     setActiveNav(triggerEl);
     if (aboutOverlay) aboutOverlay.classList.remove("active");
     if (projectsOverlay) projectsOverlay.classList.remove("active");
+    if (mobileHeader) mobileHeader.classList.remove("active");
+
     if (pageId === "about") {
       if (aboutOverlay) aboutOverlay.classList.add("active");
+      if (mobileHeader) mobileHeader.classList.add("active");
     } else if (pageId === "projects") {
       if (projectsOverlay) projectsOverlay.classList.add("active");
+      if (mobileHeader) mobileHeader.classList.add("active");
     }
     if (hamburger) hamburger.classList.remove("open");
     if (mobileNav) mobileNav.classList.remove("open");
