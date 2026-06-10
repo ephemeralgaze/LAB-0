@@ -53,7 +53,7 @@ body, html {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999; /* Ensure it's on the very top */
+  z-index: 9999;
   pointer-events: none;
 }
 
@@ -66,8 +66,10 @@ body, html {
   font-size: 1.5rem;
   white-space: nowrap;
   letter-spacing: 0.1em;
-  transform: translate(0, 0) scale(3.3333);
-  transition: transform 1.2s var(--ease);
+  transform: scale(3.3333);
+  transition: transform 1.2s var(--ease), opacity 0.8s ease;
+  will-change: transform, clip-path;
+  opacity: 1; /* Ensure visible */
 }
 
 .ab0-reveal {
@@ -75,18 +77,22 @@ body, html {
   align-items: baseline;
   clip-path: inset(0 100% 0 0);
   transition: clip-path 1.2s var(--ease);
+  will-change: clip-path;
 }
 
+/* State: Assembled */
 #wordmark.assembled {
-  transform: translate(0, 0) scale(3);
+  transform: scale(3);
 }
 
 #wordmark.assembled .ab0-reveal {
-  clip-path: inset(0 0 0 0);
+  clip-path: inset(0 0 0 0) !important; /* Force reveal */
 }
 
+/* State: Docked */
 #wordmark.docked {
   transform: translate(calc(-50vw + 60px + 1.9em), calc(-50vh + 45px + 0.4em)) scale(1);
+  pointer-events: auto; /* Enable interaction when docked */
 }
 
 /* Fixed Menu Items Architecture */
@@ -112,18 +118,24 @@ body, html {
   opacity: 0.7;
 }
 
-.ui-visible { opacity: 1; }
+.ui-visible { opacity: 1 !important; }
 
-/* NAV BACKGROUND PANEL - \"黑底\" */
+/* NAV BACKGROUND PANEL */
 #nav-bg {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  height: 85px; /* Aligned with docking height + small margin below buttons */
+  height: 85px;
   background: var(--bg-color);
-  z-index: 9998; /* Just below navigation buttons */
+  z-index: 9998;
   pointer-events: none;
+  opacity: 0;
+  transition: opacity 1s var(--ease);
+}
+
+#nav-bg.visible {
+  opacity: 1;
 }
 
 /* OVERLAY STYLES */
@@ -131,7 +143,7 @@ body, html {
   position: fixed;
   inset: 0;
   background: var(--bg-color);
-  z-index: 200; /* Stays below navigation */
+  z-index: 200;
   opacity: 0;
   pointer-events: none;
   transition: opacity 1.2s var(--ease);
@@ -577,26 +589,39 @@ document.addEventListener("DOMContentLoaded", () => {
 const wordmark = document.getElementById("wordmark");
 const grid = document.getElementById("grid");
 const menu = document.getElementById("menu");
+const navBg = document.getElementById("nav-bg");
 const aboutTrigger = document.getElementById("about-trigger");
 const projectsTrigger = document.getElementById("projects-trigger");
 const navHome = document.getElementById("nav-home");
 const aboutOverlay = document.getElementById("about-overlay");
 const projectsOverlay = document.getElementById("projects-overlay");
 
+if (!wordmark) {
+  console.error("Wordmark element not found");
+  return;
+}
+
+// Ensure clean start
+wordmark.classList.remove("assembled", "docked");
+
 // 1.5s: Start Assembly
 setTimeout(() => {
-wordmark.classList.add("assembled");
+  console.log("Adding assembled class");
+  wordmark.classList.add("assembled");
 }, 1500);
 
 // 3.5s: Start Docking
 setTimeout(() => {
-wordmark.classList.add("docked");
+  console.log("Adding docked class");
+  wordmark.classList.add("docked");
+  if (navBg) navBg.classList.add("visible");
 }, 3500);
 
 // 4.7s: UI Grid Fade-in & Menu Reveal
 setTimeout(() => {
-grid.classList.add("ui-visible");
-menu.classList.add("visible");
+  console.log("Revealing menu and grid");
+  if (grid) grid.classList.add("ui-visible");
+  if (menu) menu.classList.add("visible");
 }, 4700);
 
 
@@ -617,30 +642,36 @@ setActiveNav(navHome);
 const switchPage = (pageId, triggerEl) => {
   setActiveNav(triggerEl);
   
-  aboutOverlay.classList.remove("active");
-  projectsOverlay.classList.remove("active");
+  if (aboutOverlay) aboutOverlay.classList.remove("active");
+  if (projectsOverlay) projectsOverlay.classList.remove("active");
   
-  if (pageId === 'about') {
+  if (pageId === 'about' && aboutOverlay) {
     aboutOverlay.classList.add("active");
-  } else if (pageId === 'projects') {
+  } else if (pageId === 'projects' && projectsOverlay) {
     projectsOverlay.classList.add("active");
   }
 };
 
-aboutTrigger.addEventListener("click", (e) => {
-  e.stopPropagation();
-  switchPage('about', aboutTrigger);
-});
+if (aboutTrigger) {
+  aboutTrigger.addEventListener("click", (e) => {
+    e.stopPropagation();
+    switchPage('about', aboutTrigger);
+  });
+}
 
-projectsTrigger.addEventListener("click", (e) => {
-  e.stopPropagation();
-  switchPage('projects', projectsTrigger);
-});
+if (projectsTrigger) {
+  projectsTrigger.addEventListener("click", (e) => {
+    e.stopPropagation();
+    switchPage('projects', projectsTrigger);
+  });
+}
 
-navHome.addEventListener("click", (e) => {
-  e.stopPropagation();
-  switchPage('home', navHome);
-});
+if (navHome) {
+  navHome.addEventListener("click", (e) => {
+    e.stopPropagation();
+    switchPage('home', navHome);
+  });
+}
 
 // Projects Item Click Logic
 const projectEntries = document.querySelectorAll('.project-entry');
@@ -653,9 +684,11 @@ projectEntries.forEach(entry => {
 
 // Playback Toggle
 const playBtn = document.getElementById('play-pause');
-playBtn.addEventListener('click', () => {
-  playBtn.classList.toggle('playing');
-});
+if (playBtn) {
+  playBtn.addEventListener('click', () => {
+    playBtn.classList.toggle('playing');
+  });
+}
 
 });
 </script>
