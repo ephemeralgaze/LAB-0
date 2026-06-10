@@ -39,10 +39,12 @@ body, html {
 #dot-matrix-canvas {
   position: fixed;
   inset: 0;
-  z-index: 2; /* Increased z-index to be above background overlay */
+  z-index: 0;
   pointer-events: none;
   width: 100%;
   height: 100%;
+  opacity: 0;
+  transition: opacity 1.5s ease-in-out;
 }
 
 /* Background Overlay for Glass Effect */
@@ -590,7 +592,6 @@ body, html {
 <script>
 (function() {
   const canvas = document.getElementById('dot-matrix-canvas');
-  if (!canvas) return;
   const ctx = canvas.getContext('2d');
   let dots = [];
   let width, height, dpr;
@@ -627,6 +628,7 @@ body, html {
     ctx.clearRect(0, 0, width, height);
     
     dots.forEach(dot => {
+      // Restore exact twinkle logic: (Math.sin(time * 0.001 * dot.freq * 100 + dot.phase) * 0.5 + 0.5) * dot.maxOpacity
       const opacity = (Math.sin(time * 0.001 * dot.freq * 100 + dot.phase) * 0.5 + 0.5) * dot.maxOpacity;
       ctx.beginPath();
       ctx.arc(dot.x, dot.y, DOT_RADIUS, 0, Math.PI * 2);
@@ -643,6 +645,7 @@ body, html {
 })();
 
 document.addEventListener("DOMContentLoaded", () => {
+  const canvas = document.getElementById("dot-matrix-canvas");
   const wordmark = document.getElementById("wordmark");
   const grid = document.getElementById("grid");
   const menu = document.getElementById("menu");
@@ -658,6 +661,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setTimeout(() => {
     if (grid) grid.classList.add("ui-visible");
     if (menu) menu.classList.add("visible");
+    if (canvas) canvas.style.opacity = "1";
   }, 4700);
 
   const navItems = [navHome, projectsTrigger, aboutTrigger];
