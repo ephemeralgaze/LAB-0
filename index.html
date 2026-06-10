@@ -3,19 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EPHEMERAL GAZE | LAB-0</title>
+    <title>LAB-0</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400&family=Space+Mono&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500&family=Space+Mono&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-color: #050505;
-            --text-color: #ffffff;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.5);
+            --border-color: rgba(255, 255, 255, 0.1);
             --font-header: 'Syncopate', sans-serif;
             --font-body: 'Space Grotesk', sans-serif;
-            --font-code: 'Space Mono', monospace;
-            --transition-speed: 1.2s;
-            --ease: cubic-bezier(0.77, 0, 0.175, 1);
+            --font-mono: 'Space Mono', monospace;
+            --transition-main: 1.5s cubic-bezier(0.77, 0, 0.175, 1);
         }
 
         * {
@@ -26,165 +27,196 @@
 
         body {
             background-color: var(--bg-color);
-            color: var(--text-color);
+            color: var(--text-primary);
             font-family: var(--font-body);
-            overflow: hidden;
             height: 100vh;
             width: 100vw;
+            overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
-        #intro-container {
-            position: absolute;
+        /* --- Loading State --- */
+        #loader-container {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            width: 100%;
-            height: 100%;
-            z-index: 10;
+            gap: 20px;
+            transition: transform var(--transition-main), top var(--transition-main), left var(--transition-main);
+            position: absolute;
+            z-index: 100;
         }
 
-        .word-wrapper {
-            overflow: hidden;
-            height: 1.2em;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .intro-text {
+        .lab-text {
             font-family: var(--font-header);
             font-weight: 700;
-            font-size: clamp(2rem, 8vw, 5rem);
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            white-space: nowrap;
-        }
-
-        #ephemeral {
-            transform: translateY(110%);
-            animation: slideUp var(--transition-speed) var(--ease) forwards 0.5s;
-        }
-
-        #gaze {
-            display: inline-block;
-            transform: scaleX(1);
+            font-size: clamp(2rem, 5vw, 4rem);
+            letter-spacing: 2em; /* Initial tracking */
+            text-indent: 2em;    /* Center tracking */
             opacity: 0;
-            animation: fadeIn var(--transition-speed) var(--ease) forwards 0.8s;
+            animation: loadIn 3s var(--transition-main) forwards;
         }
 
-        /* Transition Phase */
-        .stage-transition #ephemeral {
-            animation: slideUpOut var(--transition-speed) var(--ease) forwards;
+        .loading-line {
+            width: 0;
+            height: 1px;
+            background: var(--text-primary);
+            animation: lineExpand 2.5s var(--transition-main) forwards 0.5s;
         }
 
-        .stage-transition #gaze {
-            animation: collapseGaze var(--transition-speed) var(--ease) forwards;
+        /* --- Animations --- */
+        @keyframes loadIn {
+            0% { opacity: 0; letter-spacing: 2em; text-indent: 2em; }
+            100% { opacity: 1; letter-spacing: 0.5em; text-indent: 0.5em; }
         }
 
-        #eye-logo {
-            position: fixed;
+        @keyframes lineExpand {
+            0% { width: 0; opacity: 0; }
+            20% { opacity: 1; }
+            100% { width: 200px; opacity: 1; }
+        }
+
+        /* --- Docked State --- */
+        #loader-container.docked {
+            top: 2rem;
+            left: 2rem;
+            transform: translate(0, 0) scale(0.4);
+            transform-origin: top left;
+            align-items: flex-start;
+        }
+
+        #loader-container.docked .loading-line {
+            display: none;
+        }
+
+        /* --- UI Elements --- */
+        #interface {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 2s ease 1s;
+            border: 1px solid var(--border-color);
+            margin: 1rem;
+        }
+
+        #interface.visible {
+            opacity: 1;
+        }
+
+        .coordinates {
+            position: absolute;
+            bottom: 2rem;
+            left: 2rem;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--text-secondary);
+        }
+
+        .dot-matrix {
+            position: absolute;
+            bottom: 2rem;
+            right: 2rem;
+            display: grid;
+            grid-template-columns: repeat(4, 4px);
+            gap: 4px;
+        }
+
+        .dot {
+            width: 2px;
+            height: 2px;
+            background: var(--text-primary);
+            opacity: 0.3;
+        }
+
+        .dot.blink {
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* --- Status Log --- */
+        .status-logs {
+            position: absolute;
             top: 2rem;
             right: 2rem;
-            width: 40px;
-            height: 24px;
-            opacity: 0;
-            z-index: 100;
-            transition: opacity var(--transition-speed) var(--ease);
+            font-family: var(--font-mono);
+            font-size: 10px;
+            text-align: right;
+            color: var(--text-secondary);
         }
 
-        .eye-shape {
-            fill: none;
-            stroke: white;
-            stroke-width: 1.5;
-        }
-
-        .pupil {
-            fill: white;
-        }
-
-        #content {
-            opacity: 0;
-            transition: opacity var(--transition-speed) var(--ease) 0.5s;
-            text-align: center;
-            max-width: 600px;
-            padding: 2rem;
-        }
-
-        code {
-            font-family: var(--font-code);
-            background: #111;
-            padding: 0.2rem 0.4rem;
-            border-radius: 4px;
-        }
-
-        @keyframes slideUp {
-            to { transform: translateY(0); }
-        }
-
-        @keyframes fadeIn {
-            to { opacity: 1; }
-        }
-
-        @keyframes slideUpOut {
-            to { transform: translateY(-110%); opacity: 0; }
-        }
-
-        @keyframes collapseGaze {
-            0% { transform: scaleX(1); opacity: 1; }
-            100% { transform: scaleX(0); opacity: 0; }
-        }
-
-        .active-logo {
-            opacity: 1 !important;
-        }
-
-        .active-content {
-            opacity: 1 !important;
-        }
     </style>
 </head>
 <body>
 
-    <div id="intro-container">
-        <div class="word-wrapper">
-            <span id="ephemeral" class="intro-text">EPHEMERAL</span>
-        </div>
-        <div class="word-wrapper">
-            <span id="gaze" class="intro-text">GAZE</span>
-        </div>
+    <div id="loader-container">
+        <div class="lab-text">LAB-0</div>
+        <div class="loading-line"></div>
     </div>
 
-    <svg id="eye-logo" viewBox="0 0 40 24" xmlns="http://www.w3.org/2000/svg">
-        <path class="eye-shape" d="M2,12 C2,12 10,2 20,2 C30,2 38,12 38,12 C38,12 30,22 20,22 C10,22 2,12 2,12 Z" />
-        <circle class="pupil" cx="20" cy="12" r="5" />
-    </svg>
+    <div id="interface">
+        <div class="status-logs">
+            SYS: ACTIVE<br>
+            NET: ENCRYPTED<br>
+            FARADAY: ENABLED
+        </div>
 
-    <div id="content">
-        <h1 style="font-family: var(--font-header); font-size: 1rem; margin-bottom: 2rem;">LAB-0 / INITIALIZATION</h1>
-        <p>A pristine environment for experimental visual research.</p>
-        <p style="margin-top: 1rem;"><code>system.status: active</code></p>
+        <div class="coordinates" id="coord-tracker">
+            LAT: 34.0522 N / LONG: 118.2437 W
+        </div>
+
+        <div class="dot-matrix">
+            <div class="dot blink"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot blink" style="animation-delay: 0.5s"></div>
+            <div class="dot"></div>
+            <div class="dot blink" style="animation-delay: 1.2s"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
     </div>
 
     <script>
         window.addEventListener('DOMContentLoaded', () => {
-            const container = document.getElementById('intro-container');
-            const logo = document.getElementById('eye-logo');
-            const content = document.getElementById('content');
+            const loader = document.getElementById('loader-container');
+            const ui = document.getElementById('interface');
+            const coords = document.getElementById('coord-tracker');
 
-            // Sequence timing
+            // 1. Initial positioning
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+            
+            loader.style.top = `${centerY}px`;
+            loader.style.left = `${centerX}px`;
+            loader.style.transform = 'translate(-50%, -50%)';
+
+            // 2. Sequence
             setTimeout(() => {
-                container.classList.add('stage-transition');
+                // Dock to top-left
+                loader.classList.add('docked');
                 
+                // Show UI
                 setTimeout(() => {
-                    container.style.display = 'none';
-                    logo.classList.add('active-logo');
-                    content.classList.add('active-content');
-                }, 1200);
-            }, 3000);
+                    ui.classList.add('visible');
+                }, 1000);
+            }, 4000);
+
+            // 3. Live terminal aesthetic (coordinates tracker)
+            window.addEventListener('mousemove', (e) => {
+                if (ui.classList.contains('visible')) {
+                    const x = e.clientX.toString().padStart(4, '0');
+                    const y = e.clientY.toString().padStart(4, '0');
+                    coords.innerText = `X-${x} // Y-${y} // STABLE`;
+                }
+            });
         });
     </script>
 </body>
