@@ -100,13 +100,16 @@ body, html {
   align-items: center;
   white-space: nowrap;
   clip-path: inset(0 100% 0 0);
-  transition: clip-path 1.2s var(--ease), opacity 0.6s var(--ease);
+  transition: clip-path 1.2s var(--ease), opacity 0.6s var(--ease), width 1.2s var(--ease);
   will-change: clip-path;
   opacity: 0;
+  width: 0;
+  overflow: hidden;
 }
 
 #wordmark.assembled .ab0-reveal {
   opacity: 1;
+  width: auto;
   clip-path: inset(-0.5em 0 -0.5em 0) !important;
 }
 
@@ -115,7 +118,6 @@ body, html {
   pointer-events: auto;
 }
 
-/* Desktop Icon (Monitor) */
 .desktop-icon {
   width: 1.1em;
   height: 1.1em;
@@ -126,12 +128,10 @@ body, html {
   display: inline-block;
 }
 
-/* Mobile Icon (Phone) */
 .mobile-icon {
   width: 1.1em;
   height: 1.1em;
-  margin-left: 0.08em;
-  vertical-align: middle;
+  margin-left: 0.2em;
   stroke: currentColor;
   stroke-width: 2.5;
   fill: none;
@@ -153,7 +153,6 @@ body, html {
     text-align: center;
   }
 
-  /* Absolute position the reveal segment so it doesn't push the 'L' */
   #wordmark .ab0-reveal {
     position: absolute;
     left: 100%;
@@ -168,27 +167,31 @@ body, html {
     align-items: center;
   }
 
+  #wordmark.docked {
+    transform: translate(calc(-50vw + 30px + 0.5ch), calc(-50vh + 39px)) scale(0.85);
+    justify-content: flex-start;
+  }
+
   .desktop-icon {
     display: none !important;
   }
 
   .mobile-icon {
     display: inline-block !important;
+    margin-left: 0.08em;
+    vertical-align: middle;
   }
 
-  #wordmark.docked {
-    transform: translate(calc(-50vw + 15px + 0.5ch), calc(-50vh + 37px)) scale(0.85);
-  }
-
-  /* Reveal AB-phone sequence strictly via parent clip-path */
   #wordmark.docked-final .ab0-reveal {
     opacity: 1;
+    width: auto;
     visibility: visible;
-    clip-path: inset(0 0 0 0) !important;
+    clip-path: inset(-0.5em 0 -0.5em 0) !important;
   }
 
   .ui-grid { margin: 10px; }
   .menu-items { display: none !important; }
+  .content-grid { padding: 80px 20px 40px !important; }
 }
 
 .menu-items {
@@ -295,13 +298,11 @@ body, html {
 }
 
 .menu-item:hover { opacity: 1; }
-
 .menu-item.active {
   opacity: 1 !important;
   color: #FFFFFF !important;
   pointer-events: none;
 }
-
 .ui-visible { opacity: 1 !important; }
 
 /* OVERLAY STYLES */
@@ -319,7 +320,7 @@ body, html {
   justify-content: center;
   align-items: center;
   overflow-y: auto;
-  visibility: hidden; 
+  visibility: hidden;
 }
 
 .overlay.active {
@@ -473,7 +474,7 @@ body, html {
 
 <div class="stage">
 <div id="wordmark">
-<a id="nav-home" class="menu-item" style="font-family:inherit; font-size:inherit; letter-spacing:inherit; margin:0; padding:0; text-transform: none;">
+<a id="nav-home" class="menu-item" style="font-family:inherit; font-size:inherit; letter-spacing:inherit; margin:0; padding:0; text-transform: none; display: flex; align-items: center;">
   <span class="l-char">L</span><span class="ab0-reveal">AB-<svg class="desktop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
     <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
     <line x1="8" y1="21" x2="16" y2="21"></line>
@@ -537,14 +538,14 @@ body, html {
 
 <script>
 (function() {
-  const canvas = document.getElementById('dot-matrix-canvas');
+  var canvas = document.getElementById("dot-matrix-canvas");
   if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  let dots = [];
-  let width, height, dpr;
+  var ctx = canvas.getContext("2d");
+  var dots = [];
+  var width, height, dpr;
 
-  const GRID_SIZE = 30;
-  const DOT_RADIUS = 1.2;
+  var GRID_SIZE = 30;
+  var DOT_RADIUS = 1.2;
 
   function init() {
     dpr = window.devicePixelRatio || 1;
@@ -555,17 +556,18 @@ body, html {
     ctx.scale(dpr, dpr);
     
     dots = [];
-    const cols = Math.ceil(width / GRID_SIZE);
-    const rows = Math.ceil(height / GRID_SIZE);
+    var isMobile = width <= 768;
+    var effectiveGridSize = isMobile ? 15 : GRID_SIZE;
+    var cols = Math.ceil(width / effectiveGridSize);
+    var rows = Math.ceil(height / effectiveGridSize);
 
-    for (let i = 0; i < cols; i++) {
-      for (let j = 0; j < rows; j++) {
+    for (var i = 0; i < cols; i++) {
+      for (var j = 0; j < rows; j++) {
         dots.push({
-          x: i * GRID_SIZE + GRID_SIZE / 2,
-          y: j * GRID_SIZE + GRID_SIZE / 2,
+          x: i * effectiveGridSize + effectiveGridSize / 2,
+          y: j * effectiveGridSize + effectiveGridSize / 2,
           phase: Math.random() * Math.PI * 2,
           freq: 0.02 + Math.random() * 0.03,
-          freqScale: 100,
           maxOpacity: 0.05 + Math.random() * 0.55
         });
       }
@@ -574,60 +576,55 @@ body, html {
 
   function draw(time) {
     ctx.clearRect(0, 0, width, height);
-    
     dots.forEach(function(dot) {
-      const opacity = (Math.sin(time * 0.001 * dot.freq * dot.freqScale + dot.phase) * 0.5 + 0.5) * dot.maxOpacity;
+      var opacity = (Math.sin(time * 0.001 * dot.freq * 100 + dot.phase) * 0.5 + 0.5) * dot.maxOpacity;
       ctx.beginPath();
       ctx.arc(dot.x, dot.y, DOT_RADIUS, 0, Math.PI * 2);
       ctx.fillStyle = "rgba(255, 255, 255, " + opacity.toFixed(3) + ")";
       ctx.fill();
     });
-
     requestAnimationFrame(draw);
   }
 
-  window.addEventListener('resize', init);
+  window.addEventListener("resize", init);
   init();
   requestAnimationFrame(draw);
 })();
 
 document.addEventListener("DOMContentLoaded", function() {
-  const wordmark = document.getElementById("wordmark");
-  const grid = document.getElementById("grid");
-  const menu = document.getElementById("menu");
-  const aboutTrigger = document.getElementById("about-trigger");
-  const navHome = document.getElementById("nav-home");
-  const aboutOverlay = document.getElementById("about-overlay");
+  var wordmark = document.getElementById("wordmark");
+  var grid = document.getElementById("grid");
+  var menu = document.getElementById("menu");
+  var aboutTrigger = document.getElementById("about-trigger");
+  var navHome = document.getElementById("nav-home");
+  var aboutOverlay = document.getElementById("about-overlay");
+  var hamburger = document.getElementById("hamburger");
+  var mobileNav = document.getElementById("mobile-nav");
+  var mNavHome = document.getElementById("m-nav-home");
+  var mAboutTrigger = document.getElementById("m-about-trigger");
 
-  const hamburger = document.getElementById("hamburger");
-  const mobileNav = document.getElementById("mobile-nav");
-  const mNavHome = document.getElementById("m-nav-home");
-  const mAboutTrigger = document.getElementById("m-about-trigger");
-
-  const isMobile = window.innerWidth <= 768;
+  var isMobile = window.innerWidth <= 768;
 
   if (isMobile) {
-    // Mobile Timing
     setTimeout(function() { 
       if (wordmark) wordmark.classList.add("docked");
     }, 3500);
-
     setTimeout(function() {
       if (grid) grid.classList.add("ui-visible");
       if (hamburger) hamburger.classList.add("ui-visible");
       if (menu) menu.classList.add("visible");
-      if (wordmark) wordmark.classList.add("docked-final");
+      if (wordmark) {
+        wordmark.classList.add("assembled");
+        wordmark.classList.add("docked-final");
+      }
     }, 4700);
   } else {
-    // Desktop Timing
     setTimeout(function() {
       if (wordmark) wordmark.classList.add("assembled");
     }, 1500);
-
     setTimeout(function() {
       if (wordmark) wordmark.classList.add("docked");
     }, 3500);
-
     setTimeout(function() {
       if (grid) grid.classList.add("ui-visible");
       if (hamburger) hamburger.classList.add("ui-visible");
@@ -635,23 +632,14 @@ document.addEventListener("DOMContentLoaded", function() {
     }, 4700);
   }
 
-  const setActiveNav = function(activeEl) {
-    const triggers = [navHome, aboutTrigger, mNavHome, mAboutTrigger];
-    triggers.forEach(function(item) { if (item) item.classList.remove("active"); });
-    if (activeEl) activeEl.classList.add("active");
-  };
-
-  setActiveNav(navHome);
-
-  const switchPage = function(pageId, triggerEl) {
-    setActiveNav(triggerEl);
+  function switchPage(pageId) {
     if (aboutOverlay) aboutOverlay.classList.remove("active");
     if (pageId === "about") {
       if (aboutOverlay) aboutOverlay.classList.add("active");
     }
     if (hamburger) hamburger.classList.remove("open");
     if (mobileNav) mobileNav.classList.remove("open");
-  };
+  }
 
   if (hamburger) {
     hamburger.addEventListener("click", function() {
@@ -660,16 +648,11 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   }
 
-  if (aboutTrigger) aboutTrigger.addEventListener("click", function(e) { e.stopPropagation(); switchPage("about", aboutTrigger); });
-  if (navHome) navHome.addEventListener("click", function(e) { e.stopPropagation(); switchPage("home", navHome); });
-  if (mAboutTrigger) mAboutTrigger.addEventListener("click", function() { switchPage("about", mAboutTrigger); });
-  if (mNavHome) mNavHome.addEventListener("click", function() { switchPage("home", mNavHome); });
-
-  if (aboutOverlay) {
-    aboutOverlay.addEventListener("click", function() {
-      switchPage("home", mNavHome);
-    });
-  }
+  if (aboutTrigger) aboutTrigger.addEventListener("click", function(e) { e.stopPropagation(); switchPage("about"); });
+  if (navHome) navHome.addEventListener("click", function(e) { e.stopPropagation(); switchPage("home"); });
+  if (mAboutTrigger) mAboutTrigger.addEventListener("click", function() { switchPage("about"); });
+  if (mNavHome) mNavHome.addEventListener("click", function() { switchPage("home"); });
+  if (aboutOverlay) aboutOverlay.addEventListener("click", function() { switchPage("home"); });
 });
 </script>
 </body>
