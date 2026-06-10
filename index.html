@@ -130,6 +130,34 @@
             opacity: 1;
         }
 
+        /* Arrows Styling */
+        .arrows-container {
+            display: inline-flex;
+            margin-left: 4px;
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+            will-change: opacity, transform;
+        }
+
+        .arrows-container.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .arrow {
+            font-family: var(--font-mono);
+            font-weight: 400;
+            font-size: 0.9em;
+            margin-right: -4px; /* Tight spacing */
+            color: var(--white);
+            display: inline-block;
+        }
+
+        .arrow:last-child {
+            margin-right: 0;
+        }
+
     </style>
 </head>
 <body>
@@ -137,13 +165,21 @@
     <div class="ui-grid" id="grid"></div>
 
     <div class="stage">
-        <div id="wordmark">L<span class="ab0-reveal">AB-0</span></div>
+        <div id="wordmark">
+            L<span class="ab0-reveal">AB-0</span>
+            <span class="arrows-container" id="arrows">
+                <span class="arrow">></span>
+                <span class="arrow">></span>
+                <span class="arrow">></span>
+            </span>
+        </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const wordmark = document.getElementById('wordmark');
             const grid = document.getElementById('grid');
+            const arrows = document.getElementById('arrows');
 
             // 1.5s: Start Assembly (Static reveal)
             setTimeout(() => {
@@ -151,13 +187,16 @@
             }, 1500);
 
             // 3.5s: Start Docking (Smooth transition to corner)
+            // Duration is 1.2s, so it finishes at 4.7s.
             setTimeout(() => {
                 wordmark.classList.add('docked');
             }, 3500);
 
-            // 4.7s: UI Fade-in
+            // 4.7s: UI Fade-in & Arrows Reveal
+            // This syncs with the exact end of the docking transition (3.5 + 1.2 = 4.7)
             setTimeout(() => {
                 grid.classList.add('ui-visible');
+                arrows.classList.add('visible');
             }, 4700);
         });
     </script>
