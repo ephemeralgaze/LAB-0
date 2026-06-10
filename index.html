@@ -82,7 +82,7 @@ body, html {
 #wordmark {
   position: relative;
   display: flex;
-  align-items: baseline;
+  align-items: center; /* Changed from baseline for exact centering */
   justify-content: center;
   font-family: var(--font-header);
   font-weight: 700;
@@ -97,16 +97,19 @@ body, html {
 
 .ab0-reveal {
   display: inline-flex;
-  align-items: baseline;
+  align-items: center; /* Alignment consistency */
   white-space: nowrap;
   clip-path: inset(0 100% 0 0);
-  transition: clip-path 1.2s var(--ease), opacity 0.6s var(--ease);
+  transition: clip-path 1.2s var(--ease), opacity 0.6s var(--ease), width 1.2s var(--ease);
   will-change: clip-path;
   opacity: 0;
+  width: 0; /* No width initially to center 'L' */
+  overflow: hidden;
 }
 
 #wordmark.assembled .ab0-reveal {
   opacity: 1;
+  width: auto; /* Expand width during assembly */
   clip-path: inset(-0.5em 0 -0.5em 0) !important;
 }
 
@@ -119,7 +122,6 @@ body, html {
   width: 1.1em;
   height: 1.1em;
   margin-left: 0.15em;
-  transform: translateY(0.12em);
   stroke: currentColor;
   stroke-width: 2.5;
   fill: none;
@@ -140,7 +142,7 @@ body, html {
 @media (max-width: 768px) {
   #wordmark {
     letter-spacing: 0;
-    transform: scale(2.5); /* Reduced initial scale to prevent early overflow */
+    transform: scale(2.5);
     width: auto; 
     max-width: 90vw;
     overflow: visible;
@@ -148,19 +150,15 @@ body, html {
 
   .l-char {
     display: inline-block;
+    line-height: 1;
   }
 
-  #wordmark .ab0-reveal {
-    position: relative; /* Changed from absolute to prevent layout crushing */
-    left: 0;
-    width: auto;
-    clip-path: inset(-0.5em 100% -0.5em 0) !important;
-    white-space: nowrap;
-    opacity: 0;
-    visibility: hidden;
-    transition: clip-path 0.8s var(--ease), opacity 0.4s var(--ease), visibility 0.4s var(--ease);
-    display: inline-flex;
-    align-items: center;
+  #wordmark.docked {
+    /* Aligning with hamburger (top: 30px, center: 37px) */
+    /* Target center: 37px. Screen center: 50vh. Offset: -(50vh - 37px). */
+    /* Target left: 30px. Screen center: 50vw. Offset: -(50vw - 30px - 0.5ch). */
+    transform: translate(calc(-50vw + 30px + 0.5ch), calc(-50vh + 37px)) scale(0.65);
+    justify-content: flex-start;
   }
 
   .desktop-icon {
@@ -170,35 +168,18 @@ body, html {
   .mobile-icon {
     display: inline-block !important;
     margin-left: 0.08em;
-    transform: translateY(-0.08em);
-  }
-
-  #wordmark.docked {
-    /* Aligning with hamburger (top: 30px, height: 14px -> center: 37px) */
-    /* Adjusting Y to align centers perfectly */
-    transform: translate(calc(-50vw + 30px + 0.5ch), calc(-50vh + 37px)) scale(0.65);
-    justify-content: flex-start;
-    width: auto;
-    align-items: center; /* Center items instead of baseline for exact alignment */
+    vertical-align: middle;
   }
 
   #wordmark.docked-final .ab0-reveal {
     opacity: 1;
-    visibility: visible;
+    width: auto;
     clip-path: inset(-0.5em 0 -0.5em 0) !important;
   }
 
   .ui-grid { margin: 10px; }
   .menu-items { display: none !important; }
-
-  /* Ensure overlays fit mobile screens */
-  .content-grid {
-    padding: 80px 20px 40px !important;
-  }
-  
-  .username {
-    font-size: 1.1rem !important;
-  }
+  .content-grid { padding: 80px 20px 40px !important; }
 }
 
 .menu-items {
@@ -290,12 +271,6 @@ body, html {
 
 .mobile-menu-item.active { opacity: 1; }
 
-/* Navigation Item Styles */
-@keyframes nav-breath {
-  0%, 100% { opacity: 1; filter: brightness(1.2); }
-  50% { opacity: 0.85; filter: brightness(1); }
-}
-
 .menu-item {
   color: var(--white);
   text-decoration: none;
@@ -311,15 +286,11 @@ body, html {
 }
 
 .menu-item:hover { opacity: 1; }
-
 .menu-item.active {
   opacity: 1 !important;
   color: #FFFFFF !important;
-  animation: nav-breath 3s ease-in-out infinite;
-  animation-delay: 0.45s;
   pointer-events: none;
 }
-
 .ui-visible { opacity: 1 !important; }
 
 /* OVERLAY STYLES */
@@ -337,7 +308,7 @@ body, html {
   justify-content: center;
   align-items: center;
   overflow-y: auto;
-  visibility: hidden; /* Prevent interaction when hidden */
+  visibility: hidden;
 }
 
 .overlay.active {
@@ -440,149 +411,6 @@ body, html {
   font-family: var(--font-mono);
 }
 
-/* PROJECTS SPECIFIC STYLES */
-#projects-overlay .content-grid {
-  font-family: var(--font-mono);
-  text-transform: uppercase;
-}
-
-.project-list {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  width: 100%;
-}
-
-.project-entry {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);
-  cursor: pointer;
-  opacity: 0.5;
-}
-
-.project-entry.selected {
-  opacity: 1;
-  transform: scale(1.02);
-}
-
-.project-entry:last-child { border-bottom: none; }
-
-.project-info {
-  display: flex;
-  align-items: baseline;
-  gap: 15px;
-}
-
-.project-id {
-  font-size: 0.6rem;
-  color: rgba(255, 255, 255, 0.3);
-}
-
-.project-name {
-  font-size: 0.9rem;
-  letter-spacing: 0.15em;
-  transition: font-size 0.4s var(--ease);
-}
-
-.project-entry.selected .project-name { font-size: 1.05rem; }
-
-.status-tag {
-  font-size: 0.6rem;
-  padding: 3px 8px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.spec-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.video-container {
-  width: 100%;
-  aspect-ratio: 16/9;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  position: relative;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.02);
-}
-
-.video-container::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: 
-    linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
-  background-size: 20px 20px;
-}
-
-/* Playback Control Bar */
-.playback-bar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 10px 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.p-btn {
-  background: none;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.5);
-  font-family: var(--font-mono);
-  font-size: 0.55rem;
-  padding: 6px 10px;
-  cursor: pointer;
-  transition: all 0.3s var(--ease);
-  letter-spacing: 0.1em;
-}
-
-.p-btn:hover {
-  border-color: rgba(255, 255, 255, 0.4);
-  color: var(--white);
-}
-
-.p-btn.play-pause {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-}
-
-.play-pause svg {
-  width: 16px;
-  height: 16px;
-  fill: currentColor;
-  transition: transform 0.4s var(--ease);
-}
-
-.play-pause .pause-icon { display: none; }
-.play-pause.playing .play-icon { display: none; }
-.play-pause.playing .pause-icon { display: block; }
-
-.spec-details {
-  display: grid;
-  grid-template-columns: 100px 1fr;
-  gap: 10px;
-  font-size: 0.7rem;
-  color: rgba(255, 255, 255, 0.5);
-}
-
-.spec-label { color: rgba(255, 255, 255, 0.3); }
-.spec-value { color: var(--white); }
-
-/* Common Info Item */
 .info-item {
   display: flex;
   align-items: center;
@@ -634,7 +462,7 @@ body, html {
 
 <div class="stage">
 <div id="wordmark">
-<a id="nav-home" class="menu-item" style="font-family:inherit; font-size:inherit; letter-spacing:inherit; margin:0; padding:0; text-transform: none;">
+<a id="nav-home" class="menu-item" style="font-family:inherit; font-size:inherit; letter-spacing:inherit; margin:0; padding:0; text-transform: none; display: flex; align-items: center;">
   <span class="l-char">L</span><span class="ab0-reveal">AB-<svg class="desktop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
     <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
     <line x1="8" y1="21" x2="16" y2="21"></line>
@@ -696,92 +524,16 @@ body, html {
 </div>
 </div>
 
-<!-- PROJECTS OVERLAY -->
-<div id="projects-overlay" class="overlay">
-<div class="overlay-frame">
-<span class="coord coord-tl">[1111, 1111]</span>
-<span class="coord coord-br">[9999, 9999]</span>
-</div>
-<svg class="reticle" viewBox="0 0 40 40">
-<line x1="20" y1="0" x2="20" y2="40" stroke="white" stroke-width="1"/>
-<line x1="0" y1="20" x2="40" y2="20" stroke="white" stroke-width="1"/>
-</svg>
-<div class="content-grid">
-  <div class="col-left" style="align-items: flex-start; justify-content: flex-start; padding: 20px;">
-    <div class="project-list" id="p-list">
-      <div class="project-entry selected">
-        <div class="project-info">
-          <span class="project-id">[01]</span>
-          <span class="project-name">NAME</span>
-        </div>
-        <span class="status-tag">ACTIVE</span>
-      </div>
-      <div class="project-entry">
-        <div class="project-info">
-          <span class="project-id">[02]</span>
-          <span class="project-name">NAME</span>
-        </div>
-        <span class="status-tag">STANDBY</span>
-      </div>
-      <div class="project-entry">
-        <div class="project-info">
-          <span class="project-id">[03]</span>
-          <span class="project-name">NAME</span>
-        </div>
-        <span class="status-tag">STANDBY</span>
-      </div>
-      <div class="project-entry">
-        <div class="project-info">
-          <span class="project-id">[04]</span>
-          <span class="project-name">NAME</span>
-        </div>
-        <span class="status-tag">STANDBY</span>
-      </div>
-      <div class="project-entry">
-        <div class="project-info">
-          <span class="project-id">[05]</span>
-          <span class="project-name">NAME</span>
-        </div>
-        <span class="status-tag">STANDBY</span>
-      </div>
-    </div>
-  </div>
-  <div class="col-right">
-    <div class="spec-panel">
-      <div class="video-container"></div>
-      
-      <div class="playback-bar">
-        <button class="p-btn"><-1S</button>
-        <button class="p-btn"><-1F</button>
-        <button class="p-btn play-pause" id="play-pause">
-          <svg class="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-          <svg class="pause-icon" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-        </button>
-        <button class="p-btn">+1F</button>
-        <button class="p-btn">+1S</button>
-      </div>
-
-      <div class="spec-details">
-        <span class="spec-label">Pipeline:</span><span class="spec-value">DirectX 12 / HLSL</span>
-        <span class="spec-label">Complexity:</span><span class="spec-value">8.4M Traces/s</span>
-        <span class="spec-label">Buffers:</span><span class="spec-value">Compute / G-Buffer</span>
-        <span class="spec-label">Status:</span><span class="spec-value">Optimizing Kernels</span>
-      </div>
-    </div>
-  </div>
-</div>
-</div>
-
 <script>
 (function() {
-  const canvas = document.getElementById('dot-matrix-canvas');
+  var canvas = document.getElementById("dot-matrix-canvas");
   if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  let dots = [];
-  let width, height, dpr;
+  var ctx = canvas.getContext("2d");
+  var dots = [];
+  var width, height, dpr;
 
-  const GRID_SIZE = 30;
-  const DOT_RADIUS = 1.2;
+  var GRID_SIZE = 30;
+  var DOT_RADIUS = 1.2;
 
   function init() {
     dpr = window.devicePixelRatio || 1;
@@ -792,13 +544,13 @@ body, html {
     ctx.scale(dpr, dpr);
     
     dots = [];
-    const isMobile = width <= 768;
-    const effectiveGridSize = isMobile ? 15 : GRID_SIZE; // Denser grid on mobile
-    const cols = Math.ceil(width / effectiveGridSize);
-    const rows = Math.ceil(height / effectiveGridSize);
+    var isMobile = width <= 768;
+    var effectiveGridSize = isMobile ? 15 : GRID_SIZE;
+    var cols = Math.ceil(width / effectiveGridSize);
+    var rows = Math.ceil(height / effectiveGridSize);
 
-    for (let i = 0; i < cols; i++) {
-      for (let j = 0; j < rows; j++) {
+    for (var i = 0; i < cols; i++) {
+      for (var j = 0; j < rows; j++) {
         dots.push({
           x: i * effectiveGridSize + effectiveGridSize / 2,
           y: j * effectiveGridSize + effectiveGridSize / 2,
@@ -812,63 +564,55 @@ body, html {
 
   function draw(time) {
     ctx.clearRect(0, 0, width, height);
-    
     dots.forEach(function(dot) {
-      const opacity = (Math.sin(time * 0.001 * dot.freq * 100 + dot.phase) * 0.5 + 0.5) * dot.maxOpacity;
+      var opacity = (Math.sin(time * 0.001 * dot.freq * 100 + dot.phase) * 0.5 + 0.5) * dot.maxOpacity;
       ctx.beginPath();
       ctx.arc(dot.x, dot.y, DOT_RADIUS, 0, Math.PI * 2);
       ctx.fillStyle = "rgba(255, 255, 255, " + opacity.toFixed(3) + ")";
       ctx.fill();
     });
-
     requestAnimationFrame(draw);
   }
 
-  window.addEventListener('resize', init);
+  window.addEventListener("resize", init);
   init();
   requestAnimationFrame(draw);
 })();
 
 document.addEventListener("DOMContentLoaded", function() {
-  const wordmark = document.getElementById("wordmark");
-  const grid = document.getElementById("grid");
-  const menu = document.getElementById("menu");
-  const aboutTrigger = document.getElementById("about-trigger");
-  const projectsTrigger = document.getElementById("projects-trigger");
-  const navHome = document.getElementById("nav-home");
-  const aboutOverlay = document.getElementById("about-overlay");
-  const projectsOverlay = document.getElementById("projects-overlay");
+  var wordmark = document.getElementById("wordmark");
+  var grid = document.getElementById("grid");
+  var menu = document.getElementById("menu");
+  var aboutTrigger = document.getElementById("about-trigger");
+  var navHome = document.getElementById("nav-home");
+  var aboutOverlay = document.getElementById("about-overlay");
+  var hamburger = document.getElementById("hamburger");
+  var mobileNav = document.getElementById("mobile-nav");
+  var mNavHome = document.getElementById("m-nav-home");
+  var mAboutTrigger = document.getElementById("m-about-trigger");
 
-  const hamburger = document.getElementById("hamburger");
-  const mobileNav = document.getElementById("mobile-nav");
-  const mNavHome = document.getElementById("m-nav-home");
-  const mProjectsTrigger = document.getElementById("m-projects-trigger");
-  const mAboutTrigger = document.getElementById("m-about-trigger");
-
-  const isMobile = window.innerWidth <= 768;
+  var isMobile = window.innerWidth <= 768;
 
   if (isMobile) {
-    // Mobile Timing
     setTimeout(function() { 
       if (wordmark) wordmark.classList.add("docked");
     }, 3500);
-
     setTimeout(function() {
       if (grid) grid.classList.add("ui-visible");
       if (hamburger) hamburger.classList.add("ui-visible");
       if (menu) menu.classList.add("visible");
-      if (wordmark) wordmark.classList.add("docked-final");
+      if (wordmark) {
+        wordmark.classList.add("assembled");
+        wordmark.classList.add("docked-final");
+      }
     }, 4700);
   } else {
-    // Desktop Timing
     setTimeout(function() {
       if (wordmark) wordmark.classList.add("assembled");
     }, 1500);
-
     setTimeout(function() {
       if (wordmark) wordmark.classList.add("docked");
     }, 3500);
-
     setTimeout(function() {
       if (grid) grid.classList.add("ui-visible");
       if (hamburger) hamburger.classList.add("ui-visible");
@@ -876,27 +620,14 @@ document.addEventListener("DOMContentLoaded", function() {
     }, 4700);
   }
 
-  const navItems = [navHome, projectsTrigger, aboutTrigger, mNavHome, mProjectsTrigger, mAboutTrigger];
-
-  const setActiveNav = function(activeEl) {
-    navItems.forEach(function(item) { if (item) item.classList.remove("active"); });
-    if (activeEl) activeEl.classList.add("active");
-  };
-
-  setActiveNav(navHome);
-
-  const switchPage = function(pageId, triggerEl) {
-    setActiveNav(triggerEl);
+  function switchPage(pageId) {
     if (aboutOverlay) aboutOverlay.classList.remove("active");
-    if (projectsOverlay) projectsOverlay.classList.remove("active");
-    if (pageId === 'about') {
+    if (pageId === "about") {
       if (aboutOverlay) aboutOverlay.classList.add("active");
-    } else if (pageId === 'projects') {
-      if (projectsOverlay) projectsOverlay.classList.add("active");
     }
     if (hamburger) hamburger.classList.remove("open");
     if (mobileNav) mobileNav.classList.remove("open");
-  };
+  }
 
   if (hamburger) {
     hamburger.addEventListener("click", function() {
@@ -905,28 +636,11 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   }
 
-  if (aboutTrigger) aboutTrigger.addEventListener("click", function(e) { e.stopPropagation(); switchPage('about', aboutTrigger); });
-  if (projectsTrigger) projectsTrigger.addEventListener("click", function(e) { e.stopPropagation(); switchPage('projects', projectsTrigger); });
-  if (navHome) navHome.addEventListener("click", function(e) { e.stopPropagation(); switchPage('home', navHome); });
-
-  if (mAboutTrigger) mAboutTrigger.addEventListener("click", function() { switchPage('about', mAboutTrigger); });
-  if (mProjectsTrigger) mProjectsTrigger.addEventListener("click", function() { switchPage('projects', mProjectsTrigger); });
-  if (mNavHome) mNavHome.addEventListener("click", function() { switchPage('home', mNavHome); });
-
-  const projectEntries = document.querySelectorAll('.project-entry');
-  projectEntries.forEach(function(entry) {
-    entry.addEventListener('click', function() {
-      projectEntries.forEach(function(e) { e.classList.remove('selected'); });
-      entry.classList.add('selected');
-    });
-  });
-
-  const playBtn = document.getElementById('play-pause');
-  if (playBtn) {
-    playBtn.addEventListener('click', function() {
-      playBtn.classList.toggle('playing');
-    });
-  }
+  if (aboutTrigger) aboutTrigger.addEventListener("click", function(e) { e.stopPropagation(); switchPage("about"); });
+  if (navHome) navHome.addEventListener("click", function(e) { e.stopPropagation(); switchPage("home"); });
+  if (mAboutTrigger) mAboutTrigger.addEventListener("click", function() { switchPage("about"); });
+  if (mNavHome) mNavHome.addEventListener("click", function() { switchPage("home"); });
+  if (aboutOverlay) aboutOverlay.addEventListener("click", function() { switchPage("home"); });
 });
 </script>
 </body>
