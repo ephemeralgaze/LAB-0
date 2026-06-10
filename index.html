@@ -265,6 +265,24 @@ body, html {
   color: var(--white);
   text-transform: uppercase;
 }
+
+/* Navigation Active States */
+@keyframes nav-breath {
+  0%, 100% { opacity: 1; filter: brightness(1.2); }
+  50% { opacity: 0.85; filter: brightness(1); }
+}
+
+.menu-item {
+  opacity: 0.9; /* Inactive: 10% dimmer */
+  transition: opacity 0.3s ease, filter 0.3s ease;
+}
+
+.menu-item.active {
+  opacity: 1 !important;
+  color: #FFFFFF !important;
+  animation: nav-breath 3s ease-in-out infinite;
+  pointer-events: none; /* Disable clicking active tab */
+}
 </style>
 </head>
 <body>
@@ -279,7 +297,7 @@ body, html {
 <div id="wordmark">
 <a id="nav-home" class="menu-item" style="font-family:inherit; font-size:inherit; letter-spacing:inherit; margin:0; padding:0; text-transform: none;">L<span class="ab0-reveal">AB-0</span></a>
 <div class="menu-items" id="menu">
-<a class="menu-item">PROJECTS</a>
+<a id="projects-trigger" class="menu-item">PROJECTS</a>
 <a id="about-trigger" class="menu-item">ABOUT</a>
 </div>
 </div>
@@ -357,8 +375,23 @@ grid.classList.add("ui-visible");
 menu.classList.add("visible");
 }, 4700);
 
-// Page Switching Logic
-const switchPage = (pageId) => {
+
+// Nav Active State Management
+const navItems = [navHome, document.getElementById("projects-trigger"), aboutTrigger];
+
+const setActiveNav = (activeEl) => {
+  navItems.forEach(item => {
+    if (item) item.classList.remove("active");
+  });
+  if (activeEl) activeEl.classList.add("active");
+};
+
+// Set default active (Home)
+setActiveNav(navHome);
+
+// Updated Page Switching Logic
+const switchPage = (pageId, triggerEl) => {
+  setActiveNav(triggerEl);
   if (pageId === 'about') {
     aboutOverlay.classList.add("active");
   } else {
@@ -366,27 +399,25 @@ const switchPage = (pageId) => {
   }
 };
 
-// Only explicit clicks on nav buttons switch pages
 aboutTrigger.addEventListener("click", (e) => {
-  e.preventDefault();
   e.stopPropagation();
-  switchPage('about');
+  switchPage('about', aboutTrigger);
 });
 
 navHome.addEventListener("click", (e) => {
-  e.preventDefault();
   e.stopPropagation();
-  switchPage('home');
+  switchPage('home', navHome);
 });
 
-// Dynamic Coordinates
-function updateCoords() {
-const w = window.innerWidth.toString().padStart(4, "0");
-const h = window.innerHeight.toString().padStart(4, "0");
-coordDisplay.textContent = "[" + w + ", " + h + "]";
+const projectsTrigger = document.getElementById("projects-trigger");
+if (projectsTrigger) {
+  projectsTrigger.addEventListener("click", (e) => {
+    e.stopPropagation();
+    // For now projects just stays on home or we can define logic later
+    switchPage('projects', projectsTrigger);
+  });
 }
 
-window.addEventListener("resize", updateCoords);
 updateCoords();
 });
 </script>
