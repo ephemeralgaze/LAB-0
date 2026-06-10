@@ -412,7 +412,7 @@ body, html {
   .content-grid {
     grid-template-columns: 1fr;
     gap: 40px;
-    padding: 100px 40px 60px;
+    padding: 60px 40px 60px;
   }
 }
 
@@ -865,16 +865,16 @@ document.addEventListener("DOMContentLoaded", function() {
   const mProjectsTrigger = document.getElementById("m-projects-trigger");
   const mAboutTrigger = document.getElementById("m-about-trigger");
 
-  // Phase 1: Startup (0s-3.5s) - Only 'L' visible and centered (default scale 3.33)
+  // Phase 1: Startup (0s-3.5s) - Only \"L\" visible and centered (default scale 3.33)
   
-  // Phase 2: At 3.5s, dock 'L' to the top-right corner
+  // Phase 2: At 3.5s, dock \"L\" to the top-right corner
   setTimeout(function() { 
     if (wordmark) {
       wordmark.classList.add("docked");
     }
   }, 3500);
 
-  // Phase 3: At 4.7s, reveal the UI and the 'AB-phone' suffix sequence
+  // Phase 3: At 4.7s, reveal the UI and the \"AB-phone\" suffix sequence
   setTimeout(function() {
     if (grid) grid.classList.add("ui-visible");
     if (hamburger) hamburger.classList.add("ui-visible");
