@@ -10,12 +10,11 @@
     <style>
         :root {
             --bg-color: #050505;
-            --text-color: #ffffff;
-            --accent-color: #ffffff;
+            --white: #ffffff;
             --grid-color: rgba(255, 255, 255, 0.1);
-            --syncopate: 'Syncopate', sans-serif;
-            --space-grotesk: 'Space Grotesk', sans-serif;
-            --space-mono: 'Space Mono', monospace;
+            --font-header: 'Syncopate', sans-serif;
+            --font-body: 'Space Grotesk', sans-serif;
+            --font-mono: 'Space Mono', monospace;
         }
 
         * {
@@ -28,277 +27,249 @@
             width: 100%;
             height: 100%;
             background-color: var(--bg-color);
-            color: var(--text-color);
+            color: var(--white);
             overflow: hidden;
-            font-family: var(--space-grotesk);
+            font-family: var(--font-body);
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Grid Background */
-        .grid-overlay {
+        /* 1px Grid Borders */
+        .ui-grid {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             border: 1px solid var(--grid-color);
+            margin: 20px;
             pointer-events: none;
             opacity: 0;
-            z-index: 10;
+            transition: opacity 1s ease-out;
+            z-index: 5;
         }
 
-        .grid-line-h {
-            position: absolute;
-            width: 100%;
-            height: 1px;
-            background: var(--grid-color);
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        .grid-line-v {
-            position: absolute;
-            height: 100%;
-            width: 1px;
-            background: var(--grid-color);
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        /* Intro Sequence Container */
+        /* Intro Sequence */
         .stage {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            width: 100vw;
-            height: 100vh;
-            position: relative;
         }
 
-        .wordmark-container {
+        #wordmark {
             display: flex;
             align-items: center;
-            font-family: var(--syncopate);
+            font-family: var(--font-header);
             font-weight: 700;
             font-size: 5rem;
-            letter-spacing: -0.05em;
             position: absolute;
-            transition: all 0.8s cubic-bezier(0.85, 0, 0.15, 1);
-            z-index: 50;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 1s cubic-bezier(0.8, 0, 0.2, 1);
+            z-index: 100;
         }
 
-        .wordmark-container.docked {
-            top: 40px;
-            left: 40px;
+        /* Docking Style */
+        #wordmark.docked {
+            top: 60px;
+            left: 60px;
             font-size: 1.5rem;
-            letter-spacing: 0.1em;
             transform: translate(0, 0);
         }
 
         /* SVG L Animation */
-        .l-stroke {
-            fill: transparent;
-            stroke: white;
-            stroke-width: 1px;
-            stroke-dasharray: 500;
-            stroke-dashoffset: 500;
-            animation: drawL 1.5s forwards cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        @keyframes drawL {
-            to {
-                stroke-dashoffset: 0;
-            }
-        }
-
-        .l-fill {
-            fill: white;
-            opacity: 0;
-            animation: fillL 0.5s forwards 1.5s ease-in-out;
-        }
-
-        @keyframes fillL {
-            to {
-                opacity: 1;
-            }
-        }
-
-        /* Sliding LAB-0 Assembly */
-        .l-wrapper {
+        .l-container {
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.8s cubic-bezier(0.85, 0, 0.15, 1) 2s;
+            transition: transform 0.8s cubic-bezier(0.8, 0, 0.2, 1);
         }
 
-        .wordmark-container.assembled .l-wrapper {
-            transform: translateX(-0.1em);
+        .l-svg {
+            width: 1.2em;
+            height: 1.2em;
         }
 
-        .ab0-wrapper {
+        .l-stroke {
+            fill: none;
+            stroke: var(--white);
+            stroke-width: 1.5px;
+            stroke-dasharray: 400;
+            stroke-dashoffset: 400;
+            animation: drawStroke 1.5s forwards linear;
+        }
+
+        @keyframes drawStroke {
+            to { stroke-dashoffset: 0; }
+        }
+
+        .l-fill-path {
+            fill: var(--white);
+            opacity: 0;
+            animation: fadeInFill 0.5s forwards 1.5s ease-out;
+        }
+
+        @keyframes fadeInFill {
+            to { opacity: 1; }
+        }
+
+        /* Assembly Logic */
+        .ab0-container {
             display: inline-block;
             max-width: 0;
             overflow: hidden;
             white-space: nowrap;
             opacity: 0;
-            transition: max-width 0.8s cubic-bezier(0.85, 0, 0.15, 1) 2.0s, 
-                        opacity 0.5s ease 2.1s,
-                        transform 0.8s cubic-bezier(0.85, 0, 0.15, 1) 2.0s;
-            transform: translateX(0.5em);
+            transition: max-width 0.8s cubic-bezier(0.8, 0, 0.2, 1), 
+                        opacity 0.6s ease-out,
+                        transform 0.8s cubic-bezier(0.8, 0, 0.2, 1);
+            transform: translateX(20px);
         }
 
-        .wordmark-container.assembled .ab0-wrapper {
-            max-width: 1000px; 
+        /* Assembly Trigger (at 2.0s) */
+        #wordmark.assembled .l-container {
+            transform: translateX(-0.1em) scale(0.9);
+        }
+
+        #wordmark.assembled .ab0-container {
+            max-width: 500px;
             opacity: 1;
             transform: translateX(0);
         }
 
-        /* UI Elements Fade-in */
+        /* UI Elements */
         .ui-element {
-            opacity: 0;
-            transition: opacity 1s ease-in-out 4.3s;
             position: fixed;
-            z-index: 20;
+            opacity: 0;
+            transition: opacity 1s ease-out;
+            z-index: 10;
+            font-family: var(--font-mono);
+            text-transform: uppercase;
         }
 
         .ui-visible {
             opacity: 1;
         }
 
-        .grid-visible {
-            opacity: 1;
-            transition: opacity 1.5s ease-in-out 4s;
+        .coords-tracker {
+            bottom: 60px;
+            left: 60px;
+            font-size: 0.7rem;
+            letter-spacing: 0.1em;
         }
 
-        /* Cursor Tracker */
-        .cursor-tracker {
-            bottom: 40px;
-            left: 40px;
-            font-family: var(--space-mono);
-            font-size: 0.75rem;
-            text-transform: uppercase;
-        }
-
-        /* System State Indicator */
-        .system-state {
-            top: 40px;
-            right: 40px;
+        .system-status {
+            top: 60px;
+            right: 60px;
             display: flex;
             align-items: center;
-            font-family: var(--space-mono);
             font-size: 0.7rem;
             letter-spacing: 0.1em;
         }
 
         .dot-matrix {
-            width: 8px;
-            height: 8px;
-            background-color: #fff;
-            border-radius: 50%;
-            margin-right: 12px;
-            animation: pulse 2s infinite ease-in-out;
+            width: 6px;
+            height: 6px;
+            background: var(--white);
+            margin-right: 10px;
+            animation: pulse 2s infinite;
         }
 
         @keyframes pulse {
-            0% { opacity: 0.3; transform: scale(0.8); }
+            0%, 100% { opacity: 0.2; transform: scale(0.8); }
             50% { opacity: 1; transform: scale(1.1); }
-            100% { opacity: 0.3; transform: scale(0.8); }
         }
 
-        /* Terminal Console */
-        .terminal {
-            bottom: 40px;
-            right: 40px;
+        .terminal-log {
+            bottom: 60px;
+            right: 60px;
             text-align: right;
-            font-family: var(--space-mono);
-            font-size: 0.75rem;
-            line-height: 1.6;
+            font-size: 0.7rem;
+            line-height: 1.5;
         }
 
-        .terminal span {
+        .terminal-log span {
             display: block;
-            color: rgba(255, 255, 255, 0.5);
+            color: rgba(255, 255, 255, 0.4);
         }
 
-        .terminal .status-ready {
-            color: #fff;
+        .terminal-log .ready {
+            color: var(--white);
             font-weight: bold;
+            margin-top: 4px;
         }
 
     </style>
 </head>
 <body>
 
-    <div class="grid-overlay" id="grid">
-        <div class="grid-line-h"></div>
-        <div class="grid-line-v"></div>
-    </div>
+    <div class="ui-grid" id="grid"></div>
 
     <div class="stage">
-        <div class="wordmark-container" id="wordmark">
-            <div class="l-wrapper">
-                <svg width="1em" height="1em" viewBox="0 0 100 100">
+        <div id="wordmark">
+            <div class="l-container">
+                <svg class="l-svg" viewBox="0 0 100 100">
+                    <!-- Drawing stroke -->
                     <path class="l-stroke" d="M35 25 V75 H65" />
-                    <path class="l-fill" d="M35 25 V75 H65 V70 H40 V25 Z" />
+                    <!-- Final solid fill -->
+                    <path class="l-fill-path" d="M35 25 V75 H65 V70 H40 V25 Z" />
                 </svg>
             </div>
-            <div class="ab0-wrapper">AB-0</div>
+            <div class="ab0-container">AB-0</div>
         </div>
     </div>
 
-    <!-- UI Components -->
-    <div class="ui-element cursor-tracker" id="ui-coords">
-        X: 0000 // Y: 0000
+    <!-- UI Overlays -->
+    <div class="ui-element coords-tracker" id="ui-coords">
+        X-0000 // Y-0000
     </div>
 
-    <div class="ui-element system-state" id="ui-state">
+    <div class="ui-element system-status" id="ui-status">
         <div class="dot-matrix"></div>
-        SYSTEM ACTIVE // STABLE
+        SYSTEM ACTIVE // LOGGED
     </div>
 
-    <div class="ui-element terminal" id="ui-terminal">
-        <span>INITIALIZING KERNEL...</span>
-        <span>AUTH_TOKEN: 0x0LAB0</span>
-        <span class="status-ready">SYSTEM READY</span>
+    <div class="ui-element terminal-log" id="ui-terminal">
+        <span>BUFF_OVR: CLEAR</span>
+        <span>LINK: ESTABLISHED</span>
+        <span class="ready">SYSTEM READY</span>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const wordmark = document.getElementById('wordmark');
             const grid = document.getElementById('grid');
-            const uiElements = document.querySelectorAll('.ui-element');
-            const coordsDisplay = document.getElementById('ui-coords');
+            const uiCoords = document.getElementById('ui-coords');
+            const uiStatus = document.getElementById('ui-status');
+            const uiTerminal = document.getElementById('ui-terminal');
 
-            // Initial Centering
-            wordmark.style.top = '50%';
-            wordmark.style.left = '50%';
-            wordmark.style.transform = 'translate(-50%, -50%)';
-
-            // Phase 2: Assembly (at 2.0s)
+            // Timeline:
+            // 0.0s: L starts drawing (CSS animation)
+            // 1.5s: L fills in (CSS animation)
+            
+            // 2.0s: Assemble wordmark
             setTimeout(() => {
                 wordmark.classList.add('assembled');
             }, 2000);
 
-            // Phase 3: Docking (at 3.5s)
+            // 3.5s: Dock to corner
             setTimeout(() => {
                 wordmark.classList.add('docked');
-                // Remove the manual centering to let .docked styles take over
-                wordmark.style.top = '';
-                wordmark.style.left = '';
-                wordmark.style.transform = '';
             }, 3500);
 
-            // Phase 4: UI Fade-in (at 4.0s - 4.3s)
+            // 4.5s: UI elements fade in after docking is complete
             setTimeout(() => {
-                grid.classList.add('grid-visible');
-                uiElements.forEach(el => el.classList.add('ui-visible'));
-            }, 4000);
+                grid.classList.add('ui-visible');
+                uiCoords.classList.add('ui-visible');
+                uiStatus.classList.add('ui-visible');
+                uiTerminal.classList.add('ui-visible');
+            }, 4500);
 
-            // Coordinate Tracker Logic
+            // Cursor Coordinate Tracker
             window.addEventListener('mousemove', (e) => {
-                const x = String(Math.round(e.clientX)).padStart(4, '0');
-                const y = String(Math.round(e.clientY)).padStart(4, '0');
-                coordsDisplay.innerText = `X: ${x} // Y: ${y}`;
+                const x = e.clientX.toString().padStart(4, '0');
+                const y = e.clientY.toString().padStart(4, '0');
+                uiCoords.innerText = `X-${x} // Y-${y}`;
             });
         });
     </script>
