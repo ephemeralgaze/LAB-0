@@ -15,6 +15,19 @@
             --font-header: 'Syncopate', sans-serif;
             --font-body: 'Space Grotesk', sans-serif;
             --font-mono: 'Space Mono', monospace;
+            
+            /* Metric constants for Syncopate Bold */
+            --w-l: 0.58em;
+            --w-a: 0.76em;
+            --w-b: 0.70em;
+            --w-gap: 0.20em; /* 0.1em margin-left + 0.1em letter-spacing */
+            
+            /* Initial: Center of L */
+            --center-l: calc(var(--w-l) / 2);
+            
+            /* Assembled: Center of B */
+            /* Distance: (L/2) + gap + A + (B/2) */
+            --center-b: calc(var(--w-l) + var(--w-gap) + var(--w-a) + (var(--w-b) / 2));
         }
 
         * {
@@ -72,19 +85,18 @@
             white-space: nowrap;
             z-index: 100;
             
-            /* Initial State: L centered in screen. L width ~0.58em. */
-            transform: translate(calc(50vw - 60px - 0.29em), calc(50vh - 60px - 0.4em)) scale(3.3333);
+            /* Initial State: L perfectly centered. */
+            transform: translate(calc(50vw - 60px - var(--center-l)), calc(50vh - 60px - 0.4em)) scale(3.3333);
             transition: transform 1.2s cubic-bezier(0.8, 0, 0.2, 1);
         }
 
         .l {
             display: inline-block;
-            transition: transform 1.2s cubic-bezier(0.8, 0, 0.2, 1);
+            width: var(--w-l);
         }
 
         /* 
            The Sliding Reveal Container.
-           Contains individual characters for staggered reveal.
         */
         .ab0-reveal-container {
             display: flex;
@@ -103,11 +115,10 @@
         }
 
         /* State 1: Assembled Center.
-           L slides left relative to its center, characters appear staggered.
+           B perfectly centered.
         */
         #wordmark.assembled {
-            /* Full wordmark width ~3.8em. Center at 1.9em. Offset from docked pos. */
-            transform: translate(calc(50vw - 60px - 1.9em), calc(50vh - 60px - 0.4em)) scale(3);
+            transform: translate(calc(50vw - 60px - var(--center-b)), calc(50vh - 60px - 0.4em)) scale(3);
         }
 
         #wordmark.assembled .char-wrapper {
