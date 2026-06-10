@@ -115,16 +115,26 @@ body, html {
   pointer-events: auto;
 }
 
-/* Mobile Icon (Phone) */
-.mobile-icon {
+.desktop-icon {
   width: 1.1em;
   height: 1.1em;
-  margin-left: 0.08em;
-  vertical-align: -0.05em;
+  margin-left: 0.15em;
+  flex-shrink: 0;
   stroke: currentColor;
   stroke-width: 2.5;
   fill: none;
   display: inline-block;
+}
+
+.mobile-icon {
+  width: 1.1em;
+  height: 1.1em;
+  margin-left: 0.08em;
+  flex-shrink: 0;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  fill: none;
+  display: none !important;
 }
 
 /* MOBILE HEADER */
@@ -173,7 +183,8 @@ body, html {
   #wordmark .ab0-reveal {
     position: absolute;
     left: 100%;
-    top: 0;
+    top: 50%;
+    transform: translateY(-50%);
     width: auto;
     clip-path: inset(0 100% 0 0) !important;
     white-space: nowrap;
@@ -182,6 +193,14 @@ body, html {
     transition: clip-path 0.8s var(--ease), opacity 0.4s var(--ease), visibility 0.4s var(--ease);
     display: inline-flex;
     align-items: center;
+  }
+
+  .desktop-icon {
+    display: none !important;
+  }
+
+  .mobile-icon {
+    display: inline-block !important;
   }
 
   #wordmark.docked {
@@ -638,7 +657,11 @@ body, html {
 <div class="stage">
 <div id="wordmark">
 <a id="nav-home" class="menu-item" style="font-family:inherit; font-size:inherit; letter-spacing:inherit; margin:0; padding:0; text-transform: none;">
-  <span class="l-char">L</span><span class="ab0-reveal">AB-<svg class="mobile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+  <span class="l-char">L</span><span class="ab0-reveal">AB-<svg class="desktop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+    <line x1="8" y1="21" x2="16" y2="21"></line>
+    <line x1="12" y1="17" x2="12" y2="21"></line>
+  </svg><svg class="mobile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
     <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
     <line x1="12" y1="18" x2="12" y2="18"></line>
   </svg></span>
