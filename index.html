@@ -89,7 +89,7 @@
             transform: translate(calc(-50vw + 60px + 1.9em), calc(-50vh + 45px + 0.4em)) scale(1);
         }
 
-        /* Elastic Portal Structure */
+        /* Portal Structure */
         .zero-portal {
             position: relative;
             display: inline-flex;
@@ -99,7 +99,7 @@
         .zero-char {
             display: inline-block;
             transform-origin: center;
-            transition: transform 0.6s var(--elastic);
+            /* No transformation transitions/animations applied here anymore */
         }
 
         .menu-items {
@@ -130,10 +130,6 @@
         }
 
         /* Expanded State Logic via #wordmark */
-        #wordmark.expanded .zero-char {
-            animation: stretch-open-v 0.8s var(--ease) forwards;
-        }
-
         #wordmark.expanded .menu-items {
             width: 250px;
             padding-left: 25px;
@@ -149,10 +145,6 @@
         #wordmark.expanded .menu-item:nth-child(2) { transition-delay: 0.4s; }
 
         /* Collapsing State Logic via #wordmark */
-        #wordmark.collapsing .zero-char {
-            animation: stretch-close-v 0.6s var(--ease) forwards;
-        }
-
         #wordmark.collapsing .menu-items {
             transition: width 0.4s var(--ease);
         }
@@ -161,19 +153,6 @@
             transition: none;
             opacity: 0;
             transform: translateX(-10px);
-        }
-
-        /* Vertical Stretch Animations */
-        @keyframes stretch-open-v {
-            0% { transform: scaleY(1); }
-            40% { transform: scaleY(3.0); }
-            100% { transform: scaleY(1); }
-        }
-
-        @keyframes stretch-close-v {
-            0% { transform: scaleY(1); }
-            40% { transform: scaleY(2.0); }
-            100% { transform: scaleY(1); }
         }
 
         /* Arrows Interaction */
