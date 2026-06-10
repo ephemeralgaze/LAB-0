@@ -66,13 +66,12 @@
             left: 60px;
             transform-origin: top left;
             /* Center the 'L' (visual width ~0.58em) */
-            /* Using translate -50% for vertical to center correctly within the flex row */
             transform: translate(calc(50vw - 60px), calc(50vh - 60px)) scale(3.3333) translate(-0.29em, -0.4em);
             transition: transform 1.2s cubic-bezier(0.8, 0, 0.2, 1);
             z-index: 100;
         }
 
-        /* SVG L Animation */
+        /* SVG L Container */
         .l-container {
             display: flex;
             align-items: baseline;
@@ -91,28 +90,11 @@
         }
 
         .l-glyph {
-            fill: none;
-            stroke: var(--white);
-            stroke-width: 8px;
-            stroke-linejoin: miter;
-            stroke-linecap: butt;
-            stroke-dasharray: 600;
-            stroke-dashoffset: 600;
-            animation: drawStroke 1.5s forwards linear, fadeToFill 0.3s forwards 1.5s;
+            fill: var(--white);
+            stroke: none;
             font-family: var(--font-header);
             font-weight: 700;
             font-size: 100px;
-        }
-
-        @keyframes drawStroke {
-            to { stroke-dashoffset: 0; }
-        }
-
-        @keyframes fadeToFill {
-            to { 
-                fill: var(--white);
-                stroke-width: 0;
-            }
         }
 
         /* Assembly Logic */
