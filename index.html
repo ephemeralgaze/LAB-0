@@ -198,8 +198,8 @@
                 
                 // Elliptical parameters
                 const stretchFactor = 0.4; // horizontal stretch
-                const maxRadius = Math.sqrt(Math.pow(width, 2) + Math.pow(height + 200, 2)) * 1.2;
-                const pulseOpacityPeak = 0.20;
+                const maxRadius = Math.sqrt(Math.pow(width, 2) + Math.pow(height + 200, 2)) * 1.5;
+                const pulseOpacityPeak = 0.50; // Increased peak opacity for "brighter" effect
 
                 dots.forEach(dot => {
                     const dx = dot.x - originX;
@@ -208,13 +208,14 @@
                     // Elliptical distance calculation
                     const dist = Math.sqrt(Math.pow(dx * stretchFactor, 2) + Math.pow(dy, 2));
                     
-                    // Gaussian ripple calculation
-                    const ripplePos = t * maxRadius;
-                    const spread = 400;
-                    const intensity = Math.exp(-Math.pow(dist - ripplePos, 2) / (2 * Math.pow(spread, 2)));
+                    // Gaussian marquee/sweeping wave calculation
+                    // The wave sweeps across the radius range continuously
+                    const wavePos = t * maxRadius;
+                    const spread = 600; // Wider spread for a smoother "flow"
+                    const intensity = Math.exp(-Math.pow(dist - wavePos, 2) / (2 * Math.pow(spread, 2)));
                     
                     if (intensity > 0.01) {
-                        const size = 1 + intensity * 2;
+                        const size = 1 + intensity * 2.5;
                         const opacity = 0.05 + (pulseOpacityPeak - 0.05) * intensity;
                         ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
                         ctx.beginPath();
