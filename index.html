@@ -34,6 +34,17 @@ body, html {
   -webkit-font-smoothing: antialiased;
 }
 
+/* BACKGROUND CANVAS - LOWEST LAYER */
+#visualizer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: var(--bg-color);
+  opacity: 0;
+  transition: opacity 1s var(--ease);
+  pointer-events: none;
+}
+
 /* 1px Grid Borders */
 .ui-grid {
   position: fixed;
@@ -53,7 +64,7 @@ body, html {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999; /* Ensure it's on the very top */
+  z-index: 9999;
   pointer-events: none;
 }
 
@@ -89,7 +100,6 @@ body, html {
   transform: translate(calc(-50vw + 60px + 1.9em), calc(-50vh + 45px + 0.4em)) scale(1);
 }
 
-/* Fixed Menu Items Architecture */
 .menu-items {
   position: absolute;
   left: 100%;
@@ -114,15 +124,14 @@ body, html {
 
 .ui-visible { opacity: 1; }
 
-/* NAV BACKGROUND PANEL - \"黑底\" */
 #nav-bg {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  height: 85px; /* Aligned with docking height + small margin below buttons */
+  height: 85px;
   background: var(--bg-color);
-  z-index: 9998; /* Just below navigation buttons */
+  z-index: 9998;
   pointer-events: none;
 }
 
@@ -131,7 +140,7 @@ body, html {
   position: fixed;
   inset: 0;
   background: var(--bg-color);
-  z-index: 200; /* Stays below navigation */
+  z-index: 200;
   opacity: 0;
   pointer-events: none;
   transition: opacity 1.2s var(--ease);
@@ -309,7 +318,6 @@ body, html {
   background-size: 20px 20px;
 }
 
-/* Playback Control Bar */
 .playback-bar {
   display: flex;
   align-items: center;
@@ -374,6 +382,49 @@ body, html {
   color: var(--white);
 }
 
+/* AUDIO TOGGLE STYLES */
+.audio-ctrl {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.audio-label {
+  font-size: 0.6rem;
+  color: rgba(255, 255, 255, 0.3);
+  letter-spacing: 0.15em;
+}
+
+.toggle-group {
+  display: flex;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.tgl-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.3);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  padding: 4px 12px;
+  cursor: pointer;
+  transition: all 0.3s var(--ease);
+  letter-spacing: 0.1em;
+}
+
+.tgl-btn.active {
+  background: var(--white);
+  color: var(--bg-color);
+  opacity: 1;
+}
+
+.tgl-btn:not(.active):hover {
+  color: var(--white);
+}
+
 /* Common Info Item */
 .info-item {
   display: flex;
@@ -405,7 +456,6 @@ body, html {
   text-transform: uppercase;
 }
 
-/* Navigation Active States */
 @keyframes nav-breath {
   0%, 100% { opacity: 1; filter: brightness(1.2); }
   50% { opacity: 0.85; filter: brightness(1); }
@@ -438,6 +488,7 @@ body, html {
 </head>
 <body>
 
+<canvas id="visualizer"></canvas>
 <div class="ui-grid" id="grid"></div>
 <div id="nav-bg"></div>
 
@@ -567,6 +618,14 @@ body, html {
         <span class="spec-label">Buffers:</span><span class="spec-value">Compute / G-Buffer</span>
         <span class="spec-label">Status:</span><span class="spec-value">Optimizing Kernels</span>
       </div>
+
+      <div class="audio-ctrl">
+        <span class="audio-label">SPECTRUM:</span>
+        <div class="toggle-group">
+          <button id="audio-off" class="tgl-btn active">OFF</button>
+          <button id="audio-on" class="tgl-btn">ON</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -574,89 +633,140 @@ body, html {
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-const wordmark = document.getElementById("wordmark");
-const grid = document.getElementById("grid");
-const menu = document.getElementById("menu");
-const aboutTrigger = document.getElementById("about-trigger");
-const projectsTrigger = document.getElementById("projects-trigger");
-const navHome = document.getElementById("nav-home");
-const aboutOverlay = document.getElementById("about-overlay");
-const projectsOverlay = document.getElementById("projects-overlay");
+  const wordmark = document.getElementById("wordmark");
+  const grid = document.getElementById("grid");
+  const menu = document.getElementById("menu");
+  const aboutTrigger = document.getElementById("about-trigger");
+  const projectsTrigger = document.getElementById("projects-trigger");
+  const navHome = document.getElementById("nav-home");
+  const aboutOverlay = document.getElementById("about-overlay");
+  const projectsOverlay = document.getElementById("projects-overlay");
 
-// 1.5s: Start Assembly
-setTimeout(() => {
-wordmark.classList.add("assembled");
-}, 1500);
+  // Visualizer Logic
+  const canvas = document.getElementById('visualizer');
+  const ctx = canvas.getContext('2d');
+  const audioOn = document.getElementById('audio-on');
+  const audioOff = document.getElementById('audio-off');
 
-// 3.5s: Start Docking
-setTimeout(() => {
-wordmark.classList.add("docked");
-}, 3500);
+  let audioCtx, analyser, dataArray, source;
+  let isEnabled = false;
+  let animationId;
 
-// 4.7s: UI Grid Fade-in & Menu Reveal
-setTimeout(() => {
-grid.classList.add("ui-visible");
-menu.classList.add("visible");
-}, 4700);
+  const resize = () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  };
+  window.addEventListener('resize', resize);
+  resize();
 
+  const initAudio = async () => {
+    if (audioCtx) return;
+    try {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 256;
+      source = audioCtx.createMediaStreamSource(stream);
+      source.connect(analyser);
+      dataArray = new Uint8Array(analyser.frequencyBinCount);
+    } catch (e) {
+      console.warn("Audio access denied");
+    }
+  };
 
-// Nav Active State Management
-const navItems = [navHome, projectsTrigger, aboutTrigger];
+  const draw = (time) => {
+    ctx.fillStyle = '#050505';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-const setActiveNav = (activeEl) => {
-  navItems.forEach(item => {
-    if (item) item.classList.remove("active");
+    const spacing = 30;
+    const rows = Math.ceil(canvas.height / spacing);
+    const cols = Math.ceil(canvas.width / spacing);
+
+    if (analyser) analyser.getByteFrequencyData(dataArray);
+
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < cols; j++) {
+        const x = j * spacing + spacing / 2;
+        const y = i * spacing + spacing / 2;
+        
+        let intensity = 0;
+        if (analyser) {
+          const index = Math.floor((j / cols) * dataArray.length);
+          intensity = (dataArray[index] / 255) * (1 - Math.abs(i / rows - 0.5) * 2);
+        } else {
+          intensity = (Math.sin(time * 0.002 + j * 0.2) + 1) * 0.5 * (Math.cos(time * 0.001 + i * 0.1) + 1) * 0.3;
+        }
+
+        const size = 1 + intensity * 6;
+        ctx.fillStyle = `rgba(255, 255, 255, ${0.1 + intensity * 0.7})`;
+        ctx.beginPath();
+        ctx.arc(x, y, size / 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+    animationId = requestAnimationFrame(draw);
+  };
+
+  const toggleAudio = (on) => {
+    isEnabled = on;
+    if (on) {
+      audioOn.classList.add('active');
+      audioOff.classList.remove('active');
+      canvas.style.opacity = '1';
+      initAudio().then(() => {
+        if (!animationId) draw(0);
+      });
+    } else {
+      audioOn.classList.remove('active');
+      audioOff.classList.add('active');
+      canvas.style.opacity = '0';
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+      }
+    }
+  };
+
+  audioOn.addEventListener('click', () => toggleAudio(true));
+  audioOff.addEventListener('click', () => toggleAudio(false));
+
+  // Sequence Animations
+  setTimeout(() => wordmark.classList.add("assembled"), 1500);
+  setTimeout(() => wordmark.classList.add("docked"), 3500);
+  setTimeout(() => {
+    grid.classList.add("ui-visible");
+    menu.classList.add("visible");
+  }, 4700);
+
+  // Navigation Logic
+  const navItems = [navHome, projectsTrigger, aboutTrigger];
+  const setActiveNav = (el) => {
+    navItems.forEach(item => item?.classList.remove("active"));
+    el?.classList.add("active");
+  };
+  setActiveNav(navHome);
+
+  const switchPage = (pageId, triggerEl) => {
+    setActiveNav(triggerEl);
+    aboutOverlay.classList.remove("active");
+    projectsOverlay.classList.remove("active");
+    if (pageId === 'about') aboutOverlay.classList.add("active");
+    else if (pageId === 'projects') projectsOverlay.classList.add("active");
+  };
+
+  aboutTrigger.addEventListener("click", (e) => { e.stopPropagation(); switchPage('about', aboutTrigger); });
+  projectsTrigger.addEventListener("click", (e) => { e.stopPropagation(); switchPage('projects', projectsTrigger); });
+  navHome.addEventListener("click", (e) => { e.stopPropagation(); switchPage('home', navHome); });
+
+  document.querySelectorAll('.project-entry').forEach(entry => {
+    entry.addEventListener('click', () => {
+      document.querySelectorAll('.project-entry').forEach(e => e.classList.remove('selected'));
+      entry.classList.add('selected');
+    });
   });
-  if (activeEl) activeEl.classList.add("active");
-};
 
-// Set default active (Home)
-setActiveNav(navHome);
-
-// Updated Page Switching Logic
-const switchPage = (pageId, triggerEl) => {
-  setActiveNav(triggerEl);
-  
-  aboutOverlay.classList.remove("active");
-  projectsOverlay.classList.remove("active");
-  
-  if (pageId === 'about') {
-    aboutOverlay.classList.add("active");
-  } else if (pageId === 'projects') {
-    projectsOverlay.classList.add("active");
-  }
-};
-
-aboutTrigger.addEventListener("click", (e) => {
-  e.stopPropagation();
-  switchPage('about', aboutTrigger);
-});
-
-projectsTrigger.addEventListener("click", (e) => {
-  e.stopPropagation();
-  switchPage('projects', projectsTrigger);
-});
-
-navHome.addEventListener("click", (e) => {
-  e.stopPropagation();
-  switchPage('home', navHome);
-});
-
-// Projects Item Click Logic
-const projectEntries = document.querySelectorAll('.project-entry');
-projectEntries.forEach(entry => {
-  entry.addEventListener('click', () => {
-    projectEntries.forEach(e => e.classList.remove('selected'));
-    entry.classList.add('selected');
-  });
-});
-
-// Playback Toggle
-const playBtn = document.getElementById('play-pause');
-playBtn.addEventListener('click', () => {
-  playBtn.classList.toggle('playing');
-});
-
+  const playBtn = document.getElementById('play-pause');
+  playBtn.addEventListener('click', () => playBtn.classList.toggle('playing'));
 });
 </script>
 </body>
