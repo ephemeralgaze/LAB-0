@@ -15,6 +15,7 @@
             --font-header: 'Syncopate', sans-serif;
             --font-body: 'Space Grotesk', sans-serif;
             --font-mono: 'Space Mono', monospace;
+            --ease: cubic-bezier(0.8, 0, 0.2, 1);
         }
 
         * {
@@ -73,11 +74,12 @@
             white-space: nowrap;
             letter-spacing: 0.1em;
             
-            /* Initial Scale for intro */
-            transform: scale(3.3333);
-            transition: transform 1.2s cubic-bezier(0.8, 0, 0.2, 1),
-                        top 1.2s cubic-bezier(0.8, 0, 0.2, 1),
-                        left 1.2s cubic-bezier(0.8, 0, 0.2, 1);
+            /* Center visual anchor: 
+               We start centered. In the docking phase, we transition 
+               from center (0,0) to a calculated offset.
+            */
+            transform: translate(0, 0) scale(3.3333);
+            transition: transform 1.2s var(--ease);
         }
 
         /*
@@ -87,11 +89,11 @@
         .ab0-reveal {
             display: inline-block;
             clip-path: inset(0 100% 0 0);
-            transition: clip-path 1.2s cubic-bezier(0.8, 0, 0.2, 1);
+            transition: clip-path 1.2s var(--ease);
         }
 
         #wordmark.assembled {
-            transform: scale(3);
+            transform: translate(0, 0) scale(3);
         }
 
         #wordmark.assembled .ab0-reveal {
@@ -100,14 +102,18 @@
 
         /* 
            State 2: Docking.
-           Since #wordmark is in a flex stage, we use position: fixed + top/left 
-           for the docking transition to break from center.
+           Transitions from 0,0 to the corner.
+           Corner is at top 60, left 60.
+           Viewport Center is 50vw, 50vh.
+           We translate from center (0,0) to the target coordinates.
         */
         #wordmark.docked {
-            position: fixed;
-            top: 60px;
-            left: 60px;
-            transform: scale(1);
+            /* 
+               Shift from center back to the top-left (60, 60).
+               50vw/50vh is center. 
+               Translation = Target - Current(Center).
+            */
+            transform: translate(calc(-50vw + 60px + 1.9em), calc(-50vh + 60px + 0.4em)) scale(1);
         }
 
         /* UI Elements */
@@ -211,7 +217,7 @@
                 wordmark.classList.add('assembled');
             }, 1500);
 
-            // 3.5s: Start Docking
+            // 3.5s: Start Docking (Smooth transition to corner)
             setTimeout(() => {
                 wordmark.classList.add('docked');
             }, 3500);
