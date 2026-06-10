@@ -866,27 +866,31 @@ document.addEventListener("DOMContentLoaded", function() {
   const mProjectsTrigger = document.getElementById("m-projects-trigger");
   const mAboutTrigger = document.getElementById("m-about-trigger");
 
-  // Phase 1: Startup (0s-3.5s) - Only \"L\" visible and centered (default scale 3.33)
+  // Phase 1: Startup (0s-1.5s) - Only \"L\" visible and centered (default scale 3.33)
   
-  // Phase 2: At 3.5s, dock \"L\" to the top-right corner
+  // Phase 2: At 1.5s, expand to \"LAB-monitor\" while still centered
+  setTimeout(function() {
+    if (wordmark) {
+      wordmark.classList.add("assembled");
+    }
+  }, 1500);
+
+  // Phase 3: At 3.5s, dock to the top-left corner
   setTimeout(function() { 
     if (wordmark) {
       wordmark.classList.add("docked");
     }
   }, 3500);
 
-  // Phase 3: At 4.7s, reveal the UI and the \"AB-phone\" suffix sequence
+  // Phase 4: At 4.7s, reveal the rest of the UI (grid, menu)
   setTimeout(function() {
     if (grid) grid.classList.add("ui-visible");
     if (hamburger) hamburger.classList.add("ui-visible");
     if (menu) menu.classList.add("visible");
     
-    if (wordmark) {
-        if (window.innerWidth <= 768) {
-            wordmark.classList.add("docked-final");
-        } else {
-            wordmark.classList.add("assembled");
-        }
+    // Mobile specific final dock state
+    if (wordmark && window.innerWidth <= 768) {
+        wordmark.classList.add("docked-final");
     }
   }, 4700);
 
