@@ -16,7 +16,6 @@
             --font-body: 'Space Grotesk', sans-serif;
             --font-mono: 'Space Mono', monospace;
             --ease: cubic-bezier(0.8, 0, 0.2, 1);
-            --elastic: cubic-bezier(0.68, -0.6, 0.32, 1.6);
         }
 
         * {
@@ -89,32 +88,24 @@
             transform: translate(calc(-50vw + 60px + 1.9em), calc(-50vh + 45px + 0.4em)) scale(1);
         }
 
-        /* Portal Structure */
-        .zero-portal {
-            position: relative;
-            display: inline-flex;
-            align-items: baseline;
-        }
-
-        .zero-char {
-            display: inline-block;
-            transform-origin: center;
-            /* No transformation transitions/animations applied here anymore */
-        }
-
+        /* Fixed Menu Items Architecture */
         .menu-items {
-            position: absolute; /* Lock position relative to zero-portal */
+            position: absolute;
             left: 100%;
             top: 50%;
             transform: translateY(-50%);
             display: inline-flex;
             align-items: center;
-            width: 0;
-            overflow: hidden;
-            white-space: nowrap;
-            transition: width 0.7s var(--ease);
-            padding-left: 0;
+            padding-left: 25px;
             pointer-events: none;
+            opacity: 0;
+            transition: opacity 1s var(--ease);
+        }
+
+        /* Visible when wordmark is docked */
+        #wordmark.docked .menu-items {
+            pointer-events: auto;
+            opacity: 1;
         }
 
         .menu-item {
@@ -124,100 +115,12 @@
             font-size: 0.7rem;
             letter-spacing: 0.2em;
             margin-right: 25px;
-            opacity: 0;
-            transform: translateX(-20px);
-            transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);
+            text-transform: uppercase;
+            transition: opacity 0.3s ease;
         }
 
-        /* Expanded State Logic via #wordmark */
-        #wordmark.expanded .menu-items {
-            width: 250px;
-            padding-left: 25px;
-            pointer-events: auto;
-        }
-
-        #wordmark.expanded .menu-item {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        #wordmark.expanded .menu-item:nth-child(1) { transition-delay: 0.3s; }
-        #wordmark.expanded .menu-item:nth-child(2) { transition-delay: 0.4s; }
-
-        /* Collapsing State Logic via #wordmark */
-        #wordmark.collapsing .menu-items {
-            transition: width 0.4s var(--ease);
-        }
-
-        #wordmark.collapsing .menu-item {
-            transition: none;
-            opacity: 0;
-            transform: translateX(-10px);
-        }
-
-        /* Arrows Interaction */
-        .arrows-container {
-            position: absolute;
-            left: 100%;
-            top: 50%;
-            transform: translateY(-50%);
-            display: inline-flex;
-            align-items: center;
-            margin-left: 10px;
-            height: 1em;
-            cursor: pointer;
-            pointer-events: none;
-            transition: transform 0.7s var(--ease), margin-left 0.7s var(--ease);
-            z-index: 10;
-        }
-
-        #wordmark.docked .arrows-container {
-            pointer-events: auto;
-        }
-
-        /* Dragging effect: push arrows to the right when expanded */
-        #wordmark.expanded .arrows-container {
-            transform: translate(220px, -50%);
-        }
-
-        .arrow-svg {
-            width: 14px;
-            height: 14px;
-            margin-right: -6px;
-            display: block;
-            fill: none;
-            stroke: var(--white);
-            stroke-width: 2.5;
-            stroke-linecap: square;
-            stroke-linejoin: miter;
-            stroke-miterlimit: 10;
-            opacity: 0;
-            transform: translateX(-10px) rotate(0deg);
-            transition: opacity 0.65s var(--ease), transform 0.65s var(--ease);
-            will-change: opacity, transform;
-        }
-
-        .arrow-svg:last-child { margin-right: 0; }
-
-        .arrows-container.visible .arrow-svg:nth-child(1) { opacity: 1; transform: translateX(0); transition-delay: 0s; }
-        .arrows-container.visible .arrow-svg:nth-child(2) { opacity: 1; transform: translateX(0); transition-delay: 0.12s; }
-        .arrows-container.visible .arrow-svg:nth-child(3) { opacity: 1; transform: translateX(0); transition-delay: 0.24s; }
-
-        /* Rotate arrows 180 on expansion via #wordmark.expanded */
-        #wordmark.expanded .arrows-container .arrow-svg {
-            transform: rotate(180deg);
-            transition: transform 0.5s var(--ease);
-        }
-
-        #wordmark.expanded .arrows-container .arrow-svg:nth-child(1) { transition-delay: 0.5s; }
-        #wordmark.expanded .arrows-container .arrow-svg:nth-child(2) { transition-delay: 0.6s; }
-        #wordmark.expanded .arrows-container .arrow-svg:nth-child(3) { transition-delay: 0.7s; }
-
-        /* Instant back rotation on collapse via #wordmark.collapsing */
-        #wordmark.collapsing .arrows-container .arrow-svg {
-            transform: rotate(0deg);
-            transition: transform 0.2s var(--ease);
-            transition-delay: 0s !important;
+        .menu-item:hover {
+            opacity: 0.7;
         }
 
         .ui-visible { opacity: 1; }
@@ -229,16 +132,19 @@
     <div class="ui-grid" id="grid"></div>
 
     <div class="stage">
-        <div id="wordmark">L<span class="ab0-reveal">AB-<span class="zero-portal" id="zero-portal"><span class="zero-char" id="zero-char">0</span><span class="menu-items" id="menu-items"><a href="#projects" class="menu-item">PROJECTS</a><a href="#about" class="menu-item">ABOUT</a></span></span></span><span class="arrows-container" id="arrows"><svg class="arrow-svg" viewBox="0 0 24 24"><path d="M4 4l12 8-12 8" /></svg><svg class="arrow-svg" viewBox="0 0 24 24"><path d="M4 4l12 8-12 8" /></svg><svg class="arrow-svg" viewBox="0 0 24 24"><path d="M4 4l12 8-12 8" /></svg></span></div>
+        <div id="wordmark">
+            L<span class="ab0-reveal">AB-0</span>
+            <div class="menu-items">
+                <a href="#projects" class="menu-item">PROJECTS</a>
+                <a href="#about" class="menu-item">ABOUT</a>
+            </div>
+        </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const wordmark = document.getElementById('wordmark');
             const grid = document.getElementById('grid');
-            const arrows = document.getElementById('arrows');
-
-            let isDocked = false;
 
             // 1.5s: Start Assembly
             setTimeout(() => {
@@ -248,34 +154,12 @@
             // 3.5s: Start Docking
             setTimeout(() => {
                 wordmark.classList.add('docked');
-                isDocked = true;
             }, 3500);
 
-            // 4.7s: UI Fade-in & Arrows Reveal
+            // 4.7s: UI Grid Fade-in
             setTimeout(() => {
                 grid.classList.add('ui-visible');
-                arrows.classList.add('visible');
             }, 4700);
-
-            // Toggle Elastic Menu Expansion on #wordmark
-            arrows.addEventListener('click', () => {
-                if (!isDocked) return;
-
-                if (wordmark.classList.contains('expanded')) {
-                    // Close Sequence
-                    wordmark.classList.remove('expanded');
-                    wordmark.classList.add('collapsing');
-                    
-                    // Reset collapsing state after animation completes
-                    setTimeout(() => {
-                        wordmark.classList.remove('collapsing');
-                    }, 600);
-                } else {
-                    // Open Sequence
-                    wordmark.classList.remove('collapsing');
-                    wordmark.classList.add('expanded');
-                }
-            });
         });
     </script>
 </body>
