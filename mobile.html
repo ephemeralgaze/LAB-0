@@ -832,11 +832,19 @@ document.addEventListener("DOMContentLoaded", function() {
     if (wordmark) wordmark.classList.add("docked");
   }, 3500);
 
-  setTimeout(function() {
-    if (grid) grid.classList.add("ui-visible");
-    if (hamburger) hamburger.classList.add("ui-visible");
-    if (wordmark) wordmark.classList.add("docked-final");
-  }, 4700);
+  // Use transitionend to ensure the docked transition is 100% complete before revealing the rest
+  if (wordmark) {
+    wordmark.addEventListener("transitionend", function(e) {
+      // Only fire when the main transform transition to docked state is finished
+      if (e.propertyName === "top" || e.propertyName === "transform") {
+        if (wordmark.classList.contains("docked") && !wordmark.classList.contains("docked-final")) {
+          if (grid) grid.classList.add("ui-visible");
+          if (hamburger) hamburger.classList.add("ui-visible");
+          wordmark.classList.add("docked-final");
+        }
+      }
+    });
+  }
 
   const navItems = [navHome, mNavHome, mProjectsTrigger, mAboutTrigger];
 
