@@ -65,16 +65,8 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            transition: all 1s cubic-bezier(0.8, 0, 0.2, 1);
+            transition: transform 1s cubic-bezier(0.8, 0, 0.2, 1), font-size 1s cubic-bezier(0.8, 0, 0.2, 1);
             z-index: 100;
-        }
-
-        /* Docking Style */
-        #wordmark.docked {
-            top: 60px;
-            left: 60px;
-            font-size: 1.5rem;
-            transform: translate(0, 0);
         }
 
         /* SVG L Animation */
@@ -84,7 +76,7 @@
             justify-content: center;
             width: 1em;
             height: 1em;
-            transition: transform 0.8s cubic-bezier(0.8, 0, 0.2, 1) 2s;
+            transition: transform 0.8s cubic-bezier(0.8, 0, 0.2, 1);
         }
 
         .l-svg {
@@ -119,26 +111,68 @@
 
         /* Assembly Logic */
         .ab0-container {
-            display: inline-block;
-            max-width: 0;
-            overflow: hidden;
+            position: absolute;
+            left: 1em;
+            display: flex;
+            align-items: center;
             white-space: nowrap;
             opacity: 0;
-            transition: max-width 0.8s cubic-bezier(0.8, 0, 0.2, 1) 2s, 
-                        opacity 0.6s ease-out 2s,
-                        transform 0.8s cubic-bezier(0.8, 0, 0.2, 1) 2s;
-            transform: translateX(20px) scale(0.9);
+            transform: scale(0.9);
+            transform-origin: left center;
+            transition: opacity 0.5s ease-out;
+            pointer-events: none;
         }
 
-        /* Assembly Trigger */
-        #wordmark.assembled .l-container {
-            transform: translateX(-0.1em) scale(0.9);
-        }
-
-        #wordmark.assembled .ab0-container {
-            max-width: 500px;
+        #wordmark.shifted .ab0-container {
             opacity: 1;
-            transform: translateX(0) scale(0.9);
+        }
+
+        /* Char Staggering & Geometric Extension */
+        .char-wrapper {
+            display: inline-block;
+            max-width: 0;
+            opacity: 0;
+            transform: scaleX(0) skewX(-15deg);
+            transform-origin: left;
+            transition: max-width 0.6s cubic-bezier(0.8, 0, 0.2, 1),
+                        opacity 0.4s ease-out,
+                        transform 0.6s cubic-bezier(0.8, 0, 0.2, 1);
+            transition-delay: calc(var(--index) * 0.18s);
+            white-space: nowrap;
+            overflow: hidden;
+            vertical-align: middle;
+        }
+
+        #wordmark.revealed .char-wrapper {
+            max-width: 1.2em;
+            opacity: 1;
+            transform: scaleX(1) skewX(0deg);
+        }
+
+        /* Shift L left and scale to 0.9 */
+        #wordmark.shifted {
+            transform: translate(calc(-50% - 1.1em), -50%);
+        }
+
+        #wordmark.shifted .l-container {
+            transform: scale(0.9);
+        }
+
+        /* Docking Style */
+        #wordmark.docked {
+            top: 60px;
+            left: 60px;
+            font-size: 1.5rem;
+            transform: translate(0, 0);
+        }
+
+        #wordmark.docked .l-container {
+            transform: scale(1);
+        }
+
+        #wordmark.docked .ab0-container {
+            transform: scale(1);
+            opacity: 1;
         }
 
         /* UI Elements */
@@ -217,7 +251,12 @@
                     <path class="l-fill-path" d="M15 15 V80 H70 V65 H30 V15 Z" />
                 </svg>
             </div>
-            <div class="ab0-container">AB-0</div>
+            <div class="ab0-container">
+                <span class="char-wrapper" style="--index: 0"><span class="char">A</span></span>
+                <span class="char-wrapper" style="--index: 1"><span class="char">B</span></span>
+                <span class="char-wrapper" style="--index: 2"><span class="char">-</span></span>
+                <span class="char-wrapper" style="--index: 3"><span class="char">0</span></span>
+            </div>
         </div>
     </div>
 
@@ -245,23 +284,28 @@
             const uiStatus = document.getElementById('ui-status');
             const uiTerminal = document.getElementById('ui-terminal');
 
-            // 2.0s: Assemble wordmark
+            // 2.0s: Shift L left
             setTimeout(() => {
-                wordmark.classList.add('assembled');
+                wordmark.classList.add('shifted');
             }, 2000);
 
-            // 3.5s: Dock to corner
+            // 2.8s: Reveal AB-0 characters one-by-one
+            setTimeout(() => {
+                wordmark.classList.add('revealed');
+            }, 2800);
+
+            // 4.2s: Dock to corner
             setTimeout(() => {
                 wordmark.classList.add('docked');
-            }, 3500);
+            }, 4200);
 
-            // 4.5s: UI elements fade in after docking is complete
+            // 5.2s: UI elements fade in after docking is complete
             setTimeout(() => {
                 grid.classList.add('ui-visible');
                 uiCoords.classList.add('ui-visible');
                 uiStatus.classList.add('ui-visible');
                 uiTerminal.classList.add('ui-visible');
-            }, 4500);
+            }, 5200);
 
             // Cursor Coordinate Tracker
             window.addEventListener('mousemove', (e) => {
