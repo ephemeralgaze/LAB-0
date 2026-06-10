@@ -107,7 +107,7 @@ body, html {
 
 #wordmark.assembled .ab0-reveal {
   opacity: 1;
-  clip-path: inset(-0.5em 0 -0.5em 0) !important;
+  clip-path: inset(0 0 0 0) !important;
 }
 
 #wordmark.docked {
@@ -119,22 +119,22 @@ body, html {
   width: 1.1em;
   height: 1.1em;
   margin-left: 0.15em;
-  transform: translateY(0.12em);
   stroke: currentColor;
   stroke-width: 2.5;
   fill: none;
   display: inline-block;
+  flex-shrink: 0;
 }
 
 .mobile-icon {
   width: 1.1em;
   height: 1.1em;
-  margin-left: 0.08em;
-  vertical-align: -0.05em;
+  margin-left: 0.15em;
   stroke: currentColor;
   stroke-width: 2.5;
   fill: none;
   display: none !important;
+  flex-shrink: 0;
 }
 
 /* MOBILE NAV OVERRIDES */
@@ -157,6 +157,7 @@ body, html {
     position: absolute;
     left: 100%;
     top: 0;
+    height: 100%;
     width: auto;
     clip-path: inset(0 100% 0 0) !important;
     white-space: nowrap;
@@ -165,6 +166,7 @@ body, html {
     transition: clip-path 0.8s var(--ease), opacity 0.4s var(--ease), visibility 0.4s var(--ease);
     display: inline-flex;
     align-items: center;
+    padding-left: 0.1em;
   }
 
   .desktop-icon {
@@ -760,9 +762,9 @@ body, html {
 
 <script>
 (function() {
-  const canvas = document.getElementById('dot-matrix-canvas');
+  const canvas = document.getElementById("dot-matrix-canvas");
   if (!canvas) return;
-  const ctx = canvas.getContext('2d');
+  const ctx = canvas.getContext("2d");
   let dots = [];
   let width, height, dpr;
 
@@ -808,7 +810,7 @@ body, html {
     requestAnimationFrame(draw);
   }
 
-  window.addEventListener('resize', init);
+  window.addEventListener("resize", init);
   init();
   requestAnimationFrame(draw);
 })();
@@ -832,7 +834,6 @@ document.addEventListener("DOMContentLoaded", function() {
   const isMobile = window.innerWidth <= 768;
 
   if (isMobile) {
-    // Mobile Timing
     setTimeout(function() { 
       if (wordmark) wordmark.classList.add("docked");
     }, 3500);
@@ -844,7 +845,6 @@ document.addEventListener("DOMContentLoaded", function() {
       if (wordmark) wordmark.classList.add("docked-final");
     }, 4700);
   } else {
-    // Desktop Timing
     setTimeout(function() {
       if (wordmark) wordmark.classList.add("assembled");
     }, 1500);
@@ -873,9 +873,9 @@ document.addEventListener("DOMContentLoaded", function() {
     setActiveNav(triggerEl);
     if (aboutOverlay) aboutOverlay.classList.remove("active");
     if (projectsOverlay) projectsOverlay.classList.remove("active");
-    if (pageId === 'about') {
+    if (pageId === "about") {
       if (aboutOverlay) aboutOverlay.classList.add("active");
-    } else if (pageId === 'projects') {
+    } else if (pageId === "projects") {
       if (projectsOverlay) projectsOverlay.classList.add("active");
     }
     if (hamburger) hamburger.classList.remove("open");
@@ -889,26 +889,26 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   }
 
-  if (aboutTrigger) aboutTrigger.addEventListener("click", function(e) { e.stopPropagation(); switchPage('about', aboutTrigger); });
-  if (projectsTrigger) projectsTrigger.addEventListener("click", function(e) { e.stopPropagation(); switchPage('projects', projectsTrigger); });
-  if (navHome) navHome.addEventListener("click", function(e) { e.stopPropagation(); switchPage('home', navHome); });
+  if (aboutTrigger) aboutTrigger.addEventListener("click", function(e) { e.stopPropagation(); switchPage("about", aboutTrigger); });
+  if (projectsTrigger) projectsTrigger.addEventListener("click", function(e) { e.stopPropagation(); switchPage("projects", projectsTrigger); });
+  if (navHome) navHome.addEventListener("click", function(e) { e.stopPropagation(); switchPage("home", navHome); });
 
-  if (mAboutTrigger) mAboutTrigger.addEventListener("click", function() { switchPage('about', mAboutTrigger); });
-  if (mProjectsTrigger) mProjectsTrigger.addEventListener("click", function() { switchPage('projects', mProjectsTrigger); });
-  if (mNavHome) mNavHome.addEventListener("click", function() { switchPage('home', mNavHome); });
+  if (mAboutTrigger) mAboutTrigger.addEventListener("click", function() { switchPage("about", mAboutTrigger); });
+  if (mProjectsTrigger) mProjectsTrigger.addEventListener("click", function() { switchPage("projects", mProjectsTrigger); });
+  if (mNavHome) mNavHome.addEventListener("click", function() { switchPage("home", mNavHome); });
 
-  const projectEntries = document.querySelectorAll('.project-entry');
+  const projectEntries = document.querySelectorAll(".project-entry");
   projectEntries.forEach(function(entry) {
-    entry.addEventListener('click', function() {
-      projectEntries.forEach(function(e) { e.classList.remove('selected'); });
-      entry.classList.add('selected');
+    entry.addEventListener("click", function() {
+      projectEntries.forEach(function(e) { e.classList.remove("selected"); });
+      entry.classList.add("selected");
     });
   });
 
-  const playBtn = document.getElementById('play-pause');
+  const playBtn = document.getElementById("play-pause");
   if (playBtn) {
-    playBtn.addEventListener('click', function() {
-      playBtn.classList.toggle('playing');
+    playBtn.addEventListener("click", function() {
+      playBtn.classList.toggle("playing");
     });
   }
 });
