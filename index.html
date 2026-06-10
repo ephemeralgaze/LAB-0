@@ -358,6 +358,13 @@ body, html {
   background: rgba(255, 255, 255, 0.02);
 }
 
+.video-container video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
 .video-container::before {
   content: '';
   position: absolute;
@@ -366,6 +373,48 @@ body, html {
     linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
   background-size: 20px 20px;
+  z-index: 1;
+}
+
+/* NO SIGNAL Overlay */
+.no-signal-overlay {
+  position: absolute;
+  inset: 0;
+  background: #0a0a0a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease;
+}
+
+.no-signal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.no-signal-text {
+  font-family: var(--font-mono);
+  font-size: 1.2rem;
+  color: #fff;
+  letter-spacing: 0.2em;
+  margin-bottom: 12px;
+  animation: blink 1.5s step-end infinite;
+}
+
+.no-signal-sub {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: rgba(255, 255, 255, 0.3);
+  letter-spacing: 0.1em;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
 }
 
 /* Playback Control Bar */
@@ -540,63 +589,69 @@ body, html {
 <div class="content-grid">
   <div class="col-left" style="align-items: flex-start; justify-content: flex-start; padding: 20px;">
     <div class="project-list" id="p-list">
-      <div class="project-entry selected">
+      <div class="project-entry selected" data-project="void">
         <div class="project-info">
           <span class="project-id">[01]</span>
-          <span class="project-name">NAME</span>
+          <span class="project-name">VOID</span>
         </div>
         <span class="status-tag">ACTIVE</span>
       </div>
-      <div class="project-entry">
+      <div class="project-entry" data-project="attractor">
         <div class="project-info">
           <span class="project-id">[02]</span>
-          <span class="project-name">NAME</span>
+          <span class="project-name">ATTRACTOR</span>
         </div>
-        <span class="status-tag">STANDBY</span>
+        <span class="status-tag">ACTIVE</span>
       </div>
-      <div class="project-entry">
+      <div class="project-entry" data-project="horizon">
         <div class="project-info">
           <span class="project-id">[03]</span>
-          <span class="project-name">NAME</span>
+          <span class="project-name">HORIZON</span>
         </div>
         <span class="status-tag">STANDBY</span>
       </div>
-      <div class="project-entry">
+      <div class="project-entry" data-project="quantum">
         <div class="project-info">
           <span class="project-id">[04]</span>
-          <span class="project-name">NAME</span>
+          <span class="project-name">QUANTUM</span>
         </div>
-        <span class="status-tag">STANDBY</span>
+        <span class="status-tag">ACTIVE</span>
       </div>
-      <div class="project-entry">
+      <div class="project-entry" data-project="chroma">
         <div class="project-info">
           <span class="project-id">[05]</span>
-          <span class="project-name">NAME</span>
+          <span class="project-name">CHROMA</span>
         </div>
-        <span class="status-tag">STANDBY</span>
+        <span class="status-tag">DRAFT</span>
       </div>
     </div>
   </div>
   <div class="col-right">
     <div class="spec-panel">
-      <div class="video-container"></div>
+      <div class="video-container" id="v-container">
+        <video id="p-video" playsinline muted loop></video>
+        <div class="no-signal-overlay" id="no-signal">
+          <div class="no-signal-text">[ NO SIGNAL ]</div>
+          <div class="no-signal-sub">WAITING FOR DATA...</div>
+        </div>
+      </div>
       
       <div class="playback-bar">
-        <button class="p-btn"><-1S</button>
-        <button class="p-btn"><-1F</button>
+        <button class="p-btn" id="p-back-1s">-1S</button>
+        <button class="p-btn" id="p-back-1f">-1F</button>
         <button class="p-btn play-pause" id="play-pause">
           <svg class="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
           <svg class="pause-icon" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
         </button>
-        <button class="p-btn">+1F</button>
-        <button class="p-btn">+1S</button>
+        <button class="p-btn" id="p-fwd-1f">+1F</button>
+        <button class="p-btn" id="p-fwd-1s">+1S</button>
       </div>
 
-      <div class="spec-details">
-        <span class="spec-label">Pipeline:</span><span class="spec-value">DirectX 12 / HLSL</span>
-        <span class="spec-label">Complexity:</span><span class="spec-value">8.4M Traces/s</span>
-        <span class="spec-label">Buffers:</span><span class="spec-value">Compute / G-Buffer</span>
-        <span class="spec-label">Status:</span><span class="spec-value">Optimizing Kernels</span>
+      <div class="spec-details" id="p-specs">
+        <span class="spec-label">Pipeline:</span><span class="spec-value" id="s-pipeline">---</span>
+        <span class="spec-label">Complexity:</span><span class="spec-value" id="s-complexity">---</span>
+        <span class="spec-label">Buffers:</span><span class="spec-value" id="s-buffers">---</span>
+        <span class="spec-label">Status:</span><span class="spec-value" id="s-status">---</span>
       </div>
     </div>
   </div>
@@ -668,6 +723,86 @@ document.addEventListener("DOMContentLoaded", function() {
   const aboutOverlay = document.getElementById("about-overlay");
   const projectsOverlay = document.getElementById("projects-overlay");
 
+  const pVideo = document.getElementById("p-video");
+  const noSignal = document.getElementById("no-signal");
+  const playBtn = document.getElementById("play-pause");
+  const bBack1s = document.getElementById("p-back-1s");
+  const bBack1f = document.getElementById("p-back-1f");
+  const bFwd1f = document.getElementById("p-fwd-1f");
+  const bFwd1s = document.getElementById("p-fwd-1s");
+  
+  const sPipeline = document.getElementById("s-pipeline");
+  const sComplexity = document.getElementById("s-complexity");
+  const sBuffers = document.getElementById("s-buffers");
+  const sStatus = document.getElementById("s-status");
+
+  const projectData = {
+    void: {
+      video: "void.mov",
+      pipeline: "HLSL / Compute",
+      complexity: "12.4M Particles",
+      buffers: "Structured / UAV",
+      status: "STABLE"
+    },
+    attractor: {
+      video: "",
+      pipeline: "GLSL / Vertex",
+      complexity: "Lorenz / 60FPS",
+      buffers: "VBO / VAO",
+      status: "OPTIMIZING"
+    },
+    horizon: {
+      video: "",
+      pipeline: "PBR / Raycast",
+      complexity: "Dynamic SDF",
+      buffers: "GBuffer / Depth",
+      status: "STANDBY"
+    },
+    quantum: {
+      video: "",
+      pipeline: "VFX / Compute",
+      complexity: "Q-Field Sim",
+      buffers: "Atomic / SSBO",
+      status: "ACTIVE"
+    },
+    chroma: {
+      video: "",
+      pipeline: "Post / Kernel",
+      complexity: "Multi-Pass LUT",
+      buffers: "Ping-Pong / FBO",
+      status: "DRAFT"
+    }
+  };
+
+  const updateProjectMedia = function(projectId) {
+    const data = projectData[projectId];
+    if (!data) return;
+    
+    if (pVideo) {
+      pVideo.pause();
+      if (data.video && data.video !== "") {
+        if (noSignal) noSignal.classList.remove("active");
+        pVideo.src = data.video + "#t=0.001";
+        pVideo.load();
+      } else {
+        if (noSignal) noSignal.classList.add("active");
+        pVideo.src = "";
+      }
+      playBtn.classList.remove("playing");
+    }
+    
+    if (sPipeline) sPipeline.innerText = data.pipeline;
+    if (sComplexity) sComplexity.innerText = data.complexity;
+    if (sBuffers) sBuffers.innerText = data.buffers;
+    if (sStatus) sStatus.innerText = data.status;
+  };
+
+  if (pVideo) {
+    pVideo.onerror = function() {
+      if (noSignal) noSignal.classList.add("active");
+    };
+  }
+
   // Phase 1: Startup (0s-1.5s) - Only "L" visible and centered
   
   // Phase 2: At 1.5s, expand to "LAB-monitor" while still centered
@@ -704,6 +839,7 @@ document.addEventListener("DOMContentLoaded", function() {
       if (aboutOverlay) aboutOverlay.classList.add("active");
     } else if (pageId === "projects") {
       if (projectsOverlay) projectsOverlay.classList.add("active");
+      updateProjectMedia("void");
     }
   };
 
@@ -716,13 +852,46 @@ document.addEventListener("DOMContentLoaded", function() {
     entry.addEventListener("click", function() {
       projectEntries.forEach(function(e) { e.classList.remove("selected"); });
       entry.classList.add("selected");
+      const pid = entry.getAttribute("data-project");
+      updateProjectMedia(pid);
     });
   });
 
-  const playBtn = document.getElementById("play-pause");
-  if (playBtn) {
+  if (playBtn && pVideo) {
     playBtn.addEventListener("click", function() {
-      playBtn.classList.toggle("playing");
+      if (pVideo.paused) {
+        pVideo.play();
+        playBtn.classList.add("playing");
+      } else {
+        pVideo.pause();
+        playBtn.classList.remove("playing");
+      }
+    });
+  }
+
+  const FPS = 30;
+  if (bBack1s && pVideo) {
+    bBack1s.addEventListener("click", function() {
+      pVideo.currentTime = Math.max(0, pVideo.currentTime - 1);
+    });
+  }
+  if (bBack1f && pVideo) {
+    bBack1f.addEventListener("click", function() {
+      pVideo.pause();
+      playBtn.classList.remove("playing");
+      pVideo.currentTime = Math.max(0, pVideo.currentTime - (1 / FPS));
+    });
+  }
+  if (bFwd1f && pVideo) {
+    bFwd1f.addEventListener("click", function() {
+      pVideo.pause();
+      playBtn.classList.remove("playing");
+      pVideo.currentTime = Math.min(pVideo.duration || 0, pVideo.currentTime + (1 / FPS));
+    });
+  }
+  if (bFwd1s && pVideo) {
+    bFwd1s.addEventListener("click", function() {
+      pVideo.currentTime = Math.min(pVideo.duration || 0, pVideo.currentTime + 1);
     });
   }
 });
