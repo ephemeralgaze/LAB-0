@@ -125,35 +125,35 @@
             pointer-events: none;
         }
 
-        /* Expanded State Logic */
-        .zero-portal.expanded .zero-char {
+        /* Expanded State Logic via #wordmark */
+        #wordmark.expanded .zero-char {
             animation: stretch-open 0.8s var(--ease) forwards;
         }
 
-        .zero-portal.expanded .menu-items {
+        #wordmark.expanded .menu-items {
             width: 180px;
             padding-left: 15px;
         }
 
-        .zero-portal.expanded .menu-item {
+        #wordmark.expanded .menu-item {
             opacity: 1;
             transform: translateX(0);
             pointer-events: auto;
         }
 
-        .zero-portal.expanded .menu-item:nth-child(1) { transition-delay: 0.3s; }
-        .zero-portal.expanded .menu-item:nth-child(2) { transition-delay: 0.4s; }
+        #wordmark.expanded .menu-item:nth-child(1) { transition-delay: 0.3s; }
+        #wordmark.expanded .menu-item:nth-child(2) { transition-delay: 0.4s; }
 
-        /* Collapsing State Logic */
-        .zero-portal.collapsing .zero-char {
+        /* Collapsing State Logic via #wordmark */
+        #wordmark.collapsing .zero-char {
             animation: stretch-close 0.6s var(--ease) forwards;
         }
 
-        .zero-portal.collapsing .menu-items {
+        #wordmark.collapsing .menu-items {
             transition: width 0.4s var(--ease);
         }
 
-        .zero-portal.collapsing .menu-item {
+        #wordmark.collapsing .menu-item {
             transition: none;
             opacity: 0;
             transform: translateX(-10px);
@@ -182,7 +182,7 @@
             margin-left: 10px;
             height: 1em;
             cursor: pointer;
-            pointer-events: none; /* Enabled via JS after docking */
+            pointer-events: none;
             transition: left 0.7s var(--ease);
         }
 
@@ -213,18 +213,18 @@
         .arrows-container.visible .arrow-svg:nth-child(2) { opacity: 1; transform: translateX(0); transition-delay: 0.12s; }
         .arrows-container.visible .arrow-svg:nth-child(3) { opacity: 1; transform: translateX(0); transition-delay: 0.24s; }
 
-        /* Rotate arrows 180 on expansion */
-        .zero-portal.expanded ~ .arrows-container .arrow-svg {
+        /* Rotate arrows 180 on expansion via #wordmark.expanded */
+        #wordmark.expanded .arrows-container .arrow-svg {
             transform: rotate(180deg);
             transition: transform 0.5s var(--ease);
         }
 
-        .zero-portal.expanded ~ .arrows-container .arrow-svg:nth-child(1) { transition-delay: 0.5s; }
-        .zero-portal.expanded ~ .arrows-container .arrow-svg:nth-child(2) { transition-delay: 0.6s; }
-        .zero-portal.expanded ~ .arrows-container .arrow-svg:nth-child(3) { transition-delay: 0.7s; }
+        #wordmark.expanded .arrows-container .arrow-svg:nth-child(1) { transition-delay: 0.5s; }
+        #wordmark.expanded .arrows-container .arrow-svg:nth-child(2) { transition-delay: 0.6s; }
+        #wordmark.expanded .arrows-container .arrow-svg:nth-child(3) { transition-delay: 0.7s; }
 
-        /* Instant back rotation on collapse */
-        .zero-portal.collapsing ~ .arrows-container .arrow-svg {
+        /* Instant back rotation on collapse via #wordmark.collapsing */
+        #wordmark.collapsing .arrows-container .arrow-svg {
             transform: rotate(0deg);
             transition: transform 0.2s var(--ease);
             transition-delay: 0s !important;
@@ -239,22 +239,7 @@
     <div class="ui-grid" id="grid"></div>
 
     <div class="stage">
-        <div id="wordmark">
-            L<span class="ab0-reveal">AB-
-                <span class="zero-portal" id="zero-portal">
-                    <span class="zero-char" id="zero-char">0</span>
-                    <span class="menu-items" id="menu-items">
-                        <a href="#projects" class="menu-item">PROJECTS</a>
-                        <a href="#about" class="menu-item">ABOUT</a>
-                    </span>
-                </span>
-            </span>
-            <span class="arrows-container" id="arrows">
-                <svg class="arrow-svg" viewBox="0 0 24 24"><path d="M4 4l12 8-12 8" /></svg>
-                <svg class="arrow-svg" viewBox="0 0 24 24"><path d="M4 4l12 8-12 8" /></svg>
-                <svg class="arrow-svg" viewBox="0 0 24 24"><path d="M4 4l12 8-12 8" /></svg>
-            </span>
-        </div>
+        <div id="wordmark">L<span class="ab0-reveal">AB-<span class="zero-portal" id="zero-portal"><span class="zero-char" id="zero-char">0</span><span class="menu-items" id="menu-items"><a href="#projects" class="menu-item">PROJECTS</a><a href="#about" class="menu-item">ABOUT</a></span></span></span><span class="arrows-container" id="arrows"><svg class="arrow-svg" viewBox="0 0 24 24"><path d="M4 4l12 8-12 8" /></svg><svg class="arrow-svg" viewBox="0 0 24 24"><path d="M4 4l12 8-12 8" /></svg><svg class="arrow-svg" viewBox="0 0 24 24"><path d="M4 4l12 8-12 8" /></svg></span></div>
     </div>
 
     <script>
@@ -262,7 +247,6 @@
             const wordmark = document.getElementById('wordmark');
             const grid = document.getElementById('grid');
             const arrows = document.getElementById('arrows');
-            const portal = document.getElementById('zero-portal');
 
             let isDocked = false;
 
@@ -283,23 +267,23 @@
                 arrows.classList.add('visible');
             }, 4700);
 
-            // Toggle Elastic Menu Expansion
+            // Toggle Elastic Menu Expansion on #wordmark
             arrows.addEventListener('click', () => {
                 if (!isDocked) return;
 
-                if (portal.classList.contains('expanded')) {
+                if (wordmark.classList.contains('expanded')) {
                     // Close Sequence
-                    portal.classList.remove('expanded');
-                    portal.classList.add('collapsing');
+                    wordmark.classList.remove('expanded');
+                    wordmark.classList.add('collapsing');
                     
                     // Reset collapsing state after animation completes
                     setTimeout(() => {
-                        portal.classList.remove('collapsing');
+                        wordmark.classList.remove('collapsing');
                     }, 600);
                 } else {
                     // Open Sequence
-                    portal.classList.remove('collapsing');
-                    portal.classList.add('expanded');
+                    wordmark.classList.remove('collapsing');
+                    wordmark.classList.add('expanded');
                 }
             });
         });
