@@ -55,10 +55,6 @@
             align-items: center;
         }
 
-        /* 
-           Using fixed positioning at final coordinates (60px, 60px) and font-size (1.5rem).
-           All intro states are rendered by translating from this origin using pure GPU-accelerated transforms.
-        */
         #wordmark {
             display: flex;
             align-items: baseline;
@@ -69,34 +65,35 @@
             top: 60px;
             left: 60px;
             transform-origin: top left;
-            /* 
-               Initial state: L only, centered at viewport.
-               Using em-based translate to keep the L visually static during expansion.
-            */
-            transform: translate(calc(50vw - 60px), calc(50vh - 60px)) scale(3.3333) translate(-0.29em, -50%);
+            /* Center the 'L' (visual width ~0.58em) */
+            /* Using translate -50% for vertical to center correctly within the flex row */
+            transform: translate(calc(50vw - 60px), calc(50vh - 60px)) scale(3.3333) translate(-0.29em, -0.4em);
             transition: transform 1.2s cubic-bezier(0.8, 0, 0.2, 1);
             z-index: 100;
         }
 
-        /* SVG L Animation using <text> with standard baseline alignment */
+        /* SVG L Animation */
         .l-container {
             display: flex;
             align-items: baseline;
-            width: 0.58em; /* Exact advance width for Syncopate Bold 'L' */
+            width: 0.58em;
             height: 1em;
-            transition: transform 0.8s cubic-bezier(0.8, 0, 0.2, 1);
+            position: relative;
         }
 
         .l-svg {
             width: 1em;
             height: 1em;
+            position: absolute;
+            bottom: 0;
+            left: 0;
             overflow: visible;
         }
 
         .l-glyph {
             fill: none;
             stroke: var(--white);
-            stroke-width: 6px; /* Heavy stroke to match Bold weight */
+            stroke-width: 8px;
             stroke-linejoin: miter;
             stroke-linecap: butt;
             stroke-dasharray: 600;
@@ -105,7 +102,6 @@
             font-family: var(--font-header);
             font-weight: 700;
             font-size: 100px;
-            dominant-baseline: alphabetic;
         }
 
         @keyframes drawStroke {
@@ -135,7 +131,7 @@
             opacity: 1;
         }
 
-        /* Char Staggering & Geometric Extension */
+        /* Char Staggering */
         .char-wrapper {
             display: inline-block;
             max-width: 0;
@@ -148,7 +144,7 @@
             transition-delay: calc(var(--index) * 0.12s);
             white-space: nowrap;
             overflow: hidden;
-            vertical-align: middle;
+            vertical-align: baseline;
         }
 
         #wordmark.assembled .char-wrapper {
@@ -157,21 +153,17 @@
             transform: scaleX(1) skewX(0deg);
         }
 
-        /* 
-           State 1: Assembled Center.
-           Visual center calculated to keep the 'L' static while AB-0 expands.
-        */
+        /* State 1: Assembled Center (~3.78em total width) */
         #wordmark.assembled {
-            transform: translate(calc(50vw - 60px), calc(50vh - 60px)) scale(3) translate(-1.89em, -50%);
+            transform: translate(calc(50vw - 60px), calc(50vh - 60px)) scale(3) translate(-1.89em, -0.4em);
         }
 
         #wordmark.assembled .l-container {
             transform: scale(0.9);
+            transform-origin: baseline;
         }
 
-        /* 
-           State 2: Dock to corner.
-        */
+        /* State 2: Dock to corner */
         #wordmark.docked {
             transform: translate(0, 0) scale(1) translate(0, 0);
         }
@@ -251,8 +243,8 @@
     <div class="stage">
         <div id="wordmark">
             <div class="l-container">
-                <svg class="l-svg" viewBox="0 0 58 100">
-                    <text x="0" y="80" class="l-glyph">L</text>
+                <svg class="l-svg" viewBox="0 0 100 100">
+                    <text x="0" y="100" dominant-baseline="alphabetic" class="l-glyph">L</text>
                 </svg>
             </div>
             <div class="ab0-container">
