@@ -252,6 +252,33 @@ body, html {
   color: var(--white);
   text-transform: uppercase;
 }
+
+/* Close button style */
+.close-button {
+  position: absolute;
+  top: 40px;
+  right: 40px;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  z-index: 300;
+  opacity: 0.4;
+  transition: opacity 0.3s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.close-button:hover {
+  opacity: 1;
+}
+
+.close-button svg {
+  width: 20px;
+  height: 20px;
+  stroke: var(--white);
+}
+
 </style>
 </head>
 <body>
@@ -272,6 +299,14 @@ L<span class="ab0-reveal">AB-0</span>
 <div class="overlay-frame">
 <span class="coord coord-tl">[0000, 0000]</span>
 <span class="coord coord-br" id="coord-display">[0000, 0000]</span>
+</div>
+
+<!-- Close button -->
+<div class="close-button" id="about-close">
+  <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter">
+    <line x1="18" y1="6" x2="6" y2="18"></line>
+    <line x1="6" y1="6" x2="18" y2="18"></line>
+  </svg>
 </div>
 
 <svg class="reticle" viewBox="0 0 40 40">
@@ -311,7 +346,8 @@ L<span class="ab0-reveal">AB-0</span>
       <span class="info-value" style="text-transform: none;">zgnx4ndcq5@privaterelay.appleid.com</span>
     </div>
   </div>
-</div></div></div></div>
+</div>
+</div>
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
@@ -320,6 +356,7 @@ const grid = document.getElementById("grid");
 const menu = document.getElementById("menu");
 const aboutTrigger = document.getElementById("about-trigger");
 const aboutOverlay = document.getElementById("about-overlay");
+const aboutClose = document.getElementById("about-close");
 const coordDisplay = document.getElementById("coord-display");
 
 // 1.5s: Start Assembly
@@ -344,8 +381,17 @@ e.stopPropagation();
 aboutOverlay.classList.add("active");
 });
 
+// REMOVED: click-outside to close
+/*
 aboutOverlay.addEventListener("click", () => {
 aboutOverlay.classList.remove("active");
+});
+*/
+
+// ADDED: Explicit close button logic
+aboutClose.addEventListener("click", (e) => {
+  e.stopPropagation();
+  aboutOverlay.classList.remove("active");
 });
 
 // Dynamic Coordinates
