@@ -174,12 +174,9 @@ body, html {
   }
 
   #wordmark.docked {
-    /* Aligning with hamburger (top: 30px, height: 14px -> center: 37px) */
-    /* Adjusting Y to align centers perfectly */
-    transform: translate(calc(-50vw + 30px + 0.5ch), calc(-50vh + 37px)) scale(0.65);
+    transform: translate(calc(-50vw + 25px + 1ch), calc(-50vh + 30px + 0.4em)) scale(0.65);
     justify-content: flex-start;
-    width: auto;
-    align-items: center; /* Center items instead of baseline for exact alignment */
+    width: 200px;
   }
 
   #wordmark.docked-final .ab0-reveal {
@@ -337,13 +334,11 @@ body, html {
   justify-content: center;
   align-items: center;
   overflow-y: auto;
-  visibility: hidden; /* Prevent interaction when hidden */
 }
 
 .overlay.active {
   opacity: 1;
   pointer-events: auto;
-  visibility: visible;
 }
 
 .overlay-frame {
