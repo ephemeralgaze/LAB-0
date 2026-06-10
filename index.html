@@ -242,18 +242,20 @@
             let width, height;
             let dots = [];
             
-            // Requirements: Density doubled ("halve spacing")
-            // Spacing reduced from 50px to 25px.
             const spacing = 25; 
             const baseDotSize = 0.8;
             const waveOpacityAmplitude = 0.35;
             const waveSizeAmplitude = 0.6;
-            const wavelength = 80; // Distance between peaks
-            const speed = 4; // Outward propagation speed
+            
+            // Requirements: Exactly one wave peak propagates every 4 seconds.
+            // A full period is 2 * PI radians.
+            // If we increment time by 1 every 1/60s, then in 4s (240 ticks), we want to advance by 2 * PI.
+            // speedFactor = (2 * PI) / (4 * 60)
+            const wavelength = 80; 
+            const speedFactor = (Math.PI * 2) / 240; 
             let time = 0;
 
             function resize() {
-                // High-DPI support for ultra-crisp visuals
                 const dpr = window.devicePixelRatio || 1;
                 width = window.innerWidth;
                 height = window.innerHeight;
@@ -288,20 +290,17 @@
                 for (let i = 0; i < dots.length; i++) {
                     const dot = dots[i];
                     
-                    // Math: Distance 'd' from bottom-center
                     const dx = dot.x - originX;
                     const dy = dot.y - originY;
                     const d = Math.sqrt(dx * dx + dy * dy);
                     
-                    // Requirement: Luminous Wave Propagation (modulate opacity/size only)
-                    // Static coordinates: dot.x and dot.y are used directly for rendering.
-                    const wave = Math.sin(d / wavelength - (time * speed) / wavelength);
+                    // Wave propagation calculation:
+                    // Phase = d / wavelength - time * speedFactor
+                    const phase = (d / wavelength) - (time * speedFactor);
+                    const wave = Math.sin(phase);
                     
-                    // Calculate modulated visuals
                     const opacity = Math.max(0.05, 0.15 + wave * waveOpacityAmplitude);
                     const currentSize = baseDotSize + (wave + 1) * waveSizeAmplitude;
-
-                    // Apply distance-based falloff to keep it subtle near edges
                     const falloff = Math.max(0, 1 - d / (Math.max(width, height) * 1.5));
                     
                     ctx.fillStyle = `rgba(255, 255, 255, ${opacity * falloff})`;
