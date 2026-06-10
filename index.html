@@ -135,16 +135,7 @@
             display: inline-flex;
             align-items: center;
             margin-left: 10px; /* Slight gap from the '0' */
-            opacity: 0;
-            transform: translateX(-10px);
-            transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
-            will-change: opacity, transform;
             height: 1em; /* Baseline alignment aid */
-        }
-
-        .arrows-container.visible {
-            opacity: 1;
-            transform: translateX(0);
         }
 
         .arrow-svg {
@@ -158,10 +149,35 @@
             stroke-linecap: square;
             stroke-linejoin: miter;
             stroke-miterlimit: 10; /* Ensures razor-sharp vertex */
+            
+            /* Initial state for entry animation */
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+            will-change: opacity, transform;
         }
 
         .arrow-svg:last-child {
             margin-right: 0;
+        }
+
+        /* Staggered transition delays for each arrow */
+        .arrows-container.visible .arrow-svg:nth-child(1) {
+            opacity: 1;
+            transform: translateX(0);
+            transition-delay: 0s;
+        }
+
+        .arrows-container.visible .arrow-svg:nth-child(2) {
+            opacity: 1;
+            transform: translateX(0);
+            transition-delay: 0.15s;
+        }
+
+        .arrows-container.visible .arrow-svg:nth-child(3) {
+            opacity: 1;
+            transform: translateX(0);
+            transition-delay: 0.3s;
         }
 
     </style>
