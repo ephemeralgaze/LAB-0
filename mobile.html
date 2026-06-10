@@ -347,7 +347,7 @@ body, html {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 15px;
+  gap: 8px;
   font-family: var(--font-mono);
 }
 
@@ -510,7 +510,7 @@ body, html {
   color: rgba(255, 255, 255, 0.7);
   font-size: 0.75rem;
   letter-spacing: 0.1em;
-  padding: 8px 0;
+  padding: 4px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
 }
 
@@ -531,6 +531,13 @@ body, html {
 .info-value {
   color: var(--white);
   text-transform: uppercase;
+}
+
+.info-value.email-link {
+  text-transform: none;
+  word-break: break-all;
+  text-decoration: none;
+  display: inline-block;
 }
 </style>
 </head>
@@ -601,7 +608,7 @@ body, html {
         <polyline points="22,6 12,13 2,6" />
       </svg>
       <span class="info-label">Contact</span>
-      <span class="info-value" style="text-transform: none;">zgnx4ndcq5@privaterelay...</span>
+      <a href="mailto:ephemeralgaze24@gmail.com" class="info-value email-link">ephemeralgaze24@gmail.com</a>
     </div>
   </div>
 </div>
