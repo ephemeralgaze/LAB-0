@@ -84,28 +84,35 @@
 
         /* 
            The Sliding Reveal Container.
-           Uses clip-path for a smooth geometric reveal of AB-0.
+           Contains individual characters for staggered reveal.
         */
         .ab0-reveal-container {
-            display: inline-block;
-            overflow: hidden;
+            display: flex;
+            align-items: baseline;
             margin-left: 0.1em;
             letter-spacing: 0.1em;
-            /* Start hidden: mask at x=0 */
-            clip-path: inset(0 100% 0 0);
-            transition: clip-path 1.2s cubic-bezier(0.8, 0, 0.2, 1);
+        }
+
+        .char-wrapper {
+            display: inline-block;
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: opacity 0.5s ease-out, transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transition-delay: calc(0.2s + var(--index) * 0.15s);
+            vertical-align: baseline;
         }
 
         /* State 1: Assembled Center.
-           L slides left relative to its center, container reveals.
+           L slides left relative to its center, characters appear staggered.
         */
         #wordmark.assembled {
             /* Full wordmark width ~3.8em. Center at 1.9em. Offset from docked pos. */
             transform: translate(calc(50vw - 60px - 1.9em), calc(50vh - 60px - 0.4em)) scale(3);
         }
 
-        #wordmark.assembled .ab0-reveal-container {
-            clip-path: inset(0 0 0 0);
+        #wordmark.assembled .char-wrapper {
+            opacity: 1;
+            transform: translateX(0);
         }
 
         /* State 2: Docked. No transform. */
@@ -183,7 +190,13 @@
 
     <div class="stage">
         <div id="wordmark">
-            <span class="l">L</span><span class="ab0-reveal-container">AB-0</span>
+            <span class="l">L</span>
+            <div class="ab0-reveal-container">
+                <span class="char-wrapper" style="--index: 0">A</span>
+                <span class="char-wrapper" style="--index: 1">B</span>
+                <span class="char-wrapper" style="--index: 2">-</span>
+                <span class="char-wrapper" style="--index: 3">0</span>
+            </div>
         </div>
     </div>
 
