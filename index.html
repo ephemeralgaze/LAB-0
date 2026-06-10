@@ -217,42 +217,30 @@
             const grid = document.getElementById('grid');
             const arrows = document.getElementById('arrows');
 
-            // 1.5s: Start Assembly (Static reveal)
-            setTimeout(() => {
-                wordmark.classList.add('assembled');
-            }, 1500);
-
-            // 3.5s: Start Docking (Smooth transition to corner)
-            // Duration is 1.2s, so it finishes at 4.7s.
-            setTimeout(() => {
-                wordmark.classList.add('docked');
-            }, 3500);
-
-            // 4.7s: UI Fade-in & Arrows Reveal
-            // This syncs with the exact end of the docking transition (3.5 + 1.2 = 4.7)
+            // Initial UI Animations
+            setTimeout(() => wordmark.classList.add('assembled'), 1500);
+            setTimeout(() => wordmark.classList.add('docked'), 3500);
             setTimeout(() => {
                 grid.classList.add('ui-visible');
                 arrows.classList.add('visible');
             }, 4700);
 
-            // --- Luminous Wave Dot Matrix Background ---
+            // --- Optimized Elliptical Pulse Background ---
             const canvas = document.getElementById('wave-canvas');
             const ctx = canvas.getContext('2d', { alpha: true });
             
-            let width, height;
-            let dots = [];
+            let width, height, dots = [];
             
-            const spacing = 25; 
-            const baseDotSize = 0.8;
-            const waveOpacityAmplitude = 0.35;
-            const waveSizeAmplitude = 0.6;
+            // Configuration
+            const spacing = 26; 
+            const baseDotSize = 0.7;
+            const pulseOpacity = 0.45;
+            const pulseSize = 1.2;
             
-            // Requirements: Exactly one wave peak propagates every 4 seconds.
-            // A full period is 2 * PI radians.
-            // If we increment time by 1 every 1/60s, then in 4s (240 ticks), we want to advance by 2 * PI.
-            // speedFactor = (2 * PI) / (4 * 60)
-            const wavelength = 80; 
-            const speedFactor = (Math.PI * 2) / 240; 
+            // Timing & Geometry
+            const cycleDuration = 9; // Slower frequency: 9 seconds per cycle
+            const speed = 1 / (60 * cycleDuration); 
+            const ellipseStretch = 0.4; // Flatten the ellipse
             let time = 0;
 
             function resize() {
@@ -269,42 +257,39 @@
                 dots = [];
                 const cols = Math.ceil(width / spacing) + 1;
                 const rows = Math.ceil(height / spacing) + 1;
-                
                 for (let i = 0; i < cols; i++) {
                     for (let j = 0; j < rows; j++) {
-                        dots.push({
-                            x: i * spacing,
-                            y: j * spacing
-                        });
+                        dots.push({ x: i * spacing, y: j * spacing });
                     }
                 }
             }
 
             function animate() {
-                time += 1; 
+                time += speed; 
                 ctx.clearRect(0, 0, width, height);
                 
                 const originX = width / 2;
-                const originY = height;
+                const originY = height + 200; // Origin below the screen to flatten the bottom
+                
+                // One traveling peak (Gaussian pulse)
+                const progress = time % 1; 
+                const waveRadius = progress * Math.max(width, height) * 2;
 
-                for (let i = 0; i < dots.length; i++) {
+                for (let i = 0, len = dots.length; i < len; i++) {
                     const dot = dots[i];
                     
-                    const dx = dot.x - originX;
-                    const dy = dot.y - originY;
+                    const dx = (dot.x - originX) * ellipseStretch;
+                    const dy = (dot.y - originY);
                     const d = Math.sqrt(dx * dx + dy * dy);
                     
-                    // Wave propagation calculation:
-                    // Phase = d / wavelength - time * speedFactor
-                    const phase = (d / wavelength) - (time * speedFactor);
-                    const wave = Math.sin(phase);
+                    const distFromWave = Math.abs(d - waveRadius);
+                    const intensity = Math.exp(-Math.pow(distFromWave, 2) / 15000);
                     
-                    const opacity = Math.max(0.05, 0.15 + wave * waveOpacityAmplitude);
-                    const currentSize = baseDotSize + (wave + 1) * waveSizeAmplitude;
-                    const falloff = Math.max(0, 1 - d / (Math.max(width, height) * 1.5));
+                    const opacity = Math.max(0.06, intensity * pulseOpacity);
+                    const currentSize = baseDotSize + (intensity * pulseSize);
+                    const edgeFalloff = Math.max(0, 1 - d / (Math.max(width, height) * 2.5));
                     
-                    ctx.fillStyle = `rgba(255, 255, 255, ${opacity * falloff})`;
-                    
+                    ctx.fillStyle = `rgba(255, 255, 255, ${opacity * edgeFalloff})`;
                     ctx.beginPath();
                     ctx.arc(dot.x, dot.y, currentSize, 0, Math.PI * 2);
                     ctx.fill();
