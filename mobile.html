@@ -142,6 +142,11 @@ body, html {
   pointer-events: auto;
 }
 
+/* SAFARI ALIGNMENT REFINEMENT (DOCKED STYLES) */
+#wordmark.docked-final {
+  transition: none !important;
+}
+
 .mobile-icon {
   width: 1.1em;
   height: 1.1em;
@@ -153,7 +158,7 @@ body, html {
   display: block;
 }
 
-/* MOBILE HEADER */
+/* MOBILE HEADER & CENTERING */
 #mobile-header {
   position: fixed;
   top: 0;
@@ -165,6 +170,8 @@ body, html {
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.6s var(--ease), visibility 0.6s var(--ease);
+  display: flex;
+  align-items: center;
 }
 
 #mobile-header.active {
@@ -347,7 +354,7 @@ body, html {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 8px;
+  gap: 15px;
   font-family: var(--font-mono);
 }
 
@@ -533,11 +540,15 @@ body, html {
   text-transform: uppercase;
 }
 
-.info-value.email-link {
-  text-transform: none;
-  word-break: break-all;
+.email-link {
+  color: var(--white);
   text-decoration: none;
-  display: inline-block;
+  word-break: break-all;
+  transition: opacity 0.3s ease;
+}
+
+.email-link:hover {
+  opacity: 0.7;
 }
 </style>
 </head>
@@ -608,7 +619,9 @@ body, html {
         <polyline points="22,6 12,13 2,6" />
       </svg>
       <span class="info-label">Contact</span>
-      <a href="mailto:ephemeralgaze24@gmail.com" class="info-value email-link">ephemeralgaze24@gmail.com</a>
+      <span class="info-value" style="text-transform: none;">
+        <a href="mailto:ephemeralgaze24@gmail.com" class="email-link">ephemeralgaze24@gmail.com</a>
+      </span>
     </div>
   </div>
 </div>
@@ -828,7 +841,19 @@ document.addEventListener("DOMContentLoaded", function() {
   setTimeout(function() {
     if (grid) grid.classList.add("ui-visible");
     if (hamburger) hamburger.classList.add("ui-visible");
-    if (wordmark) wordmark.classList.add("docked-final");
+    if (wordmark) {
+      wordmark.classList.add("docked-final");
+      // Safari Alignment Fix: Once docked, wrap and center properly
+      wordmark.style.position = "fixed";
+      wordmark.style.left = "30px";
+      wordmark.style.top = "0";
+      wordmark.style.height = "74px";
+      wordmark.style.width = "auto";
+      wordmark.style.transform = "scale(0.85)";
+      wordmark.style.display = "flex";
+      wordmark.style.alignItems = "center";
+      wordmark.style.zIndex = "10003";
+    }
   }, 4700);
 
   const navItems = [navHome, mNavHome, mProjectsTrigger, mAboutTrigger];
