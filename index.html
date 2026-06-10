@@ -660,7 +660,12 @@ document.addEventListener("DOMContentLoaded", () => {
   resize();
 
   const initAudio = async () => {
-    if (audioCtx) return;
+    if (audioCtx) {
+      if (audioCtx.state === 'suspended') {
+        await audioCtx.resume();
+      }
+      return;
+    }
     try {
       audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -670,11 +675,13 @@ document.addEventListener("DOMContentLoaded", () => {
       source.connect(analyser);
       dataArray = new Uint8Array(analyser.frequencyBinCount);
     } catch (e) {
-      console.warn("Audio access denied");
+      console.warn("Audio access denied", e);
     }
   };
 
   const draw = (time) => {
+    if (!isEnabled) return;
+    
     ctx.fillStyle = '#050505';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -682,7 +689,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const rows = Math.ceil(canvas.height / spacing);
     const cols = Math.ceil(canvas.width / spacing);
 
-    if (analyser) analyser.getByteFrequencyData(dataArray);
+    if (analyser && audioCtx.state === 'running') {
+      analyser.getByteFrequencyData(dataArray);
+    }
 
     for (let i = 0; i < rows; i++) {
       for (let j = 0; j < cols; j++) {
@@ -690,15 +699,16 @@ document.addEventListener("DOMContentLoaded", () => {
         const y = i * spacing + spacing / 2;
         
         let intensity = 0;
-        if (analyser) {
+        if (analyser && audioCtx.state === 'running') {
           const index = Math.floor((j / cols) * dataArray.length);
           intensity = (dataArray[index] / 255) * (1 - Math.abs(i / rows - 0.5) * 2);
         } else {
+          // Ambient fallback
           intensity = (Math.sin(time * 0.002 + j * 0.2) + 1) * 0.5 * (Math.cos(time * 0.001 + i * 0.1) + 1) * 0.3;
         }
 
-        const size = 1 + intensity * 6;
-        ctx.fillStyle = `rgba(255, 255, 255, ${0.1 + intensity * 0.7})`;
+        const size = 1.5 + intensity * 6;
+        ctx.fillStyle = `rgba(255, 255, 255, ${0.15 + intensity * 0.7})`;
         ctx.beginPath();
         ctx.arc(x, y, size / 2, 0, Math.PI * 2);
         ctx.fill();
@@ -707,15 +717,14 @@ document.addEventListener("DOMContentLoaded", () => {
     animationId = requestAnimationFrame(draw);
   };
 
-  const toggleAudio = (on) => {
+  const toggleAudio = async (on) => {
     isEnabled = on;
     if (on) {
       audioOn.classList.add('active');
       audioOff.classList.remove('active');
       canvas.style.opacity = '1';
-      initAudio().then(() => {
-        if (!animationId) draw(0);
-      });
+      await initAudio();
+      if (!animationId) draw(performance.now());
     } else {
       audioOn.classList.remove('active');
       audioOff.classList.add('active');
@@ -727,8 +736,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  audioOn.addEventListener('click', () => toggleAudio(true));
-  audioOff.addEventListener('click', () => toggleAudio(false));
+  audioOn.addEventListener('click', (e) => {
+    e.preventDefault();
+    toggleAudio(true);
+  });
+  audioOff.addEventListener('click', (e) => {
+    e.preventDefault();
+    toggleAudio(false);
+  });
 
   // Sequence Animations
   setTimeout(() => wordmark.classList.add("assembled"), 1500);
