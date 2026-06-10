@@ -120,30 +120,33 @@ body, html {
 .mobile-icon {
   width: 14px;
   height: 14px;
-  margin-left: 0.2em;
+  margin-left: 0.25em;
   vertical-align: baseline;
   stroke: currentColor;
   stroke-width: 2.5;
   fill: none;
   display: inline-block;
   opacity: 0;
-  transition: opacity 0.4s var(--ease);
+  transform: translateX(-5px);
+  transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
 }
 
 /* MOBILE NAV OVERRIDES */
 @media (max-width: 768px) {
   #wordmark {
-    width: 2ch; /* Forced width of initial 'L' plus letter-spacing for centering */
+    width: 1ch; /* Strict width of single 'L' for absolute centering */
     overflow: visible;
+    letter-spacing: 0;
   }
 
   #wordmark.assembled .ab0-reveal {
-    clip-path: inset(0 100% 0 0) !important; /* Keep AB-0 hidden in center */
+    clip-path: inset(0 100% 0 0) !important; /* Keep AB- hidden in center */
   }
   
   #wordmark.docked {
     transform: translate(calc(-50vw + 40px + 1.9em), calc(-50vh + 40px + 0.4em)) scale(0.8);
     width: auto;
+    letter-spacing: 0.1em;
   }
 
   /* Transition text to 'LAB-' with Phone Icon via sliding mask */
@@ -153,6 +156,7 @@ body, html {
 
   #wordmark.docked-final .mobile-icon {
     opacity: 1;
+    transform: translateX(0);
   }
 
   .ui-grid { margin: 10px; }
