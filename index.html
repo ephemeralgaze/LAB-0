@@ -118,10 +118,10 @@ body, html {
 
 /* Mobile Icon (Phone) */
 .mobile-icon {
-  width: 14px;
-  height: 14px;
-  margin-left: 0.25em;
-  vertical-align: baseline;
+  width: 1.1em;
+  height: 1.1em;
+  margin-left: 0.2em;
+  vertical-align: -0.15em;
   stroke: currentColor;
   stroke-width: 2.5;
   fill: none;
@@ -134,22 +134,35 @@ body, html {
 /* MOBILE NAV OVERRIDES */
 @media (max-width: 768px) {
   #wordmark {
-    width: 1ch; /* Strict width of single 'L' for absolute centering */
-    overflow: visible;
+    width: auto;
     letter-spacing: 0;
+    /* Ensure the container itself is centered and only 'L' is visible */
+    margin-right: -0.1em; /* Micro-adjustment to account for Syncopate 'L' side-bearing if needed */
+  }
+
+  .l-char {
+    display: inline-block;
+    text-align: center;
   }
 
   #wordmark.assembled .ab0-reveal {
     clip-path: inset(0 100% 0 0) !important; /* Keep AB- hidden in center */
+    width: 0; /* Collapse width so it doesn't offset centering */
+    overflow: hidden;
   }
   
   #wordmark.docked {
     transform: translate(calc(-50vw + 40px + 1.9em), calc(-50vh + 40px + 0.4em)) scale(0.8);
-    width: auto;
     letter-spacing: 0.1em;
+    margin-right: 0;
   }
 
   /* Transition text to 'LAB-' with Phone Icon via sliding mask */
+  #wordmark.docked .ab0-reveal {
+    width: auto;
+    overflow: visible;
+  }
+
   #wordmark.docked-final .ab0-reveal {
     clip-path: inset(0 0 0 0) !important;
   }
@@ -596,7 +609,7 @@ body, html {
 <div id="wordmark">
 <a id="nav-home" class="menu-item" style="font-family:inherit; font-size:inherit; letter-spacing:inherit; margin:0; padding:0; text-transform: none;">
   <span class="l-char">L</span><span class="ab0-reveal">AB-</span>
-  <svg class="mobile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <svg class="mobile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
     <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
     <line x1="12" y1="18" x2="12" y2="18"></line>
   </svg>
