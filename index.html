@@ -172,8 +172,11 @@
             function resize() {
                 width = window.innerWidth;
                 height = window.innerHeight;
-                canvas.width = width;
-                canvas.height = height;
+                canvas.width = width * window.devicePixelRatio;
+                canvas.height = height * window.devicePixelRatio;
+                canvas.style.width = width + 'px';
+                canvas.style.height = height + 'px';
+                ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
                 
                 dots.length = 0;
                 for (let x = 0; x < width; x += dotSpacing) {
@@ -196,9 +199,7 @@
                 // Elliptical parameters
                 const stretchFactor = 0.4; // horizontal stretch
                 const maxRadius = Math.sqrt(Math.pow(width, 2) + Math.pow(height + 200, 2)) * 1.2;
-                const pulseOpacity = 0.20;
-
-                ctx.fillStyle = `rgba(255, 255, 255, ${pulseOpacity})`;
+                const pulseOpacityPeak = 0.20;
 
                 dots.forEach(dot => {
                     const dx = dot.x - originX;
@@ -214,13 +215,13 @@
                     
                     if (intensity > 0.01) {
                         const size = 1 + intensity * 2;
-                        const opacity = pulseOpacity * intensity;
-                        ctx.globalAlpha = opacity;
+                        const opacity = 0.05 + (pulseOpacityPeak - 0.05) * intensity;
+                        ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
                         ctx.beginPath();
                         ctx.arc(dot.x, dot.y, size / 2, 0, Math.PI * 2);
                         ctx.fill();
                     } else {
-                        ctx.globalAlpha = 0.05; // Base faint dots
+                        ctx.fillStyle = 'rgba(255, 255, 255, 0.05)'; // Base faint dots
                         ctx.fillRect(dot.x, dot.y, 1, 1);
                     }
                 });
