@@ -82,7 +82,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.8s cubic-bezier(0.8, 0, 0.2, 1);
+            transition: transform 0.8s cubic-bezier(0.8, 0, 0.2, 1) 2s; /* Delays transform until assembly phase */
         }
 
         .l-svg {
@@ -120,13 +120,13 @@
             overflow: hidden;
             white-space: nowrap;
             opacity: 0;
-            transition: max-width 0.8s cubic-bezier(0.8, 0, 0.2, 1), 
-                        opacity 0.6s ease-out,
-                        transform 0.8s cubic-bezier(0.8, 0, 0.2, 1);
-            transform: translateX(20px);
+            transition: max-width 0.8s cubic-bezier(0.8, 0, 0.2, 1) 2s, 
+                        opacity 0.6s ease-out 2s,
+                        transform 0.8s cubic-bezier(0.8, 0, 0.2, 1) 2s;
+            transform: translateX(20px) scale(0.9); /* Starts at scale 0.9 to match L when it scales down */
         }
 
-        /* Assembly Trigger (at 2.0s) */
+        /* Assembly Trigger (at 2.0s via JavaScript class) */
         #wordmark.assembled .l-container {
             transform: translateX(-0.1em) scale(0.9);
         }
@@ -134,7 +134,7 @@
         #wordmark.assembled .ab0-container {
             max-width: 500px;
             opacity: 1;
-            transform: translateX(0);
+            transform: translateX(0) scale(0.9);
         }
 
         /* UI Elements */
