@@ -56,7 +56,7 @@ body, html {
   pointer-events: none;
 }
 
-/* 1px Grid Borders - REMOVED BORDERS */
+/* 1px Grid Borders */
 .ui-grid {
   position: fixed;
   inset: 0;
@@ -91,7 +91,7 @@ body, html {
   letter-spacing: 0.1em;
   transform: scale(3.3333);
   transition: transform 1.2s var(--ease), opacity 0.8s ease;
-  will-change: transform, clip-path;
+  will-change: transform;
   opacity: 1;
 }
 
@@ -99,7 +99,7 @@ body, html {
   display: inline-flex;
   align-items: baseline;
   clip-path: inset(0 100% 0 0);
-  transition: clip-path 1.2s var(--ease);
+  transition: clip-path 1.2s var(--ease), width 1.2s var(--ease);
   will-change: clip-path;
 }
 
@@ -125,51 +125,40 @@ body, html {
   stroke: currentColor;
   stroke-width: 2.5;
   fill: none;
-  display: inline-block;
+  display: none; /* Only used on mobile */
   opacity: 0;
-  transform: translateX(-5px);
-  transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
+  transition: opacity 0.6s var(--ease);
 }
 
 /* MOBILE NAV OVERRIDES */
 @media (max-width: 768px) {
   #wordmark {
-    width: auto;
     letter-spacing: 0;
-    /* Ensure the container itself is centered and only 'L' is visible */
-    margin-right: -0.1em; /* Micro-adjustment to account for Syncopate 'L' side-bearing if needed */
+    transform: scale(3.3333);
   }
 
-  .l-char {
-    display: inline-block;
-    text-align: center;
-  }
-
-  #wordmark.assembled .ab0-reveal {
-    clip-path: inset(0 100% 0 0) !important; /* Keep AB- hidden in center */
-    width: 0; /* Collapse width so it doesn't offset centering */
+  /* Force AB-0 segment to have ZERO layout footprint during center phase */
+  #wordmark .ab0-reveal {
+    width: 0;
     overflow: hidden;
+    clip-path: inset(0 100% 0 0) !important;
   }
-  
+
   #wordmark.docked {
     transform: translate(calc(-50vw + 40px + 1.9em), calc(-50vh + 40px + 0.4em)) scale(0.8);
-    letter-spacing: 0.1em;
-    margin-right: 0;
   }
 
-  /* Transition text to 'LAB-' with Phone Icon via sliding mask */
-  #wordmark.docked .ab0-reveal {
+  /* Reveal AB-[phone] ONLY after arrival in corner */
+  #wordmark.docked-final .ab0-reveal {
     width: auto;
     overflow: visible;
-  }
-
-  #wordmark.docked-final .ab0-reveal {
     clip-path: inset(0 0 0 0) !important;
+    transition: clip-path 0.8s var(--ease);
   }
 
   #wordmark.docked-final .mobile-icon {
+    display: inline-block;
     opacity: 1;
-    transform: translateX(0);
   }
 
   .ui-grid { margin: 10px; }
