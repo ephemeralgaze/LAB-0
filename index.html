@@ -1,321 +1,301 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LAB-0</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-color: #050505;
-            --white: #ffffff;
-            --grid-color: rgba(255, 255, 255, 0.1);
-            --font-header: 'Syncopate', sans-serif;
-            --font-body: 'Space Grotesk', sans-serif;
-            --font-mono: 'Space Mono', monospace;
-            --ease: cubic-bezier(0.8, 0, 0.2, 1);
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LAB-0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+--bg-color: #050505;
+--white: #ffffff;
+--grid-color: rgba(255, 255, 255, 0.1);
+--font-header: "Syncopate", sans-serif;
+--font-body: "Space Grotesk", sans-serif;
+--font-mono: "Space Mono", monospace;
+--ease: cubic-bezier(0.8, 0, 0.2, 1);
+}
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
 
-        body, html {
-            width: 100%;
-            height: 100%;
-            background-color: var(--bg-color);
-            color: var(--white);
-            overflow: hidden;
-            font-family: var(--font-body);
-            -webkit-font-smoothing: antialiased;
-        }
+body, html {
+width: 100%;
+height: 100%;
+background-color: var(--bg-color);
+color: var(--white);
+overflow: hidden;
+font-family: var(--font-body);
+-webkit-font-smoothing: antialiased;
+}
 
-        /* 1px Grid Borders */
-        .ui-grid {
-            position: fixed;
-            inset: 0;
-            border: 1px solid var(--grid-color);
-            margin: 20px;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 1s ease-out;
-            z-index: 5;
-        }
+/* 1px Grid Borders */
+.ui-grid {
+position: fixed;
+inset: 0;
+border: 1px solid var(--grid-color);
+margin: 20px;
+pointer-events: none;
+opacity: 0;
+transition: opacity 1s ease-out;
+z-index: 5;
+}
 
-        .stage {
-            position: fixed;
-            inset: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-            pointer-events: none;
-        }
+.stage {
+position: fixed;
+inset: 0;
+display: flex;
+justify-content: center;
+align-items: center;
+z-index: 100;
+pointer-events: none;
+}
 
-        #wordmark {
-            position: relative;
-            display: flex;
-            align-items: baseline;
-            font-family: var(--font-header);
-            font-weight: 700;
-            font-size: 1.5rem;
-            white-space: nowrap;
-            letter-spacing: 0.1em;
-            transform: translate(0, 0) scale(3.3333);
-            transition: transform 1.2s var(--ease);
-        }
+#wordmark {
+position: relative;
+display: flex;
+align-items: baseline;
+font-family: var(--font-header);
+font-weight: 700;
+font-size: 1.5rem;
+white-space: nowrap;
+letter-spacing: 0.1em;
+transform: translate(0, 0) scale(3.3333);
+transition: transform 1.2s var(--ease);
+}
 
-        .ab0-reveal {
-            display: inline-flex;
-            align-items: baseline;
-            clip-path: inset(0 100% 0 0);
-            transition: clip-path 1.2s var(--ease);
-        }
+.ab0-reveal {
+display: inline-flex;
+align-items: baseline;
+clip-path: inset(0 100% 0 0);
+transition: clip-path 1.2s var(--ease);
+}
 
-        #wordmark.assembled {
-            transform: translate(0, 0) scale(3);
-        }
+#wordmark.assembled {
+transform: translate(0, 0) scale(3);
+}
 
-        #wordmark.assembled .ab0-reveal {
-            clip-path: inset(0 0 0 0);
-        }
+#wordmark.assembled .ab0-reveal {
+clip-path: inset(0 0 0 0);
+}
 
-        #wordmark.docked {
-            transform: translate(calc(-50vw + 60px + 1.9em), calc(-50vh + 45px + 0.4em)) scale(1);
-        }
+#wordmark.docked {
+transform: translate(calc(-50vw + 60px + 1.9em), calc(-50vh + 45px + 0.4em)) scale(1);
+}
 
-        /* Fixed Menu Items Architecture */
-        .menu-items {
-            position: absolute;
-            left: 100%;
-            top: 50%;
-            transform: translateY(-50%);
-            display: inline-flex;
-            align-items: center;
-            padding-left: 25px;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 1s var(--ease);
-        }
+/* Fixed Menu Items Architecture */
+.menu-items {
+position: absolute;
+left: 100%;
+top: 50%;
+transform: translateY(-50%);
+display: inline-flex;
+align-items: center;
+padding-left: 25px;
+pointer-events: none;
+opacity: 0;
+transition: opacity 1s var(--ease);
+}
 
-        /* Visible when wordmark is docked and UI grid is visible (stable phase) */
-        #wordmark.docked .menu-items.visible {
-            pointer-events: auto;
-            opacity: 1;
-        }
+/* Visible when wordmark is docked and UI grid is visible (stable phase) */
+#wordmark.docked .menu-items.visible {
+pointer-events: auto;
+opacity: 1;
+}
 
-        .menu-item {
-            color: var(--white);
-            text-decoration: none;
-            font-family: var(--font-mono);
-            font-size: 0.7rem;
-            letter-spacing: 0.2em;
-            margin-right: 25px;
-            text-transform: uppercase;
-            transition: opacity 0.3s ease;
-            cursor: pointer;
-        }
+.menu-item {
+color: var(--white);
+text-decoration: none;
+font-family: var(--font-mono);
+font-size: 0.7rem;
+letter-spacing: 0.2em;
+margin-right: 25px;
+text-transform: uppercase;
+transition: opacity 0.3s ease;
+cursor: pointer;
+}
 
-        .menu-item:hover {
-            opacity: 0.7;
-        }
+.menu-item:hover {
+opacity: 0.7;
+}
 
-        .ui-visible { opacity: 1; }
+.ui-visible { opacity: 1; }
 
-        /* ABOUT OVERLAY STYLES */
-        #about-overlay {
-            position: fixed;
-            inset: 0;
-            background: var(--bg-color);
-            z-index: 200;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 1.2s var(--ease);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+/* ABOUT OVERLAY STYLES */
+#about-overlay {
+position: fixed;
+inset: 0;
+background: var(--bg-color);
+z-index: 200;
+opacity: 0;
+pointer-events: none;
+transition: opacity 1.2s var(--ease);
+display: flex;
+justify-content: center;
+align-items: center;
+}
 
-        #about-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
+#about-overlay.active {
+opacity: 1;
+pointer-events: auto;
+}
 
-        .overlay-frame {
-            position: absolute;
-            inset: 40px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            pointer-events: none;
-        }
+.overlay-frame {
+position: absolute;
+inset: 40px;
+border: 1px solid rgba(255, 255, 255, 0.08);
+pointer-events: none;
+}
 
-        .coord {
-            position: absolute;
-            font-family: var(--font-mono);
-            font-size: 10px;
-            color: rgba(255, 255, 255, 0.4);
-            letter-spacing: 0.1em;
-        }
-        .coord-tl { top: -20px; left: 0; }
-        .coord-br { bottom: -20px; right: 0; }
+.coord {
+position: absolute;
+font-family: var(--font-mono);
+font-size: 10px;
+color: rgba(255, 255, 255, 0.4);
+letter-spacing: 0.1em;
+}
+.coord-tl { top: -20px; left: 0; }
+.coord-br { bottom: -20px; right: 0; }
 
-        .reticle {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 40px;
-            height: 40px;
-            transform: translate(-50%, -50%);
-            opacity: 0.15;
-        }
+.reticle {
+position: absolute;
+top: 50%;
+left: 50%;
+width: 40px;
+height: 40px;
+transform: translate(-50%, -50%);
+opacity: 0.15;
+}
 
-        .content-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 80px;
-            width: 100%;
-            max-width: 1200px;
-            padding: 80px;
-            pointer-events: auto;
-        }
+.content-grid {
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 40px;
+width: 100%;
+max-width: 1200px;
+padding: 80px;
+pointer-events: auto;
+}
 
-        .col-left {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            line-height: 2;
-            color: rgba(255, 255, 255, 0.7);
-        }
+.user-profile {
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 20px;
+}
 
-        .col-left h3 {
-            font-size: 12px;
-            margin-bottom: 20px;
-            letter-spacing: 0.2em;
-            color: var(--white);
-        }
+.avatar {
+width: 120px;
+height: 120px;
+border-radius: 50%;
+border: 1px solid rgba(255, 255, 255, 0.2);
+padding: 5px;
+background: rgba(255, 255, 255, 0.05);
+}
 
-        .param-row {
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 4px 0;
-        }
+.avatar img {
+width: 100%;
+height: 100%;
+border-radius: 50%;
+object-fit: cover;
+}
 
-        .col-right {
-            font-family: var(--font-body);
-            font-weight: 300;
-            font-size: 14px;
-            line-height: 1.8;
-            letter-spacing: 0.05em;
-        }
+.username {
+font-family: var(--font-header);
+font-size: 1.2rem;
+letter-spacing: 0.2em;
+color: var(--white);
+text-transform: uppercase;
+}
 
-        .col-right h3 {
-            font-family: var(--font-mono);
-            font-size: 12px;
-            margin-bottom: 20px;
-            letter-spacing: 0.2em;
-        }
-
-        .manifesto-line {
-            margin-bottom: 10px;
-            border-left: 2px solid rgba(255, 255, 255, 0.2);
-            padding-left: 15px;
-        }
-
-    </style>
+</style>
 </head>
 <body>
 
-    <div class="ui-grid" id="grid"></div>
+<div class="ui-grid" id="grid"></div>
 
-    <div class="stage">
-        <div id="wordmark">
-            L<span class="ab0-reveal">AB-0</span>
-            <div class="menu-items" id="menu">
-                <a class="menu-item">PROJECTS</a>
-                <a id="about-trigger" class="menu-item">ABOUT</a>
-            </div>
-        </div>
-    </div>
+<div class="stage">
+<div id="wordmark">
+L<span class="ab0-reveal">AB-0</span>
+<div class="menu-items" id="menu">
+<a class="menu-item">PROJECTS</a>
+<a id="about-trigger" class="menu-item">ABOUT</a>
+</div>
+</div>
+</div>
 
-    <div id="about-overlay">
-        <div class="overlay-frame">
-            <span class="coord coord-tl">[0000, 0000]</span>
-            <span class="coord coord-br" id="coord-display">[0000, 0000]</span>
-        </div>
-        
-        <svg class="reticle" viewBox="0 0 40 40">
-            <line x1="20" y1="0" x2="20" y2="40" stroke="white" stroke-width="1"/>
-            <line x1="0" y1="20" x2="40" y2="20" stroke="white" stroke-width="1"/>
-        </svg>
+<div id="about-overlay">
+<div class="overlay-frame">
+<span class="coord coord-tl">[0000, 0000]</span>
+<span class="coord coord-br" id="coord-display">[0000, 0000]</span>
+</div>
 
-        <div class="content-grid">
-            <div class="col-left">
-                <h3>SYSTEM PARAMETERS</h3>
-                <div class="param-row"><span>LATITUDE</span><span>45.7564 N</span></div>
-                <div class="param-row"><span>LONGITUDE</span><span>126.6418 E</span></div>
-                <div class="param-row"><span>LOC</span><span>HRB_ICE_CITY</span></div>
-                <div class="param-row"><span>UNIT_HEIGHT</span><span>1880MM</span></div>
-                <div class="param-row"><span>MASS</span><span>120.00KG</span></div>
-                <div class="param-row"><span>SHADER_STATUS</span><span>OK</span></div>
-                <div class="param-row"><span>REF_IDX</span><span>1.000</span></div>
-            </div>
-            <div class="col-right">
-                <h3>DEVELOPER MANIFESTO</h3>
-                <div class="manifesto-line">VFX_ARTIST // HLSL_SHADER</div>
-                <div class="manifesto-line">GPU_OPTIMIZATION // C#_KERNEL</div>
-                <div class="manifesto-line">PROCEDURAL_GENERATION // PBR</div>
-            </div>
-        </div>
-    </div>
+<svg class="reticle" viewBox="0 0 40 40">
+<line x1="20" y1="0" x2="20" y2="40" stroke="white" stroke-width="1"/>
+<line x1="0" y1="20" x2="40" y2="20" stroke="white" stroke-width="1"/>
+</svg>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const wordmark = document.getElementById('wordmark');
-            const grid = document.getElementById('grid');
-            const menu = document.getElementById('menu');
-            const aboutTrigger = document.getElementById('about-trigger');
-            const aboutOverlay = document.getElementById('about-overlay');
-            const coordDisplay = document.getElementById('coord-display');
+<div class="content-grid">
+<div class="user-profile">
+<div class="avatar">
+<img src="https://avatars.githubusercontent.com/u/291265014?v=4" alt="ephemeralgaze">
+</div>
+<div class="username">ephemeralgaze</div>
+</div>
+</div>
+</div>
 
-            // 1.5s: Start Assembly
-            setTimeout(() => {
-                wordmark.classList.add('assembled');
-            }, 1500);
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+const wordmark = document.getElementById("wordmark");
+const grid = document.getElementById("grid");
+const menu = document.getElementById("menu");
+const aboutTrigger = document.getElementById("about-trigger");
+const aboutOverlay = document.getElementById("about-overlay");
+const coordDisplay = document.getElementById("coord-display");
 
-            // 3.5s: Start Docking
-            setTimeout(() => {
-                wordmark.classList.add('docked');
-            }, 3500);
+// 1.5s: Start Assembly
+setTimeout(() => {
+wordmark.classList.add("assembled");
+}, 1500);
 
-            // 4.7s: UI Grid Fade-in & Menu Reveal
-            setTimeout(() => {
-                grid.classList.add('ui-visible');
-                menu.classList.add('visible');
-            }, 4700);
+// 3.5s: Start Docking
+setTimeout(() => {
+wordmark.classList.add("docked");
+}, 3500);
 
-            // About Overlay Toggle
-            aboutTrigger.addEventListener('click', (e) => {
-                e.stopPropagation();
-                aboutOverlay.classList.add('active');
-            });
+// 4.7s: UI Grid Fade-in & Menu Reveal
+setTimeout(() => {
+grid.classList.add("ui-visible");
+menu.classList.add("visible");
+}, 4700);
 
-            aboutOverlay.addEventListener('click', () => {
-                aboutOverlay.classList.remove('active');
-            });
+// About Overlay Toggle
+aboutTrigger.addEventListener("click", (e) => {
+e.stopPropagation();
+aboutOverlay.classList.add("active");
+});
 
-            // Dynamic Coordinates
-            function updateCoords() {
-                const w = window.innerWidth.toString().padStart(4, '0');
-                const h = window.innerHeight.toString().padStart(4, '0');
-                coordDisplay.textContent = `[${w}, ${h}]`;
-            }
+aboutOverlay.addEventListener("click", () => {
+aboutOverlay.classList.remove("active");
+});
 
-            window.addEventListener('resize', updateCoords);
-            updateCoords();
-        });
-    </script>
+// Dynamic Coordinates
+function updateCoords() {
+const w = window.innerWidth.toString().padStart(4, "0");
+const h = window.innerHeight.toString().padStart(4, "0");
+coordDisplay.textContent = "[" + w + ", " + h + "]";
+}
+
+window.addEventListener("resize", updateCoords);
+updateCoords();
+});
+</script>
 </body>
 </html>
