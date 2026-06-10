@@ -133,11 +133,13 @@
         /* Arrows Styling */
         .arrows-container {
             display: inline-flex;
-            margin-left: 4px;
+            align-items: center;
+            margin-left: 10px; /* Slight gap from the '0' */
             opacity: 0;
             transform: translateX(-10px);
             transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
             will-change: opacity, transform;
+            height: 1em; /* Baseline alignment aid */
         }
 
         .arrows-container.visible {
@@ -145,16 +147,20 @@
             transform: translateX(0);
         }
 
-        .arrow {
-            font-family: var(--font-mono);
-            font-weight: 400;
-            font-size: 0.9em;
-            margin-right: -4px; /* Tight spacing */
-            color: var(--white);
-            display: inline-block;
+        .arrow-svg {
+            width: 14px;
+            height: 14px;
+            margin-right: -6px; /* Tight aggressive overlap */
+            display: block;
+            fill: none;
+            stroke: var(--white);
+            stroke-width: 2.5;
+            stroke-linecap: square;
+            stroke-linejoin: miter;
+            stroke-miterlimit: 10; /* Ensures razor-sharp vertex */
         }
 
-        .arrow:last-child {
+        .arrow-svg:last-child {
             margin-right: 0;
         }
 
@@ -168,9 +174,9 @@
         <div id="wordmark">
             L<span class="ab0-reveal">AB-0</span>
             <span class="arrows-container" id="arrows">
-                <span class="arrow">></span>
-                <span class="arrow">></span>
-                <span class="arrow">></span>
+                <svg class="arrow-svg" viewBox="0 0 24 24"><path d="M4 4l12 8-12 8" /></svg>
+                <svg class="arrow-svg" viewBox="0 0 24 24"><path d="M4 4l12 8-12 8" /></svg>
+                <svg class="arrow-svg" viewBox="0 0 24 24"><path d="M4 4l12 8-12 8" /></svg>
             </span>
         </div>
     </div>
