@@ -16,6 +16,7 @@
             --font-body: 'Space Grotesk', sans-serif;
             --font-mono: 'Space Mono', monospace;
             --ease: cubic-bezier(0.8, 0, 0.2, 1);
+            --elastic: cubic-bezier(0.68, -0.6, 0.32, 1.6);
         }
 
         * {
@@ -46,10 +47,6 @@
             z-index: 5;
         }
 
-        /* 
-           The Stage: Standard Centering.
-           The #wordmark is child of this, so it stays centered via flex.
-        */
         .stage {
             position: fixed;
             inset: 0;
@@ -60,12 +57,8 @@
             pointer-events: none;
         }
 
-        /* 
-           Cohesive Wordmark Block.
-           Statically centered via parent flexbox. 
-        */
         #wordmark {
-            position: relative; /* Anchor for absolute arrows */
+            position: relative;
             display: flex;
             align-items: baseline;
             font-family: var(--font-header);
@@ -73,21 +66,13 @@
             font-size: 1.5rem;
             white-space: nowrap;
             letter-spacing: 0.1em;
-            
-            /* Center visual anchor: 
-               We start centered. In the docking phase, we transition 
-               from center (0,0) to a calculated offset.
-            */
             transform: translate(0, 0) scale(3.3333);
             transition: transform 1.2s var(--ease);
         }
 
-        /*
-           The reveal part (AB-0).
-           Occupies layout space but is visually masked.
-        */
         .ab0-reveal {
-            display: inline-block;
+            display: inline-flex;
+            align-items: baseline;
             clip-path: inset(0 100% 0 0);
             transition: clip-path 1.2s var(--ease);
         }
@@ -100,95 +85,152 @@
             clip-path: inset(0 0 0 0);
         }
 
-        /* 
-           State 2: Docking.
-           Transitions from 0,0 to the corner.
-           Corner is at top 45, left 60.
-           Viewport Center is 50vw, 50vh.
-        */
         #wordmark.docked {
-            /* 
-               Vertical target adjusted to 45px (moving it 15px higher from 60px).
-               Horizontal target remains 60px.
-               1.9em and 0.4em are adjustments for visual alignment.
-            */
             transform: translate(calc(-50vw + 60px + 1.9em), calc(-50vh + 45px + 0.4em)) scale(1);
         }
 
-        /* UI Elements */
-        .ui-element {
-            position: fixed;
-            opacity: 0;
-            transition: opacity 1s ease-out;
-            z-index: 10;
+        /* Elastic Portal Structure */
+        .zero-portal {
+            position: relative;
+            display: inline-flex;
+            align-items: baseline;
+        }
+
+        .zero-char {
+            display: inline-block;
+            transform-origin: center;
+            transition: transform 0.6s var(--elastic);
+        }
+
+        .menu-items {
+            display: inline-flex;
+            align-items: center;
+            width: 0;
+            overflow: hidden;
+            white-space: nowrap;
+            transition: width 0.7s var(--ease);
+            padding-left: 0;
+        }
+
+        .menu-item {
+            color: var(--white);
+            text-decoration: none;
             font-family: var(--font-mono);
-            text-transform: uppercase;
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            margin-right: 25px;
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);
+            pointer-events: none;
         }
 
-        .ui-visible {
+        /* Expanded State Logic */
+        .zero-portal.expanded .zero-char {
+            animation: stretch-open 0.8s var(--ease) forwards;
+        }
+
+        .zero-portal.expanded .menu-items {
+            width: 180px;
+            padding-left: 15px;
+        }
+
+        .zero-portal.expanded .menu-item {
             opacity: 1;
+            transform: translateX(0);
+            pointer-events: auto;
         }
 
-        /* Arrows Styling (Restored from Backup2/851b6a89) */
+        .zero-portal.expanded .menu-item:nth-child(1) { transition-delay: 0.3s; }
+        .zero-portal.expanded .menu-item:nth-child(2) { transition-delay: 0.4s; }
+
+        /* Collapsing State Logic */
+        .zero-portal.collapsing .zero-char {
+            animation: stretch-close 0.6s var(--ease) forwards;
+        }
+
+        .zero-portal.collapsing .menu-items {
+            transition: width 0.4s var(--ease);
+        }
+
+        .zero-portal.collapsing .menu-item {
+            transition: none;
+            opacity: 0;
+            transform: translateX(-10px);
+        }
+
+        @keyframes stretch-open {
+            0% { transform: scaleX(1); }
+            40% { transform: scaleX(4.5); }
+            100% { transform: scaleX(1); }
+        }
+
+        @keyframes stretch-close {
+            0% { transform: scaleX(1); }
+            40% { transform: scaleX(3.5); }
+            100% { transform: scaleX(1); }
+        }
+
+        /* Arrows Interaction */
         .arrows-container {
-            /* 
-               ABSOLUTE POSITIONING FIX:
-               By setting position: absolute, the arrows container 
-               no longer takes up space in the #wordmark flex container.
-               This ensures the text 'LAB-0' is perfectly centered in the beginning.
-            */
             position: absolute;
             left: 100%;
             top: 50%;
             transform: translateY(-50%);
             display: inline-flex;
             align-items: center;
-            margin-left: 10px; /* Gap from the '0' */
+            margin-left: 10px;
             height: 1em;
+            cursor: pointer;
+            pointer-events: none; /* Enabled via JS after docking */
+            transition: left 0.7s var(--ease);
+        }
+
+        #wordmark.docked .arrows-container {
+            pointer-events: auto;
         }
 
         .arrow-svg {
             width: 14px;
             height: 14px;
-            margin-right: -6px; /* Tight aggressive overlap */
+            margin-right: -6px;
             display: block;
             fill: none;
             stroke: var(--white);
             stroke-width: 2.5;
             stroke-linecap: square;
             stroke-linejoin: miter;
-            stroke-miterlimit: 10; /* Razor-sharp vertex */
-            
-            /* Initial state for entry animation */
+            stroke-miterlimit: 10;
             opacity: 0;
-            transform: translateX(-10px);
-            /* COMPRESS DURATION: 0.65s (~18% faster) */
+            transform: translateX(-10px) rotate(0deg);
             transition: opacity 0.65s var(--ease), transform 0.65s var(--ease);
             will-change: opacity, transform;
         }
 
-        .arrow-svg:last-child {
-            margin-right: 0;
+        .arrow-svg:last-child { margin-right: 0; }
+
+        .arrows-container.visible .arrow-svg:nth-child(1) { opacity: 1; transform: translateX(0); transition-delay: 0s; }
+        .arrows-container.visible .arrow-svg:nth-child(2) { opacity: 1; transform: translateX(0); transition-delay: 0.12s; }
+        .arrows-container.visible .arrow-svg:nth-child(3) { opacity: 1; transform: translateX(0); transition-delay: 0.24s; }
+
+        /* Rotate arrows 180 on expansion */
+        .zero-portal.expanded ~ .arrows-container .arrow-svg {
+            transform: rotate(180deg);
+            transition: transform 0.5s var(--ease);
         }
 
-        /* Staggered transition delays (Restored from Backup2/851b6a89) */
-        .arrows-container.visible .arrow-svg:nth-child(1) {
-            opacity: 1;
-            transform: translateX(0);
-            transition-delay: 0s;
+        .zero-portal.expanded ~ .arrows-container .arrow-svg:nth-child(1) { transition-delay: 0.5s; }
+        .zero-portal.expanded ~ .arrows-container .arrow-svg:nth-child(2) { transition-delay: 0.6s; }
+        .zero-portal.expanded ~ .arrows-container .arrow-svg:nth-child(3) { transition-delay: 0.7s; }
+
+        /* Instant back rotation on collapse */
+        .zero-portal.collapsing ~ .arrows-container .arrow-svg {
+            transform: rotate(0deg);
+            transition: transform 0.2s var(--ease);
+            transition-delay: 0s !important;
         }
 
-        .arrows-container.visible .arrow-svg:nth-child(2) {
-            opacity: 1;
-            transform: translateX(0);
-            transition-delay: 0.12s;
-        }
-
-        .arrows-container.visible .arrow-svg:nth-child(3) {
-            opacity: 1;
-            transform: translateX(0);
-            transition-delay: 0.24s;
-        }
+        .ui-visible { opacity: 1; }
 
     </style>
 </head>
@@ -198,7 +240,15 @@
 
     <div class="stage">
         <div id="wordmark">
-            L<span class="ab0-reveal">AB-0</span>
+            L<span class="ab0-reveal">AB-
+                <span class="zero-portal" id="zero-portal">
+                    <span class="zero-char" id="zero-char">0</span>
+                    <span class="menu-items" id="menu-items">
+                        <a href="#projects" class="menu-item">PROJECTS</a>
+                        <a href="#about" class="menu-item">ABOUT</a>
+                    </span>
+                </span>
+            </span>
             <span class="arrows-container" id="arrows">
                 <svg class="arrow-svg" viewBox="0 0 24 24"><path d="M4 4l12 8-12 8" /></svg>
                 <svg class="arrow-svg" viewBox="0 0 24 24"><path d="M4 4l12 8-12 8" /></svg>
@@ -212,6 +262,9 @@
             const wordmark = document.getElementById('wordmark');
             const grid = document.getElementById('grid');
             const arrows = document.getElementById('arrows');
+            const portal = document.getElementById('zero-portal');
+
+            let isDocked = false;
 
             // 1.5s: Start Assembly
             setTimeout(() => {
@@ -221,6 +274,7 @@
             // 3.5s: Start Docking
             setTimeout(() => {
                 wordmark.classList.add('docked');
+                isDocked = true;
             }, 3500);
 
             // 4.7s: UI Fade-in & Arrows Reveal
@@ -228,6 +282,26 @@
                 grid.classList.add('ui-visible');
                 arrows.classList.add('visible');
             }, 4700);
+
+            // Toggle Elastic Menu Expansion
+            arrows.addEventListener('click', () => {
+                if (!isDocked) return;
+
+                if (portal.classList.contains('expanded')) {
+                    // Close Sequence
+                    portal.classList.remove('expanded');
+                    portal.classList.add('collapsing');
+                    
+                    // Reset collapsing state after animation completes
+                    setTimeout(() => {
+                        portal.classList.remove('collapsing');
+                    }, 600);
+                } else {
+                    // Open Sequence
+                    portal.classList.remove('collapsing');
+                    portal.classList.add('expanded');
+                }
+            });
         });
     </script>
 </body>
