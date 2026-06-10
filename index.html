@@ -115,7 +115,17 @@ body, html {
   pointer-events: auto;
 }
 
-/* Mobile Icon (Phone) - Baseline desktop styles */
+.desktop-icon {
+  width: 1.1em;
+  height: 1.1em;
+  margin-left: 0.15em;
+  vertical-align: -0.15em;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  fill: none;
+  display: inline-block;
+}
+
 .mobile-icon {
   width: 1.1em;
   height: 1.1em;
@@ -124,7 +134,7 @@ body, html {
   stroke: currentColor;
   stroke-width: 2.5;
   fill: none;
-  display: none; /* Hidden on desktop by default */
+  display: none !important;
 }
 
 /* MOBILE NAV OVERRIDES */
@@ -142,7 +152,6 @@ body, html {
     text-align: center;
   }
 
-  /* Absolute position the reveal segment so it doesn't push the 'L' */
   #wordmark .ab0-reveal {
     position: absolute;
     left: 100%;
@@ -154,20 +163,23 @@ body, html {
     visibility: hidden;
     transition: clip-path 0.8s var(--ease), opacity 0.4s var(--ease), visibility 0.4s var(--ease);
     display: inline-flex;
-    align-items: center; /* Scoped alignment for mobile reveal */
+    align-items: center;
+  }
+
+  .desktop-icon {
+    display: none !important;
   }
 
   .mobile-icon {
-    display: inline-block; /* Visible on mobile */
-    margin-left: 0.08em; /* Scoped custom margin */
-    vertical-align: 0.02em; /* Scoped custom alignment */
+    display: inline-block !important;
+    margin-left: 0.08em;
+    vertical-align: 0.02em;
   }
 
   #wordmark.docked {
     transform: translate(calc(-50vw + 40px + 0.5em), calc(-50vh + 40px + 0.4em)) scale(0.8);
   }
 
-  /* Reveal AB-phone sequence strictly via parent clip-path */
   #wordmark.docked-final .ab0-reveal {
     opacity: 1;
     visibility: visible;
@@ -610,7 +622,11 @@ body, html {
 <div class="stage">
 <div id="wordmark">
 <a id="nav-home" class="menu-item" style="font-family:inherit; font-size:inherit; letter-spacing:inherit; margin:0; padding:0; text-transform: none;">
-  <span class="l-char">L</span><span class="ab0-reveal">AB-<svg class="mobile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+  <span class="l-char">L</span><span class="ab0-reveal">AB-<svg class="desktop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+    <line x1="8" y1="21" x2="16" y2="21"></line>
+    <line x1="12" y1="17" x2="12" y2="21"></line>
+  </svg><svg class="mobile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
     <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
     <line x1="12" y1="18" x2="12" y2="18"></line>
   </svg></span>
@@ -814,29 +830,36 @@ document.addEventListener("DOMContentLoaded", function() {
   const mProjectsTrigger = document.getElementById("m-projects-trigger");
   const mAboutTrigger = document.getElementById("m-about-trigger");
 
-  // Phase 1: Startup (0s-3.5s) - Only 'L' visible and centered (default scale 3.33)
-  
-  // Phase 2: At 3.5s, dock 'L' to the top-right corner
-  setTimeout(function() { 
-    if (wordmark) {
-      wordmark.classList.add("docked");
-    }
-  }, 3500);
+  const isMobile = window.innerWidth <= 768;
 
-  // Phase 3: At 4.7s, reveal the UI and the 'AB-phone' suffix sequence
-  setTimeout(function() {
-    if (grid) grid.classList.add("ui-visible");
-    if (hamburger) hamburger.classList.add("ui-visible");
-    if (menu) menu.classList.add("visible");
-    
-    if (wordmark) {
-        if (window.innerWidth <= 768) {
-            wordmark.classList.add("docked-final");
-        } else {
-            wordmark.classList.add("assembled");
-        }
-    }
-  }, 4700);
+  if (isMobile) {
+    // Mobile Timing
+    setTimeout(function() { 
+      if (wordmark) wordmark.classList.add("docked");
+    }, 3500);
+
+    setTimeout(function() {
+      if (grid) grid.classList.add("ui-visible");
+      if (hamburger) hamburger.classList.add("ui-visible");
+      if (menu) menu.classList.add("visible");
+      if (wordmark) wordmark.classList.add("docked-final");
+    }, 4700);
+  } else {
+    // Desktop Timing
+    setTimeout(function() {
+      if (wordmark) wordmark.classList.add("assembled");
+    }, 1500);
+
+    setTimeout(function() {
+      if (wordmark) wordmark.classList.add("docked");
+    }, 3500);
+
+    setTimeout(function() {
+      if (grid) grid.classList.add("ui-visible");
+      if (hamburger) hamburger.classList.add("ui-visible");
+      if (menu) menu.classList.add("visible");
+    }, 4700);
+  }
 
   const navItems = [navHome, projectsTrigger, aboutTrigger, mNavHome, mProjectsTrigger, mAboutTrigger];
 
