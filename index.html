@@ -816,33 +816,40 @@ document.addEventListener("DOMContentLoaded", () => {
   const mProjectsTrigger = document.getElementById("m-projects-trigger");
   const mAboutTrigger = document.getElementById("m-about-trigger");
 
-  setTimeout(() => { if (wordmark) wordmark.classList.add("assembled"); }, 1500);
-  setTimeout(() => { 
+  // Phase 1: Startup (0s-3.5s) - Only 'L' visible and centered (default scale 3.33)
+  // No initial "assembled" trigger for desktop-only clip-path logic if we want to keep it simple
+  
+  // Phase 2: At 3.5s, dock 'L' to the top-right corner
+  setTimeout(function() { 
     if (wordmark) {
       wordmark.classList.add("docked");
-      if (window.innerWidth <= 768) {
-        setTimeout(() => {
-          wordmark.classList.add("docked-final");
-        }, 1200);
-      }
     }
   }, 3500);
-  setTimeout(() => {
+
+  // Phase 3: At 4.7s, reveal the UI and the 'AB-phone' suffix on mobile
+  setTimeout(function() {
     if (grid) grid.classList.add("ui-visible");
     if (hamburger) hamburger.classList.add("ui-visible");
     if (menu) menu.classList.add("visible");
+    
+    if (wordmark && window.innerWidth <= 768) {
+        wordmark.classList.add("docked-final");
+    } else if (wordmark) {
+        // Desktop reveal
+        wordmark.classList.add("assembled");
+    }
   }, 4700);
 
   const navItems = [navHome, projectsTrigger, aboutTrigger, mNavHome, mProjectsTrigger, mAboutTrigger];
 
-  const setActiveNav = (activeEl) => {
-    navItems.forEach(item => { if (item) item.classList.remove("active"); });
+  const setActiveNav = function(activeEl) {
+    navItems.forEach(function(item) { if (item) item.classList.remove("active"); });
     if (activeEl) activeEl.classList.add("active");
   };
 
   setActiveNav(navHome);
 
-  const switchPage = (pageId, triggerEl) => {
+  const switchPage = function(pageId, triggerEl) {
     setActiveNav(triggerEl);
     if (aboutOverlay) aboutOverlay.classList.remove("active");
     if (projectsOverlay) projectsOverlay.classList.remove("active");
@@ -856,31 +863,31 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   if (hamburger) {
-    hamburger.addEventListener("click", () => {
+    hamburger.addEventListener("click", function() {
       hamburger.classList.toggle("open");
       mobileNav.classList.toggle("open");
     });
   }
 
-  if (aboutTrigger) aboutTrigger.addEventListener("click", (e) => { e.stopPropagation(); switchPage('about', aboutTrigger); });
-  if (projectsTrigger) projectsTrigger.addEventListener("click", (e) => { e.stopPropagation(); switchPage('projects', projectsTrigger); });
-  if (navHome) navHome.addEventListener("click", (e) => { e.stopPropagation(); switchPage('home', navHome); });
+  if (aboutTrigger) aboutTrigger.addEventListener("click", function(e) { e.stopPropagation(); switchPage('about', aboutTrigger); });
+  if (projectsTrigger) projectsTrigger.addEventListener("click", function(e) { e.stopPropagation(); switchPage('projects', projectsTrigger); });
+  if (navHome) navHome.addEventListener("click", function(e) { e.stopPropagation(); switchPage('home', navHome); });
 
-  if (mAboutTrigger) mAboutTrigger.addEventListener("click", () => switchPage('about', mAboutTrigger));
-  if (mProjectsTrigger) mProjectsTrigger.addEventListener("click", () => switchPage('projects', mProjectsTrigger));
-  if (mNavHome) mNavHome.addEventListener("click", () => switchPage('home', mNavHome));
+  if (mAboutTrigger) mAboutTrigger.addEventListener("click", function() { switchPage('about', mAboutTrigger); });
+  if (mProjectsTrigger) mProjectsTrigger.addEventListener("click", function() { switchPage('projects', mProjectsTrigger); });
+  if (mNavHome) mNavHome.addEventListener("click", function() { switchPage('home', mNavHome); });
 
   const projectEntries = document.querySelectorAll('.project-entry');
-  projectEntries.forEach(entry => {
-    entry.addEventListener('click', () => {
-      projectEntries.forEach(e => e.classList.remove('selected'));
+  projectEntries.forEach(function(entry) {
+    entry.addEventListener('click', function() {
+      projectEntries.forEach(function(e) { e.classList.remove('selected'); });
       entry.classList.add('selected');
     });
   });
 
   const playBtn = document.getElementById('play-pause');
   if (playBtn) {
-    playBtn.addEventListener('click', () => {
+    playBtn.addEventListener('click', function() {
       playBtn.classList.toggle('playing');
     });
   }
