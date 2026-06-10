@@ -103,6 +103,10 @@
         }
 
         .menu-items {
+            position: absolute; /* Lock position relative to zero-portal */
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
             display: inline-flex;
             align-items: center;
             width: 0;
@@ -110,6 +114,7 @@
             white-space: nowrap;
             transition: width 0.7s var(--ease);
             padding-left: 0;
+            pointer-events: none;
         }
 
         .menu-item {
@@ -122,23 +127,22 @@
             opacity: 0;
             transform: translateX(-20px);
             transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);
-            pointer-events: none;
         }
 
         /* Expanded State Logic via #wordmark */
         #wordmark.expanded .zero-char {
-            animation: stretch-open 0.8s var(--ease) forwards;
+            animation: stretch-open-v 0.8s var(--ease) forwards;
         }
 
         #wordmark.expanded .menu-items {
-            width: 180px;
-            padding-left: 15px;
+            width: 250px;
+            padding-left: 25px;
+            pointer-events: auto;
         }
 
         #wordmark.expanded .menu-item {
             opacity: 1;
             transform: translateX(0);
-            pointer-events: auto;
         }
 
         #wordmark.expanded .menu-item:nth-child(1) { transition-delay: 0.3s; }
@@ -146,7 +150,7 @@
 
         /* Collapsing State Logic via #wordmark */
         #wordmark.collapsing .zero-char {
-            animation: stretch-close 0.6s var(--ease) forwards;
+            animation: stretch-close-v 0.6s var(--ease) forwards;
         }
 
         #wordmark.collapsing .menu-items {
@@ -159,16 +163,17 @@
             transform: translateX(-10px);
         }
 
-        @keyframes stretch-open {
-            0% { transform: scaleX(1); }
-            40% { transform: scaleX(4.5); }
-            100% { transform: scaleX(1); }
+        /* Vertical Stretch Animations */
+        @keyframes stretch-open-v {
+            0% { transform: scaleY(1); }
+            40% { transform: scaleY(3.0); }
+            100% { transform: scaleY(1); }
         }
 
-        @keyframes stretch-close {
-            0% { transform: scaleX(1); }
-            40% { transform: scaleX(3.5); }
-            100% { transform: scaleX(1); }
+        @keyframes stretch-close-v {
+            0% { transform: scaleY(1); }
+            40% { transform: scaleY(2.0); }
+            100% { transform: scaleY(1); }
         }
 
         /* Arrows Interaction */
@@ -183,11 +188,17 @@
             height: 1em;
             cursor: pointer;
             pointer-events: none;
-            transition: left 0.7s var(--ease);
+            transition: transform 0.7s var(--ease), margin-left 0.7s var(--ease);
+            z-index: 10;
         }
 
         #wordmark.docked .arrows-container {
             pointer-events: auto;
+        }
+
+        /* Dragging effect: push arrows to the right when expanded */
+        #wordmark.expanded .arrows-container {
+            transform: translate(220px, -50%);
         }
 
         .arrow-svg {
