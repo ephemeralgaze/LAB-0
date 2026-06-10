@@ -107,7 +107,7 @@ body, html {
 
 #wordmark.assembled .ab0-reveal {
   opacity: 1;
-  clip-path: inset(0 0 0 0) !important;
+  clip-path: inset(-0.5em 0 -0.5em 0) !important;
 }
 
 #wordmark.docked {
@@ -115,7 +115,17 @@ body, html {
   pointer-events: auto;
 }
 
-/* Mobile Icon (Phone) */
+.desktop-icon {
+  width: 1.1em;
+  height: 1.1em;
+  margin-left: 0.15em;
+  transform: translateY(0.12em);
+  stroke: currentColor;
+  stroke-width: 2.5;
+  fill: none;
+  display: inline-block;
+}
+
 .mobile-icon {
   width: 1.1em;
   height: 1.1em;
@@ -124,7 +134,7 @@ body, html {
   stroke: currentColor;
   stroke-width: 2.5;
   fill: none;
-  display: inline-block;
+  display: none !important;
 }
 
 /* MOBILE NAV OVERRIDES */
@@ -155,6 +165,14 @@ body, html {
     transition: clip-path 0.8s var(--ease), opacity 0.4s var(--ease), visibility 0.4s var(--ease);
     display: inline-flex;
     align-items: center;
+  }
+
+  .desktop-icon {
+    display: none !important;
+  }
+
+  .mobile-icon {
+    display: inline-block !important;
   }
 
   #wordmark.docked {
@@ -604,7 +622,11 @@ body, html {
 <div class="stage">
 <div id="wordmark">
 <a id="nav-home" class="menu-item" style="font-family:inherit; font-size:inherit; letter-spacing:inherit; margin:0; padding:0; text-transform: none;">
-  <span class="l-char">L</span><span class="ab0-reveal">AB-<svg class="mobile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+  <span class="l-char">L</span><span class="ab0-reveal">AB-<svg class="desktop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+    <line x1="8" y1="21" x2="16" y2="21"></line>
+    <line x1="12" y1="17" x2="12" y2="21"></line>
+  </svg><svg class="mobile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
     <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
     <line x1="12" y1="18" x2="12" y2="18"></line>
   </svg></span>
@@ -689,8 +711,7 @@ body, html {
         <span class="status-tag">STANDBY</span>
       </div>
       <div class="project-entry">
-        <div class="project-info">
-          <span class="project-id">[03]</span>
+        <div class="project-id">[03]</span>
           <span class="project-name">NAME</span>
         </div>
         <span class="status-tag">STANDBY</span>
@@ -751,7 +772,7 @@ body, html {
   function init() {
     dpr = window.devicePixelRatio || 1;
     width = window.innerWidth;
-    height = window.innerHeight;
+    height = document.documentElement.clientHeight;
     canvas.width = width * dpr;
     canvas.height = height * dpr;
     ctx.scale(dpr, dpr);
@@ -808,29 +829,36 @@ document.addEventListener("DOMContentLoaded", function() {
   const mProjectsTrigger = document.getElementById("m-projects-trigger");
   const mAboutTrigger = document.getElementById("m-about-trigger");
 
-  // Phase 1: Startup (0s-3.5s) - Only 'L' visible and centered (default scale 3.33)
-  
-  // Phase 2: At 3.5s, dock 'L' to the top-right corner
-  setTimeout(function() { 
-    if (wordmark) {
-      wordmark.classList.add("docked");
-    }
-  }, 3500);
+  const isMobile = window.innerWidth <= 768;
 
-  // Phase 3: At 4.7s, reveal the UI and the 'AB-phone' suffix sequence
-  setTimeout(function() {
-    if (grid) grid.classList.add("ui-visible");
-    if (hamburger) hamburger.classList.add("ui-visible");
-    if (menu) menu.classList.add("visible");
-    
-    if (wordmark) {
-        if (window.innerWidth <= 768) {
-            wordmark.classList.add("docked-final");
-        } else {
-            wordmark.classList.add("assembled");
-        }
-    }
-  }, 4700);
+  if (isMobile) {
+    // Mobile Timing
+    setTimeout(function() { 
+      if (wordmark) wordmark.classList.add("docked");
+    }, 3500);
+
+    setTimeout(function() {
+      if (grid) grid.classList.add("ui-visible");
+      if (hamburger) hamburger.classList.add("ui-visible");
+      if (menu) menu.classList.add("visible");
+      if (wordmark) wordmark.classList.add("docked-final");
+    }, 4700);
+  } else {
+    // Desktop Timing
+    setTimeout(function() {
+      if (wordmark) wordmark.classList.add("assembled");
+    }, 1500);
+
+    setTimeout(function() {
+      if (wordmark) wordmark.classList.add("docked");
+    }, 3500);
+
+    setTimeout(function() {
+      if (grid) grid.classList.add("ui-visible");
+      if (hamburger) hamburger.classList.add("ui-visible");
+      if (menu) menu.classList.add("visible");
+    }, 4700);
+  }
 
   const navItems = [navHome, projectsTrigger, aboutTrigger, mNavHome, mProjectsTrigger, mAboutTrigger];
 
