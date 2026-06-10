@@ -430,9 +430,24 @@ body, html {
   transition: opacity 0.45s cubic-bezier(0.25, 1, 0.5, 1), filter 0.45s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
+/* Diagnostics Log Style */
+#diagnostics-log {
+  position: fixed;
+  bottom: 40px;
+  left: 40px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.25);
+  line-height: 1.5;
+  text-transform: uppercase;
+  z-index: 10;
+  pointer-events: none;
+}
+
 </style>
 </head>
 <body>
+<canvas id="webgl-canvas" style="position: fixed; inset: 0; z-index: 0; pointer-events: none; width: 100vw; height: 100vh;"></canvas>
 
 <div class="ui-grid" id="grid"></div>
 <div id="nav-bg"></div>
@@ -446,6 +461,9 @@ body, html {
 </div>
 </div>
 </div>
+
+<!-- Diagnostics Log Container -->
+<div id="diagnostics-log"></div>
 
 <!-- ABOUT OVERLAY -->
 <div id="about-overlay" class="overlay">
@@ -607,7 +625,91 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   const playBtn = document.getElementById('play-pause');
-  playBtn.addEventListener('click', () => playBtn.classList.toggle('playing'));
+  if (playBtn) playBtn.addEventListener('click', () => playBtn.classList.toggle('playing'));
+
+  // WebGL Background Initialization
+  const canvas = document.getElementById('webgl-canvas');
+  const gl = canvas.getContext('webgl');
+  if (gl) {
+    const vs = `
+      attribute vec2 position;
+      void main() {
+        gl_Position = vec4(position, 0.0, 1.0);
+      }
+    `;
+    const fs = `
+      precision highp float;
+      uniform float u_time;
+      uniform vec2 u_resolution;
+      float random(vec2 st) {
+        return fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 43758.5453123);
+      }
+      void main() {
+        vec2 st = gl_FragCoord.xy / u_resolution.xy;
+        float n = random(st + u_time * 0.05);
+        float grain = (n - 0.5) * 0.03;
+        vec3 color = vec3(0.0196) + grain;
+        gl_FragColor = vec4(color, 1.0);
+      }
+    `;
+
+    function createShader(gl, type, source) {
+      const shader = gl.createShader(type);
+      gl.shaderSource(shader, source);
+      gl.compileShader(shader);
+      return shader;
+    }
+
+    const program = gl.createProgram();
+    gl.attachShader(program, createShader(gl, gl.VERTEX_SHADER, vs));
+    gl.attachShader(program, createShader(gl, gl.FRAGMENT_SHADER, fs));
+    gl.linkProgram(program);
+    gl.useProgram(program);
+
+    const vertices = new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]);
+    const buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+    const positionLoc = gl.getAttribLocation(program, 'position');
+    gl.enableVertexAttribArray(positionLoc);
+    gl.vertexAttribPointer(positionLoc, 2, gl.FLOAT, false, 0, 0);
+
+    const timeLoc = gl.getUniformLocation(program, 'u_time');
+    const resolutionLoc = gl.getUniformLocation(program, 'u_resolution');
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      gl.viewport(0, 0, canvas.width, canvas.height);
+      gl.uniform2f(resolutionLoc, canvas.width, canvas.height);
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    function render(time) {
+      gl.uniform1f(timeLoc, time * 0.001);
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+      requestAnimationFrame(render);
+    }
+    requestAnimationFrame(render);
+  }
+
+  // Diagnostics Log
+  const log = document.getElementById('diagnostics-log');
+  function updateLog() {
+    const now = new Date();
+    const timestamp = now.toISOString().replace('T', ' ').split('.')[0];
+    log.innerHTML = \`
+      SYS_INIT_OK: TRUE<br>
+      PIPELINE: DX12_HLSL<br>
+      SHADERS: VOID.HLSL // ATTRACTOR.HLSL<br>
+      LOG_TIME: \${timestamp}<br>
+      SYS_AMBIENT_KERN: OK
+    \`;
+  }
+  updateLog();
+  setInterval(updateLog, 1000);
 });
 </script>
 </body>
