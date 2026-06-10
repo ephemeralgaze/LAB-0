@@ -9,211 +9,249 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root {
---bg-color: #050505;
---white: #ffffff;
---grid-color: rgba(255, 255, 255, 0.1);
---font-header: "Syncopate", sans-serif;
---font-body: "Space Grotesk", sans-serif;
---font-mono: "Space Mono", monospace;
---ease: cubic-bezier(0.8, 0, 0.2, 1);
+  --bg-color: #050505;
+  --white: #ffffff;
+  --grid-color: rgba(255, 255, 255, 0.1);
+  --font-header: "Syncopate", sans-serif;
+  --font-body: "Space Grotesk", sans-serif;
+  --font-mono: "Space Mono", monospace;
+  --ease: cubic-bezier(0.8, 0, 0.2, 1);
 }
 
 * {
-margin: 0;
-padding: 0;
-box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body, html {
-width: 100%;
-height: 100%;
-background-color: var(--bg-color);
-color: var(--white);
-overflow: hidden;
-font-family: var(--font-body);
--webkit-font-smoothing: antialiased;
+  width: 100%;
+  height: 100%;
+  background-color: var(--bg-color);
+  color: var(--white);
+  overflow: hidden;
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
 }
 
 /* 1px Grid Borders */
 .ui-grid {
-position: fixed;
-inset: 0;
-border: 1px solid var(--grid-color);
-margin: 20px;
-pointer-events: none;
-opacity: 0;
-transition: opacity 1s ease-out;
-z-index: 5;
+  position: fixed;
+  inset: 0;
+  border: 1px solid var(--grid-color);
+  margin: 20px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1s ease-out;
+  z-index: 5;
 }
 
 .stage {
-position: fixed;
-inset: 0;
-display: flex;
-justify-content: center;
-align-items: center;
-z-index: 100;
-pointer-events: none;
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  pointer-events: none;
 }
 
 #wordmark {
-position: relative;
-display: flex;
-align-items: baseline;
-font-family: var(--font-header);
-font-weight: 700;
-font-size: 1.5rem;
-white-space: nowrap;
-letter-spacing: 0.1em;
-transform: translate(0, 0) scale(3.3333);
-transition: transform 1.2s var(--ease);
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  font-family: var(--font-header);
+  font-weight: 700;
+  font-size: 1.5rem;
+  white-space: nowrap;
+  letter-spacing: 0.1em;
+  transform: translate(0, 0) scale(3.3333);
+  transition: transform 1.2s var(--ease);
 }
 
 .ab0-reveal {
-display: inline-flex;
-align-items: baseline;
-clip-path: inset(0 100% 0 0);
-transition: clip-path 1.2s var(--ease);
+  display: inline-flex;
+  align-items: baseline;
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 1.2s var(--ease);
 }
 
 #wordmark.assembled {
-transform: translate(0, 0) scale(3);
+  transform: translate(0, 0) scale(3);
 }
 
 #wordmark.assembled .ab0-reveal {
-clip-path: inset(0 0 0 0);
+  clip-path: inset(0 0 0 0);
 }
 
 #wordmark.docked {
-transform: translate(calc(-50vw + 60px + 1.9em), calc(-50vh + 45px + 0.4em)) scale(1);
+  transform: translate(calc(-50vw + 60px + 1.9em), calc(-50vh + 45px + 0.4em)) scale(1);
 }
 
 /* Fixed Menu Items Architecture */
 .menu-items {
-position: absolute;
-left: 100%;
-top: 50%;
-transform: translateY(-50%);
-display: inline-flex;
-align-items: center;
-padding-left: 25px;
-pointer-events: none;
-opacity: 0;
-transition: opacity 1s var(--ease);
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  padding-left: 25px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1s var(--ease);
 }
 
 /* Visible when wordmark is docked and UI grid is visible (stable phase) */
 #wordmark.docked .menu-items.visible {
-pointer-events: auto;
-opacity: 1;
+  pointer-events: auto;
+  opacity: 1;
 }
 
 .menu-item {
-color: var(--white);
-text-decoration: none;
-font-family: var(--font-mono);
-font-size: 0.7rem;
-letter-spacing: 0.2em;
-margin-right: 25px;
-text-transform: uppercase;
-transition: opacity 0.3s ease;
-cursor: pointer;
+  color: var(--white);
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  margin-right: 25px;
+  text-transform: uppercase;
+  transition: opacity 0.3s ease;
+  cursor: pointer;
 }
 
 .menu-item:hover {
-opacity: 0.7;
+  opacity: 0.7;
 }
 
 .ui-visible { opacity: 1; }
 
 /* ABOUT OVERLAY STYLES */
 #about-overlay {
-position: fixed;
-inset: 0;
-background: var(--bg-color);
-z-index: 200;
-opacity: 0;
-pointer-events: none;
-transition: opacity 1.2s var(--ease);
-display: flex;
-justify-content: center;
-align-items: center;
+  position: fixed;
+  inset: 0;
+  background: var(--bg-color);
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1.2s var(--ease);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 #about-overlay.active {
-opacity: 1;
-pointer-events: auto;
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .overlay-frame {
-position: absolute;
-inset: 40px;
-border: 1px solid rgba(255, 255, 255, 0.08);
-pointer-events: none;
+  position: absolute;
+  inset: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  pointer-events: none;
 }
 
 .coord {
-position: absolute;
-font-family: var(--font-mono);
-font-size: 10px;
-color: rgba(255, 255, 255, 0.4);
-letter-spacing: 0.1em;
+  position: absolute;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.1em;
 }
 .coord-tl { top: -20px; left: 0; }
 .coord-br { bottom: -20px; right: 0; }
 
 .reticle {
-position: absolute;
-top: 50%;
-left: 50%;
-width: 40px;
-height: 40px;
-transform: translate(-50%, -50%);
-opacity: 0.15;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  transform: translate(-50%, -50%);
+  opacity: 0.15;
 }
 
 .content-grid {
-display: flex;
-flex-direction: column;
-align-items: center;
-gap: 40px;
-width: 100%;
-max-width: 1200px;
-padding: 80px;
-pointer-events: auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  width: 100%;
+  max-width: 1200px;
+  padding: 80px;
+  pointer-events: auto;
 }
 
-.user-profile {
-display: flex;
-flex-direction: column;
-align-items: center;
-gap: 20px;
+.col-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .avatar {
-width: 120px;
-height: 120px;
-border-radius: 50%;
-border: 1px solid rgba(255, 255, 255, 0.2);
-padding: 5px;
-background: rgba(255, 255, 255, 0.05);
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .avatar img {
-width: 100%;
-height: 100%;
-border-radius: 50%;
-object-fit: cover;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .username {
-font-family: var(--font-header);
-font-size: 1.2rem;
-letter-spacing: 0.2em;
-color: var(--white);
-text-transform: uppercase;
+  font-family: var(--font-header);
+  font-size: 1.4rem;
+  letter-spacing: 0.3em;
+  color: var(--white);
+  text-transform: uppercase;
 }
 
+.col-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 25px;
+  font-family: var(--font-mono);
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.info-icon {
+  width: 18px;
+  height: 18px;
+  opacity: 0.8;
+  flex-shrink: 0;
+}
+
+.info-label {
+  width: 100px;
+  font-size: 0.6rem;
+  color: rgba(255, 255, 255, 0.3);
+  text-transform: uppercase;
+}
+
+.info-value {
+  color: var(--white);
+  text-transform: uppercase;
+}
 </style>
 </head>
 <body>
@@ -242,9 +280,37 @@ L<span class="ab0-reveal">AB-0</span>
 </svg>
 
 <div class="content-grid">
-<div class="user-profile">
-<div class="avatar">
-<img src="https://avatars.githubusercontent.com/u/291265014?v=4" alt="ephemeralgaze">
+  <div class="col-left">
+    <div class="avatar">
+      <img src="https://avatars.githubusercontent.com/u/291265014?v=4" alt="ephemeralgaze">
+    </div>
+    <div class="username">ephemeralgaze</div>
+  </div>
+  <div class="col-right">
+    <div class="info-item">
+      <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M22 10v6M2 10v6M12 4L2 10l10 6 10-6-10-6zM12 18v-6" />
+      </svg>
+      <span class="info-label">Education</span>
+      <span class="info-value">Undergraduate / Game Dev</span>
+    </div>
+    <div class="info-item">
+      <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="12" cy="12" r="10" />
+        <polyline points="12 6 12 12 16 14" />
+      </svg>
+      <span class="info-label">Age</span>
+      <span class="info-value">21</span>
+    </div>
+    <div class="info-item">
+      <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+        <polyline points="22,6 12,13 2,6" />
+      </svg>
+      <span class="info-label">Contact</span>
+      <span class="info-value" style="text-transform: none;">zgnx4ndcq5@privaterelay.appleid.com</span>
+    </div>
+  </div>
 </div>
 <div class="username">ephemeralgaze</div>
 </div>
