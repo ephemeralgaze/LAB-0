@@ -55,6 +55,10 @@
             align-items: center;
         }
 
+        /* 
+           The Sliding Door Wordmark.
+           Fixed at docked position (60, 60), using transforms for intro.
+        */
         #wordmark {
             display: flex;
             align-items: baseline;
@@ -65,93 +69,48 @@
             top: 60px;
             left: 60px;
             transform-origin: top left;
-            /* Center the 'L' (visual width ~0.58em) */
-            transform: translate(calc(50vw - 60px), calc(50vh - 60px)) scale(3.3333) translate(-0.29em, -0.4em);
-            transition: transform 1.2s cubic-bezier(0.8, 0, 0.2, 1);
+            white-space: nowrap;
             z-index: 100;
+            
+            /* Initial State: L centered in screen. L width ~0.58em. */
+            transform: translate(calc(50vw - 60px - 0.29em), calc(50vh - 60px - 0.4em)) scale(3.3333);
+            transition: transform 1.2s cubic-bezier(0.8, 0, 0.2, 1);
         }
 
-        /* SVG L Container */
-        .l-container {
-            display: flex;
-            align-items: baseline;
-            width: 0.58em;
-            height: 1em;
-            position: relative;
-        }
-
-        .l-svg {
-            width: 1em;
-            height: 1em;
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            overflow: visible;
-        }
-
-        .l-glyph {
-            fill: var(--white);
-            stroke: none;
-            font-family: var(--font-header);
-            font-weight: 700;
-            font-size: 100px;
-        }
-
-        /* Assembly Logic */
-        .ab0-container {
-            display: flex;
-            align-items: baseline;
-            white-space: nowrap;
-            opacity: 0;
-            transition: opacity 0.4s ease-out;
-            pointer-events: none;
-            letter-spacing: 0.1em;
-            margin-left: 0.1em;
-        }
-
-        #wordmark.assembled .ab0-container {
-            opacity: 1;
-        }
-
-        /* Char Staggering */
-        .char-wrapper {
+        .l {
             display: inline-block;
-            max-width: 0;
-            opacity: 0;
-            transform: scaleX(0) skewX(-15deg);
-            transform-origin: left center;
-            transition: max-width 0.8s cubic-bezier(0.8, 0, 0.2, 1),
-                        opacity 0.4s ease-out,
-                        transform 0.8s cubic-bezier(0.8, 0, 0.2, 1);
-            transition-delay: calc(var(--index) * 0.12s);
-            white-space: nowrap;
+            transition: transform 1.2s cubic-bezier(0.8, 0, 0.2, 1);
+        }
+
+        /* 
+           The Sliding Reveal Container.
+           Uses clip-path for a smooth geometric reveal of AB-0.
+        */
+        .ab0-reveal-container {
+            display: inline-block;
             overflow: hidden;
-            vertical-align: baseline;
+            margin-left: 0.1em;
+            letter-spacing: 0.1em;
+            /* Start hidden: mask at x=0 */
+            clip-path: inset(0 100% 0 0);
+            transition: clip-path 1.2s cubic-bezier(0.8, 0, 0.2, 1);
         }
 
-        #wordmark.assembled .char-wrapper {
-            max-width: 1.5em;
-            opacity: 1;
-            transform: scaleX(1) skewX(0deg);
-        }
-
-        /* State 1: Assembled Center (~3.78em total width) */
+        /* State 1: Assembled Center.
+           L slides left relative to its center, container reveals.
+        */
         #wordmark.assembled {
-            transform: translate(calc(50vw - 60px), calc(50vh - 60px)) scale(3) translate(-1.89em, -0.4em);
+            /* Full wordmark width ~3.8em. Center at 1.9em. Offset from docked pos. */
+            transform: translate(calc(50vw - 60px - 1.9em), calc(50vh - 60px - 0.4em)) scale(3);
         }
 
-        #wordmark.assembled .l-container {
-            transform: scale(0.9);
-            transform-origin: baseline;
+        #wordmark.assembled .ab0-reveal-container {
+            clip-path: inset(0 0 0 0);
         }
 
-        /* State 2: Dock to corner */
+        /* State 2: Docked. No transform. */
         #wordmark.docked {
-            transform: translate(0, 0) scale(1) translate(0, 0);
-        }
-
-        #wordmark.docked .l-container {
-            transform: scale(1);
+            transform: translate(0, 0) scale(1);
         }
 
         /* UI Elements */
@@ -224,17 +183,7 @@
 
     <div class="stage">
         <div id="wordmark">
-            <div class="l-container">
-                <svg class="l-svg" viewBox="0 0 100 100">
-                    <text x="0" y="100" dominant-baseline="alphabetic" class="l-glyph">L</text>
-                </svg>
-            </div>
-            <div class="ab0-container">
-                <span class="char-wrapper" style="--index: 0"><span class="char">A</span></span>
-                <span class="char-wrapper" style="--index: 1"><span class="char">B</span></span>
-                <span class="char-wrapper" style="--index: 2"><span class="char">-</span></span>
-                <span class="char-wrapper" style="--index: 3"><span class="char">0</span></span>
-            </div>
+            <span class="l">L</span><span class="ab0-reveal-container">AB-0</span>
         </div>
     </div>
 
@@ -262,23 +211,23 @@
             const uiStatus = document.getElementById('ui-status');
             const uiTerminal = document.getElementById('ui-terminal');
 
-            // 2.0s: Start Assembly
+            // 1.5s: Start Assembly (Sliding Reveal)
             setTimeout(() => {
                 wordmark.classList.add('assembled');
-            }, 2000);
+            }, 1500);
 
-            // 4.0s: Start Docking
+            // 3.5s: Start Docking
             setTimeout(() => {
                 wordmark.classList.add('docked');
-            }, 4000);
+            }, 3500);
 
-            // 5.2s: UI Fade-in
+            // 4.7s: UI Fade-in
             setTimeout(() => {
                 grid.classList.add('ui-visible');
                 uiCoords.classList.add('ui-visible');
                 uiStatus.classList.add('ui-visible');
                 uiTerminal.classList.add('ui-visible');
-            }, 5200);
+            }, 4700);
 
             // Cursor Coordinate Tracker
             window.addEventListener('mousemove', (e) => {
