@@ -269,7 +269,7 @@ body, html {
   pointer-events: none;
   transition: opacity 1.2s var(--ease), visibility 1.2s var(--ease);
   display: flex;
-  justify(center);
+  justify-content: center;
   align-items: flex-start;
   overflow-y: auto;
 }
@@ -504,7 +504,7 @@ body, html {
 
 .play-pause .pause-icon { display: none; }
 .play-pause.playing .play-icon { display: none; }
-.play-pause.playing .pause-icon { block; }
+.play-pause.playing .pause-icon { display: block; }
 
 .spec-details {
   display: grid;
@@ -791,7 +791,7 @@ body, html {
           y: j * GRID_SIZE + GRID_SIZE / 2,
           phase: Math.random() * Math.PI * 2,
           freq: 0.02 + Math.random() * 0.03,
-          maxOpacity: 0.05 + Math.random() * 0.55
+          maxOpacity: 0.02 + Math.random() * 0.28
         });
       }
     }
