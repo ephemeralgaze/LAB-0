@@ -27,6 +27,18 @@
   --ease: cubic-bezier(0.8, 0, 0.2, 1);
 }
 
+@media (dynamic-range: high) or (color-gamut: p3) {
+  :root {
+    --white: color(display-p3 1 1 1);
+    --grid-color: color(display-p3 1 1 1 / 0.1);
+  }
+  
+  .video-container video, #p-video {
+    filter: none !important;
+    background: transparent !important;
+  }
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -71,6 +83,7 @@ body, html {
   opacity: 0;
   transition: opacity 1s ease-out;
   z-index: 5;
+  border-color: var(--grid-color);
 }
 
 .stage {
@@ -164,13 +177,14 @@ body, html {
 
 .menu-item.active {
   opacity: 1 !important;
-  color: #FFFFFF !important;
+  color: var(--white) !important;
   pointer-events: none;
 }
 
 .ui-visible { opacity: 1 !important; }
 
 .overlay {
+  isolation: isolate;
   position: fixed;
   inset: 0;
   background: var(--overlay-bg);
@@ -205,6 +219,11 @@ body, html {
   font-size: 10px;
   color: rgba(255, 255, 255, 0.4);
   letter-spacing: 0.1em;
+}
+@media (dynamic-range: high) or (color-gamut: p3) {
+  .coord {
+    color: color(display-p3 1 1 1 / 0.4);
+  }
 }
 .coord-tl { top: -20px; left: 0; }
 .coord-br { bottom: -20px; right: 0; }
@@ -248,16 +267,35 @@ body, html {
   cursor: pointer;
   opacity: 0.5;
 }
+@media (dynamic-range: high) or (color-gamut: p3) {
+  .project-entry {
+    border-bottom: 1px solid color(display-p3 1 1 1 / 0.05);
+  }
+}
 
 .project-entry.selected { opacity: 1; }
 .project-info { display: flex; align-items: baseline; gap: 15px; font-family: var(--font-mono); text-transform: uppercase; }
 .project-id { font-size: 0.6rem; color: rgba(255, 255, 255, 0.3); }
+@media (dynamic-range: high) or (color-gamut: p3) {
+  .project-id { color: color(display-p3 1 1 1 / 0.3); }
+}
 .project-name { font-size: 0.9rem; letter-spacing: 0.15em; }
 .status-tag { font-size: 0.6rem; padding: 3px 8px; border: 1px solid rgba(255, 255, 255, 0.2); color: rgba(255, 255, 255, 0.7); font-family: var(--font-mono); }
+@media (dynamic-range: high) or (color-gamut: p3) {
+  .status-tag {
+    border: 1px solid color(display-p3 1 1 1 / 0.2);
+    color: color(display-p3 1 1 1 / 0.7);
+  }
+}
 
 .spec-panel { display: flex; flex-direction: column; gap: 20px; }
-.video-container { width: 100%; aspect-ratio: 16/9; border: 1px solid rgba(255, 255, 255, 0.1); position: relative; overflow: hidden; background: #000; }
-.video-container video { width: 100%; height: 100%; object-fit: cover; filter: brightness(1.08) contrast(1.05); }
+.video-container { width: 100%; aspect-ratio: 16/9; border: 1px solid rgba(255, 255, 255, 0.1); position: relative; overflow: hidden; background: #000; z-index: 100000; isolation: isolate; transform: translateZ(0); }
+@media (dynamic-range: high) or (color-gamut: p3) {
+  .video-container {
+    border: 1px solid color(display-p3 1 1 1 / 0.1);
+  }
+}
+.video-container video { width: 100%; height: 100%; object-fit: cover; transform: translateZ(0); will-change: transform; }
 
 /* No Signal Styles */
 .no-signal-overlay {
@@ -274,7 +312,7 @@ body, html {
   font-family: var(--font-mono);
   font-size: 0.8rem;
   letter-spacing: 0.2em;
-  color: #ffffff;
+  color: var(--white);
 }
 
 .timeline-container {
@@ -292,6 +330,12 @@ body, html {
   position: relative;
   cursor: pointer;
   border: 1px solid rgba(255, 255, 255, 0.3);
+}
+@media (dynamic-range: high) or (color-gamut: p3) {
+  #p-bar-container {
+    background: color(display-p3 1 1 1 / 0.1);
+    border: 1px solid color(display-p3 1 1 1 / 0.3);
+  }
 }
 
 #p-bar-fill {
@@ -312,6 +356,11 @@ body, html {
   border-top: 1px solid rgba(255, 255, 255, 0.05);
   width: 100%;
 }
+@media (dynamic-range: high) or (color-gamut: p3) {
+  .playback-bar {
+    border-top: 1px solid color(display-p3 1 1 1 / 0.05);
+  }
+}
 
 .p-btn {
   background: none;
@@ -330,6 +379,12 @@ body, html {
   min-width: 0;
   border-radius: 0;
 }
+@media (dynamic-range: high) or (color-gamut: p3) {
+  .p-btn {
+    border: 1px solid color(display-p3 1 1 1 / 0.1);
+    color: color(display-p3 1 1 1 / 0.5);
+  }
+}
 .p-btn:hover { border-color: var(--white); color: var(--white); }
 .p-btn.play-pause { flex: 0 0 48px; border-radius: 50%; padding: 0; }
 .play-pause svg { width: 20px; height: 20px; fill: currentColor; }
@@ -339,13 +394,16 @@ body, html {
 
 .spec-details { display: grid; grid-template-columns: 100px 1fr; gap: 10px; font-size: 0.7rem; font-family: var(--font-mono); text-transform: uppercase; }
 .spec-label { color: rgba(255, 255, 255, 0.3); }
+@media (dynamic-range: high) or (color-gamut: p3) {
+  .spec-label { color: color(display-p3 1 1 1 / 0.3); }
+}
 .spec-value { color: var(--white); }
 
 /* About Specific Styles */
 .avatar {
   width: 160px;
   height: 160px;
-  border: 1px solid #ffffff;
+  border: 1px solid var(--white);
   padding: 0;
   background: #000;
   overflow: hidden;
@@ -368,13 +426,16 @@ body, html {
   text-transform: uppercase;
   letter-spacing: 1px;
 }
+@media (dynamic-range: high) or (color-gamut: p3) {
+  .info-label { color: color(display-p3 1 1 1 / 0.4); }
+}
 .info-value {
   font-size: 16px;
   letter-spacing: 0.5px;
   line-height: 1.5;
 }
 .mail-link {
-  color: #ffffff;
+  color: var(--white);
   text-decoration: underline;
   text-decoration-thickness: 1px;
   border: none;
@@ -386,7 +447,7 @@ body, html {
 }
 .mail-link:hover {
   background: transparent;
-  color: #ffffff;
+  color: var(--white);
   opacity: 0.7;
 }
 </style>
@@ -485,12 +546,12 @@ body, html {
 <span class="coord coord-tl">[0000, 0000]</span>
 <span class="coord coord-br">[8888, 8888]</span>
 </div>
-<div class="content-grid" style="grid-template-columns: 0.6fr 1.4fr; background-color: #050505; color: #ffffff; font-family: 'Space Grotesk', sans-serif; border: 1px solid rgba(255,255,255,0.1); padding: 60px;">
+<div class="content-grid" style="grid-template-columns: 0.6fr 1.4fr; background-color: #050505; color: var(--white); font-family: 'Space Grotesk', sans-serif; border: 1px solid rgba(255,255,255,0.1); padding: 60px;">
   <div class="col-left" style="display: flex; flex-direction: column; align-items: center; justify-content: center; border-right: none; padding-right: 40px;">
     <a href="https://github.com/ephemeralgaze" target="_blank" class="avatar" style="display: block; cursor: pointer;">
       <img src="https://github.com/ephemeralgaze.png" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
     </a>
-    <a href="https://github.com/ephemeralgaze" target="_blank" style="margin-top: 25px; font-family: 'Space Mono', monospace; font-size: 14px; text-align: center; letter-spacing: 2px; font-weight: bold; text-transform: uppercase; color: #ffffff; text-decoration: none; display: block; cursor: pointer;">
+    <a href="https://github.com/ephemeralgaze" target="_blank" style="margin-top: 25px; font-family: 'Space Mono', monospace; font-size: 14px; text-align: center; letter-spacing: 2px; font-weight: bold; text-transform: uppercase; color: var(--white); text-decoration: none; display: block; cursor: pointer;">
       EPHEMERAL GAZE
     </a>
   </div>
