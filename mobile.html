@@ -509,7 +509,7 @@ body, html {
   position: relative;
 }
 
-.volume-container {
+.progress-container {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -519,7 +519,7 @@ body, html {
   transition: all 0.8s var(--ease);
 }
 
-.volume-container span {
+.progress-container span {
   font-family: var(--font-mono);
   font-size: 0.5rem;
   color: rgba(255, 255, 255, 0.3);
@@ -527,7 +527,7 @@ body, html {
   text-transform: uppercase;
 }
 
-#v-slider {
+#p-progress {
   flex: 1;
   height: 2px;
   -webkit-appearance: none;
@@ -536,7 +536,7 @@ body, html {
   cursor: pointer;
 }
 
-#v-slider::-webkit-slider-thumb {
+#p-progress::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 6px;
   height: 6px;
@@ -544,7 +544,7 @@ body, html {
   border-radius: 0;
 }
 
-#v-slider::-moz-range-thumb {
+#p-progress::-moz-range-thumb {
   width: 6px;
   height: 6px;
   background: var(--white);
@@ -590,6 +590,36 @@ body, html {
 .play-pause .pause-icon { display: none; }
 .play-pause.playing .play-icon { display: none; }
 .play-pause.playing .pause-icon { display: block; }
+
+.vol-btn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: all 0.3s var(--ease);
+}
+
+.vol-btn:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+  color: var(--white);
+}
+
+.vol-btn svg {
+  width: 12px;
+  height: 12px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+}
+
+.vol-btn .muted-icon { display: none; }
+.vol-btn.muted .unmuted-icon { display: none; }
+.vol-btn.muted .muted-icon { display: block; }
 
 /* Fullscreen Button */
 .fs-btn {
@@ -795,7 +825,7 @@ body, html {
 <div id="projects-overlay" class="overlay">
 <div class="overlay-frame">
 <span class="coord coord-tl">[1111, 1111]</span>
-<span class="coord coord-br">[9999, 9999]</span>
+<span id="coord-br-projects" class="coord coord-br">[9999, 9999]</span>
 </div>
 <div class="content-grid" id="p-grid-container">
   <div class="col-left" style="align-items: flex-start; justify-content: flex-start; padding: 15px;">
@@ -856,15 +886,21 @@ body, html {
         </button>
         <button class="p-btn" id="p-fwd-1f">+1F</button>
         <button class="p-btn" id="p-fwd-1s">+1S</button>
+        
+        <button class="p-btn vol-btn muted" id="p-volume-toggle">
+          <svg class="unmuted-icon" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5zM19.07 4.93l-1.41 1.41C19.1 7.79 20 9.79 20 12c0 2.21-.9 4.21-2.34 5.66l1.41 1.41C20.93 17.22 22 14.72 22 12c0-2.72-1.07-5.22-2.93-7.07z"/></svg>
+          <svg class="muted-icon" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5zm8.5 7c0-1.77-.77-3.29-2-4.3L16.2 9.1c.48.57.8 1.3.8 1.9 0 .6-.32 1.33-.8 1.9l1.3 1.4c1.23-1.01 2-2.53 2-4.3zm-3.5 0c0-.3-.12-.57-.3-.77l-1.3 1.3c.18-.15.3-.33.3-.53z"/><line x1="1" y1="1" x2="23" y2="23" stroke="currentColor" stroke-width="2"/></svg>
+        </button>
+
         <button class="fs-btn" id="p-fs-toggle">
           <svg class="fs-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
           <svg class="exit-fs-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14h6v6M20 10h-6V4M14 10l7-7M10 14l-7 7"/></svg>
         </button>
       </div>
 
-      <div class="volume-container">
-        <span>VOL</span>
-        <input type="range" id="v-slider" min="0" max="1" step="0.01" value="0">
+      <div class="progress-container">
+        <span>DATA</span>
+        <input type="range" id="p-progress" min="0" max="100" step="0.1" value="0">
       </div>
 
       <div class="spec-details" id="p-specs">
@@ -954,9 +990,11 @@ document.addEventListener("DOMContentLoaded", function() {
   const bBack1f = document.getElementById("p-back-1f");
   const bFwd1f = document.getElementById("p-fwd-1f");
   const bFwd1s = document.getElementById("p-fwd-1s");
-  const vSlider = document.getElementById("v-slider");
+  const pProgress = document.getElementById("p-progress");
+  const pVolToggle = document.getElementById("p-volume-toggle");
   const fsToggle = document.getElementById("p-fs-toggle");
   const pGridContainer = document.getElementById("p-grid-container");
+  const coordBrProjects = document.getElementById("coord-br-projects");
   
   const sPipeline = document.getElementById("s-pipeline");
   const sComplexity = document.getElementById("s-complexity");
@@ -1001,6 +1039,27 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   };
 
+  const formatTime = function(seconds) {
+    if (isNaN(seconds)) return "00:00";
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return (mins < 10 ? "0" + mins : mins) + ":" + (secs < 10 ? "0" + secs : secs);
+  };
+
+  const updateUI = function() {
+    if (!pVideo) return;
+    const current = pVideo.currentTime;
+    const duration = pVideo.duration || 0;
+    
+    if (pProgress) {
+      pProgress.value = duration > 0 ? (current / duration) * 100 : 0;
+    }
+    
+    if (coordBrProjects) {
+      coordBrProjects.innerText = "[" + " " + formatTime(current) + " " + "/" + " " + formatTime(duration) + " " + "]";
+    }
+  };
+
   const updateProjectMedia = function(projectId) {
     const data = projectData[projectId];
     if (!data) return;
@@ -1016,6 +1075,7 @@ document.addEventListener("DOMContentLoaded", function() {
         pVideo.src = "";
       }
       playBtn.classList.remove("playing");
+      updateUI();
     }
     
     if (sPipeline) sPipeline.innerText = data.pipeline;
@@ -1028,12 +1088,26 @@ document.addEventListener("DOMContentLoaded", function() {
     pVideo.onerror = function() {
       if (noSignal) noSignal.classList.add("active");
     };
+    pVideo.addEventListener("timeupdate", updateUI);
+    pVideo.addEventListener("loadedmetadata", updateUI);
   }
 
-  if (vSlider && pVideo) {
-    vSlider.addEventListener("input", function() {
-      pVideo.volume = vSlider.value;
-      pVideo.muted = (vSlider.value == 0);
+  if (pProgress && pVideo) {
+    pProgress.addEventListener("input", function() {
+      const duration = pVideo.duration || 0;
+      pVideo.currentTime = (pProgress.value / 100) * duration;
+      updateUI();
+    });
+  }
+
+  if (pVolToggle && pVideo) {
+    pVolToggle.addEventListener("click", function() {
+      pVideo.muted = !pVideo.muted;
+      if (pVideo.muted) {
+        pVolToggle.classList.add("muted");
+      } else {
+        pVolToggle.classList.remove("muted");
+      }
     });
   }
 
@@ -1127,6 +1201,7 @@ document.addEventListener("DOMContentLoaded", function() {
   if (bBack1s && pVideo) {
     bBack1s.addEventListener("click", function() {
       pVideo.currentTime = Math.max(0, pVideo.currentTime - 1);
+      updateUI();
     });
   }
   if (bBack1f && pVideo) {
@@ -1134,6 +1209,7 @@ document.addEventListener("DOMContentLoaded", function() {
       pVideo.pause();
       playBtn.classList.remove("playing");
       pVideo.currentTime = Math.max(0, pVideo.currentTime - (1 / FPS));
+      updateUI();
     });
   }
   if (bFwd1f && pVideo) {
@@ -1141,11 +1217,13 @@ document.addEventListener("DOMContentLoaded", function() {
       pVideo.pause();
       playBtn.classList.remove("playing");
       pVideo.currentTime = Math.min(pVideo.duration || 0, pVideo.currentTime + (1 / FPS));
+      updateUI();
     });
   }
   if (bFwd1s && pVideo) {
     bFwd1s.addEventListener("click", function() {
       pVideo.currentTime = Math.min(pVideo.duration || 0, pVideo.currentTime + 1);
+      updateUI();
     });
   }
 });
