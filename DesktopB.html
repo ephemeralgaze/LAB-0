@@ -217,16 +217,18 @@ body, html {
   max-width: 1400px;
   padding: 80px;
   pointer-events: auto;
-  align-items: center;
-  justify-content: center;
+}
+
+#projects-overlay .content-grid {
+  grid-template-columns: 0.6fr 1.4fr;
 }
 
 .col-left {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 20px;
-  border-right: 1px solid rgba(255, 255, 255, 0.05);
-  padding-right: 40px;
+  border-right: none;
 }
 
 .project-list {
@@ -254,32 +256,25 @@ body, html {
 .status-tag { font-size: 0.6rem; padding: 3px 8px; border: 1px solid rgba(255, 255, 255, 0.2); color: rgba(255, 255, 255, 0.7); font-family: var(--font-mono); }
 
 .spec-panel { display: flex; flex-direction: column; gap: 20px; }
-.video-container { width: 100%; aspect-ratio: 16/9; border: 1px solid rgba(255, 255, 255, 0.1); position: relative; overflow: hidden; background: #050505; }
-.video-container video { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+.video-container { width: 100%; aspect-ratio: 16/9; border: 1px solid rgba(255, 255, 255, 0.1); position: relative; overflow: hidden; background: #000; }
+.video-container video { width: 100%; height: 100%; object-fit: cover; }
 
 /* No Signal Styles */
 .no-signal-overlay {
   position: absolute;
   inset: 0;
-  display: none;
-  flex-direction: column;
+  display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 5;
-  background: rgba(5, 5, 5, 0.9);
-  font-family: var(--font-mono);
-  font-size: 0.9rem;
-  color: #ffffff;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  pointer-events: none;
-  border: 1px solid #ffffff;
+  background: #000;
+  z-index: 10;
+  display: none;
 }
-.no-signal-overlay.active { display: flex; }
-.blink-text { animation: signal-blink 1.5s steps(1) infinite; }
-@keyframes signal-blink { 
-  0%, 100% { opacity: 1; } 
-  50% { opacity: 0; } 
+.no-signal-text {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+  color: #ffffff;
 }
 
 .timeline-container {
@@ -290,20 +285,22 @@ body, html {
 }
 .p-time { font-family: var(--font-mono); font-size: 0.65rem; color: var(--white); width: 40px; text-align: center; }
 
-#p-progress-container {
+#p-bar-container {
   flex-grow: 1;
-  height: 2px;
   background: rgba(255, 255, 255, 0.1);
+  height: 6px;
   position: relative;
   cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
-#p-progress-bar {
+
+#p-bar-fill {
   position: absolute;
   left: 0;
   top: 0;
   height: 100%;
+  background: var(--white);
   width: 0%;
-  background: #ffffff;
 }
 
 .playback-bar {
@@ -338,25 +335,13 @@ body, html {
 .play-pause svg { width: 20px; height: 20px; fill: currentColor; }
 .play-pause .pause-icon { display: none; }
 .play-pause.playing .play-icon { display: none; }
-.play-pause.playing .pause-icon { display: block; }
+.play-pause.playing .pause-icon { block; }
 
 .spec-details { display: grid; grid-template-columns: 100px 1fr; gap: 10px; font-size: 0.7rem; font-family: var(--font-mono); text-transform: uppercase; }
 .spec-label { color: rgba(255, 255, 255, 0.3); }
 .spec-value { color: var(--white); }
 
 /* About Specific Styles */
-.github-link-wrapper {
-  text-decoration: none;
-  color: inherit;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  transition: opacity 0.3s ease;
-}
-.github-link-wrapper:hover {
-  opacity: 0.8;
-}
-
 .avatar {
   width: 160px;
   height: 160px;
@@ -443,7 +428,7 @@ body, html {
       </div>
       <div class="project-entry" data-project="attractor">
         <div class="project-info"><span class="project-id">[02]</span><span class="project-name">ATTRACTOR</span></div>
-        <span class="status-tag">ACTIVE</span>
+        <span class="status-tag">STANDBY</span>
       </div>
       <div class="project-entry" data-project="horizon">
         <div class="project-info"><span class="project-id">[03]</span><span class="project-name">HORIZON</span></div>
@@ -461,19 +446,18 @@ body, html {
   </div>
   <div class="col-right">
     <div class="spec-panel">
-      <div class="video-container" id="v-container">
+      <div class="video-container">
         <video id="p-video" playsinline loop muted></video>
         <div id="no-signal" class="no-signal-overlay">
-          <span class="blink-text">[ NO SIGNAL ]</span>
-          <span style="font-size: 0.6rem; opacity: 0.5; margin-top: 10px;">WAITING FOR DATA...</span>
+          <div class="no-signal-text">NO SIGNAL</div>
         </div>
       </div>
       <div class="timeline-container">
-        <div class="p-time" id="current-time">--:--</div>
-        <div id="p-progress-container">
-          <div id="p-progress-bar"></div>
+        <div class="p-time" id="current-time">00:00</div>
+        <div id="p-bar-container">
+          <div id="p-bar-fill"></div>
         </div>
-        <div class="p-time" id="duration-time">--:--</div>
+        <div class="p-time" id="duration-time">00:00</div>
       </div>
       <div class="playback-bar">
         <button class="p-btn" id="p-vol">VOL: 0</button>
@@ -501,15 +485,13 @@ body, html {
 <span class="coord coord-tl">[0000, 0000]</span>
 <span class="coord coord-br">[8888, 8888]</span>
 </div>
-<div class="content-grid" style="grid-template-columns: 0.7fr 1.3fr; background-color: #050505; color: #ffffff; font-family: 'Space Grotesk', sans-serif; border: 1px solid rgba(255,255,255,0.1); padding: 60px;">
-  <div class="col-left" style="display: flex; flex-direction: column; align-items: center; justify-content: center; border-right: 1px solid rgba(255,255,255,0.2); padding-right: 40px;">
-    <a href="https://github.com/ephemeralgaze" class="github-link-wrapper" target="_blank">
-      <div class="avatar">
-        <img src="https://github.com/ephemeralgaze.png" alt="Avatar">
-      </div>
-      <div style="margin-top: 25px; font-family: 'Space Mono', monospace; font-size: 14px; text-align: center; letter-spacing: 2px; font-weight: bold; text-transform: uppercase;">
-        EPHEMERAL GAZE
-      </div>
+<div class="content-grid" style="grid-template-columns: 0.6fr 1.4fr; background-color: #050505; color: #ffffff; font-family: 'Space Grotesk', sans-serif; border: 1px solid rgba(255,255,255,0.1); padding: 60px;">
+  <div class="col-left" style="display: flex; flex-direction: column; align-items: center; justify-content: center; border-right: none; padding-right: 40px;">
+    <a href="https://github.com/ephemeralgaze" target="_blank" class="avatar" style="display: block; cursor: pointer;">
+      <img src="https://github.com/ephemeralgaze.png" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
+    </a>
+    <a href="https://github.com/ephemeralgaze" target="_blank" style="margin-top: 25px; font-family: 'Space Mono', monospace; font-size: 14px; text-align: center; letter-spacing: 2px; font-weight: bold; text-transform: uppercase; color: #ffffff; text-decoration: none; display: block; cursor: pointer;">
+      EPHEMERAL GAZE
     </a>
   </div>
   <div class="col-right" style="padding-left: 60px; display: flex; flex-direction: column; justify-content: center; gap: 25px;">
@@ -534,60 +516,6 @@ body, html {
 </div>
 
 <script>
-(function() {
-  var canvas = document.getElementById("dot-matrix-canvas");
-  if (!canvas) return;
-  var ctx = canvas.getContext("2d");
-  var dots = [];
-  var width, height, dpr;
-
-  var GRID_SIZE = 30;
-  var DOT_RADIUS = 1.2;
-
-  function init() {
-    dpr = window.devicePixelRatio || 1;
-    width = window.innerWidth;
-    height = window.innerHeight;
-    canvas.width = width * dpr;
-    canvas.height = height * dpr;
-    ctx.scale(dpr, dpr);
-    
-    dots = [];
-    var cols = Math.ceil(width / GRID_SIZE);
-    var rows = Math.ceil(height / GRID_SIZE);
-
-    for (var i = 0; i < cols; i++) {
-      for (var j = 0; j < rows; j++) {
-        dots.push({
-          x: i * GRID_SIZE + GRID_SIZE / 2,
-          y: j * GRID_SIZE + GRID_SIZE / 2,
-          phase: Math.random() * Math.PI * 2,
-          freq: 0.02 + Math.random() * 0.03,
-          maxOpacity: 0.05 + Math.random() * 0.55
-        });
-      }
-    }
-  }
-
-  function draw(time) {
-    ctx.clearRect(0, 0, width, height);
-    
-    dots.forEach(function(dot) {
-      var opacity = (Math.sin(time * 0.001 * dot.freq * 100 + dot.phase) * 0.5 + 0.5) * dot.maxOpacity;
-      ctx.beginPath();
-      ctx.arc(dot.x, dot.y, DOT_RADIUS, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(255, 255, 255, " + opacity.toFixed(3) + ")";
-      ctx.fill();
-    });
-
-    requestAnimationFrame(draw);
-  }
-
-  window.addEventListener("resize", init);
-  init();
-  requestAnimationFrame(draw);
-})();
-
 document.addEventListener("DOMContentLoaded", function() {
   var wordmark = document.getElementById("wordmark");
   var grid = document.getElementById("grid");
@@ -600,7 +528,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
   var pVideo = document.getElementById("p-video");
   var playBtn = document.getElementById("play-pause");
-  var pProgressBar = document.getElementById("p-progress-bar");
+  var pBarContainer = document.getElementById("p-bar-container");
+  var pBarFill = document.getElementById("p-bar-fill");
   var curTimeTxt = document.getElementById("current-time");
   var durTimeTxt = document.getElementById("duration-time");
   var sPipeline = document.getElementById("s-pipeline");
@@ -629,25 +558,28 @@ document.addEventListener("DOMContentLoaded", function() {
     var data = projectData[pid];
     if (!data) return;
     
-    if (pVideo && noSignal) {
-      pVideo.pause();
-      if (pProgressBar) pProgressBar.style.width = "0%";
-      if (data.video && data.video !== "") {
-        if (curTimeTxt) curTimeTxt.innerText = "00:00";
-        if (durTimeTxt) durTimeTxt.innerText = "00:00";
-        noSignal.classList.remove("active");
-        pVideo.src = data.video + "#t=0.001";
-        pVideo.load();
-      } else {
-        if (curTimeTxt) curTimeTxt.innerText = "--:--";
-        if (durTimeTxt) durTimeTxt.innerText = "--:--";
-        pVideo.src = "";
-        noSignal.classList.add("active");
-      }
+    pVideo.pause();
+    pVideo.src = "";
+    pVideo.load();
+    pVideo.currentTime = 0;
+    if (pBarFill) pBarFill.style.width = "0%";
+    playBtn.classList.remove("playing");
+    
+    if (data.video && data.video !== "") {
+      curTimeTxt.innerText = "00:00";
+      durTimeTxt.innerText = "00:00";
+      noSignal.style.display = "none";
+      pVideo.src = data.video;
+      pVideo.load();
+    } else {
+      curTimeTxt.innerText = "--:--";
+      durTimeTxt.innerText = "--:--";
+      pVideo.src = "";
+      noSignal.style.display = "flex";
     }
     
-    if (sPipeline) sPipeline.innerText = data.pipeline;
-    if (sComplexity) sComplexity.innerText = data.complexity;
+    sPipeline.innerText = data.pipeline;
+    sComplexity.innerText = data.complexity;
   }
 
   if (projectsTrigger) projectsTrigger.addEventListener("click", function() {
@@ -688,40 +620,42 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   });
 
-  if (pVideo && noSignal) {
-    pVideo.onerror = function() {
-      noSignal.classList.add("active");
-    };
-  }
-
   if (playBtn) playBtn.addEventListener("click", function() {
-    if (pVideo.paused) { pVideo.play(); }
-    else { pVideo.pause(); }
+    if (pVideo.paused) { pVideo.play(); playBtn.classList.add("playing"); }
+    else { pVideo.pause(); playBtn.classList.remove("playing"); }
   });
 
   if (pVideo) {
-    pVideo.addEventListener("play", function() { if (playBtn) playBtn.classList.add("playing"); });
-    pVideo.addEventListener("pause", function() { if (playBtn) playBtn.classList.remove("playing"); });
     pVideo.addEventListener("timeupdate", function() {
-      if (curTimeTxt && !isNaN(pVideo.duration) && pVideo.duration > 0) {
+      if (!isNaN(pVideo.duration) && pVideo.duration > 0) {
+        var v = (pVideo.currentTime / pVideo.duration) * 100;
+        if (pBarFill) pBarFill.style.width = v + "%";
         curTimeTxt.innerText = formatTime(pVideo.currentTime);
-        if (pProgressBar) {
-          var v = (pVideo.currentTime / pVideo.duration) * 100;
-          pProgressBar.style.width = v + "%";
-        }
       }
     });
     pVideo.addEventListener("loadedmetadata", function() {
-      if (durTimeTxt) durTimeTxt.innerText = formatTime(pVideo.duration);
+      durTimeTxt.innerText = formatTime(pVideo.duration);
     });
   }
 
-  var FPS = 60;
-  function syncPause() { if (!pVideo.paused) { pVideo.pause(); } }
+  if (pBarContainer) {
+    pBarContainer.addEventListener("click", function(e) {
+      if (!isNaN(pVideo.duration) && pVideo.duration > 0) {
+        var rect = pBarContainer.getBoundingClientRect();
+        var x = e.clientX - rect.left;
+        var pct = x / rect.width;
+        if (pct < 0) pct = 0;
+        if (pct > 1) pct = 1;
+        pVideo.currentTime = pct * pVideo.duration;
+      }
+    });
+  }
+
+  function syncPause() { if (!pVideo.paused) { pVideo.pause(); playBtn.classList.remove("playing"); } }
   document.getElementById("p-back-1s").addEventListener("click", function() { syncPause(); pVideo.currentTime -= 1; });
   document.getElementById("p-fwd-1s").addEventListener("click", function() { syncPause(); pVideo.currentTime += 1; });
-  document.getElementById("p-back-f").addEventListener("click", function() { syncPause(); pVideo.currentTime -= (1/FPS); });
-  document.getElementById("p-fwd-f").addEventListener("click", function() { syncPause(); pVideo.currentTime += (1/FPS); });
+  document.getElementById("p-back-f").addEventListener("click", function() { syncPause(); pVideo.currentTime -= (1/60); });
+  document.getElementById("p-fwd-f").addEventListener("click", function() { syncPause(); pVideo.currentTime += (1/60); });
   
   var volBtn = document.getElementById("p-vol");
   volBtn.addEventListener("click", function() {
@@ -745,6 +679,43 @@ document.addEventListener("DOMContentLoaded", function() {
     else if (pVideo.webkitRequestFullscreen) pVideo.webkitRequestFullscreen();
     else if (pVideo.msRequestFullscreen) pVideo.msRequestFullscreen();
   });
+
+  var canvas = document.getElementById("dot-matrix-canvas");
+  if (canvas) {
+    var ctx = canvas.getContext("2d");
+    var dots = [];
+    var rows, cols;
+    var spacing = 40;
+
+    function initDots() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      cols = Math.ceil(canvas.width / spacing) + 1;
+      rows = Math.ceil(canvas.height / spacing) + 1;
+      dots = [];
+      for (var i = 0; i < cols; i++) {
+        for (var j = 0; j < rows; j++) {
+          dots.push({ x: i * spacing, y: j * spacing, baseOpacity: 0.05 + Math.random() * 0.1 });
+        }
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      var time = Date.now() * 0.001;
+      for (var i = 0; i < dots.length; i++) {
+        var d = dots[i];
+        var pulse = Math.sin(time + (d.x + d.y) * 0.01) * 0.05;
+        ctx.fillStyle = "rgba(255, 255, 255, " + (d.baseOpacity + pulse) + ")";
+        ctx.fillRect(d.x, d.y, 1, 1);
+      }
+      requestAnimationFrame(animate);
+    }
+
+    window.addEventListener("resize", initDots);
+    initDots();
+    animate();
+  }
 });
 </script>
 </body>
