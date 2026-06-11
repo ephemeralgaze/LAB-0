@@ -576,16 +576,19 @@ document.addEventListener("DOMContentLoaded", function() {
     pVideo.load();
     pVideo.currentTime = 0;
     pBar.value = 0;
-    curTimeTxt.innerText = "00:00";
     playBtn.classList.remove("playing");
     
     if (data.video && data.video !== "") {
+      curTimeTxt.innerText = "00:00";
+      durTimeTxt.innerText = "00:00";
       noSignal.style.display = "none";
       loadingPct.style.display = "flex";
       loadingPct.innerText = "LOADING...";
       pVideo.src = data.video;
       pVideo.load();
     } else {
+      curTimeTxt.innerText = "--:--";
+      durTimeTxt.innerText = "--:--";
       pVideo.src = "";
       noSignal.style.display = "flex";
       loadingPct.style.display = "none";
