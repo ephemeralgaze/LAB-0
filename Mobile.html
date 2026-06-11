@@ -184,7 +184,7 @@ body, html {
   left: 0;
   width: 100%;
   height: 40px;
-  background: linear-gradient(to bottom, #050505 0%, rgba(5, 5, 5,) 100%);
+  background: linear-gradient(to bottom, #050505 0%, rgba(5, 5, 5, 0) 100%);
   pointer-events: none;
 }
 
@@ -454,8 +454,7 @@ body, html {
   width: 100%;
   aspect-ratio: 16/9;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  position: relative;
-  overflow: hidden;
+  position: relative; overflow: hidden;
   background: rgba(255, 255, 255, 0.02);
 }
 
@@ -1001,11 +1000,12 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
   var FPS = 30;
+  var syncPause = function() { if (pVideo && !pVideo.paused) { pVideo.pause(); } };
   document.getElementById("p-volume-toggle").addEventListener("click", function() { pVideo.muted = !pVideo.muted; });
-  document.getElementById("p-back-1s").addEventListener("click", function() { pVideo.currentTime -= 1; });
-  document.getElementById("p-back-1f").addEventListener("click", function() { pVideo.currentTime -= (1/FPS); });
-  document.getElementById("p-fwd-1f").addEventListener("click", function() { pVideo.currentTime += (1/FPS); });
-  document.getElementById("p-fwd-1s").addEventListener("click", function() { pVideo.currentTime += 1; });
+  document.getElementById("p-back-1s").addEventListener("click", function() { syncPause(); pVideo.currentTime -= 1; });
+  document.getElementById("p-back-1f").addEventListener("click", function() { syncPause(); pVideo.currentTime -= (1/FPS); });
+  document.getElementById("p-fwd-1f").addEventListener("click", function() { syncPause(); pVideo.currentTime += (1/FPS); });
+  document.getElementById("p-fwd-1s").addEventListener("click", function() { syncPause(); pVideo.currentTime += 1; });
   document.getElementById("p-fs-toggle").addEventListener("click", function() {
     if (pVideo.requestFullscreen) { pVideo.requestFullscreen(); }
     else if (pVideo.webkitEnterFullscreen) { pVideo.webkitEnterFullscreen(); }
