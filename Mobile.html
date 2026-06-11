@@ -748,6 +748,15 @@ body, html {
         </div>
       </div>
       
+      <!-- New Timeline for Mobile -->
+      <div style="display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 0;">
+        <div id="current-time" style="font-family: 'Space Mono', monospace; font-size: 0.6rem; color: #ffffff; width: 35px;">--:--</div>
+        <div style="flex-grow: 1; height: 1px; background: rgba(255,255,255,0.1); position: relative;">
+          <div id="p-progress" style="position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: #ffffff;"></div>
+        </div>
+        <div id="duration-time" style="font-family: 'Space Mono', monospace; font-size: 0.6rem; color: #ffffff; width: 35px; text-align: right;">--:--</div>
+      </div>
+
       <div class="playback-bar" id="playback-bar">
         <button class="p-btn" id="p-volume-toggle">VOL</button>
         <button class="p-btn" id="p-back-1s">-1S</button>
@@ -844,6 +853,9 @@ document.addEventListener("DOMContentLoaded", function() {
   var pVideo = document.getElementById("p-video");
   var noSignal = document.getElementById("no-signal");
   var playBtn = document.getElementById("play-pause");
+  var curTimeTxt = document.getElementById("current-time");
+  var durTimeTxt = document.getElementById("duration-time");
+  var pProgress = document.getElementById("p-progress");
   
   var sPipeline = document.getElementById("s-pipeline");
   var sComplexity = document.getElementById("s-complexity");
@@ -888,21 +900,31 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   };
 
+  function formatTime(s) {
+    var m = Math.floor(s / 60);
+    var sec = Math.floor(s % 60);
+    return (m < 10 ? "0" + m : m) + ":" + (sec < 10 ? "0" + sec : sec);
+  }
+
   var updateProjectMedia = function(projectId) {
     var data = projectData[projectId];
     if (!data) return;
     
     if (pVideo && noSignal) {
       pVideo.pause();
+      if (pProgress) pProgress.style.width = "0%";
       if (data.video && data.video !== "") {
+        if (curTimeTxt) curTimeTxt.innerText = "00:00";
+        if (durTimeTxt) durTimeTxt.innerText = "00:00";
         noSignal.classList.remove("active");
         pVideo.src = data.video + "#t=0.001";
         pVideo.load();
       } else {
+        if (curTimeTxt) curTimeTxt.innerText = "--:--";
+        if (durTimeTxt) durTimeTxt.innerText = "--:--";
         pVideo.src = "";
         noSignal.classList.add("active");
       }
-      // class synced via events
     }
     
     if (sPipeline) sPipeline.innerText = data.pipeline;
@@ -993,6 +1015,18 @@ document.addEventListener("DOMContentLoaded", function() {
 
     pVideo.addEventListener('play', function() { if (playBtn) playBtn.classList.add('playing'); });
     pVideo.addEventListener('pause', function() { if (playBtn) playBtn.classList.remove('playing'); });
+    pVideo.addEventListener('timeupdate', function() {
+      if (curTimeTxt && !isNaN(pVideo.duration) && pVideo.duration > 0) {
+        curTimeTxt.innerText = formatTime(pVideo.currentTime);
+        if (pProgress) {
+          var v = (pVideo.currentTime / pVideo.duration) * 100;
+          pProgress.style.width = v + "%";
+        }
+      }
+    });
+    pVideo.addEventListener('loadedmetadata', function() {
+      if (durTimeTxt) durTimeTxt.innerText = formatTime(pVideo.duration);
+    });
     pVideo.addEventListener('webkitendfullscreen', function() {
       pVideo.pause();
       if (playBtn) playBtn.classList.remove('playing');
