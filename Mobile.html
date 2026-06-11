@@ -904,7 +904,7 @@ document.addEventListener("DOMContentLoaded", function() {
         pVideo.src = "";
         noSignal.classList.add("active");
       }
-      playBtn.classList.remove("playing");
+      // class synced via events
     }
     
     if (sPipeline) sPipeline.innerText = data.pipeline;
@@ -939,6 +939,7 @@ document.addEventListener("DOMContentLoaded", function() {
   setActiveNav(navHome);
 
   var switchPage = function(pageId, triggerEl) {
+    if (pageId !== "projects") { if (pVideo) pVideo.pause(); }
     setActiveNav(triggerEl);
     if (aboutOverlay) aboutOverlay.classList.remove("active");
     if (projectsOverlay) projectsOverlay.classList.remove("active");
@@ -987,11 +988,16 @@ document.addEventListener("DOMContentLoaded", function() {
     playBtn.addEventListener("click", function() {
       if (pVideo.paused) {
         pVideo.play();
-        playBtn.classList.add("playing");
       } else {
         pVideo.pause();
-        playBtn.classList.remove("playing");
       }
+    });
+
+    pVideo.addEventListener('play', function() { if (playBtn) playBtn.classList.add('playing'); });
+    pVideo.addEventListener('pause', function() { if (playBtn) playBtn.classList.remove('playing'); });
+    pVideo.addEventListener('webkitendfullscreen', function() {
+      pVideo.pause();
+      if (playBtn) playBtn.classList.remove('playing');
     });
   }
 

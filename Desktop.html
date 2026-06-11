@@ -11,7 +11,7 @@
 (function() {
   var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
   if (isMobile || window.innerWidth < 768) {
-    window.location.replace("mobile.html");
+    window.location.replace("Mobile.html");
   }
 })();
 </script>
@@ -384,24 +384,35 @@ body, html {
 <span class="coord coord-tl">[0000, 0000]</span>
 <span class="coord coord-br">[8888, 8888]</span>
 </div>
-<div class="content-grid" style="grid-template-columns: 0.7fr 1.3fr;">
-  <div class="col-left">
-    <div style="font-family: 'Syncopate', sans-serif; font-size: 24px; font-weight: bold; letter-spacing: 2px; margin-bottom: 20px;">LAB-0</div>
-    <div style="font-family: 'Space Mono', monospace; font-size: 11px; opacity: 0.7; line-height: 1.8;">
-      SYSTEM: RUNNING KERNEL<br>
-      STATUS: CALIBRATED<br>
-      METAPHOR: FARADAY CAGE<br>
-      CORE: SUPER-SYMMETRY
+<div class="content-grid" style="grid-template-columns: 140px 1fr; align-items: start; gap: 60px; max-width: 900px; background: #050505; border: 1px solid #FFFFFF; padding: 60px;">
+  <div class="col-left" style="border: none; padding: 0;">
+    <div style="width: 120px; height: 120px; border: 1px solid #FFFFFF; border-radius: 0px; overflow: hidden; background: #000;">
+      <img src="https://github.com/ephemeralgaze.png" style="width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.2);">
     </div>
   </div>
-  <div class="col-right" style="border-left: 1px solid rgba(255, 255, 255, 0.1); padding-left: 40px; display: flex; flex-direction: column; justify-content: space-between;">
-    <div style="font-family: 'Space Grotesk', sans-serif; font-size: 14px; line-height: 1.8; opacity: 0.9;">
-      EXPERIMENTAL GAME DEVELOPMENT AND TECHNICAL ARTISTRY UNIT.<br>
-      BUILT FROM ZERO. PROCEDURAL GENERATION, SHADER MANIFESTS, GPU DYNAMICS.<br><br>
-      DEVELOPER: EPHEMERAL GAZE // ZKDLIN3390
+  <div class="col-right" style="border: none; padding: 0; display: flex; flex-direction: column; gap: 30px;">
+    <div style="display: flex; flex-direction: column; gap: 5px;">
+      <div style="font-family: 'Space Grotesk', sans-serif; font-size: 32px; font-weight: 700; color: #FFFFFF; text-transform: uppercase; letter-spacing: -0.02em;">Kyungsoo Doh</div>
+      <div style="font-family: 'Space Mono', monospace; font-size: 13px; color: #FFFFFF; opacity: 0.6; letter-spacing: 0.1em;">zkdlin3390 (Ephemeral Gaze)</div>
     </div>
-    <div style="font-family: 'Space Mono', monospace; font-size: 10px; opacity: 0.4;">
-      CRITICAL THRESHOLD: 130 BPM // NO LAYOUT SHIFTS TOLERATED
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; font-family: 'Space Mono', monospace; font-size: 11px; text-transform: uppercase;">
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <span style="opacity: 0.4;">Age</span>
+        <span style="color: #FFFFFF;">21 (Born 2005)</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <span style="opacity: 0.4;">Status</span>
+        <span style="color: #FFFFFF;">Undergraduate Student</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <span style="opacity: 0.4;">Focus</span>
+        <span style="color: #FFFFFF;">Game Dev / Tech Artist</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <span style="opacity: 0.4;">Relay</span>
+        <span style="color: #FFFFFF; text-transform: none;">zgnx4ndcq5@privaterelay.appleid.com</span>
+      </div>
     </div>
   </div>
 </div>
@@ -499,7 +510,7 @@ document.addEventListener("DOMContentLoaded", function() {
     var data = projectData[pid];
     if (!data) return;
     pVideo.pause();
-    playBtn.classList.remove("playing");
+    // class synced via events
     pVideo.src = data.video;
     pVideo.load();
     sPipeline.innerText = data.pipeline;
@@ -535,10 +546,15 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   });
 
-  if (playBtn) playBtn.addEventListener("click", function() {
-    if (pVideo.paused) { pVideo.play(); playBtn.classList.add("playing"); }
-    else { pVideo.pause(); playBtn.classList.remove("playing"); }
-  });
+  if (playBtn && pVideo) {
+    playBtn.addEventListener("click", function() {
+      if (pVideo.paused) { pVideo.play(); }
+      else { pVideo.pause(); }
+    });
+
+    pVideo.addEventListener('play', function() { if (playBtn) playBtn.classList.add('playing'); });
+    pVideo.addEventListener('pause', function() { if (playBtn) playBtn.classList.remove('playing'); });
+  }
 
   if (pVideo) {
     pVideo.addEventListener("timeupdate", function() {
