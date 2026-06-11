@@ -11,7 +11,7 @@
 (function() {
   var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
   if (isMobile || window.innerWidth < 768) {
-    window.location.replace("mobile.html");
+    window.location.replace("Mobile.html");
   }
 })();
 </script>
@@ -258,6 +258,24 @@ body, html {
 .video-container { width: 100%; aspect-ratio: 16/9; border: 1px solid rgba(255, 255, 255, 0.1); position: relative; overflow: hidden; background: #000; }
 .video-container video { width: 100%; height: 100%; object-fit: cover; }
 
+/* No Signal Styles */
+.no-signal-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  z-index: 10;
+  display: none;
+}
+.no-signal-text {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+  color: #ffffff;
+}
+
 .timeline-container {
   display: flex;
   align-items: center;
@@ -287,10 +305,11 @@ body, html {
 .playback-bar {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 15px;
+  justify-content: space-between;
+  gap: 10px;
   padding: 15px 0;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
+  width: 100%;
 }
 
 .p-btn {
@@ -302,9 +321,16 @@ body, html {
   padding: 8px 12px;
   cursor: pointer;
   transition: all 0.3s var(--ease);
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-width: 0;
+  border-radius: 0;
 }
 .p-btn:hover { border-color: var(--white); color: var(--white); }
-.p-btn.play-pause { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; padding: 0; }
+.p-btn.play-pause { flex: 0 0 48px; border-radius: 50%; padding: 0; }
 .play-pause svg { width: 20px; height: 20px; fill: currentColor; }
 .play-pause .pause-icon { display: none; }
 .play-pause.playing .play-icon { display: none; }
@@ -313,6 +339,55 @@ body, html {
 .spec-details { display: grid; grid-template-columns: 100px 1fr; gap: 10px; font-size: 0.7rem; font-family: var(--font-mono); text-transform: uppercase; }
 .spec-label { color: rgba(255, 255, 255, 0.3); }
 .spec-value { color: var(--white); }
+
+/* About Specific Styles */
+.avatar {
+  width: 160px;
+  height: 160px;
+  border: 1px solid #ffffff;
+  padding: 0;
+  background: #000;
+  overflow: hidden;
+}
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0;
+}
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.info-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  color: rgba(255,255,255,0.4);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.info-value {
+  font-size: 16px;
+  letter-spacing: 0.5px;
+  line-height: 1.5;
+}
+.mail-link {
+  color: #ffffff;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  border: none;
+  padding: 0;
+  transition: all 0.3s ease;
+  display: inline-block;
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+}
+.mail-link:hover {
+  background: transparent;
+  color: #ffffff;
+  opacity: 0.7;
+}
 </style>
 </head>
 <body>
@@ -352,23 +427,44 @@ body, html {
         <div class="project-info"><span class="project-id">[02]</span><span class="project-name">ATTRACTOR</span></div>
         <span class="status-tag">STANDBY</span>
       </div>
+      <div class="project-entry" data-project="horizon">
+        <div class="project-info"><span class="project-id">[03]</span><span class="project-name">HORIZON</span></div>
+        <span class="status-tag">STANDBY</span>
+      </div>
+      <div class="project-entry" data-project="quantum">
+        <div class="project-info"><span class="project-id">[04]</span><span class="project-name">QUANTUM</span></div>
+        <span class="status-tag">ACTIVE</span>
+      </div>
+      <div class="project-entry" data-project="monolith">
+        <div class="project-info"><span class="project-id">[05]</span><span class="project-name">MONOLITH</span></div>
+        <span class="status-tag">STANDBY</span>
+      </div>
     </div>
   </div>
   <div class="col-right">
     <div class="spec-panel">
-      <div class="video-container"><video id="p-video" playsinline loop muted></video></div>
+      <div class="video-container">
+        <video id="p-video" playsinline loop muted></video>
+        <div id="no-signal" class="no-signal-overlay">
+          <div class="no-signal-text">NO SIGNAL</div>
+        </div>
+      </div>
       <div class="timeline-container">
         <div class="p-time" id="current-time">00:00</div>
         <input type="range" id="p-bar" min="0" value="0" step="0.01">
         <div class="p-time" id="duration-time">00:00</div>
       </div>
       <div class="playback-bar">
-        <button class="p-btn" id="p-back-1s"><-1S</button>
+        <button class="p-btn" id="p-vol">VOL: 0</button>
+        <button class="p-btn" id="p-back-f">&lt;F</button>
+        <button class="p-btn" id="p-back-1s">&lt;-1S</button>
         <button class="p-btn play-pause" id="play-pause">
           <svg class="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
           <svg class="pause-icon" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
         </button>
         <button class="p-btn" id="p-fwd-1s">+1S</button>
+        <button class="p-btn" id="p-fwd-f">F&gt;</button>
+        <button class="p-btn" id="p-fs">FS</button>
       </div>
       <div class="spec-details">
         <span class="spec-label">Pipeline:</span><span class="spec-value" id="s-pipeline">---</span>
@@ -379,14 +475,105 @@ body, html {
 </div>
 </div>
 
+<div id="about-overlay" class="overlay">
+<div class="overlay-frame">
+<span class="coord coord-tl">[0000, 0000]</span>
+<span class="coord coord-br">[8888, 8888]</span>
+</div>
+<div class="content-grid" style="grid-template-columns: 0.7fr 1.3fr; background-color: #050505; color: #ffffff; font-family: 'Space Grotesk', sans-serif; border: 1px solid rgba(255,255,255,0.1); padding: 60px;">
+  <div class="col-left" style="display: flex; flex-direction: column; align-items: center; justify-content: center; border-right: 1px solid rgba(255,255,255,0.2); padding-right: 40px;">
+    <div class="avatar">
+      <img src="https://github.com/ephemeralgaze.png" alt="Avatar">
+    </div>
+    <div style="margin-top: 25px; font-family: 'Space Mono', monospace; font-size: 14px; text-align: center; letter-spacing: 2px; font-weight: bold; text-transform: uppercase;">
+      EPHEMERAL GAZE
+    </div>
+  </div>
+  <div class="col-right" style="padding-left: 60px; display: flex; flex-direction: column; justify-content: center; gap: 25px;">
+    <div class="info-item">
+      <span class="info-label">Name / Identity</span>
+      <span class="info-value" style="font-size: 18px; letter-spacing: 1px; font-weight: 500;">zkdlin3390</span>
+    </div>
+    <div class="info-item">
+      <span class="info-label">Status</span>
+      <span class="info-value">Age 21 / Born 2004</span>
+    </div>
+    <div class="info-item">
+      <span class="info-label">Field</span>
+      <span class="info-value">Undergraduate Student<br>Game Developer & Technical Artist</span>
+    </div>
+    <div class="info-item">
+      <span class="info-label">Direct Access</span>
+      <a href="mailto:zgnx4ndcq5@privaterelay.appleid.com" class="mail-link">zgnx4ndcq5@privaterelay.appleid.com</a>
+    </div>
+  </div>
+</div>
+</div>
+
 <script>
+(function() {
+  var canvas = document.getElementById("dot-matrix-canvas");
+  if (!canvas) return;
+  var ctx = canvas.getContext("2d");
+  var dots = [];
+  var width, height, dpr;
+
+  var GRID_SIZE = 30;
+  var DOT_RADIUS = 1.2;
+
+  function init() {
+    dpr = window.devicePixelRatio || 1;
+    width = window.innerWidth;
+    height = window.innerHeight;
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    ctx.scale(dpr, dpr);
+    
+    dots = [];
+    var cols = Math.ceil(width / GRID_SIZE);
+    var rows = Math.ceil(height / GRID_SIZE);
+
+    for (var i = 0; i < cols; i++) {
+      for (var j = 0; j < rows; j++) {
+        dots.push({
+          x: i * GRID_SIZE + GRID_SIZE / 2,
+          y: j * GRID_SIZE + GRID_SIZE / 2,
+          phase: Math.random() * Math.PI * 2,
+          freq: 0.02 + Math.random() * 0.03,
+          maxOpacity: 0.05 + Math.random() * 0.55
+        });
+      }
+    }
+  }
+
+  function draw(time) {
+    ctx.clearRect(0, 0, width, height);
+    
+    dots.forEach(function(dot) {
+      var opacity = (Math.sin(time * 0.001 * dot.freq * 100 + dot.phase) * 0.5 + 0.5) * dot.maxOpacity;
+      ctx.beginPath();
+      ctx.arc(dot.x, dot.y, DOT_RADIUS, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(255, 255, 255, " + opacity.toFixed(3) + ")";
+      ctx.fill();
+    });
+
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener("resize", init);
+  init();
+  requestAnimationFrame(draw);
+})();
+
 document.addEventListener("DOMContentLoaded", function() {
   var wordmark = document.getElementById("wordmark");
   var grid = document.getElementById("grid");
   var menu = document.getElementById("menu");
   var projectsTrigger = document.getElementById("projects-trigger");
+  var aboutTrigger = document.getElementById("about-trigger");
   var navHome = document.getElementById("nav-home");
   var projectsOverlay = document.getElementById("projects-overlay");
+  var aboutOverlay = document.getElementById("about-overlay");
 
   var pVideo = document.getElementById("p-video");
   var playBtn = document.getElementById("play-pause");
@@ -395,10 +582,14 @@ document.addEventListener("DOMContentLoaded", function() {
   var durTimeTxt = document.getElementById("duration-time");
   var sPipeline = document.getElementById("s-pipeline");
   var sComplexity = document.getElementById("s-complexity");
+  var noSignal = document.getElementById("no-signal");
 
   var projectData = {
     void: { video: "void.mov", pipeline: "HLSL / Compute", complexity: "12.4M Particles" },
-    attractor: { video: "attractor.mp4", pipeline: "GLSL / Vertex", complexity: "Lorenz / 60FPS" }
+    attractor: { video: "attractor.mp4", pipeline: "GLSL / Vertex", complexity: "Lorenz / 60FPS" },
+    horizon: { video: "horizon.mp4", pipeline: "PBR / Raycast", complexity: "Dynamic SDF" },
+    quantum: { video: "quantum.mp4", pipeline: "VFX / Compute", complexity: "Q-Field Sim" },
+    monolith: { video: "monolith.mp4", pipeline: "Geometry Shaders", complexity: "Instanced Mesh" }
   };
 
   setTimeout(function() { if (wordmark) wordmark.classList.add("assembled"); }, 1500);
@@ -414,20 +605,50 @@ document.addEventListener("DOMContentLoaded", function() {
   function updateProject(pid) {
     var data = projectData[pid];
     if (!data) return;
+    
     pVideo.pause();
-    playBtn.classList.remove("playing");
-    pVideo.src = data.video;
+    pVideo.src = "";
     pVideo.load();
+    pVideo.currentTime = 0;
+    pBar.value = 0;
+    playBtn.classList.remove("playing");
+    
+    if (data.video && data.video !== "") {
+      curTimeTxt.innerText = "00:00";
+      durTimeTxt.innerText = "00:00";
+      noSignal.style.display = "none";
+      pVideo.src = data.video;
+      pVideo.load();
+    } else {
+      curTimeTxt.innerText = "--:--";
+      durTimeTxt.innerText = "--:--";
+      pVideo.src = "";
+      noSignal.style.display = "flex";
+    }
+    
     sPipeline.innerText = data.pipeline;
     sComplexity.innerText = data.complexity;
   }
 
   if (projectsTrigger) projectsTrigger.addEventListener("click", function() {
+    aboutOverlay.classList.remove("active");
     projectsOverlay.classList.add("active");
     updateProject("void");
   });
 
-  if (navHome) navHome.addEventListener("click", function() { projectsOverlay.classList.remove("active"); });
+  if (aboutTrigger) {
+    aboutTrigger.addEventListener("click", function() {
+      projectsOverlay.classList.remove("active");
+      aboutOverlay.classList.add("active");
+    });
+  }
+
+  if (navHome) {
+    navHome.addEventListener("click", function() { 
+      projectsOverlay.classList.remove("active"); 
+      aboutOverlay.classList.remove("active"); 
+    });
+  }
 
   var projectEntries = document.querySelectorAll(".project-entry");
   projectEntries.forEach(function(entry) {
@@ -445,7 +666,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   if (pVideo) {
     pVideo.addEventListener("timeupdate", function() {
-      if (!isNaN(pVideo.duration)) {
+      if (!isNaN(pVideo.duration) && pVideo.duration > 0) {
         var v = (pVideo.currentTime / pVideo.duration) * 100;
         pBar.value = v;
         curTimeTxt.innerText = formatTime(pVideo.currentTime);
@@ -454,15 +675,49 @@ document.addEventListener("DOMContentLoaded", function() {
     pVideo.addEventListener("loadedmetadata", function() {
       durTimeTxt.innerText = formatTime(pVideo.duration);
     });
+    pVideo.addEventListener("error", function() {
+      var noSignalEl = document.getElementById("no-signal");
+      if (noSignalEl) {
+        noSignalEl.style.display = "flex";
+      }
+    }, true);
   }
 
   if (pBar) pBar.addEventListener("input", function() {
-    var t = (pBar.value / 100) * pVideo.duration;
-    pVideo.currentTime = t;
+    if (!isNaN(pVideo.duration)) {
+      var t = (pBar.value / 100) * pVideo.duration;
+      pVideo.currentTime = t;
+    }
   });
 
-  document.getElementById("p-back-1s").addEventListener("click", function() { pVideo.currentTime -= 1; });
-  document.getElementById("p-fwd-1s").addEventListener("click", function() { pVideo.currentTime += 1; });
+  function syncPause() { if (!pVideo.paused) { pVideo.pause(); playBtn.classList.remove("playing"); } }
+  document.getElementById("p-back-1s").addEventListener("click", function() { syncPause(); pVideo.currentTime -= 1; });
+  document.getElementById("p-fwd-1s").addEventListener("click", function() { syncPause(); pVideo.currentTime += 1; });
+  document.getElementById("p-back-f").addEventListener("click", function() { syncPause(); pVideo.currentTime -= (1/60); });
+  document.getElementById("p-fwd-f").addEventListener("click", function() { syncPause(); pVideo.currentTime += (1/60); });
+  
+  var volBtn = document.getElementById("p-vol");
+  volBtn.addEventListener("click", function() {
+    if (pVideo.muted) {
+      pVideo.muted = false;
+      pVideo.volume = 1.0;
+      volBtn.innerText = "VOL: 1";
+    } else if (pVideo.volume > 0) {
+      pVideo.volume = 0;
+      pVideo.muted = true;
+      volBtn.innerText = "VOL: 0";
+    } else {
+      pVideo.muted = false;
+      pVideo.volume = 1.0;
+      volBtn.innerText = "VOL: 1";
+    }
+  });
+
+  document.getElementById("p-fs").addEventListener("click", function() {
+    if (pVideo.requestFullscreen) pVideo.requestFullscreen();
+    else if (pVideo.webkitRequestFullscreen) pVideo.webkitRequestFullscreen();
+    else if (pVideo.msRequestFullscreen) pVideo.msRequestFullscreen();
+  });
 });
 </script>
 </body>
