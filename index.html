@@ -1,28 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>LAB-0 | ROUTER</title>
-  <style>
-    html, body {
-      background: #050505;
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-    }
-  </style>
-  <script>
-    (function() {
-      var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-      var isMobile = width < 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-      if (isMobile) {
-        window.location.replace("Mobile.html");
-      } else {
-        window.location.replace("Desktop.html");
-      }
-    })();
-  </script>
+<meta charset="utf-8">
+<title>LAB-0 | ROUTER</title>
+<style>
+html, body {
+background: #050505;
+margin: 0;
+padding: 0;
+width: 100%;
+height: 100%;
+}
+</style>
+<script>
+(function() {
+var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+var isMobile = width < 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+if (isMobile) {
+window.location.replace("Mobile.html");
+} else {
+window.location.replace("Desktop.html");
+}
+})();
+</script>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="apple-touch-icon" href="favicon.svg">
 </head>
 <body style="background:#050505;">
 </body>
