@@ -504,7 +504,7 @@ body, html {
 
 .play-pause .pause-icon { display: none; }
 .play-pause.playing .play-icon { display: none; }
-.play-pause.playing .pause-icon { block; }
+.play-pause.playing .pause-icon { display: block; }
 
 .spec-details {
   display: grid;
@@ -971,9 +971,9 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   });
   if (pVideo && noSignal) {
-    pVideo.onerror = function() {
+    pVideo.addEventListener("error", function() {
       noSignal.classList.add("active");
-    };
+    }, true);
   }
 
   if (playBtn && pVideo) {
