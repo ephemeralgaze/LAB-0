@@ -97,7 +97,6 @@ body, html {
   font-family: var(--font-header);
   font-weight: 700;
   font-size: 1.5rem;
-  /* CRITICAL: Lock physical bounds to prevent translate(0, -50%) shifts */
   height: 24px;
   line-height: 24px;
   white-space: nowrap;
@@ -484,7 +483,7 @@ body, html {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 4px;
   padding: 8px 0;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -495,12 +494,13 @@ body, html {
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: rgba(255, 255, 255, 0.5);
   font-family: var(--font-mono);
-  font-size: 0.5rem;
-  padding: 6px 10px;
+  font-size: 0.45rem;
+  padding: 6px 4px;
   cursor: pointer;
   transition: all 0.3s var(--ease);
-  letter-spacing: 0.1em;
+  letter-spacing: 0.05em;
   border-radius: 0;
+  min-width: 34px;
 }
 
 .p-btn:hover {
@@ -509,13 +509,14 @@ body, html {
 }
 
 .p-btn.play-pause {
-  width: 40px;
-  height: 40px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0;
+  min-width: 34px;
 }
 
 .play-pause svg {
@@ -584,7 +585,6 @@ body, html {
 }
 
 @media (orientation: landscape) and (max-height: 500px) {
-  /* 1. content-grid splits to double-column */
   #projects-overlay .content-grid {
     grid-template-columns: 1fr 1.2fr;
     gap: 20px;
@@ -592,7 +592,6 @@ body, html {
     align-items: start;
   }
 
-  /* 2. Left column border positioning swap */
   #projects-overlay .col-left {
     border-bottom: none;
     border-right: 1px solid rgba(255, 255, 255, 0.05);
@@ -600,13 +599,11 @@ body, html {
     padding-right: 20px;
   }
 
-  /* 3. Strict video height constraint */
   #projects-overlay .video-container {
     max-height: 40vh;
     background: #000;
   }
 
-  /* 4. Fine-tuning detail layout */
   #projects-overlay .spec-panel {
     gap: 8px;
   }
@@ -753,13 +750,17 @@ body, html {
         </div>
       </div>
       
-      <div class="playback-bar">
-        <button class="p-btn" id="p-rewind">STEP-</button>
+      <div class="playback-bar" id="playback-bar">
+        <button class="p-btn" id="p-volume-toggle">VOL</button>
+        <button class="p-btn" id="p-back-1s">-1S</button>
+        <button class="p-btn" id="p-back-1f">-1F</button>
         <button class="p-btn play-pause" id="play-pause">
           <svg class="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
           <svg class="pause-icon" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
         </button>
-        <button class="p-btn" id="p-forward">STEP+</button>
+        <button class="p-btn" id="p-fwd-1f">+1F</button>
+        <button class="p-btn" id="p-fwd-1s">+1S</button>
+        <button class="p-btn" id="p-fs-toggle">FS</button>
       </div>
 
       <div class="spec-details" id="p-specs">
@@ -775,14 +776,14 @@ body, html {
 
 <script>
 (function() {
-  const canvas = document.getElementById("dot-matrix-canvas");
+  var canvas = document.getElementById("dot-matrix-canvas");
   if (!canvas) return;
-  const ctx = canvas.getContext("2d");
-  let dots = [];
-  let width, height, dpr;
+  var ctx = canvas.getContext("2d");
+  var dots = [];
+  var width, height, dpr;
 
-  const GRID_SIZE = 30;
-  const DOT_RADIUS = 1.2;
+  var GRID_SIZE = 30;
+  var DOT_RADIUS = 1.2;
 
   function init() {
     dpr = window.devicePixelRatio || 1;
@@ -793,11 +794,11 @@ body, html {
     ctx.scale(dpr, dpr);
     
     dots = [];
-    const cols = Math.ceil(width / GRID_SIZE);
-    const rows = Math.ceil(height / GRID_SIZE);
+    var cols = Math.ceil(width / GRID_SIZE);
+    var rows = Math.ceil(height / GRID_SIZE);
 
-    for (let i = 0; i < cols; i++) {
-      for (let j = 0; j < rows; j++) {
+    for (var i = 0; i < cols; i++) {
+      for (var j = 0; j < rows; j++) {
         dots.push({
           x: i * GRID_SIZE + GRID_SIZE / 2,
           y: j * GRID_SIZE + GRID_SIZE / 2,
@@ -813,7 +814,7 @@ body, html {
     ctx.clearRect(0, 0, width, height);
     
     dots.forEach(function(dot) {
-      const opacity = (Math.sin(time * 0.001 * dot.freq * 100 + dot.phase) * 0.5 + 0.5) * dot.maxOpacity;
+      var opacity = (Math.sin(time * 0.001 * dot.freq * 100 + dot.phase) * 0.5 + 0.5) * dot.maxOpacity;
       ctx.beginPath();
       ctx.arc(dot.x, dot.y, DOT_RADIUS, 0, Math.PI * 2);
       ctx.fillStyle = "rgba(255, 255, 255, " + opacity.toFixed(3) + ")";
@@ -829,31 +830,29 @@ body, html {
 })();
 
 document.addEventListener("DOMContentLoaded", function() {
-  const wordmark = document.getElementById("wordmark");
-  const grid = document.getElementById("grid");
-  const navHome = document.getElementById("nav-home");
-  const aboutOverlay = document.getElementById("about-overlay");
-  const projectsOverlay = document.getElementById("projects-overlay");
+  var wordmark = document.getElementById("wordmark");
+  var grid = document.getElementById("grid");
+  var navHome = document.getElementById("nav-home");
+  var aboutOverlay = document.getElementById("about-overlay");
+  var projectsOverlay = document.getElementById("projects-overlay");
 
-  const hamburger = document.getElementById("hamburger");
-  const mobileNav = document.getElementById("mobile-nav");
-  const mNavHome = document.getElementById("m-nav-home");
-  const mProjectsTrigger = document.getElementById("m-projects-trigger");
-  const mAboutTrigger = document.getElementById("m-about-trigger");
-  const mobileHeader = document.getElementById("mobile-header");
+  var hamburger = document.getElementById("hamburger");
+  var mobileNav = document.getElementById("mobile-nav");
+  var mNavHome = document.getElementById("m-nav-home");
+  var mProjectsTrigger = document.getElementById("m-projects-trigger");
+  var mAboutTrigger = document.getElementById("m-about-trigger");
+  var mobileHeader = document.getElementById("mobile-header");
 
-  const pVideo = document.getElementById("p-video");
-  const noSignal = document.getElementById("no-signal");
-  const playBtn = document.getElementById("play-pause");
-  const rewindBtn = document.getElementById("p-rewind");
-  const forwardBtn = document.getElementById("p-forward");
+  var pVideo = document.getElementById("p-video");
+  var noSignal = document.getElementById("no-signal");
+  var playBtn = document.getElementById("play-pause");
   
-  const sPipeline = document.getElementById("s-pipeline");
-  const sComplexity = document.getElementById("s-complexity");
-  const sBuffers = document.getElementById("s-buffers");
-  const sStatus = document.getElementById("s-status");
+  var sPipeline = document.getElementById("s-pipeline");
+  var sComplexity = document.getElementById("s-complexity");
+  var sBuffers = document.getElementById("s-buffers");
+  var sStatus = document.getElementById("s-status");
 
-  const projectData = {
+  var projectData = {
     void: {
       video: "void.mov",
       pipeline: "HLSL / Compute",
@@ -891,8 +890,8 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   };
 
-  const updateProjectMedia = function(projectId) {
-    const data = projectData[projectId];
+  var updateProjectMedia = function(projectId) {
+    var data = projectData[projectId];
     if (!data) return;
     
     if (pVideo && noSignal) {
@@ -914,15 +913,12 @@ document.addEventListener("DOMContentLoaded", function() {
     if (sStatus) sStatus.innerText = data.status;
   };
 
-  // Mobile Sequence
   setTimeout(function() { 
     if (wordmark) wordmark.classList.add("docked");
   }, 3500);
 
-  // Use transitionend to ensure the docked transition is 100% complete before revealing the rest
   if (wordmark) {
     wordmark.addEventListener("transitionend", function(e) {
-      // Only fire when the main transform transition to docked state is finished
       if (e.propertyName === "top" || e.propertyName === "transform") {
         if (wordmark.classList.contains("docked") && !wordmark.classList.contains("docked-final")) {
           if (grid) grid.classList.add("ui-visible");
@@ -933,16 +929,16 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   }
 
-  const navItems = [navHome, mNavHome, mProjectsTrigger, mAboutTrigger];
+  var navItems = [navHome, mNavHome, mProjectsTrigger, mAboutTrigger];
 
-  const setActiveNav = function(activeEl) {
+  var setActiveNav = function(activeEl) {
     navItems.forEach(function(item) { if (item) item.classList.remove("active"); });
     if (activeEl) activeEl.classList.add("active");
   };
 
   setActiveNav(navHome);
 
-  const switchPage = function(pageId, triggerEl) {
+  var switchPage = function(pageId, triggerEl) {
     setActiveNav(triggerEl);
     if (aboutOverlay) aboutOverlay.classList.remove("active");
     if (projectsOverlay) projectsOverlay.classList.remove("active");
@@ -972,12 +968,12 @@ document.addEventListener("DOMContentLoaded", function() {
   if (mProjectsTrigger) mProjectsTrigger.addEventListener("click", function() { switchPage("projects", mProjectsTrigger); });
   if (mNavHome) mNavHome.addEventListener("click", function() { switchPage("home", mNavHome); });
 
-  const projectEntries = document.querySelectorAll(".project-entry");
+  var projectEntries = document.querySelectorAll(".project-entry");
   projectEntries.forEach(function(entry) {
     entry.addEventListener("click", function() {
       projectEntries.forEach(function(e) { e.classList.remove("selected"); });
       entry.classList.add("selected");
-      const pid = entry.getAttribute("data-project");
+      var pid = entry.getAttribute("data-project");
       updateProjectMedia(pid);
     });
   });
@@ -986,7 +982,6 @@ document.addEventListener("DOMContentLoaded", function() {
       noSignal.classList.add("active");
     };
   }
-
 
   if (playBtn && pVideo) {
     playBtn.addEventListener("click", function() {
@@ -1000,22 +995,16 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   }
 
-  const FPS = 30;
-  if (rewindBtn && pVideo) {
-    rewindBtn.addEventListener("click", function() {
-      pVideo.pause();
-      playBtn.classList.remove("playing");
-      pVideo.currentTime = Math.max(0, pVideo.currentTime - (1 / FPS));
-    });
-  }
-
-  if (forwardBtn && pVideo) {
-    forwardBtn.addEventListener("click", function() {
-      pVideo.pause();
-      playBtn.classList.remove("playing");
-      pVideo.currentTime = Math.min(pVideo.duration || 0, pVideo.currentTime + (1 / FPS));
-    });
-  }
+  var FPS = 30;
+  document.getElementById("p-volume-toggle").addEventListener("click", function() { pVideo.muted = !pVideo.muted; });
+  document.getElementById("p-back-1s").addEventListener("click", function() { pVideo.currentTime -= 1; });
+  document.getElementById("p-back-1f").addEventListener("click", function() { pVideo.currentTime -= (1/FPS); });
+  document.getElementById("p-fwd-1f").addEventListener("click", function() { pVideo.currentTime += (1/FPS); });
+  document.getElementById("p-fwd-1s").addEventListener("click", function() { pVideo.currentTime += 1; });
+  document.getElementById("p-fs-toggle").addEventListener("click", function() {
+    if (pVideo.requestFullscreen) { pVideo.requestFullscreen(); }
+    else if (pVideo.webkitEnterFullscreen) { pVideo.webkitEnterFullscreen(); }
+  });
 });
 </script>
 </body>
