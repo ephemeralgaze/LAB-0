@@ -11,7 +11,7 @@
 (function() {
   var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
   if (isMobile || window.innerWidth < 768) {
-    window.location.replace("mobile.html");
+    window.location.replace("Mobile.html");
   }
 })();
 </script>
@@ -262,7 +262,6 @@ body, html {
 .no-signal-overlay {
   position: absolute;
   inset: 0;
-  border: 1px solid #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -658,10 +657,11 @@ document.addEventListener("DOMContentLoaded", function() {
     pVideo.currentTime = t;
   });
 
-  document.getElementById("p-back-1s").addEventListener("click", function() { pVideo.currentTime -= 1; });
-  document.getElementById("p-fwd-1s").addEventListener("click", function() { pVideo.currentTime += 1; });
-  document.getElementById("p-back-f").addEventListener("click", function() { pVideo.currentTime -= (1/60); });
-  document.getElementById("p-fwd-f").addEventListener("click", function() { pVideo.currentTime += (1/60); });
+  function syncPause() { if (!pVideo.paused) { pVideo.pause(); playBtn.classList.remove("playing"); } }
+  document.getElementById("p-back-1s").addEventListener("click", function() { syncPause(); pVideo.currentTime -= 1; });
+  document.getElementById("p-fwd-1s").addEventListener("click", function() { syncPause(); pVideo.currentTime += 1; });
+  document.getElementById("p-back-f").addEventListener("click", function() { syncPause(); pVideo.currentTime -= (1/60); });
+  document.getElementById("p-fwd-f").addEventListener("click", function() { syncPause(); pVideo.currentTime += (1/60); });
   
   var volBtn = document.getElementById("p-vol");
   volBtn.addEventListener("click", function() {
