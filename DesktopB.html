@@ -8,514 +8,14 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
 <script>
+
 (function() {
   var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
   if (isMobile || window.innerWidth < 768) {
     window.location.replace("Mobile.html");
   }
 })();
-</script>
-<style>
-:root {
-  --bg-color: #050505;
-  --overlay-bg: rgba(5, 5, 5, 0.7);
-  --white: #ffffff;
-  --grid-color: rgba(255, 255, 255, 0.1);
-  --font-header: "Syncopate", sans-serif;
-  --font-body: "Space Grotesk", sans-serif;
-  --font-mono: "Space Mono", monospace;
-  --ease: cubic-bezier(0.8, 0, 0.2, 1);
-}
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body, html {
-  width: 100%;
-  height: 100%;
-  background-color: var(--bg-color);
-  color: var(--white);
-  overflow: hidden;
-  font-family: var(--font-body);
-  -webkit-font-smoothing: antialiased;
-}
-
-#dot-matrix-canvas {
-  position: fixed;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-  width: 100%;
-  height: 100%;
-}
-
-#bg-overlay {
-  position: fixed;
-  inset: 0;
-  background: var(--overlay-bg);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  z-index: 1;
-  pointer-events: none;
-}
-
-.ui-grid {
-  position: fixed;
-  inset: 0;
-  border: none;
-  margin: 20px;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 1s ease-out;
-  z-index: 5;
-}
-
-.stage {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-  pointer-events: none;
-}
-
-#wordmark {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-header);
-  font-weight: 700;
-  font-size: 1.5rem;
-  white-space: nowrap;
-  letter-spacing: 0.1em;
-  transform: scale(3.3333);
-  transition: transform 1.2s var(--ease), opacity 0.8s ease;
-  will-change: transform;
-  opacity: 1;
-}
-
-.ab0-reveal {
-  display: inline-flex;
-  align-items: center;
-  white-space: nowrap;
-  clip-path: inset(0 100% 0 0);
-  transition: clip-path 1.2s var(--ease), opacity 0.6s var(--ease);
-  will-change: clip-path;
-  opacity: 0;
-}
-
-#wordmark.assembled .ab0-reveal {
-  opacity: 1;
-  clip-path: inset(0 0 0 0) !important;
-}
-
-#wordmark.docked {
-  transform: translate(calc(-50vw + 60px + 1.9em), calc(-50vh + 45px + 0.4em)) scale(1);
-  pointer-events: auto;
-}
-
-.desktop-icon {
-  width: 1.1em;
-  height: 1.1em;
-  margin-left: 0.15em;
-  flex-shrink: 0;
-  stroke: currentColor;
-  stroke-width: 2.5;
-  fill: none;
-  display: inline-block;
-}
-
-.menu-items {
-  position: absolute;
-  left: 100%;
-  top: 50%;
-  transform: translateY(-50%);
-  display: inline-flex;
-  align-items: center;
-  padding-left: 25px;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 1s var(--ease);
-}
-
-#wordmark.docked .menu-items.visible {
-  pointer-events: auto;
-  opacity: 1;
-}
-
-.menu-item {
-  color: var(--white);
-  text-decoration: none;
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.2em;
-  margin-right: 25px;
-  text-transform: uppercase;
-  transition: opacity 0.15s ease-out, filter 0.15s ease-out;
-  cursor: pointer;
-  pointer-events: auto;
-  opacity: 1;
-}
-
-.menu-item.active {
-  opacity: 1 !important;
-  color: #FFFFFF !important;
-  pointer-events: none;
-}
-
-.ui-visible { opacity: 1 !important; }
-
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: var(--overlay-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  z-index: 200;
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transition: opacity 1.2s var(--ease), visibility 1.2s var(--ease);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.overlay.active {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-}
-
-.overlay-frame {
-  position: absolute;
-  inset: 40px;
-  border: none;
-  pointer-events: none;
-}
-
-.coord {
-  position: absolute;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  color: rgba(255, 255, 255, 0.4);
-  letter-spacing: 0.1em;
-}
-.coord-tl { top: -20px; left: 0; }
-.coord-br { bottom: -20px; right: 0; }
-
-.content-grid {
-  display: grid;
-  grid-template-columns: 0.6fr 1.4fr;
-  gap: 80px;
-  width: 100%;
-  max-width: 1400px;
-  padding: 80px;
-  pointer-events: auto;
-}
-
-#projects-overlay .content-grid {
-  grid-template-columns: 0.6fr 1.4fr;
-}
-
-.col-left {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 20px;
-  border-right: none;
-}
-
-.project-list {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  width: 100%;
-}
-
-.project-entry {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);
-  cursor: pointer;
-  opacity: 0.5;
-}
-
-.project-entry.selected { opacity: 1; }
-.project-info { display: flex; align-items: baseline; gap: 15px; font-family: var(--font-mono); text-transform: uppercase; }
-.project-id { font-size: 0.6rem; color: rgba(255, 255, 255, 0.3); }
-.project-name { font-size: 0.9rem; letter-spacing: 0.15em; }
-.status-tag { font-size: 0.6rem; padding: 3px 8px; border: 1px solid rgba(255, 255, 255, 0.2); color: rgba(255, 255, 255, 0.7); font-family: var(--font-mono); }
-
-.spec-panel { display: flex; flex-direction: column; gap: 20px; }
-.video-container { width: 100%; aspect-ratio: 16/9; border: 1px solid rgba(255, 255, 255, 0.1); position: relative; overflow: hidden; background: #000; }
-.video-container video { width: 100%; height: 100%; object-fit: cover; }
-
-/* No Signal Styles */
-.no-signal-overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #000;
-  z-index: 10;
-  display: none;
-}
-.no-signal-text {
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  letter-spacing: 0.2em;
-  color: #ffffff;
-}
-
-.timeline-container {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  width: 100%;
-}
-.p-time { font-family: var(--font-mono); font-size: 0.65rem; color: var(--white); width: 40px; text-align: center; }
-
-#p-bar-container {
-  flex-grow: 1;
-  background: rgba(255, 255, 255, 0.1);
-  height: 6px;
-  position: relative;
-  cursor: pointer;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-#p-bar-fill {
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  background: var(--white);
-  width: 0%;
-}
-
-.playback-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 15px 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  width: 100%;
-}
-
-.p-btn {
-  background: none;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.5);
-  font-family: var(--font-mono);
-  font-size: 0.6rem;
-  padding: 8px 12px;
-  cursor: pointer;
-  transition: all 0.3s var(--ease);
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex: 1;
-  min-width: 0;
-  border-radius: 0;
-}
-.p-btn:hover { border-color: var(--white); color: var(--white); }
-.p-btn.play-pause { flex: 0 0 48px; border-radius: 50%; padding: 0; }
-.play-pause svg { width: 20px; height: 20px; fill: currentColor; }
-.play-pause .pause-icon { display: none; }
-.play-pause.playing .play-icon { display: none; }
-.play-pause.playing .pause-icon { block; }
-
-.spec-details { display: grid; grid-template-columns: 100px 1fr; gap: 10px; font-size: 0.7rem; font-family: var(--font-mono); text-transform: uppercase; }
-.spec-label { color: rgba(255, 255, 255, 0.3); }
-.spec-value { color: var(--white); }
-
-/* About Specific Styles */
-.avatar {
-  width: 160px;
-  height: 160px;
-  border: 1px solid #ffffff;
-  padding: 0;
-  background: #000;
-  overflow: hidden;
-}
-.avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 0;
-}
-.info-item {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.info-label {
-  font-family: 'Space Mono', monospace;
-  font-size: 9px;
-  color: rgba(255,255,255,0.4);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-.info-value {
-  font-size: 16px;
-  letter-spacing: 0.5px;
-  line-height: 1.5;
-}
-.mail-link {
-  color: #ffffff;
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  border: none;
-  padding: 0;
-  transition: all 0.3s ease;
-  display: inline-block;
-  font-family: 'Space Mono', monospace;
-  font-size: 12px;
-}
-.mail-link:hover {
-  background: transparent;
-  color: #ffffff;
-  opacity: 0.7;
-}
-</style>
-    <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <link rel="apple-touch-icon" href="favicon.svg">
-</head>
-<body>
-<canvas id="dot-matrix-canvas"></canvas>
-<div id="bg-overlay"></div>
-<div class="ui-grid" id="grid"></div>
-
-<div class="stage">
-<div id="wordmark">
-<a id="nav-home" class="menu-item" style="font-family:inherit; font-size:inherit; letter-spacing:inherit; margin:0; padding:0; text-transform: none;">
-  <span>L</span><span class="ab0-reveal">AB-<svg class="desktop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-    <line x1="8" y1="21" x2="16" y2="21"></line>
-    <line x1="12" y1="17" x2="12" y2="21"></line>
-  </svg></span>
-</a>
-<div class="menu-items" id="menu">
-<a id="projects-trigger" class="menu-item">PROJECTS</a>
-<a id="about-trigger" class="menu-item">ABOUT</a>
-</div>
-</div>
-</div>
-
-<div id="projects-overlay" class="overlay">
-<div class="overlay-frame">
-<span class="coord coord-tl">[1111, 1111]</span>
-<span class="coord coord-br">[9999, 9999]</span>
-</div>
-<div class="content-grid">
-  <div class="col-left">
-    <div class="project-list" id="p-list">
-      <div class="project-entry selected" data-project="void">
-        <div class="project-info"><span class="project-id">[01]</span><span class="project-name">VOID</span></div>
-        <span class="status-tag">ACTIVE</span>
-      </div>
-      <div class="project-entry" data-project="attractor">
-        <div class="project-info"><span class="project-id">[02]</span><span class="project-name">ATTRACTOR</span></div>
-        <span class="status-tag">STANDBY</span>
-      </div>
-      <div class="project-entry" data-project="horizon">
-        <div class="project-info"><span class="project-id">[03]</span><span class="project-name">HORIZON</span></div>
-        <span class="status-tag">STANDBY</span>
-      </div>
-      <div class="project-entry" data-project="quantum">
-        <div class="project-info"><span class="project-id">[04]</span><span class="project-name">QUANTUM</span></div>
-        <span class="status-tag">ACTIVE</span>
-      </div>
-      <div class="project-entry" data-project="monolith">
-        <div class="project-info"><span class="project-id">[05]</span><span class="project-name">MONOLITH</span></div>
-        <span class="status-tag">STANDBY</span>
-      </div>
-    </div>
-  </div>
-  <div class="col-right">
-    <div class="spec-panel">
-      <div class="video-container">
-        <video id="p-video" playsinline loop muted></video>
-        <div id="no-signal" class="no-signal-overlay">
-          <div class="no-signal-text">NO SIGNAL</div>
-        </div>
-      </div>
-      <div class="timeline-container">
-        <div class="p-time" id="current-time">00:00</div>
-        <div id="p-bar-container">
-          <div id="p-bar-fill"></div>
-        </div>
-        <div class="p-time" id="duration-time">00:00</div>
-      </div>
-      <div class="playback-bar">
-        <button class="p-btn" id="p-vol">VOL: 0</button>
-        <button class="p-btn" id="p-back-f">&lt;F</button>
-        <button class="p-btn" id="p-back-1s">&lt;-1S</button>
-        <button class="p-btn play-pause" id="play-pause">
-          <svg class="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-          <svg class="pause-icon" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-        </button>
-        <button class="p-btn" id="p-fwd-1s">+1S</button>
-        <button class="p-btn" id="p-fwd-f">F&gt;</button>
-        <button class="p-btn" id="p-fs">FS</button>
-      </div>
-      <div class="spec-details">
-        <span class="spec-label">Pipeline:</span><span class="spec-value" id="s-pipeline">---</span>
-        <span class="spec-label">Complexity:</span><span class="spec-value" id="s-complexity">---</span>
-      </div>
-    </div>
-  </div>
-</div>
-</div>
-
-<div id="about-overlay" class="overlay">
-<div class="overlay-frame">
-<span class="coord coord-tl">[0000, 0000]</span>
-<span class="coord coord-br">[8888, 8888]</span>
-</div>
-<div class="content-grid" style="grid-template-columns: 0.6fr 1.4fr; background-color: #050505; color: #ffffff; font-family: 'Space Grotesk', sans-serif; border: 1px solid rgba(255,255,255,0.1); padding: 60px;">
-  <div class="col-left" style="display: flex; flex-direction: column; align-items: center; justify-content: center; border-right: none; padding-right: 40px;">
-    <a href="https://github.com/ephemeralgaze" target="_blank" class="avatar" style="display: block; cursor: pointer;">
-      <img src="https://github.com/ephemeralgaze.png" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
-    </a>
-    <a href="https://github.com/ephemeralgaze" target="_blank" style="margin-top: 25px; font-family: 'Space Mono', monospace; font-size: 14px; text-align: center; letter-spacing: 2px; font-weight: bold; text-transform: uppercase; color: #ffffff; text-decoration: none; display: block; cursor: pointer;">
-      EPHEMERAL GAZE
-    </a>
-  </div>
-  <div class="col-right" style="padding-left: 60px; display: flex; flex-direction: column; justify-content: center; gap: 25px;">
-    <div class="info-item">
-      <span class="info-label">Name / Identity</span>
-      <span class="info-value" style="font-size: 18px; letter-spacing: 1px; font-weight: 500;">zkdlin3390</span>
-    </div>
-    <div class="info-item">
-      <span class="info-label">Status</span>
-      <span class="info-value">Age 21 / Born 2004</span>
-    </div>
-    <div class="info-item">
-      <span class="info-label">Field</span>
-      <span class="info-value">Undergraduate Student<br>Game Developer & Technical Artist</span>
-    </div>
-    <div class="info-item">
-      <span class="info-label">Direct Access</span>
-      <a href="mailto:zgnx4ndcq5@privaterelay.appleid.com" class="mail-link">zgnx4ndcq5@privaterelay.appleid.com</a>
-    </div>
-  </div>
-</div>
-</div>
-
-<script>
 document.addEventListener("DOMContentLoaded", function() {
   var wordmark = document.getElementById("wordmark");
   var grid = document.getElementById("grid");
@@ -658,64 +158,86 @@ document.addEventListener("DOMContentLoaded", function() {
   document.getElementById("p-fwd-f").addEventListener("click", function() { syncPause(); pVideo.currentTime += (1/60); });
   
   var volBtn = document.getElementById("p-vol");
-  volBtn.addEventListener("click", function() {
-    if (pVideo.muted) {
-      pVideo.muted = false;
-      pVideo.volume = 1.0;
-      volBtn.innerText = "VOL: 1";
-    } else if (pVideo.volume > 0) {
-      pVideo.volume = 0;
-      pVideo.muted = true;
-      volBtn.innerText = "VOL: 0";
-    } else {
-      pVideo.muted = false;
-      pVideo.volume = 1.0;
-      volBtn.innerText = "VOL: 1";
-    }
-  });
+  if (volBtn) {
+    volBtn.addEventListener("click", function() {
+      if (pVideo.muted) {
+        pVideo.muted = false;
+        pVideo.volume = 1.0;
+        volBtn.innerText = "VOL: 1";
+      } else if (pVideo.volume > 0) {
+        pVideo.volume = 0;
+        pVideo.muted = true;
+        volBtn.innerText = "VOL: 0";
+      } else {
+        pVideo.muted = false;
+        pVideo.volume = 1.0;
+        volBtn.innerText = "VOL: 1";
+      }
+    });
+  }
 
-  document.getElementById("p-fs").addEventListener("click", function() {
-    if (pVideo.requestFullscreen) pVideo.requestFullscreen();
-    else if (pVideo.webkitRequestFullscreen) pVideo.webkitRequestFullscreen();
-    else if (pVideo.msRequestFullscreen) pVideo.msRequestFullscreen();
-  });
+  var fsBtn = document.getElementById("p-fs");
+  if (fsBtn) {
+    fsBtn.addEventListener("click", function() {
+      if (pVideo.requestFullscreen) pVideo.requestFullscreen();
+      else if (pVideo.webkitRequestFullscreen) pVideo.webkitRequestFullscreen();
+      else if (pVideo.msRequestFullscreen) pVideo.msRequestFullscreen();
+    });
+  }
 
-  var canvas = document.getElementById("dot-matrix-canvas");
-  if (canvas) {
+  (function() {
+    var canvas = document.getElementById("dot-matrix-canvas");
+    if (!canvas) return;
     var ctx = canvas.getContext("2d");
     var dots = [];
-    var rows, cols;
-    var spacing = 40;
+    var width, height, dpr;
 
-    function initDots() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      cols = Math.ceil(canvas.width / spacing) + 1;
-      rows = Math.ceil(canvas.height / spacing) + 1;
+    var GRID_SIZE = 30;
+    var DOT_RADIUS = 1.2;
+
+    function init() {
+      dpr = window.devicePixelRatio || 1;
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      ctx.scale(dpr, dpr);
+      
       dots = [];
+      var cols = Math.ceil(width / GRID_SIZE);
+      var rows = Math.ceil(height / GRID_SIZE);
+
       for (var i = 0; i < cols; i++) {
         for (var j = 0; j < rows; j++) {
-          dots.push({ x: i * spacing, y: j * spacing, baseOpacity: 0.05 + Math.random() * 0.1 });
+          dots.push({
+            x: i * GRID_SIZE + GRID_SIZE / 2,
+            y: j * GRID_SIZE + GRID_SIZE / 2,
+            phase: Math.random() * Math.PI * 2,
+            freq: 0.02 + Math.random() * 0.03,
+            maxOpacity: 0.02 + Math.random() * 0.28
+          });
         }
       }
     }
 
-    function animate() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      var time = Date.now() * 0.001;
-      for (var i = 0; i < dots.length; i++) {
-        var d = dots[i];
-        var pulse = Math.sin(time + (d.x + d.y) * 0.01) * 0.05;
-        ctx.fillStyle = "rgba(255, 255, 255, " + (d.baseOpacity + pulse) + ")";
-        ctx.fillRect(d.x, d.y, 1, 1);
-      }
-      requestAnimationFrame(animate);
+    function draw(time) {
+      ctx.clearRect(0, 0, width, height);
+      
+      dots.forEach(function(dot) {
+        var opacity = (Math.sin(time * 0.001 * dot.freq * 100 + dot.phase) * 0.5 + 0.5) * dot.maxOpacity;
+        ctx.beginPath();
+        ctx.arc(dot.x, dot.y, DOT_RADIUS, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(255, 255, 255, " + opacity.toFixed(3) + ")";
+        ctx.fill();
+      });
+
+      requestAnimationFrame(draw);
     }
 
-    window.addEventListener("resize", initDots);
-    initDots();
-    animate();
-  }
+    window.addEventListener("resize", init);
+    init();
+    requestAnimationFrame(draw);
+  })();
 });
 </script>
 </body>
