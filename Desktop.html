@@ -226,8 +226,9 @@ body, html {
 .col-left {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 20px;
-  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  border-right: none;
 }
 
 .project-list {
@@ -485,13 +486,13 @@ body, html {
 <span class="coord coord-br">[8888, 8888]</span>
 </div>
 <div class="content-grid" style="grid-template-columns: 0.6fr 1.4fr; background-color: #050505; color: #ffffff; font-family: 'Space Grotesk', sans-serif; border: 1px solid rgba(255,255,255,0.1); padding: 60px;">
-  <div class="col-left" style="display: flex; flex-direction: column; align-items: center; justify-content: center; border-right: 1px solid rgba(255,255,255,0.2); padding-right: 40px;">
-    <div class="avatar">
-      <img src="https://github.com/ephemeralgaze.png" alt="Avatar">
-    </div>
-    <div style="margin-top: 25px; font-family: 'Space Mono', monospace; font-size: 14px; text-align: center; letter-spacing: 2px; font-weight: bold; text-transform: uppercase;">
+  <div class="col-left" style="display: flex; flex-direction: column; align-items: center; justify-content: center; border-right: none; padding-right: 40px;">
+    <a href="https://github.com/ephemeralgaze" target="_blank" class="avatar" style="display: block; cursor: pointer;">
+      <img src="https://github.com/ephemeralgaze.png" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
+    </a>
+    <a href="https://github.com/ephemeralgaze" target="_blank" style="margin-top: 25px; font-family: 'Space Mono', monospace; font-size: 14px; text-align: center; letter-spacing: 2px; font-weight: bold; text-transform: uppercase; color: #ffffff; text-decoration: none; display: block; cursor: pointer;">
       EPHEMERAL GAZE
-    </div>
+    </a>
   </div>
   <div class="col-right" style="padding-left: 60px; display: flex; flex-direction: column; justify-content: center; gap: 25px;">
     <div class="info-item">
@@ -540,7 +541,7 @@ document.addEventListener("DOMContentLoaded", function() {
     attractor: { video: "attractor.mp4", pipeline: "GLSL / Vertex", complexity: "Lorenz / 60FPS" },
     horizon: { video: "horizon.mp4", pipeline: "PBR / Raycast", complexity: "Dynamic SDF" },
     quantum: { video: "quantum.mp4", pipeline: "VFX / Compute", complexity: "Q-Field Sim" },
-    monolith: { video: "monolith.mp4", pipeline: "Geometry Shaders", complexity: "Instanced Mesh" }
+    monolith: { video: "", pipeline: "Geometry Shaders", complexity: "Instanced Mesh" }
   };
 
   setTimeout(function() { if (wordmark) wordmark.classList.add("assembled"); }, 1500);
@@ -694,7 +695,7 @@ document.addEventListener("DOMContentLoaded", function() {
       dots = [];
       for (var i = 0; i < cols; i++) {
         for (var j = 0; j < rows; j++) {
-          dots.push({ x: i * spacing, y: j * spacing, baseOpacity: 0.05 + Math.random() * 0.1 });
+          dots.push({ x: i * spacing, y: j * spacing, baseOpacity: 0.1 + Math.random() * 0.1 });
         }
       }
     }
