@@ -464,7 +464,7 @@ body, html {
         <div id="no-signal" class="no-signal-overlay">
           <div class="no-signal-text">NO SIGNAL</div>
         </div>
-        <div id="loading-pct" class="loading-indicator">LOADING 0%</div>
+        <div id="loading-pct" class="loading-indicator">LOADING...</div>
       </div>
       <div class="timeline-container">
         <div class="p-time" id="current-time">00:00</div>
@@ -572,6 +572,8 @@ document.addEventListener("DOMContentLoaded", function() {
     
     // Reset Progress Bar and Time
     pVideo.pause();
+    pVideo.src = "";
+    pVideo.load();
     pVideo.currentTime = 0;
     pBar.value = 0;
     curTimeTxt.innerText = "00:00";
@@ -580,7 +582,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (data.video && data.video !== "") {
       noSignal.style.display = "none";
       loadingPct.style.display = "flex";
-      loadingPct.innerText = "LOADING 0%";
+      loadingPct.innerText = "LOADING...";
       pVideo.src = data.video;
       pVideo.load();
     } else {
@@ -628,20 +630,22 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 
   if (pVideo) {
-    pVideo.addEventListener("progress", function() {
-      if (pVideo.buffered.length > 0 && pVideo.duration) {
-        var end = pVideo.buffered.end(pVideo.buffered.length - 1);
-        var pct = Math.round((end / pVideo.duration) * 100);
-        loadingPct.innerText = "LOADING " + pct + "%";
+    pVideo.addEventListener("waiting", function() {
+      if (pVideo.src && pVideo.src !== window.location.href) {
+        loadingPct.style.display = "flex";
       }
     });
-    
-    pVideo.addEventListener("canplaythrough", function() {
+
+    pVideo.addEventListener("canplay", function() {
+      loadingPct.style.display = "none";
+    });
+
+    pVideo.addEventListener("playing", function() {
       loadingPct.style.display = "none";
     });
 
     pVideo.addEventListener("timeupdate", function() {
-      if (!isNaN(pVideo.duration)) {
+      if (!isNaN(pVideo.duration) && pVideo.duration > 0) {
         var v = (pVideo.currentTime / pVideo.duration) * 100;
         pBar.value = v;
         curTimeTxt.innerText = formatTime(pVideo.currentTime);
@@ -653,8 +657,10 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
   if (pBar) pBar.addEventListener("input", function() {
-    var t = (pBar.value / 100) * pVideo.duration;
-    pVideo.currentTime = t;
+    if (!isNaN(pVideo.duration)) {
+      var t = (pBar.value / 100) * pVideo.duration;
+      pVideo.currentTime = t;
+    }
   });
 
   function syncPause() { if (!pVideo.paused) { pVideo.pause(); playBtn.classList.remove("playing"); } }
