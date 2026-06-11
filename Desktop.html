@@ -538,9 +538,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
   var projectData = {
     void: { video: "void.mov", pipeline: "HLSL / Compute", complexity: "12.4M Particles" },
-    attractor: { video: "attractor.mp4", pipeline: "GLSL / Vertex", complexity: "Lorenz / 60FPS" },
-    horizon: { video: "horizon.mp4", pipeline: "PBR / Raycast", complexity: "Dynamic SDF" },
-    quantum: { video: "quantum.mp4", pipeline: "VFX / Compute", complexity: "Q-Field Sim" },
+    attractor: { video: "", pipeline: "GLSL / Vertex", complexity: "Lorenz / 60FPS" },
+    horizon: { video: "", pipeline: "PBR / Raycast", complexity: "Dynamic SDF" },
+    quantum: { video: "", pipeline: "VFX / Compute", complexity: "Q-Field Sim" },
     monolith: { video: "", pipeline: "Geometry Shaders", complexity: "Instanced Mesh" }
   };
 
@@ -695,7 +695,7 @@ document.addEventListener("DOMContentLoaded", function() {
       dots = [];
       for (var i = 0; i < cols; i++) {
         for (var j = 0; j < rows; j++) {
-          dots.push({ x: i * spacing, y: j * spacing, baseOpacity: 0.1 + Math.random() * 0.1 });
+          dots.push({ x: i * spacing, y: j * spacing, baseOpacity: 0.05 + Math.random() * 0.1 });
         }
       }
     }
