@@ -211,17 +211,14 @@ body, html {
 
 .content-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 0.6fr 1.4fr;
   gap: 80px;
   width: 100%;
   max-width: 1400px;
   padding: 80px;
   pointer-events: auto;
   align-items: center;
-}
-
-#projects-overlay .content-grid {
-  grid-template-columns: 0.6fr 1.4fr;
+  justify-content: center;
 }
 
 .col-left {
@@ -229,13 +226,7 @@ body, html {
   flex-direction: column;
   gap: 20px;
   border-right: 1px solid rgba(255, 255, 255, 0.05);
-  justify-content: center;
-}
-
-.col-right {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  padding-right: 40px;
 }
 
 .project-list {
@@ -263,32 +254,32 @@ body, html {
 .status-tag { font-size: 0.6rem; padding: 3px 8px; border: 1px solid rgba(255, 255, 255, 0.2); color: rgba(255, 255, 255, 0.7); font-family: var(--font-mono); }
 
 .spec-panel { display: flex; flex-direction: column; gap: 20px; }
-.video-container { width: 100%; aspect-ratio: 16/9; border: 1px solid rgba(255, 255, 255, 0.1); position: relative; overflow: hidden; background: #000; }
-.video-container video { width: 100%; height: 100%; object-fit: cover; }
+.video-container { width: 100%; aspect-ratio: 16/9; border: 1px solid rgba(255, 255, 255, 0.1); position: relative; overflow: hidden; background: #050505; }
+.video-container video { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
 
 /* No Signal Styles */
 .no-signal-overlay {
   position: absolute;
   inset: 0;
-  display: flex;
+  display: none;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #000;
-  z-index: 10;
-  display: none;
-}
-.no-signal-text {
+  z-index: 5;
+  background: rgba(5, 5, 5, 0.9);
   font-family: var(--font-mono);
-  font-size: 0.8rem;
-  letter-spacing: 0.2em;
+  font-size: 0.9rem;
   color: #ffffff;
-  animation: signal-blink 1s infinite steps(1);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  pointer-events: none;
+  border: 1px solid #ffffff;
 }
-
-@keyframes signal-blink {
-  0% { opacity: 1; }
-  50% { opacity: 0; }
-  100% { opacity: 1; }
+.no-signal-overlay.active { display: flex; }
+.blink-text { animation: signal-blink 1.5s steps(1) infinite; }
+@keyframes signal-blink { 
+  0%, 100% { opacity: 1; } 
+  50% { opacity: 0; } 
 }
 
 .timeline-container {
@@ -299,22 +290,20 @@ body, html {
 }
 .p-time { font-family: var(--font-mono); font-size: 0.65rem; color: var(--white); width: 40px; text-align: center; }
 
-#p-bar {
+#p-progress-container {
   flex-grow: 1;
-  -webkit-appearance: none;
+  height: 2px;
   background: rgba(255, 255, 255, 0.1);
-  height: 4px;
-  outline: none;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  position: relative;
   cursor: pointer;
 }
-#p-bar::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 12px;
-  height: 12px;
-  background: var(--white);
-  border: 1px solid #000;
-  cursor: pointer;
+#p-progress-bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 0%;
+  background: #ffffff;
 }
 
 .playback-bar {
@@ -454,7 +443,7 @@ body, html {
       </div>
       <div class="project-entry" data-project="attractor">
         <div class="project-info"><span class="project-id">[02]</span><span class="project-name">ATTRACTOR</span></div>
-        <span class="status-tag">STANDBY</span>
+        <span class="status-tag">ACTIVE</span>
       </div>
       <div class="project-entry" data-project="horizon">
         <div class="project-info"><span class="project-id">[03]</span><span class="project-name">HORIZON</span></div>
@@ -472,16 +461,19 @@ body, html {
   </div>
   <div class="col-right">
     <div class="spec-panel">
-      <div class="video-container">
+      <div class="video-container" id="v-container">
         <video id="p-video" playsinline loop muted></video>
         <div id="no-signal" class="no-signal-overlay">
-          <div class="no-signal-text">NO SIGNAL</div>
+          <span class="blink-text">[ NO SIGNAL ]</span>
+          <span style="font-size: 0.6rem; opacity: 0.5; margin-top: 10px;">WAITING FOR DATA...</span>
         </div>
       </div>
       <div class="timeline-container">
-        <div class="p-time" id="current-time">00:00</div>
-        <input type="range" id="p-bar" min="0" value="0" step="0.01">
-        <div class="p-time" id="duration-time">00:00</div>
+        <div class="p-time" id="current-time">--:--</div>
+        <div id="p-progress-container">
+          <div id="p-progress-bar"></div>
+        </div>
+        <div class="p-time" id="duration-time">--:--</div>
       </div>
       <div class="playback-bar">
         <button class="p-btn" id="p-vol">VOL: 0</button>
@@ -608,7 +600,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   var pVideo = document.getElementById("p-video");
   var playBtn = document.getElementById("play-pause");
-  var pBar = document.getElementById("p-bar");
+  var pProgressBar = document.getElementById("p-progress-bar");
   var curTimeTxt = document.getElementById("current-time");
   var durTimeTxt = document.getElementById("duration-time");
   var sPipeline = document.getElementById("s-pipeline");
@@ -617,10 +609,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
   var projectData = {
     void: { video: "void.mov", pipeline: "HLSL / Compute", complexity: "12.4M Particles" },
-    attractor: { video: "attractor.mp4", pipeline: "GLSL / Vertex", complexity: "Lorenz / 60FPS" },
-    horizon: { video: "horizon.mp4", pipeline: "PBR / Raycast", complexity: "Dynamic SDF" },
-    quantum: { video: "quantum.mp4", pipeline: "VFX / Compute", complexity: "Q-Field Sim" },
-    monolith: { video: "monolith.mp4", pipeline: "Geometry Shaders", complexity: "Instanced Mesh" }
+    attractor: { video: "", pipeline: "GLSL / Vertex", complexity: "Lorenz / 60FPS" },
+    horizon: { video: "", pipeline: "PBR / Raycast", complexity: "Dynamic SDF" },
+    quantum: { video: "", pipeline: "VFX / Compute", complexity: "Q-Field Sim" },
+    monolith: { video: "", pipeline: "Geometry Shaders", complexity: "Instanced Mesh" }
   };
 
   setTimeout(function() { if (wordmark) wordmark.classList.add("assembled"); }, 1500);
@@ -637,28 +629,25 @@ document.addEventListener("DOMContentLoaded", function() {
     var data = projectData[pid];
     if (!data) return;
     
-    pVideo.pause();
-    pVideo.src = "";
-    pVideo.load();
-    pVideo.currentTime = 0;
-    pBar.value = 0;
-    playBtn.classList.remove("playing");
-    
-    if (data.video && data.video !== "") {
-      curTimeTxt.innerText = "00:00";
-      durTimeTxt.innerText = "00:00";
-      noSignal.style.display = "none";
-      pVideo.src = data.video;
-      pVideo.load();
-    } else {
-      curTimeTxt.innerText = "--:--";
-      durTimeTxt.innerText = "--:--";
-      pVideo.src = "";
-      noSignal.style.display = "flex";
+    if (pVideo && noSignal) {
+      pVideo.pause();
+      if (pProgressBar) pProgressBar.style.width = "0%";
+      if (data.video && data.video !== "") {
+        if (curTimeTxt) curTimeTxt.innerText = "00:00";
+        if (durTimeTxt) durTimeTxt.innerText = "00:00";
+        noSignal.classList.remove("active");
+        pVideo.src = data.video + "#t=0.001";
+        pVideo.load();
+      } else {
+        if (curTimeTxt) curTimeTxt.innerText = "--:--";
+        if (durTimeTxt) durTimeTxt.innerText = "--:--";
+        pVideo.src = "";
+        noSignal.classList.add("active");
+      }
     }
     
-    sPipeline.innerText = data.pipeline;
-    sComplexity.innerText = data.complexity;
+    if (sPipeline) sPipeline.innerText = data.pipeline;
+    if (sComplexity) sComplexity.innerText = data.complexity;
   }
 
   if (projectsTrigger) projectsTrigger.addEventListener("click", function() {
@@ -699,36 +688,40 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   });
 
+  if (pVideo && noSignal) {
+    pVideo.onerror = function() {
+      noSignal.classList.add("active");
+    };
+  }
+
   if (playBtn) playBtn.addEventListener("click", function() {
-    if (pVideo.paused) { pVideo.play(); playBtn.classList.add("playing"); }
-    else { pVideo.pause(); playBtn.classList.remove("playing"); }
+    if (pVideo.paused) { pVideo.play(); }
+    else { pVideo.pause(); }
   });
 
   if (pVideo) {
+    pVideo.addEventListener("play", function() { if (playBtn) playBtn.classList.add("playing"); });
+    pVideo.addEventListener("pause", function() { if (playBtn) playBtn.classList.remove("playing"); });
     pVideo.addEventListener("timeupdate", function() {
-      if (!isNaN(pVideo.duration) && pVideo.duration > 0) {
-        var v = (pVideo.currentTime / pVideo.duration) * 100;
-        pBar.value = v;
+      if (curTimeTxt && !isNaN(pVideo.duration) && pVideo.duration > 0) {
         curTimeTxt.innerText = formatTime(pVideo.currentTime);
+        if (pProgressBar) {
+          var v = (pVideo.currentTime / pVideo.duration) * 100;
+          pProgressBar.style.width = v + "%";
+        }
       }
     });
     pVideo.addEventListener("loadedmetadata", function() {
-      durTimeTxt.innerText = formatTime(pVideo.duration);
+      if (durTimeTxt) durTimeTxt.innerText = formatTime(pVideo.duration);
     });
   }
 
-  if (pBar) pBar.addEventListener("input", function() {
-    if (!isNaN(pVideo.duration)) {
-      var t = (pBar.value / 100) * pVideo.duration;
-      pVideo.currentTime = t;
-    }
-  });
-
-  function syncPause() { if (!pVideo.paused) { pVideo.pause(); playBtn.classList.remove("playing"); } }
+  var FPS = 60;
+  function syncPause() { if (!pVideo.paused) { pVideo.pause(); } }
   document.getElementById("p-back-1s").addEventListener("click", function() { syncPause(); pVideo.currentTime -= 1; });
   document.getElementById("p-fwd-1s").addEventListener("click", function() { syncPause(); pVideo.currentTime += 1; });
-  document.getElementById("p-back-f").addEventListener("click", function() { syncPause(); pVideo.currentTime -= (1/60); });
-  document.getElementById("p-fwd-f").addEventListener("click", function() { syncPause(); pVideo.currentTime += (1/60); });
+  document.getElementById("p-back-f").addEventListener("click", function() { syncPause(); pVideo.currentTime -= (1/FPS); });
+  document.getElementById("p-fwd-f").addEventListener("click", function() { syncPause(); pVideo.currentTime += (1/FPS); });
   
   var volBtn = document.getElementById("p-vol");
   volBtn.addEventListener("click", function() {
