@@ -258,11 +258,15 @@ body, html {
     opacity: 0 !important;
     visibility: hidden !important;
   }
-  #wordmark.docked {
+  
+  /* Wordmark Slide-Out: Only when Projects or About is active */
+  .projects-active #wordmark.docked,
+  .about-active #wordmark.docked {
     transform: translate(-150%, -50%) scale(0.85);
     opacity: 0;
     pointer-events: none;
   }
+  
   .hamburger {
     height: 54px;
   }
@@ -272,33 +276,38 @@ body, html {
     background: rgba(5, 5, 5, 0.9);
   }
 
-  /* Arrow Transformation Logic */
+  /* Arrow Transformation Logic (Sharp <<) */
   .projects-active .hamburger:not(.open) span:nth-child(1) {
     width: 12px;
     transform: translate(-4px, 4px) rotate(-45deg);
   }
   .projects-active .hamburger:not(.open) span:nth-child(2) {
-    width: 16px;
-    transform: translateX(-8px);
+    width: 0;
+    opacity: 0;
   }
   .projects-active .hamburger:not(.open) span:nth-child(3) {
     width: 12px;
     transform: translate(-4px, -4px) rotate(45deg);
   }
   
-  /* Create the second arrow via pseudo-element on the middle bar */
-  .projects-active .hamburger:not(.open) span:nth-child(2)::after {
+  /* Create the double arrows using pseudo-elements on the top/bottom bars or a wrapper */
+  /* Re-forming sharp << with span 1 and 3 as the outer arrow, and their pseudo-elements as the inner arrow */
+  .projects-active .hamburger:not(.open) span:nth-child(1)::after,
+  .projects-active .hamburger:not(.open) span:nth-child(3)::after {
     content: '';
     position: absolute;
-    right: 100%;
-    top: 50%;
-    width: 8px;
-    height: 8px;
-    border-left: 1px solid var(--white);
-    border-bottom: 1px solid var(--white);
-    transform: translate(16px, -50%) rotate(45deg);
-    opacity: 1;
-    transition: opacity 0.4s var(--ease);
+    width: 12px;
+    height: 1px;
+    background-color: var(--white);
+    transition: transform 0.4s var(--ease);
+  }
+  
+  /* Inner Arrow Head (offset from outer) */
+  .projects-active .hamburger:not(.open) span:nth-child(1)::after {
+    transform: translate(8px, 0);
+  }
+  .projects-active .hamburger:not(.open) span:nth-child(3)::after {
+    transform: translate(8px, 0);
   }
 }
 
