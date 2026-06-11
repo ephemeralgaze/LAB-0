@@ -276,22 +276,6 @@ body, html {
   color: #ffffff;
 }
 
-/* Loading Styles */
-.loading-indicator {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 11;
-  display: none;
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  letter-spacing: 0.2em;
-  color: #ffffff;
-}
-
 .timeline-container {
   display: flex;
   align-items: center;
@@ -350,7 +334,7 @@ body, html {
 .play-pause svg { width: 20px; height: 20px; fill: currentColor; }
 .play-pause .pause-icon { display: none; }
 .play-pause.playing .play-icon { display: none; }
-.play-pause.playing .pause-icon { display: block; }
+.play-pause.playing .pause-icon { block; }
 
 .spec-details { display: grid; grid-template-columns: 100px 1fr; gap: 10px; font-size: 0.7rem; font-family: var(--font-mono); text-transform: uppercase; }
 .spec-label { color: rgba(255, 255, 255, 0.3); }
@@ -464,7 +448,6 @@ body, html {
         <div id="no-signal" class="no-signal-overlay">
           <div class="no-signal-text">NO SIGNAL</div>
         </div>
-        <div id="loading-pct" class="loading-indicator">LOADING...</div>
       </div>
       <div class="timeline-container">
         <div class="p-time" id="current-time">00:00</div>
@@ -546,7 +529,6 @@ document.addEventListener("DOMContentLoaded", function() {
   var sPipeline = document.getElementById("s-pipeline");
   var sComplexity = document.getElementById("s-complexity");
   var noSignal = document.getElementById("no-signal");
-  var loadingPct = document.getElementById("loading-pct");
 
   var projectData = {
     void: { video: "void.mov", pipeline: "HLSL / Compute", complexity: "12.4M Particles" },
@@ -570,7 +552,6 @@ document.addEventListener("DOMContentLoaded", function() {
     var data = projectData[pid];
     if (!data) return;
     
-    // Reset Progress Bar and Time
     pVideo.pause();
     pVideo.src = "";
     pVideo.load();
@@ -582,8 +563,6 @@ document.addEventListener("DOMContentLoaded", function() {
       curTimeTxt.innerText = "00:00";
       durTimeTxt.innerText = "00:00";
       noSignal.style.display = "none";
-      loadingPct.style.display = "flex";
-      loadingPct.innerText = "LOADING...";
       pVideo.src = data.video;
       pVideo.load();
     } else {
@@ -591,7 +570,6 @@ document.addEventListener("DOMContentLoaded", function() {
       durTimeTxt.innerText = "--:--";
       pVideo.src = "";
       noSignal.style.display = "flex";
-      loadingPct.style.display = "none";
     }
     
     sPipeline.innerText = data.pipeline;
@@ -633,20 +611,6 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 
   if (pVideo) {
-    pVideo.addEventListener("waiting", function() {
-      if (pVideo.src && pVideo.src !== window.location.href) {
-        loadingPct.style.display = "flex";
-      }
-    });
-
-    pVideo.addEventListener("canplay", function() {
-      loadingPct.style.display = "none";
-    });
-
-    pVideo.addEventListener("playing", function() {
-      loadingPct.style.display = "none";
-    });
-
     pVideo.addEventListener("timeupdate", function() {
       if (!isNaN(pVideo.duration) && pVideo.duration > 0) {
         var v = (pVideo.currentTime / pVideo.duration) * 100;
