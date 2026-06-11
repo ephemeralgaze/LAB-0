@@ -426,7 +426,7 @@ body, html {
   border: 1px solid rgba(255, 255, 255, 0.1);
   position: relative;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.02);
+  background: #000000;
 }
 
 .video-container video {
@@ -434,6 +434,9 @@ body, html {
   height: 100%;
   object-fit: cover;
   pointer-events: none;
+  background: #000000;
+  position: relative;
+  z-index: 2;
 }
 
 .video-container::before {
@@ -496,7 +499,48 @@ body, html {
   gap: 10px;
   padding: 8px 0;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.volume-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  margin-bottom: 5px;
+}
+
+.volume-container span {
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  color: rgba(255, 255, 255, 0.3);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+#v-slider {
+  flex: 1;
+  height: 2px;
+  -webkit-appearance: none;
+  background: rgba(255, 255, 255, 0.1);
+  outline: none;
+  cursor: pointer;
+}
+
+#v-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 6px;
+  height: 6px;
+  background: var(--white);
+  border-radius: 0;
+}
+
+#v-slider::-moz-range-thumb {
+  width: 6px;
+  height: 6px;
+  background: var(--white);
+  border-radius: 0;
+  border: none;
 }
 
 .p-btn {
@@ -733,6 +777,11 @@ body, html {
         <button class="p-btn" id="p-fwd-1s">+1S</button>
       </div>
 
+      <div class="volume-container">
+        <span>VOL</span>
+        <input type="range" id="v-slider" min="0" max="1" step="0.01" value="0">
+      </div>
+
       <div class="spec-details" id="p-specs">
         <span class="spec-label">Pipeline:</span><span class="spec-value" id="s-pipeline">---</span>
         <span class="spec-label">Complexity:</span><span class="spec-value" id="s-complexity">---</span>
@@ -820,6 +869,7 @@ document.addEventListener("DOMContentLoaded", function() {
   const bBack1f = document.getElementById("p-back-1f");
   const bFwd1f = document.getElementById("p-fwd-1f");
   const bFwd1s = document.getElementById("p-fwd-1s");
+  const vSlider = document.getElementById("v-slider");
   
   const sPipeline = document.getElementById("s-pipeline");
   const sComplexity = document.getElementById("s-complexity");
@@ -891,6 +941,13 @@ document.addEventListener("DOMContentLoaded", function() {
     pVideo.onerror = function() {
       if (noSignal) noSignal.classList.add("active");
     };
+  }
+
+  if (vSlider && pVideo) {
+    vSlider.addEventListener("input", function() {
+      pVideo.volume = vSlider.value;
+      pVideo.muted = (vSlider.value == 0);
+    });
   }
 
   // Mobile Sequence
