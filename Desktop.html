@@ -453,12 +453,14 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
   if (projectsTrigger) projectsTrigger.addEventListener("click", function() {
+    if (aboutOverlay) aboutOverlay.classList.remove("active");
     projectsOverlay.classList.add("active");
     updateProject("void");
   });
 
   if (aboutTrigger) {
     aboutTrigger.addEventListener("click", function() {
+      if (projectsOverlay) projectsOverlay.classList.remove("active");
       aboutOverlay.classList.add("active");
     });
   }
