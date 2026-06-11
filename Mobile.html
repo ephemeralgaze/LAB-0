@@ -121,7 +121,7 @@ body, html {
   display: flex;
   align-items: center;
   white-space: nowrap;
-  clip-path: inset(0 100% 0 0) !important;
+  clip-path: inset(0 100% 0 0);
   opacity: 0;
   visibility: hidden;
   transition: clip-path 1.2s var(--ease), opacity 0.6s var(--ease), visibility 0.4s var(--ease);
@@ -930,7 +930,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (activeEl) activeEl.classList.add("active");
   };
 
-  setActiveNav(navHome);
+  if (navHome) setActiveNav(navHome);
 
   var switchPage = function(pageId, triggerEl) {
     if (pageId !== "projects") { if (pVideo) pVideo.pause(); }
@@ -1009,12 +1009,18 @@ document.addEventListener("DOMContentLoaded", function() {
 
   var FPS = 30;
   var syncPause = function() { if (pVideo && !pVideo.paused) { pVideo.pause(); if (playBtn) playBtn.classList.remove("playing"); } };
-  document.getElementById("p-volume-toggle").addEventListener("click", function() { pVideo.muted = !pVideo.muted; });
-  document.getElementById("p-back-1s").addEventListener("click", function() { syncPause(); pVideo.currentTime -= 1; });
-  document.getElementById("p-back-1f").addEventListener("click", function() { syncPause(); pVideo.currentTime -= (1/FPS); });
-  document.getElementById("p-fwd-1f").addEventListener("click", function() { syncPause(); pVideo.currentTime += (1/FPS); });
-  document.getElementById("p-fwd-1s").addEventListener("click", function() { syncPause(); pVideo.currentTime += 1; });
-  document.getElementById("p-fs-toggle").addEventListener("click", function() {
+  var volBtn = document.getElementById("p-volume-toggle");
+  if (volBtn) volBtn.addEventListener("click", function() { pVideo.muted = !pVideo.muted; });
+  var back1s = document.getElementById("p-back-1s");
+  if (back1s) back1s.addEventListener("click", function() { syncPause(); pVideo.currentTime -= 1; });
+  var back1f = document.getElementById("p-back-1f");
+  if (back1f) back1f.addEventListener("click", function() { syncPause(); pVideo.currentTime -= (1/FPS); });
+  var fwd1f = document.getElementById("p-fwd-1f");
+  if (fwd1f) fwd1f.addEventListener("click", function() { syncPause(); pVideo.currentTime += (1/FPS); });
+  var fwd1s = document.getElementById("p-fwd-1s");
+  if (fwd1s) fwd1s.addEventListener("click", function() { syncPause(); pVideo.currentTime += 1; });
+  var fsBtn = document.getElementById("p-fs-toggle");
+  if (fsBtn) fsBtn.addEventListener("click", function() {
     if (pVideo.requestFullscreen) { pVideo.requestFullscreen(); }
     else if (pVideo.webkitEnterFullscreen) { pVideo.webkitEnterFullscreen(); }
   });
