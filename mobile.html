@@ -225,7 +225,7 @@ body, html {
   height: 1px;
   background-color: var(--white);
   border-radius: 0;
-  transition: transform 0.4s var(--ease), opacity 0.4s var(--ease);
+  transition: transform 0.4s var(--ease), opacity 0.4s var(--ease), width 0.4s var(--ease);
 }
 
 .hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
@@ -258,6 +258,11 @@ body, html {
     opacity: 0 !important;
     visibility: hidden !important;
   }
+  #wordmark.docked {
+    transform: translate(-150%, -50%) scale(0.85);
+    opacity: 0;
+    pointer-events: none;
+  }
   .hamburger {
     height: 54px;
   }
@@ -265,6 +270,35 @@ body, html {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     background: rgba(5, 5, 5, 0.9);
+  }
+
+  /* Arrow Transformation Logic */
+  .projects-active .hamburger:not(.open) span:nth-child(1) {
+    width: 12px;
+    transform: translate(-4px, 4px) rotate(-45deg);
+  }
+  .projects-active .hamburger:not(.open) span:nth-child(2) {
+    width: 16px;
+    transform: translateX(-8px);
+  }
+  .projects-active .hamburger:not(.open) span:nth-child(3) {
+    width: 12px;
+    transform: translate(-4px, -4px) rotate(45deg);
+  }
+  
+  /* Create the second arrow via pseudo-element on the middle bar */
+  .projects-active .hamburger:not(.open) span:nth-child(2)::after {
+    content: '';
+    position: absolute;
+    right: 100%;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    border-left: 1px solid var(--white);
+    border-bottom: 1px solid var(--white);
+    transform: translate(16px, -50%) rotate(45deg);
+    opacity: 1;
+    transition: opacity 0.4s var(--ease);
   }
 }
 
@@ -333,8 +367,9 @@ body, html {
     bottom: 40px;
   }
   #about-overlay {
+    height: 100% !important;
     overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch;
+    -webkit-overflow-scrolling: touch !important;
   }
   #about-overlay .content-grid {
     padding-bottom: 80px;
@@ -779,7 +814,7 @@ body, html {
 }
 </style>
 </head>
-<body>
+<body class="home-active">
 
 <div id="mobile-header"></div>
 <canvas id="dot-matrix-canvas"></canvas>
@@ -1202,6 +1237,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
   const switchPage = function(pageId, triggerEl) {
     setActiveNav(triggerEl);
+    
+    // Clear page active classes
+    document.body.classList.remove("about-active", "projects-active", "home-active");
+    document.body.classList.add(pageId + "-active");
+
     if (aboutOverlay) {
       aboutOverlay.classList.remove("active");
       aboutOverlay.classList.remove("nav-active");
