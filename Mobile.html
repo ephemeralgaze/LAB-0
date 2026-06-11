@@ -504,7 +504,7 @@ body, html {
 
 .play-pause .pause-icon { display: none; }
 .play-pause.playing .play-icon { display: none; }
-.play-pause.playing .pause-icon { display: block; }
+.play-pause.playing .pause-icon { block; }
 
 .spec-details {
   display: grid;
@@ -519,13 +519,13 @@ body, html {
 
 .info-item {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 15px;
   color: rgba(255, 255, 255, 0.7);
   font-size: 0.75rem;
   letter-spacing: 0.1em;
-  padding: 4px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .info-icon {
@@ -545,6 +545,8 @@ body, html {
 .info-value {
   color: var(--white);
   text-transform: uppercase;
+  text-align: right;
+  flex: 1;
 }
 
 .mail-link {
@@ -667,7 +669,7 @@ body, html {
         <polyline points="22,6 12,13 2,6" />
       </svg>
       <span class="info-label">Contact</span>
-      <span class="info-value" style="text-transform: none; display: block; overflow-wrap: anywhere; white-space: normal; text-align: left;"><a href="mailto:zgnx4ndcq5@privaterelay.appleid.com" class="mail-link">zgnx4ndcq5@privaterelay.appleid.com</a></span>
+      <span class="info-value" style="text-transform: none; overflow-wrap: anywhere; white-space: normal;"><a href="mailto:zgnx4ndcq5@privaterelay.appleid.com" class="mail-link">zgnx4ndcq5@privaterelay.appleid.com</a></span>
     </div>
   </div>
 </div>
