@@ -83,7 +83,7 @@ body, html {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 10004;
+  z-index: 9999;
   pointer-events: none;
 }
 
@@ -136,7 +136,7 @@ body, html {
 }
 
 #wordmark.docked {
-  top: 27px;
+  top: 37px;
   left: 30px;
   transform: translate(0, -50%) scale(0.85);
   pointer-events: auto;
@@ -165,7 +165,7 @@ body, html {
   top: 0;
   left: 0;
   width: 100%;
-  height: 54px;
+  height: 74px;
   background: #050505;
   z-index: 10002;
   opacity: 0;
@@ -184,8 +184,8 @@ body, html {
   top: 100%;
   left: 0;
   width: 100%;
-  height: 20px;
-  background: linear-gradient(to bottom, #050505 0%, rgba(5, 5, 5, 0) 100%);
+  height: 40px;
+  background: linear-gradient(to bottom, #050505 0%, rgba(5, 5, 5) 100%);
   pointer-events: none;
 }
 
@@ -195,7 +195,7 @@ body, html {
   top: 0;
   right: 30px;
   width: 24px;
-  height: 54px;
+  height: 74px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -221,13 +221,11 @@ body, html {
 
 .hamburger span {
   display: block;
-  position: relative;
   width: 100%;
   height: 1px;
   background-color: var(--white);
   border-radius: 0;
-  transition: transform 0.4s var(--ease), opacity 0.4s var(--ease), width 0.4s var(--ease);
-  transform-origin: left center;
+  transition: transform 0.4s var(--ease), opacity 0.4s var(--ease);
 }
 
 .hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
@@ -254,77 +252,6 @@ body, html {
   transform: translateX(0);
 }
 
-@media (orientation: landscape) and (max-height: 500px) {
-  #mobile-header {
-    display: none !important;
-    opacity: 0 !important;
-    visibility: hidden !important;
-  }
-  
-  /* Wordmark Slide-Out: Only when Projects or About is active */
-  .projects-active #wordmark.docked,
-  .about-active #wordmark.docked {
-    transform: translate(-150%, -50%) scale(0.85);
-    opacity: 0;
-    pointer-events: none;
-  }
-  
-  .hamburger {
-    height: 54px;
-  }
-  .mobile-nav-overlay {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    background: rgba(5, 5, 5, 0.9);
-  }
-
-  /* Mathematically Perfect Double Left Arrow (<<) */
-  .projects-active .hamburger:not(.open) span:nth-child(1) {
-    width: 12px;
-    transform: translateY(6.5px) rotate(-45deg);
-  }
-  .projects-active .hamburger:not(.open) span:nth-child(2) {
-    width: 0;
-    opacity: 0;
-  }
-  .projects-active .hamburger:not(.open) span:nth-child(3) {
-    width: 12px;
-    transform: translateY(-6.5px) rotate(45deg);
-  }
-  
-  /* Create the second arrow head using pseudo-elements */
-  .projects-active .hamburger:not(.open) span:nth-child(1)::after,
-  .projects-active .hamburger:not(.open) span:nth-child(3)::after {
-    content: '';
-    position: absolute;
-    width: 12px;
-    height: 1px;
-    background-color: var(--white);
-    top: 0;
-    left: 0;
-    transition: transform 0.4s var(--ease);
-  }
-  
-  /* 
-     S = 6px (horizontal gap)
-     θ = 45deg
-     X_local = S * cos(45) = 4.24px
-     Y_local = -S * sin(45) = -4.24px
-  */
-  .projects-active .hamburger:not(.open) span:nth-child(1)::after {
-    transform: translate(4.24px, -4.24px);
-  }
-  
-  /* 
-     θ = -45deg
-     X_local = S * cos(-45) = 4.24px
-     Y_local = -S * sin(-45) = 4.24px
-  */
-  .projects-active .hamburger:not(.open) span:nth-child(3)::after {
-    transform: translate(4.24px, 4.24px);
-  }
-}
-
 .mobile-menu-item {
   font-family: var(--font-header);
   font-size: 1.2rem;
@@ -349,7 +276,7 @@ body, html {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transition: opacity 1.2s var(--ease), visibility 1.2s var(--ease), transform 0.8s var(--ease);
+  transition: opacity 1.2s var(--ease), visibility 1.2s var(--ease);
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -360,12 +287,6 @@ body, html {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
-}
-
-.overlay.nav-active {
-  transform: translateY(100%);
-  opacity: 0;
-  pointer-events: none;
 }
 
 .overlay-frame {
@@ -385,20 +306,6 @@ body, html {
 .coord-tl { top: -20px; left: 0; }
 .coord-br { bottom: -20px; right: 0; }
 
-@media (orientation: landscape) and (max-height: 500px) {
-  .overlay-frame {
-    bottom: 40px;
-  }
-  #about-overlay {
-    height: 100% !important;
-    overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch !important;
-  }
-  #about-overlay .content-grid {
-    padding-bottom: 80px;
-  }
-}
-
 .content-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -406,7 +313,6 @@ body, html {
   width: 100%;
   padding: 114px 30px 60px;
   pointer-events: auto;
-  transition: all 0.8s var(--ease);
 }
 
 .col-left {
@@ -417,7 +323,6 @@ body, html {
   gap: 20px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   padding-bottom: 30px;
-  transition: opacity 0.8s var(--ease);
 }
 
 .avatar {
@@ -448,9 +353,8 @@ body, html {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 12px;
+  gap: 8px;
   font-family: var(--font-mono);
-  transition: all 0.8s var(--ease);
 }
 
 /* PROJECTS SPECIFIC STYLES */
@@ -514,7 +418,38 @@ body, html {
   display: flex;
   flex-direction: column;
   gap: 15px;
-  transition: all 0.8s var(--ease);
+}
+
+
+.no-signal-overlay {
+  position: absolute;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  background: rgba(5, 5, 5, 0.9);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  pointer-events: none;
+}
+.no-signal-overlay.active { display: flex; }
+.no-signal-box {
+  padding: 15px 30px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.blink-text { animation: signal-blink 1.5s steps(1) infinite; }
+@keyframes signal-blink { 
+  0%, 100% { opacity: 1; } 
+  50% { opacity: 0; } 
 }
 
 .video-container {
@@ -523,9 +458,7 @@ body, html {
   border: 1px solid rgba(255, 255, 255, 0.1);
   position: relative;
   overflow: hidden;
-  background: #000000;
-  transition: all 0.8s var(--ease);
-  z-index: 5;
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .video-container video {
@@ -533,9 +466,6 @@ body, html {
   height: 100%;
   object-fit: cover;
   pointer-events: none;
-  background: #000000;
-  position: relative;
-  z-index: 2;
 }
 
 .video-container::before {
@@ -549,47 +479,6 @@ body, html {
   z-index: 1;
 }
 
-/* NO SIGNAL Overlay */
-.no-signal-overlay {
-  position: absolute;
-  inset: 0;
-  background: #0a0a0a;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.4s ease;
-}
-
-.no-signal-overlay.active {
-  opacity: 1;
-  visibility: visible;
-}
-
-.no-signal-text {
-  font-family: var(--font-mono);
-  font-size: 1rem;
-  color: #fff;
-  letter-spacing: 0.2em;
-  margin-bottom: 10px;
-  animation: blink 1.5s step-end infinite;
-}
-
-.no-signal-sub {
-  font-family: var(--font-mono);
-  font-size: 0.5rem;
-  color: rgba(255, 255, 255, 0.3);
-  letter-spacing: 0.1em;
-}
-
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
-}
-
 /* Playback Control Bar */
 .playback-bar {
   display: flex;
@@ -598,51 +487,7 @@ body, html {
   gap: 10px;
   padding: 8px 0;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
-  transition: all 0.8s var(--ease);
-  position: relative;
-}
-
-.progress-container {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 8px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  margin-bottom: 5px;
-  transition: all 0.8s var(--ease);
-}
-
-.progress-container span {
-  font-family: var(--font-mono);
-  font-size: 0.5rem;
-  color: rgba(255, 255, 255, 0.3);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-#p-progress {
-  flex: 1;
-  height: 2px;
-  -webkit-appearance: none;
-  background: rgba(255, 255, 255, 0.1);
-  outline: none;
-  cursor: pointer;
-}
-
-#p-progress::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 6px;
-  height: 6px;
-  background: var(--white);
-  border-radius: 0;
-}
-
-#p-progress::-moz-range-thumb {
-  width: 6px;
-  height: 6px;
-  background: var(--white);
-  border-radius: 0;
-  border: none;
 }
 
 .p-btn {
@@ -684,124 +529,26 @@ body, html {
 .play-pause.playing .play-icon { display: none; }
 .play-pause.playing .pause-icon { display: block; }
 
-.vol-btn {
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: none;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.5);
-  cursor: pointer;
-  transition: all 0.3s var(--ease);
-}
-
-.vol-btn:hover {
-  border-color: rgba(255, 255, 255, 0.4);
-  color: var(--white);
-}
-
-.vol-btn svg {
-  width: 12px;
-  height: 12px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-}
-
-.vol-btn .muted-icon { display: none; }
-.vol-btn.muted .unmuted-icon { display: none; }
-.vol-btn.muted .muted-icon { display: block; }
-
-/* Fullscreen Button */
-.fs-btn {
-  background: none;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.4);
-  width: 28px;
-  height: 28px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s var(--ease);
-}
-
-.fs-btn:hover {
-  border-color: rgba(255, 255, 255, 0.3);
-  color: var(--white);
-}
-
-.fs-btn svg {
-  width: 12px;
-  height: 12px;
-}
-
-.fs-btn .exit-fs-icon { display: none; }
-
 .spec-details {
   display: grid;
   grid-template-columns: 80px 1fr;
   gap: 8px;
   font-size: 0.65rem;
   color: rgba(255, 255, 255, 0.5);
-  transition: opacity 0.6s var(--ease);
 }
 
 .spec-label { color: rgba(255, 255, 255, 0.3); }
 .spec-value { color: var(--white); }
 
-/* Fake Fullscreen State Mobile */
-.content-grid.fullscreen-mode {
-  padding: 0;
-  height: 100vh;
-  gap: 0;
-}
-
-.content-grid.fullscreen-mode .col-left {
-  display: none;
-  opacity: 0;
-}
-
-.content-grid.fullscreen-mode .col-right {
-  height: 100%;
-  padding: 20px;
-  justify-content: center;
-}
-
-.content-grid.fullscreen-mode .spec-panel {
-  height: 100%;
-  gap: 20px;
-}
-
-.content-grid.fullscreen-mode .video-container {
-  flex: 1;
-  aspect-ratio: auto;
-}
-
-.content-grid.fullscreen-mode .playback-bar {
-  transform: scale(1.15);
-  transform-origin: center;
-}
-
-.content-grid.fullscreen-mode .spec-details {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.content-grid.fullscreen-mode .fs-btn .fs-icon { display: none; }
-.content-grid.fullscreen-mode .fs-btn .exit-fs-icon { display: block; }
-
 /* Common Info Item */
 .info-item {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 15px;
   color: rgba(255, 255, 255, 0.7);
   font-size: 0.75rem;
   letter-spacing: 0.1em;
-  padding: 6px 0;
+  padding: 4px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
 }
 
@@ -810,22 +557,18 @@ body, html {
   height: 16px;
   opacity: 0.8;
   flex-shrink: 0;
-  margin-top: 2px;
 }
 
 .info-label {
-  width: 85px;
+  width: 80px;
   font-size: 0.55rem;
   color: rgba(255, 255, 255, 0.3);
   text-transform: uppercase;
-  flex-shrink: 0;
-  margin-top: 3px;
 }
 
 .info-value {
   color: var(--white);
   text-transform: uppercase;
-  flex: 1;
 }
 
 /* Mailto Styling */
@@ -833,11 +576,53 @@ body, html {
   color: var(--white);
   text-decoration: none;
   word-break: break-all;
-  text-transform: none;
+  transition: opacity 0.3s ease;
+}
+
+.mail-link:hover {
+  opacity: 0.8;
+}
+
+@media (orientation: landscape) and (max-height: 500px) {
+  /* 1. content-grid splits to double-column */
+  #projects-overlay .content-grid {
+    grid-template-columns: 1fr 1.2fr;
+    gap: 20px;
+    padding: 60px 30px 20px;
+    align-items: start;
+  }
+
+  /* 2. Left column border positioning swap */
+  #projects-overlay .col-left {
+    border-bottom: none;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 0;
+    padding-right: 20px;
+  }
+
+  /* 3. Strict video height constraint */
+  #projects-overlay .video-container {
+    max-height: 40vh;
+    background: #000;
+  }
+
+  /* 4. Fine-tuning detail layout */
+  #projects-overlay .spec-panel {
+    gap: 8px;
+  }
+
+  #projects-overlay .playback-bar {
+    padding: 4px 0;
+  }
+
+  #projects-overlay .spec-details {
+    grid-template-columns: 70px 1fr;
+    font-size: 0.65rem;
+  }
 }
 </style>
 </head>
-<body class="home-active">
+<body>
 
 <div id="mobile-header"></div>
 <canvas id="dot-matrix-canvas"></canvas>
@@ -904,7 +689,7 @@ body, html {
         <polyline points="22,6 12,13 2,6" />
       </svg>
       <span class="info-label">Contact</span>
-      <span class="info-value"><a href="mailto:zgnx4ndcq5@privaterelay.appleid.com" class="mail-link">zgnx4ndcq5@privaterelay.appleid.com</a></span>
+      <span class="info-value" style="text-transform: none;"><a href="mailto:ephemeralgaze24@gmail.com" class="mail-link">ephemeralgaze24@gmail.com</a></span>
     </div>
   </div>
 </div>
@@ -914,9 +699,9 @@ body, html {
 <div id="projects-overlay" class="overlay">
 <div class="overlay-frame">
 <span class="coord coord-tl">[1111, 1111]</span>
-<span id="coord-br-projects" class="coord coord-br">[9999, 9999]</span>
+<span class="coord coord-br">[9999, 9999]</span>
 </div>
-<div class="content-grid" id="p-grid-container">
+<div class="content-grid">
   <div class="col-left" style="align-items: flex-start; justify-content: flex-start; padding: 15px;">
     <div class="project-list" id="p-list">
       <div class="project-entry selected" data-project="void">
@@ -961,35 +746,20 @@ body, html {
       <div class="video-container" id="v-container">
         <video id="p-video" playsinline muted loop></video>
         <div class="no-signal-overlay" id="no-signal">
-          <div class="no-signal-text">[ NO SIGNAL ]</div>
-          <div class="no-signal-sub">WAITING FOR DATA...</div>
+          <div class="no-signal-box">
+            <span class="blink-text">[ NO SIGNAL ]</span>
+            <span style="font-size: 0.6rem; opacity: 0.5;">WAITING FOR DATA...</span>
+          </div>
         </div>
       </div>
       
       <div class="playback-bar">
-        <button class="p-btn vol-btn muted" id="p-volume-toggle">
-          <svg class="unmuted-icon" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5zM19.07 4.93l-1.41 1.41C19.1 7.79 20 9.79 20 12c0 2.21-.9 4.21-2.34 5.66l1.41 1.41C20.93 17.22 22 14.72 22 12c0-2.72-1.07-5.22-2.93-7.07z"/></svg>
-          <svg class="muted-icon" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5zm8.5 7c0-1.77-.77-3.29-2-4.3L16.2 9.1c.48.57.8 1.3.8 1.9 0 .6-.32 1.33-.8 1.9l1.3 1.4c1.23-1.01 2-2.53 2-4.3zm-3.5 0c0-.3-.12-.57-.3-.77l-1.3 1.3c.18-.15.3-.33.3-.53z"/><line x1="1" y1="1" x2="23" y2="23" stroke="currentColor" stroke-width="2"/></svg>
-        </button>
-
-        <button class="p-btn" id="p-back-1s">-1S</button>
-        <button class="p-btn" id="p-back-1f">-1F</button>
+        <button class="p-btn" id="p-rewind">STEP-</button>
         <button class="p-btn play-pause" id="play-pause">
           <svg class="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
           <svg class="pause-icon" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
         </button>
-        <button class="p-btn" id="p-fwd-1f">+1F</button>
-        <button class="p-btn" id="p-fwd-1s">+1S</button>
-        
-        <button class="fs-btn" id="p-fs-toggle">
-          <svg class="fs-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
-          <svg class="exit-fs-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14h6v6M20 10h-6V4M14 10l7-7M10 14l-7 7"/></svg>
-        </button>
-      </div>
-
-      <div class="progress-container">
-        <span>DATA</span>
-        <input type="range" id="p-progress" min="0" max="100" step="0.1" value="0">
+        <button class="p-btn" id="p-forward">STEP+</button>
       </div>
 
       <div class="spec-details" id="p-specs">
@@ -1074,17 +844,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
   const pVideo = document.getElementById("p-video");
   const noSignal = document.getElementById("no-signal");
-  const vContainer = document.getElementById("v-container");
   const playBtn = document.getElementById("play-pause");
-  const bBack1s = document.getElementById("p-back-1s");
-  const bBack1f = document.getElementById("p-back-1f");
-  const bFwd1f = document.getElementById("p-fwd-1f");
-  const bFwd1s = document.getElementById("p-fwd-1s");
-  const pProgress = document.getElementById("p-progress");
-  const pVolToggle = document.getElementById("p-volume-toggle");
-  const fsToggle = document.getElementById("p-fs-toggle");
-  const pGridContainer = document.getElementById("p-grid-container");
-  const coordBrProjects = document.getElementById("coord-br-projects");
+  const rewindBtn = document.getElementById("p-rewind");
+  const forwardBtn = document.getElementById("p-forward");
   
   const sPipeline = document.getElementById("s-pipeline");
   const sComplexity = document.getElementById("s-complexity");
@@ -1129,42 +891,21 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   };
 
-  const formatTime = function(seconds) {
-    if (isNaN(seconds)) return "00:00";
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return (mins < 10 ? "0" + mins : mins) + ":" + (secs < 10 ? "0" + secs : secs);
-  };
-
-  const updateUI = function() {
-    if (!pVideo) return;
-    const current = pVideo.currentTime;
-    const duration = pVideo.duration || 0;
-    
-    if (pProgress) {
-      pProgress.value = duration > 0 ? (current / duration) * 100 : 0;
-    }
-    
-    if (coordBrProjects) {
-      coordBrProjects.innerText = "[" + " " + formatTime(current) + " " + "/" + " " + formatTime(duration) + " " + "]";
-    }
-  };
-
   const updateProjectMedia = function(projectId) {
     const data = projectData[projectId];
     if (!data) return;
     
-    if (pVideo) {
+    if (pVideo && noSignal) {
       pVideo.pause();
       if (data.video && data.video !== "") {
-        if (noSignal) noSignal.classList.remove("active");
+        noSignal.classList.remove("active");
         pVideo.src = data.video + "#t=0.001";
         pVideo.load();
       } else {
-        if (noSignal) noSignal.classList.add("active");
         pVideo.src = "";
+        noSignal.classList.add("active");
       }
-      updateUI();
+      playBtn.classList.remove("playing");
     }
     
     if (sPipeline) sPipeline.innerText = data.pipeline;
@@ -1172,63 +913,6 @@ document.addEventListener("DOMContentLoaded", function() {
     if (sBuffers) sBuffers.innerText = data.buffers;
     if (sStatus) sStatus.innerText = data.status;
   };
-
-  if (pVideo) {
-    pVideo.onerror = function() {
-      if (noSignal) noSignal.classList.add("active");
-    };
-    pVideo.addEventListener("timeupdate", updateUI);
-    pVideo.addEventListener("loadedmetadata", updateUI);
-
-    pVideo.addEventListener("play", function() {
-      if (playBtn) playBtn.classList.add("playing");
-    });
-    pVideo.addEventListener("pause", function() {
-      if (playBtn) playBtn.classList.remove("playing");
-    });
-    pVideo.addEventListener("webkitendfullscreen", function() {
-      if (pVideo.paused && playBtn) {
-        playBtn.classList.remove("playing");
-      }
-    });
-  }
-
-  if (pProgress && pVideo) {
-    pProgress.addEventListener("input", function() {
-      const duration = pVideo.duration || 0;
-      pVideo.currentTime = (pProgress.value / 100) * duration;
-      updateUI();
-    });
-  }
-
-  if (pVolToggle && pVideo) {
-    pVolToggle.addEventListener("click", function() {
-      pVideo.muted = !pVideo.muted;
-      if (pVideo.muted) {
-        pVolToggle.classList.add("muted");
-      } else {
-        pVolToggle.classList.remove("muted");
-      }
-    });
-  }
-
-  if (fsToggle && pVideo && vContainer) {
-    fsToggle.addEventListener("click", function() {
-      if (pVideo.webkitEnterFullscreen) {
-        pVideo.webkitEnterFullscreen();
-      } else if (vContainer.requestFullscreen) {
-        vContainer.requestFullscreen();
-      } else if (vContainer.webkitRequestFullscreen) {
-        vContainer.webkitRequestFullscreen();
-      } else if (vContainer.mozRequestFullScreen) {
-        vContainer.mozRequestFullScreen();
-      } else if (vContainer.msRequestFullscreen) {
-        vContainer.msRequestFullscreen();
-      } else {
-        pGridContainer.classList.toggle("fullscreen-mode");
-      }
-    });
-  }
 
   // Mobile Sequence
   setTimeout(function() { 
@@ -1260,24 +944,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
   const switchPage = function(pageId, triggerEl) {
     setActiveNav(triggerEl);
-    
-    // Clear page active classes
-    document.body.classList.remove("about-active", "projects-active", "home-active");
-    document.body.classList.add(pageId + "-active");
-
-    if (aboutOverlay) {
-      aboutOverlay.classList.remove("active");
-      aboutOverlay.classList.remove("nav-active");
-    }
-    if (projectsOverlay) {
-      projectsOverlay.classList.remove("active");
-      projectsOverlay.classList.remove("nav-active");
-    }
+    if (aboutOverlay) aboutOverlay.classList.remove("active");
+    if (projectsOverlay) projectsOverlay.classList.remove("active");
     if (mobileHeader) mobileHeader.classList.remove("active");
-
-    if (pageId !== "projects" && pVideo) {
-      pVideo.pause();
-    }
 
     if (pageId === "about") {
       if (aboutOverlay) aboutOverlay.classList.add("active");
@@ -1295,21 +964,6 @@ document.addEventListener("DOMContentLoaded", function() {
     hamburger.addEventListener("click", function() {
       hamburger.classList.toggle("open");
       mobileNav.classList.toggle("open");
-      
-      const overlays = [aboutOverlay, projectsOverlay];
-      overlays.forEach(function(overlay) {
-        if (overlay && overlay.classList.contains("active")) {
-          if (mobileNav.classList.contains("open")) {
-            overlay.classList.add("nav-active");
-          } else {
-            overlay.classList.remove("nav-active");
-          }
-        }
-      });
-
-      if (mobileNav.classList.contains("open") && pVideo) {
-        pVideo.pause();
-      }
     });
   }
 
@@ -1327,42 +981,39 @@ document.addEventListener("DOMContentLoaded", function() {
       updateProjectMedia(pid);
     });
   });
+  if (pVideo && noSignal) {
+    pVideo.onerror = function() {
+      noSignal.classList.add("active");
+    };
+  }
+
 
   if (playBtn && pVideo) {
     playBtn.addEventListener("click", function() {
       if (pVideo.paused) {
         pVideo.play();
+        playBtn.classList.add("playing");
       } else {
         pVideo.pause();
+        playBtn.classList.remove("playing");
       }
     });
   }
 
   const FPS = 30;
-  if (bBack1s && pVideo) {
-    bBack1s.addEventListener("click", function() {
-      pVideo.currentTime = Math.max(0, pVideo.currentTime - 1);
-      updateUI();
-    });
-  }
-  if (bBack1f && pVideo) {
-    bBack1f.addEventListener("click", function() {
+  if (rewindBtn && pVideo) {
+    rewindBtn.addEventListener("click", function() {
       pVideo.pause();
+      playBtn.classList.remove("playing");
       pVideo.currentTime = Math.max(0, pVideo.currentTime - (1 / FPS));
-      updateUI();
     });
   }
-  if (bFwd1f && pVideo) {
-    bFwd1f.addEventListener("click", function() {
+
+  if (forwardBtn && pVideo) {
+    forwardBtn.addEventListener("click", function() {
       pVideo.pause();
+      playBtn.classList.remove("playing");
       pVideo.currentTime = Math.min(pVideo.duration || 0, pVideo.currentTime + (1 / FPS));
-      updateUI();
-    });
-  }
-  if (bFwd1s && pVideo) {
-    bFwd1s.addEventListener("click", function() {
-      pVideo.currentTime = Math.min(pVideo.duration || 0, pVideo.currentTime + 1);
-      updateUI();
     });
   }
 });
