@@ -221,11 +221,13 @@ body, html {
 
 .hamburger span {
   display: block;
+  position: relative;
   width: 100%;
   height: 1px;
   background-color: var(--white);
   border-radius: 0;
-  transition: transform 0.4s var(--ease), opacity 0.4s var(--ease);
+  transition: transform 0.4s var(--ease), opacity 0.4s var(--ease), width 0.4s var(--ease);
+  transform-origin: left center;
 }
 
 .hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
@@ -258,6 +260,15 @@ body, html {
     opacity: 0 !important;
     visibility: hidden !important;
   }
+  
+  /* Wordmark Slide-Out: Only when Projects or About is active */
+  .projects-active #wordmark.docked,
+  .about-active #wordmark.docked {
+    transform: translate(-150%, -50%) scale(0.85);
+    opacity: 0;
+    pointer-events: none;
+  }
+  
   .hamburger {
     height: 54px;
   }
@@ -265,6 +276,52 @@ body, html {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     background: rgba(5, 5, 5, 0.9);
+  }
+
+  /* Mathematically Perfect Double Left Arrow (<<) */
+  .projects-active .hamburger:not(.open) span:nth-child(1) {
+    width: 12px;
+    transform: translateY(6.5px) rotate(-45deg);
+  }
+  .projects-active .hamburger:not(.open) span:nth-child(2) {
+    width: 0;
+    opacity: 0;
+  }
+  .projects-active .hamburger:not(.open) span:nth-child(3) {
+    width: 12px;
+    transform: translateY(-6.5px) rotate(45deg);
+  }
+  
+  /* Create the second arrow head using pseudo-elements */
+  .projects-active .hamburger:not(.open) span:nth-child(1)::after,
+  .projects-active .hamburger:not(.open) span:nth-child(3)::after {
+    content: '';
+    position: absolute;
+    width: 12px;
+    height: 1px;
+    background-color: var(--white);
+    top: 0;
+    left: 0;
+    transition: transform 0.4s var(--ease);
+  }
+  
+  /* 
+     S = 6px (horizontal gap)
+     θ = 45deg
+     X_local = S * cos(45) = 4.24px
+     Y_local = -S * sin(45) = -4.24px
+  */
+  .projects-active .hamburger:not(.open) span:nth-child(1)::after {
+    transform: translate(4.24px, -4.24px);
+  }
+  
+  /* 
+     θ = -45deg
+     X_local = S * cos(-45) = 4.24px
+     Y_local = -S * sin(-45) = 4.24px
+  */
+  .projects-active .hamburger:not(.open) span:nth-child(3)::after {
+    transform: translate(4.24px, 4.24px);
   }
 }
 
@@ -333,8 +390,9 @@ body, html {
     bottom: 40px;
   }
   #about-overlay {
+    height: 100% !important;
     overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch;
+    -webkit-overflow-scrolling: touch !important;
   }
   #about-overlay .content-grid {
     padding-bottom: 80px;
@@ -779,7 +837,7 @@ body, html {
 }
 </style>
 </head>
-<body>
+<body class="home-active">
 
 <div id="mobile-header"></div>
 <canvas id="dot-matrix-canvas"></canvas>
