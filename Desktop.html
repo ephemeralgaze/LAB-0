@@ -258,6 +258,41 @@ body, html {
 .video-container { width: 100%; aspect-ratio: 16/9; border: 1px solid rgba(255, 255, 255, 0.1); position: relative; overflow: hidden; background: #000; }
 .video-container video { width: 100%; height: 100%; object-fit: cover; }
 
+/* No Signal Styles */
+.no-signal-overlay {
+  position: absolute;
+  inset: 0;
+  border: 1px solid #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  z-index: 10;
+  display: none;
+}
+.no-signal-text {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+  color: #ffffff;
+}
+
+/* Loading Styles */
+.loading-indicator {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 11;
+  display: none;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+  color: #ffffff;
+}
+
 .timeline-container {
   display: flex;
   align-items: center;
@@ -425,7 +460,13 @@ body, html {
   </div>
   <div class="col-right">
     <div class="spec-panel">
-      <div class="video-container"><video id="p-video" playsinline loop muted></video></div>
+      <div class="video-container">
+        <video id="p-video" playsinline loop muted></video>
+        <div id="no-signal" class="no-signal-overlay">
+          <div class="no-signal-text">NO SIGNAL</div>
+        </div>
+        <div id="loading-pct" class="loading-indicator">LOADING 0%</div>
+      </div>
       <div class="timeline-container">
         <div class="p-time" id="current-time">00:00</div>
         <input type="range" id="p-bar" min="0" value="0" step="0.01">
@@ -473,7 +514,7 @@ body, html {
     </div>
     <div class="info-item">
       <span class="info-label">Status</span>
-      <span class="info-value">Age 21 / Born 2005</span>
+      <span class="info-value">Age 21 / Born 2004</span>
     </div>
     <div class="info-item">
       <span class="info-label">Field</span>
@@ -505,6 +546,8 @@ document.addEventListener("DOMContentLoaded", function() {
   var durTimeTxt = document.getElementById("duration-time");
   var sPipeline = document.getElementById("s-pipeline");
   var sComplexity = document.getElementById("s-complexity");
+  var noSignal = document.getElementById("no-signal");
+  var loadingPct = document.getElementById("loading-pct");
 
   var projectData = {
     void: { video: "void.mov", pipeline: "HLSL / Compute", complexity: "12.4M Particles" },
@@ -527,10 +570,26 @@ document.addEventListener("DOMContentLoaded", function() {
   function updateProject(pid) {
     var data = projectData[pid];
     if (!data) return;
+    
+    // Reset Progress Bar and Time
     pVideo.pause();
+    pVideo.currentTime = 0;
+    pBar.value = 0;
+    curTimeTxt.innerText = "00:00";
     playBtn.classList.remove("playing");
-    pVideo.src = data.video;
-    pVideo.load();
+    
+    if (data.video && data.video !== "") {
+      noSignal.style.display = "none";
+      loadingPct.style.display = "flex";
+      loadingPct.innerText = "LOADING 0%";
+      pVideo.src = data.video;
+      pVideo.load();
+    } else {
+      pVideo.src = "";
+      noSignal.style.display = "flex";
+      loadingPct.style.display = "none";
+    }
+    
     sPipeline.innerText = data.pipeline;
     sComplexity.innerText = data.complexity;
   }
@@ -570,6 +629,18 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 
   if (pVideo) {
+    pVideo.addEventListener("progress", function() {
+      if (pVideo.buffered.length > 0 && pVideo.duration) {
+        var end = pVideo.buffered.end(pVideo.buffered.length - 1);
+        var pct = Math.round((end / pVideo.duration) * 100);
+        loadingPct.innerText = "LOADING " + pct + "%";
+      }
+    });
+    
+    pVideo.addEventListener("canplaythrough", function() {
+      loadingPct.style.display = "none";
+    });
+
     pVideo.addEventListener("timeupdate", function() {
       if (!isNaN(pVideo.duration)) {
         var v = (pVideo.currentTime / pVideo.duration) * 100;
