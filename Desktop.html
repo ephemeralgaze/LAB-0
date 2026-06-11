@@ -379,14 +379,44 @@ body, html {
 </div>
 </div>
 
+<div id="about-overlay" class="overlay">
+<div class="overlay-frame">
+<span class="coord coord-tl">[0000, 0000]</span>
+<span class="coord coord-br">[8888, 8888]</span>
+</div>
+<div class="content-grid" style="grid-template-columns: 0.7fr 1.3fr;">
+  <div class="col-left">
+    <div style="font-family: 'Syncopate', sans-serif; font-size: 24px; font-weight: bold; letter-spacing: 2px; margin-bottom: 20px;">LAB-0</div>
+    <div style="font-family: 'Space Mono', monospace; font-size: 11px; opacity: 0.7; line-height: 1.8;">
+      SYSTEM: RUNNING KERNEL<br>
+      STATUS: CALIBRATED<br>
+      METAPHOR: FARADAY CAGE<br>
+      CORE: SUPER-SYMMETRY
+    </div>
+  </div>
+  <div class="col-right" style="border-left: 1px solid rgba(255, 255, 255, 0.1); padding-left: 40px; display: flex; flex-direction: column; justify-content: space-between;">
+    <div style="font-family: 'Space Grotesk', sans-serif; font-size: 14px; line-height: 1.8; opacity: 0.9;">
+      EXPERIMENTAL GAME DEVELOPMENT AND TECHNICAL ARTISTRY UNIT.<br>
+      BUILT FROM ZERO. PROCEDURAL GENERATION, SHADER MANIFESTS, GPU DYNAMICS.<br><br>
+      DEVELOPER: EPHEMERAL GAZE // ZKDLIN3390
+    </div>
+    <div style="font-family: 'Space Mono', monospace; font-size: 10px; opacity: 0.4;">
+      CRITICAL THRESHOLD: 130 BPM // NO LAYOUT SHIFTS TOLERATED
+    </div>
+  </div>
+</div>
+</div>
+
 <script>
 document.addEventListener("DOMContentLoaded", function() {
   var wordmark = document.getElementById("wordmark");
   var grid = document.getElementById("grid");
   var menu = document.getElementById("menu");
   var projectsTrigger = document.getElementById("projects-trigger");
+  var aboutTrigger = document.getElementById("about-trigger");
   var navHome = document.getElementById("nav-home");
   var projectsOverlay = document.getElementById("projects-overlay");
+  var aboutOverlay = document.getElementById("about-overlay");
 
   var pVideo = document.getElementById("p-video");
   var playBtn = document.getElementById("play-pause");
@@ -427,7 +457,18 @@ document.addEventListener("DOMContentLoaded", function() {
     updateProject("void");
   });
 
-  if (navHome) navHome.addEventListener("click", function() { projectsOverlay.classList.remove("active"); });
+  if (aboutTrigger) {
+    aboutTrigger.addEventListener("click", function() {
+      aboutOverlay.classList.add("active");
+    });
+  }
+
+  if (navHome) {
+    navHome.addEventListener("click", function() { 
+      projectsOverlay.classList.remove("active"); 
+      aboutOverlay.classList.remove("active"); 
+    });
+  }
 
   var projectEntries = document.querySelectorAll(".project-entry");
   projectEntries.forEach(function(entry) {
