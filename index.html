@@ -252,6 +252,7 @@ body, html {
   justify-content: center;
   gap: 30px;
   border-right: 1px solid rgba(255, 255, 255, 0.05);
+  transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
 }
 
 .avatar {
@@ -290,6 +291,7 @@ body, html {
 #projects-overlay .content-grid {
   font-family: var(--font-mono);
   text-transform: uppercase;
+  transition: all 0.8s var(--ease);
 }
 
 .project-list {
@@ -347,6 +349,7 @@ body, html {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  transition: all 0.8s var(--ease);
 }
 
 .video-container {
@@ -356,6 +359,8 @@ body, html {
   position: relative;
   overflow: hidden;
   background: #000000;
+  transition: all 0.8s var(--ease);
+  z-index: 5;
 }
 
 .video-container video {
@@ -428,6 +433,8 @@ body, html {
   gap: 10px;
   padding: 10px 0;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.8s var(--ease);
+  position: relative;
 }
 
 .volume-container {
@@ -437,6 +444,7 @@ body, html {
   padding: 10px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   margin-bottom: 5px;
+  transition: all 0.8s var(--ease);
 }
 
 .volume-container span {
@@ -482,6 +490,7 @@ body, html {
   cursor: pointer;
   transition: all 0.3s var(--ease);
   letter-spacing: 0.1em;
+  position: relative;
 }
 
 .p-btn:hover {
@@ -510,16 +519,95 @@ body, html {
 .play-pause.playing .play-icon { display: none; }
 .play-pause.playing .pause-icon { display: block; }
 
+/* Fullscreen Button */
+.fs-btn {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.4);
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s var(--ease);
+}
+
+.fs-btn:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  color: var(--white);
+}
+
+.fs-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.fs-btn .exit-fs-icon { display: none; }
+
 .spec-details {
   display: grid;
   grid-template-columns: 100px 1fr;
   gap: 10px;
   font-size: 0.7rem;
   color: rgba(255, 255, 255, 0.5);
+  transition: opacity 0.6s var(--ease);
 }
 
 .spec-label { color: rgba(255, 255, 255, 0.3); }
 .spec-value { color: var(--white); }
+
+/* Fake Fullscreen State */
+.content-grid.fullscreen-mode {
+  grid-template-columns: 1fr;
+  max-width: none;
+  padding: 0;
+  height: 100%;
+}
+
+.content-grid.fullscreen-mode .col-left {
+  display: none;
+  opacity: 0;
+}
+
+.content-grid.fullscreen-mode .col-right {
+  height: 100%;
+  padding: 40px;
+}
+
+.content-grid.fullscreen-mode .spec-panel {
+  height: 100%;
+  gap: 40px;
+}
+
+.content-grid.fullscreen-mode .video-container {
+  flex: 1;
+  aspect-ratio: auto;
+}
+
+.content-grid.fullscreen-mode .playback-bar {
+  transform: scale(1.4);
+  transform-origin: center;
+  padding: 30px 0;
+}
+
+.content-grid.fullscreen-mode .volume-container {
+  transform: scale(1.2);
+  transform-origin: center;
+  margin-bottom: 20px;
+}
+
+.content-grid.fullscreen-mode .spec-details {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.content-grid.fullscreen-mode .fs-btn .fs-icon { display: none; }
+.content-grid.fullscreen-mode .fs-btn .exit-fs-icon { display: block; }
 
 /* Common Info Item */
 .info-item {
@@ -630,7 +718,7 @@ body, html {
 <line x1="20" y1="0" x2="20" y2="40" stroke="white" stroke-width="1"/>
 <line x1="0" y1="20" x2="40" y2="20" stroke="white" stroke-width="1"/>
 </svg>
-<div class="content-grid">
+<div class="content-grid" id="p-grid-container">
   <div class="col-left" style="align-items: flex-start; justify-content: flex-start; padding: 20px;">
     <div class="project-list" id="p-list">
       <div class="project-entry selected" data-project="void">
@@ -689,6 +777,10 @@ body, html {
         </button>
         <button class="p-btn" id="p-fwd-1f">+1F</button>
         <button class="p-btn" id="p-fwd-1s">+1S</button>
+        <button class="fs-btn" id="p-fs-toggle">
+          <svg class="fs-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+          <svg class="exit-fs-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14h6v6M20 10h-6V4M14 10l7-7M10 14l-7 7"/></svg>
+        </button>
       </div>
 
       <div class="volume-container">
@@ -780,6 +872,8 @@ document.addEventListener("DOMContentLoaded", function() {
   const bFwd1f = document.getElementById("p-fwd-1f");
   const bFwd1s = document.getElementById("p-fwd-1s");
   const vSlider = document.getElementById("v-slider");
+  const fsToggle = document.getElementById("p-fs-toggle");
+  const pGridContainer = document.getElementById("p-grid-container");
   
   const sPipeline = document.getElementById("s-pipeline");
   const sComplexity = document.getElementById("s-complexity");
@@ -857,6 +951,12 @@ document.addEventListener("DOMContentLoaded", function() {
     vSlider.addEventListener("input", function() {
       pVideo.volume = vSlider.value;
       pVideo.muted = (vSlider.value == 0);
+    });
+  }
+
+  if (fsToggle && pGridContainer) {
+    fsToggle.addEventListener("click", function() {
+      pGridContainer.classList.toggle("fullscreen-mode");
     });
   }
 
