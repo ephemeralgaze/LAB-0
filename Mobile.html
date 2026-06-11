@@ -455,7 +455,7 @@ body, html {
   aspect-ratio: 16/9;
   border: 1px solid rgba(255, 255, 255, 0.1);
   position: relative; overflow: hidden;
-  background: rgba(255, 255, 255, 0.02);
+  background: #050505;
 }
 
 .video-container video {
@@ -465,16 +465,6 @@ body, html {
   pointer-events: none;
 }
 
-.video-container::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: 
-    linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
-  background-size: 20px 20px;
-  z-index: 1;
-}
 
 /* Playback Control Bar */
 .playback-bar {
@@ -526,7 +516,7 @@ body, html {
 
 .play-pause .pause-icon { display: none; }
 .play-pause.playing .play-icon { display: none; }
-.play-pause.playing .pause-icon { display: block; }
+.play-pause.playing .pause-icon { block; }
 
 .spec-details {
   display: grid;
@@ -694,7 +684,6 @@ body, html {
 <div id="projects-overlay" class="overlay">
 <div class="overlay-frame">
 <span class="coord coord-tl">[1111, 1111]</span>
-<span class="coord coord-br">[9999, 9999]</span>
 </div>
 <div class="content-grid">
   <div class="col-left" style="align-items: flex-start; justify-content: flex-start; padding: 15px;">
@@ -1013,9 +1002,9 @@ document.addEventListener("DOMContentLoaded", function() {
       }
     });
 
-    pVideo.addEventListener('play', function() { if (playBtn) playBtn.classList.add('playing'); });
-    pVideo.addEventListener('pause', function() { if (playBtn) playBtn.classList.remove('playing'); });
-    pVideo.addEventListener('timeupdate', function() {
+    pVideo.addEventListener("play", function() { if (playBtn) playBtn.classList.add("playing"); });
+    pVideo.addEventListener("pause", function() { if (playBtn) playBtn.classList.remove("playing"); });
+    pVideo.addEventListener("timeupdate", function() {
       if (curTimeTxt && !isNaN(pVideo.duration) && pVideo.duration > 0) {
         curTimeTxt.innerText = formatTime(pVideo.currentTime);
         if (pProgress) {
@@ -1024,17 +1013,17 @@ document.addEventListener("DOMContentLoaded", function() {
         }
       }
     });
-    pVideo.addEventListener('loadedmetadata', function() {
+    pVideo.addEventListener("loadedmetadata", function() {
       if (durTimeTxt) durTimeTxt.innerText = formatTime(pVideo.duration);
     });
-    pVideo.addEventListener('webkitendfullscreen', function() {
+    pVideo.addEventListener("webkitendfullscreen", function() {
       pVideo.pause();
-      if (playBtn) playBtn.classList.remove('playing');
+      if (playBtn) playBtn.classList.remove("playing");
     });
   }
 
   var FPS = 30;
-  var syncPause = function() { if (pVideo && !pVideo.paused) { pVideo.pause(); } };
+  var syncPause = function() { if (pVideo && !pVideo.paused) { pVideo.pause(); if (playBtn) playBtn.classList.remove("playing"); } };
   document.getElementById("p-volume-toggle").addEventListener("click", function() { pVideo.muted = !pVideo.muted; });
   document.getElementById("p-back-1s").addEventListener("click", function() { syncPause(); pVideo.currentTime -= 1; });
   document.getElementById("p-back-1f").addEventListener("click", function() { syncPause(); pVideo.currentTime -= (1/FPS); });
