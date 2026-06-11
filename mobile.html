@@ -221,11 +221,13 @@ body, html {
 
 .hamburger span {
   display: block;
+  position: relative;
   width: 100%;
   height: 1px;
   background-color: var(--white);
   border-radius: 0;
   transition: transform 0.4s var(--ease), opacity 0.4s var(--ease), width 0.4s var(--ease);
+  transform-origin: left center;
 }
 
 .hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
@@ -276,10 +278,10 @@ body, html {
     background: rgba(5, 5, 5, 0.9);
   }
 
-  /* Arrow Transformation Logic (Sharp <<) */
+  /* Mathematically Perfect Double Left Arrow (<<) */
   .projects-active .hamburger:not(.open) span:nth-child(1) {
     width: 12px;
-    transform: translate(-4px, 4px) rotate(-45deg);
+    transform: translateY(6.5px) rotate(-45deg);
   }
   .projects-active .hamburger:not(.open) span:nth-child(2) {
     width: 0;
@@ -287,11 +289,10 @@ body, html {
   }
   .projects-active .hamburger:not(.open) span:nth-child(3) {
     width: 12px;
-    transform: translate(-4px, -4px) rotate(45deg);
+    transform: translateY(-6.5px) rotate(45deg);
   }
   
-  /* Create the double arrows using pseudo-elements on the top/bottom bars or a wrapper */
-  /* Re-forming sharp << with span 1 and 3 as the outer arrow, and their pseudo-elements as the inner arrow */
+  /* Create the second arrow head using pseudo-elements */
   .projects-active .hamburger:not(.open) span:nth-child(1)::after,
   .projects-active .hamburger:not(.open) span:nth-child(3)::after {
     content: '';
@@ -299,15 +300,28 @@ body, html {
     width: 12px;
     height: 1px;
     background-color: var(--white);
+    top: 0;
+    left: 0;
     transition: transform 0.4s var(--ease);
   }
   
-  /* Inner Arrow Head (offset from outer) */
+  /* 
+     S = 6px (horizontal gap)
+     θ = 45deg
+     X_local = S * cos(45) = 4.24px
+     Y_local = -S * sin(45) = -4.24px
+  */
   .projects-active .hamburger:not(.open) span:nth-child(1)::after {
-    transform: translate(8px, 0);
+    transform: translate(4.24px, -4.24px);
   }
+  
+  /* 
+     θ = -45deg
+     X_local = S * cos(-45) = 4.24px
+     Y_local = -S * sin(-45) = 4.24px
+  */
   .projects-active .hamburger:not(.open) span:nth-child(3)::after {
-    transform: translate(8px, 0);
+    transform: translate(4.24px, 4.24px);
   }
 }
 
