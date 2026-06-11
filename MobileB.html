@@ -43,7 +43,6 @@ body, html {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Canvas Layer */
 #dot-matrix-canvas {
   position: fixed;
   inset: 0;
@@ -53,7 +52,6 @@ body, html {
   height: 100%;
 }
 
-/* Background Overlay */
 #bg-overlay {
   position: fixed;
   inset: 0;
@@ -64,7 +62,6 @@ body, html {
   pointer-events: none;
 }
 
-/* 1px Grid Borders */
 .ui-grid {
   position: fixed;
   inset: 0;
@@ -76,7 +73,6 @@ body, html {
   z-index: 5;
 }
 
-/* NAVIGATION LAYER */
 .stage {
   position: fixed;
   inset: 0;
@@ -158,7 +154,6 @@ body, html {
   display: block;
 }
 
-/* MOBILE HEADER */
 #mobile-header {
   position: fixed;
   top: 0;
@@ -188,7 +183,6 @@ body, html {
   pointer-events: none;
 }
 
-/* SpaceX-style Hamburger Menu */
 .hamburger {
   position: fixed;
   top: 0;
@@ -231,7 +225,6 @@ body, html {
 .hamburger.open span:nth-child(2) { opacity: 0; }
 .hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
 
-/* Mobile Nav Drawer */
 .mobile-nav-overlay {
   position: fixed;
   inset: 0;
@@ -266,7 +259,6 @@ body, html {
 
 .ui-visible { opacity: 1 !important; }
 
-/* OVERLAY STYLES */
 .overlay {
   position: fixed;
   inset: 0;
@@ -356,7 +348,6 @@ body, html {
   font-family: var(--font-mono);
 }
 
-/* PROJECTS SPECIFIC STYLES */
 #projects-overlay .content-grid {
   font-family: var(--font-mono);
   text-transform: uppercase;
@@ -419,7 +410,6 @@ body, html {
   gap: 15px;
 }
 
-
 .no-signal-overlay {
   position: absolute;
   inset: 0;
@@ -439,7 +429,6 @@ body, html {
 .no-signal-overlay.active { display: flex; }
 .no-signal-box {
   padding: 15px 30px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -455,9 +444,8 @@ body, html {
   width: 100%;
   aspect-ratio: 16/9;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  position: relative;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.02);
+  position: relative; overflow: hidden;
+  background: #050505;
 }
 
 .video-container video {
@@ -467,18 +455,6 @@ body, html {
   pointer-events: none;
 }
 
-.video-container::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: 
-    linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
-  background-size: 20px 20px;
-  z-index: 1;
-}
-
-/* Playback Control Bar */
 .playback-bar {
   display: flex;
   align-items: center;
@@ -528,7 +504,7 @@ body, html {
 
 .play-pause .pause-icon { display: none; }
 .play-pause.playing .play-icon { display: none; }
-.play-pause.playing .pause-icon { display: block; }
+.play-pause.playing .pause-icon { block; }
 
 .spec-details {
   display: grid;
@@ -541,7 +517,6 @@ body, html {
 .spec-label { color: rgba(255, 255, 255, 0.3); }
 .spec-value { color: var(--white); }
 
-/* Common Info Item */
 .info-item {
   display: flex;
   align-items: center;
@@ -572,7 +547,6 @@ body, html {
   text-transform: uppercase;
 }
 
-/* Mailto Styling */
 .mail-link {
   color: var(--white);
   text-decoration: none;
@@ -651,7 +625,6 @@ body, html {
 </div>
 </div>
 
-<!-- ABOUT OVERLAY -->
 <div id="about-overlay" class="overlay">
 <div class="overlay-frame">
 <span class="coord coord-tl">[0000, 0000]</span>
@@ -692,11 +665,9 @@ body, html {
 </div>
 </div>
 
-<!-- PROJECTS OVERLAY -->
 <div id="projects-overlay" class="overlay">
 <div class="overlay-frame">
 <span class="coord coord-tl">[1111, 1111]</span>
-<span class="coord coord-br">[9999, 9999]</span>
 </div>
 <div class="content-grid">
   <div class="col-left" style="align-items: flex-start; justify-content: flex-start; padding: 15px;">
@@ -750,6 +721,14 @@ body, html {
         </div>
       </div>
       
+      <div style="display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 0;">
+        <div id="current-time" style="font-family: 'Space Mono', monospace; font-size: 0.6rem; color: #ffffff; width: 35px;">--:--</div>
+        <div style="flex-grow: 1; height: 1px; background: rgba(255,255,255,0.1); position: relative;">
+          <div id="p-progress" style="position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: #ffffff;"></div>
+        </div>
+        <div id="duration-time" style="font-family: 'Space Mono', monospace; font-size: 0.6rem; color: #ffffff; width: 35px; text-align: right;">--:--</div>
+      </div>
+
       <div class="playback-bar" id="playback-bar">
         <button class="p-btn" id="p-volume-toggle">VOL</button>
         <button class="p-btn" id="p-back-1s">-1S</button>
@@ -846,6 +825,9 @@ document.addEventListener("DOMContentLoaded", function() {
   var pVideo = document.getElementById("p-video");
   var noSignal = document.getElementById("no-signal");
   var playBtn = document.getElementById("play-pause");
+  var curTimeTxt = document.getElementById("current-time");
+  var durTimeTxt = document.getElementById("duration-time");
+  var pProgress = document.getElementById("p-progress");
   
   var sPipeline = document.getElementById("s-pipeline");
   var sComplexity = document.getElementById("s-complexity");
@@ -890,21 +872,31 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   };
 
+  function formatTime(s) {
+    var m = Math.floor(s / 60);
+    var sec = Math.floor(s % 60);
+    return (m < 10 ? "0" + m : m) + ":" + (sec < 10 ? "0" + sec : sec);
+  }
+
   var updateProjectMedia = function(projectId) {
     var data = projectData[projectId];
     if (!data) return;
     
     if (pVideo && noSignal) {
       pVideo.pause();
+      if (pProgress) pProgress.style.width = "0%";
       if (data.video && data.video !== "") {
+        if (curTimeTxt) curTimeTxt.innerText = "00:00";
+        if (durTimeTxt) durTimeTxt.innerText = "00:00";
         noSignal.classList.remove("active");
         pVideo.src = data.video + "#t=0.001";
         pVideo.load();
       } else {
+        if (curTimeTxt) curTimeTxt.innerText = "--:--";
+        if (durTimeTxt) durTimeTxt.innerText = "--:--";
         pVideo.src = "";
         noSignal.classList.add("active");
       }
-      playBtn.classList.remove("playing");
     }
     
     if (sPipeline) sPipeline.innerText = data.pipeline;
@@ -939,6 +931,7 @@ document.addEventListener("DOMContentLoaded", function() {
   setActiveNav(navHome);
 
   var switchPage = function(pageId, triggerEl) {
+    if (pageId !== "projects") { if (pVideo) pVideo.pause(); }
     setActiveNav(triggerEl);
     if (aboutOverlay) aboutOverlay.classList.remove("active");
     if (projectsOverlay) projectsOverlay.classList.remove("active");
@@ -987,20 +980,38 @@ document.addEventListener("DOMContentLoaded", function() {
     playBtn.addEventListener("click", function() {
       if (pVideo.paused) {
         pVideo.play();
-        playBtn.classList.add("playing");
       } else {
         pVideo.pause();
-        playBtn.classList.remove("playing");
       }
+    });
+
+    pVideo.addEventListener("play", function() { if (playBtn) playBtn.classList.add("playing"); });
+    pVideo.addEventListener("pause", function() { if (playBtn) playBtn.classList.remove("playing"); });
+    pVideo.addEventListener("timeupdate", function() {
+      if (curTimeTxt && !isNaN(pVideo.duration) && pVideo.duration > 0) {
+        curTimeTxt.innerText = formatTime(pVideo.currentTime);
+        if (pProgress) {
+          var v = (pVideo.currentTime / pVideo.duration) * 100;
+          pProgress.style.width = v + "%";
+        }
+      }
+    });
+    pVideo.addEventListener("loadedmetadata", function() {
+      if (durTimeTxt) durTimeTxt.innerText = formatTime(pVideo.duration);
+    });
+    pVideo.addEventListener("webkitendfullscreen", function() {
+      pVideo.pause();
+      if (playBtn) playBtn.classList.remove("playing");
     });
   }
 
   var FPS = 30;
+  var syncPause = function() { if (pVideo && !pVideo.paused) { pVideo.pause(); if (playBtn) playBtn.classList.remove("playing"); } };
   document.getElementById("p-volume-toggle").addEventListener("click", function() { pVideo.muted = !pVideo.muted; });
-  document.getElementById("p-back-1s").addEventListener("click", function() { pVideo.currentTime -= 1; });
-  document.getElementById("p-back-1f").addEventListener("click", function() { pVideo.currentTime -= (1/FPS); });
-  document.getElementById("p-fwd-1f").addEventListener("click", function() { pVideo.currentTime += (1/FPS); });
-  document.getElementById("p-fwd-1s").addEventListener("click", function() { pVideo.currentTime += 1; });
+  document.getElementById("p-back-1s").addEventListener("click", function() { syncPause(); pVideo.currentTime -= 1; });
+  document.getElementById("p-back-1f").addEventListener("click", function() { syncPause(); pVideo.currentTime -= (1/FPS); });
+  document.getElementById("p-fwd-1f").addEventListener("click", function() { syncPause(); pVideo.currentTime += (1/FPS); });
+  document.getElementById("p-fwd-1s").addEventListener("click", function() { syncPause(); pVideo.currentTime += 1; });
   document.getElementById("p-fs-toggle").addEventListener("click", function() {
     if (pVideo.requestFullscreen) { pVideo.requestFullscreen(); }
     else if (pVideo.webkitEnterFullscreen) { pVideo.webkitEnterFullscreen(); }
