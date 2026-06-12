@@ -1480,6 +1480,32 @@ document.addEventListener("DOMContentLoaded", function() {
   border-color: rgba(255, 255, 255, 0.4);
   color: var(--white);
 }
+   /* 🔥 修复横屏下的留白问题 */
+@media (orientation: landscape) {
+  .content-grid {
+    display: grid !important;
+    grid-template-columns: 0.8fr 1.2fr !important; /* 调整比例，让列表稍微宽一点 */
+    gap: 20px !important;                          /* 缩小间距，解决中间“空洞”感 */
+    padding: 20px 40px !important;                 /* 减小外边距，让内容向屏幕中心靠拢 */
+    max-width: 100vw !important;
+  }
+
+  .col-left {
+    height: 70vh !important; /* 限制高度，触发滚动锁 */
+    justify-content: flex-start !important;
+  }
+
+  .project-entry {
+    padding: 8px 0 !important; /* 让列表更紧凑，不至于太稀疏 */
+  }
+
+  /* 如果还有空隙，把右侧视频容器也拉大一点 */
+  .col-right {
+    display: flex;
+    align-items: center;
+  }
+}
+
 </style>
 
 <script>
