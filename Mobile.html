@@ -798,14 +798,14 @@ body, html {
   </div>
   <div class="col-right">
     <div class="spec-panel">
-      <div class="video-container" id="v-container">
-        <video id="p-video" playsinline muted loop></video>
-        <div class="no-signal-overlay" id="no-signal">
-          <div class="no-signal-box">
-            <span class="blink-text">[ NO SIGNAL ]</span>
-            <span style="font-size: 0.6rem; opacity: 0.5;">WAITING FOR DATA...</span>
-          </div>
-        </div>
+      
+     <div class="video-container">
+  <video id="project-video" autoplay muted playsinline></video>
+
+  <div class="no-signal-overlay" id="video-fallback">
+    NO SIGNAL · OFFLINE MODE
+  </div>
+</div>
       </div>
       
       <div style="display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 0;">
@@ -1140,6 +1140,33 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   }
 });
+</script>
+  <script>
+window.networkStatus = {
+  isOnline: navigator.onLine,
+
+  init() {
+    window.addEventListener("online", () => {
+      document.documentElement.classList.remove("offline-mode");
+    });
+
+    window.addEventListener("offline", () => {
+      document.documentElement.classList.add("offline-mode");
+    });
+
+    // 防“假在线”：定期探测
+    setInterval(async () => {
+      try {
+        await fetch("https://github.com", { mode: "no-cors" });
+        document.documentElement.classList.remove("offline-mode");
+      } catch {
+        document.documentElement.classList.add("offline-mode");
+      }
+    }, 8000);
+  }
+};
+
+window.networkStatus.init();
 </script>
 </body>
 </html>
