@@ -962,6 +962,13 @@ body, html {
         </div>
         <span class="status-tag">MUSIC</span>
       </div>
+      <div class="project-entry" data-project="V6">
+        <div class="project-info">
+          <span class="project-id">[06]</span>
+          <span class="project-name">Crazy</span>
+        </div>
+        <span class="status-tag">Stage</span>
+      </div>
     </div>
   </div>
   <div class="col-right">
@@ -1105,21 +1112,28 @@ document.addEventListener("DOMContentLoaded", function() {
       status: "OPTIMIZING"
     },
     V3: {
-      video: "",
+      video: "Pineapple Slice.MOV",
       pipeline: "PBR / Raycast",
       complexity: "Dynamic SDF",
       buffers: "GBuffer / Depth",
       status: "STANDBY"
     },
     V4: {
-      video: "",
+      video: "Deja Vu.MOV",
       pipeline: "VFX / Compute",
       complexity: "Q-Field Sim",
       buffers: "Atomic / SSBO",
       status: "ACTIVE"
     },
     V5: {
-      video: "",
+      video: "All I Got.MOV",
+      pipeline: "Post / Kernel",
+      complexity: "Multi-Pass LUT",
+      buffers: "Ping-Pong / FBO",
+      status: "DRAFT"
+    }
+    V6: {
+      video: "Crazy.MOV",
       pipeline: "Post / Kernel",
       complexity: "Multi-Pass LUT",
       buffers: "Ping-Pong / FBO",
