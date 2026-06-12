@@ -913,7 +913,7 @@ document.addEventListener("DOMContentLoaded", function() {
     else { pVideo.pause(); playBtn.classList.remove("playing"); }
   });
 
-  if (pVideo) {
+    if (pVideo) {
     pVideo.addEventListener("timeupdate", function() {
       if (!isNaN(pVideo.duration) && pVideo.duration > 0) {
         var v = (pVideo.currentTime / pVideo.duration) * 100;
@@ -924,7 +924,16 @@ document.addEventListener("DOMContentLoaded", function() {
     pVideo.addEventListener("loadedmetadata", function() {
       durTimeTxt.innerText = formatTime(pVideo.duration);
     });
+    
+    // =========== 新增：监听视频播放结束 ===========
+    pVideo.addEventListener("ended", function() {
+      if (playBtn) {
+        playBtn.classList.remove("playing"); // 播放结束时，将按钮图标变回播放状态
+      }
+    });
+    // ============================================
   }
+
 
   if (pBarContainer) {
     pBarContainer.addEventListener("click", function(e) {
