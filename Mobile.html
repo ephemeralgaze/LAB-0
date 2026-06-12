@@ -27,7 +27,7 @@ window.addEventListener('load', function() {
 // 3. 设置字体加载超时降级（5秒后还没加载就放弃，防止白屏）
 setTimeout(function() {
   if (!window.fontsLoaded && !document.documentElement.classList.contains('fonts-ready')) {
-    document.documentElement.classList.add('fonts-fallback');
+    document.documentElement.classList.add('fonts-fback');
     console.log('⏱️ 字体加载超时，已降级为系统字体方案');
   }
 }, 5000);
@@ -35,7 +35,7 @@ setTimeout(function() {
 <style>
 :root {
   /* 当字体加载超时，降级为系统安全字体，防止文字隐形或排版卡死 */
-html.fonts-fallback {
+html.fonts-fback {
   --font-header: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
@@ -951,7 +951,7 @@ body, html {
       <div class="project-entry" data-project="V4">
         <div class="project-info">
           <span class="project-id">[04]</span>
-          <span class="project-name">Ephemeral Gaze</span>
+          <span class="project-name">Deja Vu</span>
         </div>
         <span class="status-tag">CONCERT</span>
       </div>
@@ -960,7 +960,7 @@ body, html {
           <span class="project-id">[05]</span>
           <span class="project-name">All I Got</span>
         </div>
-        <span class="status-tag">MUSIC</span>
+        <span class="status-tag">Stage</span>
       </div>
        <div class="project-entry" data-project="V6">
         <div class="project-info">
@@ -1126,14 +1126,14 @@ document.addEventListener("DOMContentLoaded", function() {
       status: "ACTIVE"
     },
     V5: {
-      video: "AllIGot.mov",
+      video: "AllIGot.MOV",
       pipeline: "Post / Kernel",
       complexity: "Multi-Pass LUT",
       buffers: "Ping-Pong / FBO",
       status: "DRAFT"
     },
     V6: {
-      video: "Crazy.mov",
+      video: "Crazy.MOV",
       pipeline: "Post / Kernel",
       complexity: "Multi-Pass LUT",
       buffers: "Ping-Pong / FBO",
@@ -1398,7 +1398,7 @@ document.addEventListener("DOMContentLoaded", function() {
     width: 100% !important;
   }
 
-  /* 🔥【父容器大解禁】参数面板容器必须可见（因为视频在它里面），但抹掉多余间距 */
+  
   #projects-overlay .spec-panel {
     display: flex !important;
     flex-direction: column !important;
@@ -1407,10 +1407,10 @@ document.addEventListener("DOMContentLoaded", function() {
     height: auto !important;
   }
 
-  /* 极其刚性的视频块：强制横屏下100%撑满右侧 */
+ 
   #projects-overlay .video-container {
     width: 100% !important;
-    height: 54vh !important; /* 极其舒适的横屏高度 */
+    height: 54vh !important; 
     background: #000 !important;
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
     display: block !important;
@@ -1433,7 +1433,7 @@ document.addEventListener("DOMContentLoaded", function() {
     display: none !important; 
   }
 
-  /* 3. 🔥 ABOUT 横屏终极重构（头像与布局整体上移，防止被视口切掉） */
+  
   #about-overlay .content-grid {
     grid-template-columns: 1fr 1fr !important;
     gap: 40px !important;
