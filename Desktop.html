@@ -4,12 +4,32 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LAB-0</title>
-<!-- Google Fonts - 异步加载，允许失败，使用 system fallback -->
+
+<!-- ============ 网络友好的字体加载 ============ -->
+<!-- Google Fonts 异步加载，允许超时失败 -->
 <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-<noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet"></noscript>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" onerror="console.warn('Google Fonts 加载失败，使用系统字体')">
 
+<!-- 字体加载失败的备用策略 -->
+<script>
+// 监测 Google Fonts 加载状态
+window.fontsLoaded = false;
+window.addEventListener('load', function() {
+  window.fontsLoaded = true;
+  document.documentElement.classList.add('fonts-ready');
+});
+
+// 设置字体加载超时降级（5秒后还没加载就放弃）
+setTimeout(function() {
+  if (!window.fontsLoaded && !document.documentElement.classList.contains('fonts-ready')) {
+    document.documentElement.classList.add('fonts-fallback');
+    console.log('⏱️ 字体加载超时，使用系统字体');
+  }
+}, 5000);
+</script>
+
+<!-- ============ 移动设备检测 ============ -->
 <script>
 (function() {
   var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -18,7 +38,7 @@
   }
 })();
 
-// 网络状态管理
+// ============ 网络状态管理 ============
 window.networkStatus = {
   isOnline: navigator.onLine,
   offlineIndicator: null,
@@ -26,12 +46,12 @@ window.networkStatus = {
     var self = this;
     window.addEventListener('online', function() {
       self.isOnline = true;
-      console.log('🟢 Network: ONLINE');
+      console.log('🟢 网络: 在线');
       if (self.offlineIndicator) self.offlineIndicator.classList.remove('visible');
     });
     window.addEventListener('offline', function() {
       self.isOnline = false;
-      console.log('🔴 Network: OFFLINE - 使用本地备用资源');
+      console.log('🔴 网络: 离线 - 使用本地备用资源');
       if (self.offlineIndicator) self.offlineIndicator.classList.add('visible');
     });
   }
@@ -44,21 +64,30 @@ window.networkStatus = {
   --overlay-bg: rgba(5, 5, 5, 0.7);
   --white: #ffffff;
   --grid-color: rgba(255, 255, 255, 0.1);
+  
+  /* 优先使用 Google Fonts，失败则自动降级到系统字体 */
   --font-header: "Syncopate", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-body: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-mono: "Space Mono", "Monaco", "Courier New", monospace;
   --ease: cubic-bezier(0.8, 0, 0.2, 1);
 }
 
+/* 网络良好时使用高级特性 */
+@supports (backdrop-filter: blur(1px)) {
+  .overlay { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+}
+
+/* 字体加载失败时的降级方案 */
+html.fonts-fallback {
+  --font-header: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+/* 高色域显示支持 */
 @media (dynamic-range: high) or (color-gamut: p3) {
   :root {
     --white: color(display-p3 1 1 1);
     --grid-color: color(display-p3 1 1 1 / 0.1);
-  }
-  
-  .video-container video, #p-video {
-    filter: none !important;
-    background: transparent !important;
   }
 }
 
@@ -76,6 +105,7 @@ body, html {
   overflow: hidden;
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #dot-matrix-canvas {
@@ -85,16 +115,20 @@ body, html {
   pointer-events: none;
   width: 100%;
   height: 100%;
+  will-change: auto;
 }
 
 #bg-overlay {
   position: fixed;
   inset: 0;
   background: var(--overlay-bg);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
   z-index: 1;
   pointer-events: none;
+  will-change: auto;
+}
+
+@supports (backdrop-filter: blur(1px)) {
+  #bg-overlay { backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 }
 
 .ui-grid {
@@ -211,8 +245,6 @@ body, html {
   position: fixed;
   inset: 0;
   background: var(--overlay-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   z-index: 200;
   opacity: 0;
   visibility: hidden;
@@ -221,6 +253,10 @@ body, html {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+@supports (backdrop-filter: blur(1px)) {
+  .overlay { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
 }
 
 .overlay.active {
@@ -301,7 +337,12 @@ body, html {
   isolation: isolate;
 }
 
-.video-container video { width: 100%; height: 100%; object-fit: cover; }
+.video-container video { 
+  width: 100%; 
+  height: 100%; 
+  object-fit: cover;
+  display: block;
+}
 
 .no-signal-overlay {
   position: absolute;
@@ -311,7 +352,6 @@ body, html {
   justify-content: center;
   background: #000;
   z-index: 10;
-  display: none;
   font-family: var(--font-mono);
   font-size: 0.8rem;
   letter-spacing: 0.2em;
@@ -405,7 +445,12 @@ body, html {
   overflow: hidden;
 }
 
-.avatar img { width: 100%; height: 100%; object-fit: cover; }
+.avatar img { 
+  width: 100%; 
+  height: 100%; 
+  object-fit: cover;
+  display: block;
+}
 
 .info-item { display: flex; flex-direction: column; gap: 4px; }
 .info-label { font-family: var(--font-mono); font-size: 9px; color: rgba(255, 255, 255, 0.4); text-transform: uppercase; letter-spacing: 1px; }
@@ -422,7 +467,7 @@ body, html {
 
 .mail-link:hover { opacity: 0.7; }
 
-/* 离线指示器 */
+/* ============ 网络状态指示器 ============ */
 .network-status-indicator {
   position: fixed;
   bottom: 20px;
@@ -443,149 +488,185 @@ body, html {
 .network-status-indicator.visible {
   opacity: 1;
 }
+
+/* ============ 资源加载失败降级 ============ */
+.resource-failed {
+  background: #1a1a1a;
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+}
+
+.resource-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.1em;
+}
 </style>
-    <link rel="icon" type="image/png" href="assets/LAB-0.png?v=20260612">
-    <link rel="apple-touch-icon" href="LAB-0.png?v=20260612">
+
+<link rel="icon" type="image/png" href="assets/LAB-0.png?v=20260612">
+<link rel="apple-touch-icon" href="assets/LAB-0.png?v=20260612">
+
 </head>
 <body>
 
+<!-- 网络离线指示器 -->
 <div class="network-status-indicator" id="network-indicator">OFFLINE MODE</div>
 
+<!-- 背景图形元素（点阵动画） -->
 <canvas id="dot-matrix-canvas"></canvas>
 <div id="bg-overlay"></div>
 <div class="ui-grid" id="grid"></div>
 
+<!-- ============ 导航区域 ============ -->
 <div class="stage">
-<div id="wordmark">
-<a id="nav-home" class="menu-item" style="font-family:inherit; font-size:inherit; letter-spacing:inherit; margin:0; padding:0; text-transform: none; display: flex; align-items: center; justify-content: center;">
-  <span>L</span><span class="ab0-reveal">AB-<svg class="desktop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-    <line x1="8" y1="21" x2="16" y2="21"></line>
-    <line x1="12" y1="17" x2="12" y2="21"></line>
-  </svg></span>
-</a>
-<div class="menu-items" id="menu">
-<a id="projects-trigger" class="menu-item">PROJECTS</a>
-<a id="about-trigger" class="menu-item">ABOUT</a>
-</div>
-</div>
+  <div id="wordmark">
+    <a id="nav-home" class="menu-item" style="font-family:inherit; font-size:inherit; letter-spacing:inherit; margin:0; padding:0; text-transform: none; display: flex; align-items: center; justify-content: center;">
+      <span>L</span><span class="ab0-reveal">AB-<svg class="desktop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+        <line x1="8" y1="21" x2="16" y2="21"></line>
+        <line x1="12" y1="17" x2="12" y2="21"></line>
+      </svg></span>
+    </a>
+    <div class="menu-items" id="menu">
+      <a id="projects-trigger" class="menu-item">PROJECTS</a>
+      <a id="about-trigger" class="menu-item">ABOUT</a>
+    </div>
+  </div>
 </div>
 
+<!-- ============ PROJECTS 页面 ============ -->
 <div id="projects-overlay" class="overlay">
-<div class="overlay-frame">
-<span class="coord coord-tl">[1111, 1111]</span>
-<span class="coord coord-br">[9999, 9999]</span>
-</div>
-<div class="content-grid">
-  <div class="col-left">
-    <div class="project-list" id="p-list">
-      <div class="project-entry selected" data-project="V1">
-        <div class="project-info"><span class="project-id">[01]</span><span class="project-name">Stack it,Stack it,Go up</span></div>
-        <span class="status-tag">CONCERT</span>
-      </div>
-      <div class="project-entry" data-project="V2">
-        <div class="project-info"><span class="project-id">[02]</span><span class="project-name">Atmos</span></div>
-        <span class="status-tag">M/V</span>
-      </div>
-      <div class="project-entry" data-project="V3">
-        <div class="project-info"><span class="project-id">[03]</span><span class="project-name">Pineapple slice</span></div>
-        <span class="status-tag">M/V</span>
-      </div>
-      <div class="project-entry" data-project="V4">
-        <div class="project-info"><span class="project-id">[04]</span><span class="project-name">Ephemeral Gaze</span></div>
-        <span class="status-tag">CONCERT</span>
-      </div>
-      <div class="project-entry" data-project="V5">
-        <div class="project-info"><span class="project-id">[05]</span><span class="project-name">all i got</span></div>
-        <span class="status-tag">MUSIC</span>
-      </div>
-    </div>
+  <div class="overlay-frame">
+    <span class="coord coord-tl">[1111, 1111]</span>
+    <span class="coord coord-br">[9999, 9999]</span>
   </div>
-  <div class="col-right">
-    <div class="spec-panel">
-      <div class="video-container">
-        <video id="p-video" playsinline loop muted></video>
-        <div id="no-signal" class="no-signal-overlay">NO SIGNAL</div>
-      </div>
-      <div class="timeline-container">
-        <div class="p-time" id="current-time">00:00</div>
-        <div id="p-bar-container">
-          <div id="p-bar-fill"></div>
+  <div class="content-grid">
+    <div class="col-left">
+      <div class="project-list" id="p-list">
+        <div class="project-entry selected" data-project="V1">
+          <div class="project-info"><span class="project-id">[01]</span><span class="project-name">Stack it,Stack it,Go up</span></div>
+          <span class="status-tag">CONCERT</span>
         </div>
-        <div class="p-time" id="duration-time">00:00</div>
+        <div class="project-entry" data-project="V2">
+          <div class="project-info"><span class="project-id">[02]</span><span class="project-name">Atmos</span></div>
+          <span class="status-tag">M/V</span>
+        </div>
+        <div class="project-entry" data-project="V3">
+          <div class="project-info"><span class="project-id">[03]</span><span class="project-name">Pineapple slice</span></div>
+          <span class="status-tag">M/V</span>
+        </div>
+        <div class="project-entry" data-project="V4">
+          <div class="project-info"><span class="project-id">[04]</span><span class="project-name">Ephemeral Gaze</span></div>
+          <span class="status-tag">CONCERT</span>
+        </div>
+        <div class="project-entry" data-project="V5">
+          <div class="project-info"><span class="project-id">[05]</span><span class="project-name">all i got</span></div>
+          <span class="status-tag">MUSIC</span>
+        </div>
       </div>
-      <div class="playback-bar">
-        <button class="p-btn" id="p-vol">VOL: 0</button>
-        <button class="p-btn" id="p-back-1s">&lt;-1S</button>
-        <button class="p-btn" id="p-back-f">&lt;F</button>
-        <button class="p-btn play-pause" id="play-pause">
-          <svg class="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-          <svg class="pause-icon" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-        </button>
-        <button class="p-btn" id="p-fwd-f">F&gt;</button>
-        <button class="p-btn" id="p-fwd-1s">+1S</button>
-        <button class="p-btn" id="p-fs">FS</button>
-      </div>
-      <div class="spec-details">
-        <span class="spec-label">Pipeline:</span><span class="spec-value" id="s-pipeline">---</span>
-        <span class="spec-label">Complexity:</span><span class="spec-value" id="s-complexity">---</span>
+    </div>
+    <div class="col-right">
+      <div class="spec-panel">
+        <div class="video-container">
+          <video id="p-video" playsinline muted></video>
+          <div id="no-signal" class="no-signal-overlay">NO SIGNAL</div>
+        </div>
+        <div class="timeline-container">
+          <div class="p-time" id="current-time">00:00</div>
+          <div id="p-bar-container">
+            <div id="p-bar-fill"></div>
+          </div>
+          <div class="p-time" id="duration-time">00:00</div>
+        </div>
+        <div class="playback-bar">
+          <button class="p-btn" id="p-vol">VOL: 0</button>
+          <button class="p-btn" id="p-back-1s">&lt;-1S</button>
+          <button class="p-btn" id="p-back-f">&lt;F</button>
+          <button class="p-btn play-pause" id="play-pause">
+            <svg class="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            <svg class="pause-icon" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+          </button>
+          <button class="p-btn" id="p-fwd-f">F&gt;</button>
+          <button class="p-btn" id="p-fwd-1s">+1S</button>
+          <button class="p-btn" id="p-fs">FS</button>
+        </div>
+        <div class="spec-details">
+          <span class="spec-label">Pipeline:</span><span class="spec-value" id="s-pipeline">---</span>
+          <span class="spec-label">Complexity:</span><span class="spec-value" id="s-complexity">---</span>
+        </div>
       </div>
     </div>
   </div>
-</div>
 </div>
 
+<!-- ============ ABOUT 页面 ============ -->
 <div id="about-overlay" class="overlay">
-<div class="overlay-frame">
-<span class="coord coord-tl">[0000, 0000]</span>
-<span class="coord coord-br">[8888, 8888]</span>
-</div>
-<div class="content-grid" style="grid-template-columns: 0.6fr 1.4fr; background-color: #050505; color: var(--white); font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;">
-  <div class="col-left" style="display: flex; flex-direction: column; align-items: center; justify-content: center; border-right: none; padding-right: 40px;">
-    <a href="https://github.com/ephemeralgaze" target="_blank" class="avatar" style="display: block; cursor: pointer;">
-      <img src="https://github.com/ephemeralgaze.png" alt="Avatar">
-    </a>
-    <a href="https://github.com/ephemeralgaze" target="_blank" style="margin-top: 25px; font-family: 'Space Mono', 'Monaco', 'Courier New', monospace; font-size: 14px; text-align: center; letter-spacing: 2px; font-weight: 500; color: white; text-decoration: none; transition: opacity 0.3s ease;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">
-      EPHEMERAL GAZE
-    </a>
+  <div class="overlay-frame">
+    <span class="coord coord-tl">[0000, 0000]</span>
+    <span class="coord coord-br">[8888, 8888]</span>
   </div>
-  <div class="col-right" style="padding-left: 60px; display: flex; flex-direction: column; justify-content: center; gap: 25px;">
-    <div class="info-item">
-      <span class="info-label">Name / Identity</span>
-      <span class="info-value" style="font-size: 18px; letter-spacing: 1px; font-weight: 500;">zkdlin3390</span>
+  <div class="content-grid">
+    <div class="col-left" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding-right: 40px;">
+      <a href="https://github.com/ephemeralgaze" target="_blank" class="avatar" style="display: block; cursor: pointer;">
+        <img src="https://github.com/ephemeralgaze.png" alt="ephemeralgaze avatar" onerror="this.parentElement.classList.add('resource-failed'); this.style.display='none'; var ph = document.createElement('div'); ph.className='resource-placeholder'; ph.textContent='[AVATAR]'; this.parentElement.appendChild(ph);">
+      </a>
+      <a href="https://github.com/ephemeralgaze" target="_blank" style="margin-top: 25px; font-family: 'Space Mono', 'Monaco', 'Courier New', monospace; font-size: 14px; text-align: center; letter-spacing: 1px; color: inherit; text-decoration: none;">
+        EPHEMERAL GAZE
+      </a>
     </div>
-    <div class="info-item">
-      <span class="info-label">Status</span>
-      <span class="info-value">Age 21 / Born 2004</span>
-    </div>
-    <div class="info-item">
-      <span class="info-label">Field</span>
-      <span class="info-value">Undergraduate Student<br>Game Developer & Technical Artist</span>
-    </div>
-    <div class="info-item">
-      <span class="info-label">Direct Access</span>
-      <a href="mailto:zgnx4ndcq5@privaterelay.appleid.com" class="mail-link">zgnx4ndcq5@privaterelay.appleid.com</a>
+    <div class="col-right" style="padding-left: 60px; display: flex; flex-direction: column; justify-content: center; gap: 25px;">
+      <div class="info-item">
+        <span class="info-label">Name / Identity</span>
+        <span class="info-value" style="font-size: 18px; letter-spacing: 1px; font-weight: 500;">zkdlin3390</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Status</span>
+        <span class="info-value">Age 21 / Born 2004</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Field</span>
+        <span class="info-value">Undergraduate Student<br>Game Developer & Technical Artist</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Direct Access</span>
+        <a href="mailto:zgnx4ndcq5@privaterelay.appleid.com" class="mail-link">zgnx4ndcq5@privaterelay.appleid.com</a>
+      </div>
     </div>
   </div>
-</div>
 </div>
 
 <script>
-// 初始化网络管理器
+// ============ 网络管理器初始化 ============
 window.networkStatus.offlineIndicator = document.getElementById('network-indicator');
 window.networkStatus.init();
 
-// ============ 视频容错加载系统 ============
+// ============ 视频容错加载系统（双网络兼容） ============
 window.videoLoader = {
+  // 主源：优先使用 GitHub raw 原始链接（CDN 加速友好）
   primarySources: {
-    V1: "BackitUp.mov",
-    V2: "Atmos.MOV",
+    V1: "https://raw.githubusercontent.com/ephemeralgaze/LAB-0/main/BackitUp.mov",
+    V2: "https://raw.githubusercontent.com/ephemeralgaze/LAB-0/main/Atmos.MOV",
     V3: "",
     V4: "",
     V5: ""
   },
   
-  fallbackSources: {
+  // 备用源 1：相对路径（本地优先）
+  fallbackSources1: {
+    V1: "./BackitUp.mov",
+    V2: "./Atmos.MOV",
+    V3: "",
+    V4: "",
+    V5: ""
+  },
+  
+  // 备用源 2：assets 目录
+  fallbackSources2: {
     V1: "./assets/videos/BackitUp.mov",
     V2: "./assets/videos/Atmos.mov",
     V3: "",
@@ -593,7 +674,7 @@ window.videoLoader = {
     V5: ""
   },
   
-  loadVideo: function(projectId, primarySrc, fallbackSrc) {
+  loadVideo: function(projectId, primarySrc, fallback1Src, fallback2Src) {
     var video = document.getElementById('p-video');
     var noSignal = document.getElementById('no-signal');
     
@@ -602,46 +683,67 @@ window.videoLoader = {
       return;
     }
     
+    var fallbackAttempt = 0;
     var fallbackTimer = null;
+    var self = this;
     
-    var loadFallback = function() {
-      if (fallbackSrc && fallbackSrc !== primarySrc) {
-        console.log('⚠️ 主源失败，切换到本地: ' + fallbackSrc);
-        video.src = fallbackSrc;
-        video.load();
-        if (noSignal) noSignal.style.display = 'none';
-      } else {
+    var trySource = function(src, label) {
+      if (!src) {
         console.log('❌ 无可用视频源');
+        if (noSignal) noSignal.style.display = 'flex';
+        return;
+      }
+      
+      console.log('📹 ' + label + ': ' + src);
+      video.src = src;
+      video.load();
+      
+      // 10秒超时，尝试下一个源
+      if (fallbackTimer) clearTimeout(fallbackTimer);
+      fallbackTimer = setTimeout(function() {
+        if (video.readyState === 0 && video.src === src) {
+          console.log('⏱️ ' + label + ' 超时或失败，尝试下一个源...');
+          fallbackAttempt++;
+          
+          if (fallbackAttempt === 1 && fallback1Src) {
+            trySource(fallback1Src, '备用源1（本地相对路径）');
+          } else if (fallbackAttempt === 2 && fallback2Src) {
+            trySource(fallback2Src, '备用源2（assets目录）');
+          } else {
+            console.log('❌ 所有源都已失败');
+            if (noSignal) noSignal.style.display = 'flex';
+          }
+        }
+      }, 10000);
+    };
+    
+    video.onerror = function(e) {
+      console.warn('⚠️ 视频加载出错: ' + video.src);
+      if (fallbackTimer) clearTimeout(fallbackTimer);
+      
+      fallbackAttempt++;
+      if (fallbackAttempt === 1 && fallback1Src) {
+        trySource(fallback1Src, '备用源1（本地相对路径）');
+      } else if (fallbackAttempt === 2 && fallback2Src) {
+        trySource(fallback2Src, '备用源2（assets目录）');
+      } else {
+        console.log('❌ 所有源都已失败');
         if (noSignal) noSignal.style.display = 'flex';
       }
     };
     
-    video.onerror = function() {
-      console.warn('视频加载出错: ' + video.src);
-      clearTimeout(fallbackTimer);
-      loadFallback();
-    };
-    
     video.onloadstart = function() {
       console.log('✅ 视频开始加载');
-      clearTimeout(fallbackTimer);
+      if (fallbackTimer) clearTimeout(fallbackTimer);
       if (noSignal) noSignal.style.display = 'none';
     };
     
-    console.log('📹 加载主源: ' + primarySrc);
-    video.src = primarySrc;
-    video.load();
-    
-    // 3秒超时 fallback
-    fallbackTimer = setTimeout(function() {
-      if (video.readyState === 0 && video.src === primarySrc) {
-        console.log('⏱️ 加载超时，切换到备用源');
-        loadFallback();
-      }
-    }, 3000);
+    // 尝试主源
+    trySource(primarySrc, '主源（GitHub CDN）');
   }
 };
 
+// ============ 点阵背景动画（不依赖网络） ============
 (function() {
   var canvas = document.getElementById("dot-matrix-canvas");
   if (!canvas) return;
@@ -696,6 +798,7 @@ window.videoLoader = {
   requestAnimationFrame(draw);
 })();
 
+// ============ 主业务逻辑 ============
 document.addEventListener("DOMContentLoaded", function() {
   var wordmark = document.getElementById("wordmark");
   var grid = document.getElementById("grid");
@@ -724,6 +827,7 @@ document.addEventListener("DOMContentLoaded", function() {
     V5: { video: "", pipeline: "Geometry Shaders", complexity: "Instanced Mesh" }
   };
 
+  // 动画序列
   setTimeout(function() { if (wordmark) wordmark.classList.add("assembled"); }, 1500);
   setTimeout(function() { if (wordmark) wordmark.classList.add("docked"); }, 3500);
   setTimeout(function() { if (grid) grid.classList.add("ui-visible"); if (menu) menu.classList.add("visible"); }, 4700);
@@ -750,9 +854,10 @@ document.addEventListener("DOMContentLoaded", function() {
       durTimeTxt.innerText = "00:00";
       noSignal.style.display = "none";
       
-      var primarySrc = data.video;
-      var fallbackSrc = window.videoLoader.fallbackSources[pid];
-      window.videoLoader.loadVideo(pid, primarySrc, fallbackSrc);
+      var primarySrc = window.videoLoader.primarySources[pid];
+      var fallback1Src = window.videoLoader.fallbackSources1[pid];
+      var fallback2Src = window.videoLoader.fallbackSources2[pid];
+      window.videoLoader.loadVideo(pid, primarySrc, fallback1Src, fallback2Src);
     } else {
       curTimeTxt.innerText = "--:--";
       durTimeTxt.innerText = "--:--";
@@ -764,6 +869,7 @@ document.addEventListener("DOMContentLoaded", function() {
     sComplexity.innerText = data.complexity;
   }
 
+  // 导航事件
   if (projectsTrigger) projectsTrigger.addEventListener("click", function() {
     aboutOverlay.classList.remove("active");
     projectsOverlay.classList.add("active");
@@ -791,6 +897,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   }
 
+  // 项目选择
   var projectEntries = document.querySelectorAll(".project-entry");
   projectEntries.forEach(function(entry) {
     entry.addEventListener("click", function() {
@@ -800,6 +907,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   });
 
+  // 播放控制
   if (playBtn) playBtn.addEventListener("click", function() {
     if (pVideo.paused) { pVideo.play(); playBtn.classList.add("playing"); }
     else { pVideo.pause(); playBtn.classList.remove("playing"); }
@@ -861,5 +969,6 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 });
 </script>
+
 </body>
 </html>
