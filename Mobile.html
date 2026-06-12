@@ -1319,8 +1319,9 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 </script>
  <style>
+/* ==================== ⚡ LAB-0 移动端横屏终极重构系统（第12次精准对齐版） ==================== */
 @media (orientation: landscape) and (max-height: 500px) {
-  /* 1. 顶部全局遮罩隐藏 */
+  /* 1. 隐藏顶部的黑色遮罩块，释放垂直空间 */
   #mobile-header {
     opacity: 0 !important;
     visibility: hidden !important;
@@ -1329,9 +1330,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
   /* 2. PROJECTS 横屏终极重构 */
   #projects-overlay .content-grid {
-    grid-template-columns: 1fr 1.2fr !important; /* 调整列表与视频的黄金比例 */
-    gap: 30px !important;
-    padding: 20px 45px 20px 20px !important; /* 给右侧向左的箭头留出绝对操作空间 */
+    grid-template-columns: 1fr 1.3fr !important; /* 调整列表与视频的黄金比例 */
+    gap: 25px !important;
+    padding: 20px 55px 20px 20px !important; /* 给右侧向左的箭头留出绝对操作空间 */
     height: 100vh !important;
     align-items: center !important;
     box-sizing: border-box !important;
@@ -1339,9 +1340,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
   /* 🔥【左侧列表】变身独立滑动区域 + 100% 干净的单独翻页捕捉（Scroll Snap） */
   #projects-overlay .col-left {
-    height: 80vh !important;
+    height: 85vh !important;
     overflow-y: auto !important;
-    padding-right: 10px !important;
+    padding: 10px 10px 10px 0 !important;
     border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
     border-bottom: none !important;
     scrollbar-width: none !important; /* 彻底隐藏滚动条 */
@@ -1351,16 +1352,26 @@ document.addEventListener("DOMContentLoaded", function() {
     scroll-behavior: smooth !important;
     
     /* 用 CSS Mask 动态切出上下边缘的模糊淡出遮罩 */
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
-    mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%) !important;
+    mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%) !important;
   }
   #projects-overlay .col-left::-webkit-scrollbar { display: none !important; }
 
-  /* 给列表里的每一个项目卡片强制绑定翻页对齐锚点 */
-  #projects-overlay .project-item {
+  /* 绑定真正的列表容器 */
+  #projects-overlay .project-list {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 15px !important;
+    width: 100% !important;
+  }
+
+  /* 给每一个项目条目强制绑定翻页对齐锚点 */
+  #projects-overlay .project-entry {
     scroll-snap-align: center !important; /* 保证滑动时刚好居中对齐 */
     scroll-snap-stop: always !important;  /* 每次只允许翻一页，不脱手飞走 */
-    margin-bottom: 15px !important;
+    margin: 0 !important;
+    width: 100% !important;
+    flex-shrink: 0 !important;
   }
 
   /* 【右侧容器】确保撑满，防止视频缩水不见 */
@@ -1369,14 +1380,23 @@ document.addEventListener("DOMContentLoaded", function() {
     flex-direction: column !important;
     justify-content: center !important;
     align-items: center !important;
-    height: 80vh !important;
+    height: 85vh !important;
     width: 100% !important;
   }
 
-  /* 极简视频块：强制横屏下100%撑满右侧，绝对不能不见 */
+  /* 🔥【父容器大解禁】参数面板容器必须可见（因为视频在它里面），但抹掉多余间距 */
+  #projects-overlay .spec-panel {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  /* 极其刚性的视频块：强制横屏下100%撑满右侧 */
   #projects-overlay .video-container {
     width: 100% !important;
-    height: 55vh !important; /* 极大地拉高视频面积 */
+    height: 54vh !important; /* 极其舒适的横屏高度 */
     background: #000 !important;
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
     display: block !important;
@@ -1389,31 +1409,40 @@ document.addEventListener("DOMContentLoaded", function() {
 
   /* 播放控制栏微调，紧贴视频下方 */
   #projects-overlay .playback-bar {
+    display: flex !important;
     width: 100% !important;
     margin-top: 8px !important;
   }
 
-  /* 横屏下右侧底下那些参数面板、调试信息直接蒸发 */
-  #projects-overlay .spec-panel {
-    display: none !important;
+  /* 🔥 真正蒸发横屏下右侧底下碍事的参数细节和调试信息 */
+  #projects-overlay .spec-details {
+    display: none !important; 
   }
 
-  /* 3. ABOUT 横屏终极重构 */
+  /* 3. 🔥 ABOUT 横屏终极重构（头像与布局整体上移，防止被视口切掉） */
   #about-overlay .content-grid {
     grid-template-columns: 1fr 1fr !important;
-    gap: 30px !important;
-    padding: 30px 45px 30px 30px !important;
+    gap: 40px !important;
+    padding: 20px 55px 20px 20px !important;
     height: 100vh !important;
-    align-items: center !important;
+    align-items: flex-start !important; /* 整体靠上对齐 */
+    padding-top: 12vh !important;     /* 留出舒适的上方间隙 */
+    box-sizing: border-box !important;
   }
-  #about-overlay .about-section {
-    max-height: 80vh !important;
-    overflow-y: auto !important;
-    scrollbar-width: none !important;
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 10%, #000 90%, transparent 100%);
-    mask-image: linear-gradient(to bottom, transparent 0%, #000 10%, #000 90%, transparent 100%);
+  #about-overlay .col-left {
+    border-bottom: none !important;
+    padding-bottom: 0 !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
+    padding-right: 20px !important;
+    justify-content: flex-start !important; /* 头像上移 */
   }
-  #about-overlay .about-section::-webkit-scrollbar { display: none !important; }
+  #about-overlay .avatar {
+    width: 100px !important;  /* 横屏下稍微缩小头像，防挤压 */
+    height: 100px !important;
+  }
+  #about-overlay .col-right {
+    justify-content: flex-start !important; /* 个人信息栏上移 */
+  }
 
   /* 4. 强制解除按钮动画的样式枷锁 */
   #hamburger:not(.open) span {
@@ -1421,6 +1450,13 @@ document.addEventListener("DOMContentLoaded", function() {
     transform-origin: var(--land-origin, center) !important;
     opacity: var(--land-op, 1) !important;
   }
+}
+
+.mail-link { text-decoration: underline; }
+
+.p-btn.playing, .p-btn.active {
+  border-color: rgba(255, 255, 255, 0.4);
+  color: var(--white);
 }
 </style>
 
@@ -1437,6 +1473,7 @@ document.addEventListener("DOMContentLoaded", function() {
     var isProj = pOverlay && pOverlay.classList.contains("active");
     var isAbout = aOverlay && aOverlay.classList.contains("active");
 
+    // 🔥【关键锁死】只有当处于横屏，且真正打开了 Projects 或者 About 面板时，才触发左移和箭头折叠！
     if (isLandscape && (isProj || isAbout)) {
       
       // 1. Logo (Wordmark) 向左平移出屏隐藏
@@ -1446,30 +1483,27 @@ document.addEventListener("DOMContentLoaded", function() {
         wMark.style.setProperty("pointer-events", "none", "important");
       }
 
-      // 2. 按钮基座向右靠边站 (12px)，不占地方
+      // 2. 按钮基座向右靠边站 (12px)
       if (hBurger) {
         hBurger.style.setProperty("right", "12px", "important");
       }
 
-      // 3. 🔥【方向修正】三条杠反向折叠，精准合并为一个指向左侧页面内部的返回箭头 ( < )
+      // 3. 三条杠反向折叠为向左箭头 ( < )
       if (hBurger) {
         var spans = hBurger.querySelectorAll("span");
         if (spans.length >= 3) {
-          // 上线条：逆时针旋转 45°，砍短，锚点锁在左侧，折向左边
           spans[0].style.setProperty("--land-trans", "translate(-3px, 3px) rotate(-45deg) scaleX(0.55)");
           spans[0].style.setProperty("--land-origin", "left center");
           
-          // 中线条：物理隐形
           spans[1].style.setProperty("--land-op", "0");
           spans[1].style.setProperty("--land-trans", "scaleX(0)");
           
-          // 下线条：顺时针旋转 45°，砍短，锚点锁在左侧，折向左边
           spans[2].style.setProperty("--land-trans", "translate(-3px, -3px) rotate(45deg) scaleX(0.55)");
           spans[2].style.setProperty("--land-origin", "left center");
         }
       }
     } else {
-      // 还原状态：转回竖屏，或者退回主页
+      // 还原状态：如果是在主页横屏，或者返回竖屏，则清空所有行内破坏样式，回归最初的极简状态！
       if (wMark) {
         wMark.style.transform = "";
         wMark.style.opacity = "";
@@ -1490,13 +1524,15 @@ document.addEventListener("DOMContentLoaded", function() {
   window.addEventListener("resize", runLandscapeEngine);
   window.addEventListener("orientationchange", runLandscapeEngine);
 
+  // 挂钩底层切页函数，只要页面一换，顺发检测视口
   var rawSwitch = window.switchPage;
   window.switchPage = function(pId, trig) {
     if (typeof rawSwitch === "function") rawSwitch(pId, trig);
-    setTimeout(runLandscapeEngine, 40); 
+    setTimeout(runLandscapeEngine, 50); 
   };
 })();
 </script>
+
 
 
 </body>
