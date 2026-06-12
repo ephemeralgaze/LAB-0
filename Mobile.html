@@ -725,11 +725,7 @@ body, html {
     border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
     padding: 10px 15px 10px 0 !important;
     scrollbar-width: none !important; /* 彻底隐藏滚动条 */
-    touch-action: pan-y !important; 
-    overscroll-behavior-y: contain !important; /* 防止列表滚动到底后带动全屏滚动 */
-    -webkit-overflow-scrolling: touch !important; /* 保证 iOS 端的惯性滚动顺滑 */
-  }
-
+    
     /* 开启高精度垂直滚动捕捉 */
     scroll-snap-type: y mandatory !important;
     scroll-behavior: smooth !important;
@@ -1480,17 +1476,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
 <script>
 (function() {
-  <script>
-
-  document.addEventListener('DOMContentLoaded', function() {
-    var colLeft = document.querySelector('#projects-overlay .col-left');
-    if (colLeft) {
-      colLeft.addEventListener('touchmove', function(e) {
-        // e.stopPropagation() 不够，加上下面这句强行阻止默认行为
-        e.cancelable && e.stopPropagation();
-      }, { passive: true });
-    }
-  });
   function runLandscapeEngine() {
     var isLandscape = window.innerHeight <= 500 && window.innerWidth > window.innerHeight;
     
