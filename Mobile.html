@@ -658,34 +658,87 @@ body, html {
 /* ==================== 终极横屏适配与汉堡按钮变箭头 ==================== */
 
 @media (orientation: landscape) and (max-height: 500px) {
-  /* 1. 强行隐藏顶部的黑色遮罩 */
+  /* 1. 隐藏顶部的黑色遮罩块，释放垂直空间 */
   #mobile-header.active {
     opacity: 0 !important;
     visibility: hidden !important;
     pointer-events: none !important;
   }
-  
-  /* 调整横屏下汉堡按钮的垂直居中位置，使其不受 header 高度限制 */
+
+  /* 2. 核心避让：当导航菜单打开时 (.open)，让 LAB-手机图标 顺滑地向左平移移出屏幕 */
+  #mobile-nav.open ~ .stage #wordmark.docked {
+    transform: translate(-180%, -50%) scale(0.85); /* 强行向左拉出屏幕 */
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* 3. 汉堡按钮基座：默认在右边 30px，当菜单打开时，不仅变形，还要向右平移死死贴在操作边上 */
   .hamburger {
     top: 20px;
     right: 30px;
     height: 24px;
+    transition: transform 0.4s var(--ease), right 0.4s var(--ease), opacity 0.4s ease;
+    z-index: 10005; /* 确保在最上层可以被点击 */
   }
 
-  /* 2. 核心动画：当菜单打开时 (.open)，三条杠通过位移和旋转组合成一个指向左边的现代科技感箭头 */
+  /* 当菜单打开时，汉堡按钮右移到 12px 边缘（贴着右侧操作区边上） */
+  .hamburger.open {
+    right: 12px !important;
+  }
+
+  /* 4. 核心几何变形：三条杠直接退化成两根线组成的干净锐角右指向箭头 ( > ) */
+  /* 上弦：顺时针旋转 45 度，长度砍掉，旋转锚点锁在右边 */
   .hamburger.open span:nth-child(1) {
-    transform: translate(-4px, 4px) rotate(-45deg) scaleX(0.7);
-    transform-origin: left center;
+    transform: translate(3px, 2px) rotate(45deg) scaleX(0.55);
+    transform-origin: right center;
   }
   
+  /* 中弦：直接隐形蒸发，不占地方 */
   .hamburger.open span:nth-child(2) {
-    opacity: 1;
-    transform: scaleX(0.95); /* 中间这根线变成箭头的躯干 */
+    opacity: 0;
+    transform: scaleX(0);
   }
   
+  /* 下弦：逆时针旋转 45 度，长度砍掉，旋转锚点锁在右边 */
   .hamburger.open span:nth-child(3) {
-    transform: translate(-4px, -4px) rotate(45deg) scaleX(0.7);
-    transform-origin: left center;
+    transform: translate(3px, -2px) rotate(-45deg) scaleX(0.55);
+    transform-origin: right center;
+  }
+
+  /* 5. 保留你原本完美的横屏双栏排版布局 */
+  #projects-overlay .content-grid {
+    grid-template-columns: 1fr 1.2fr;
+    gap: 20px;
+    padding: 60px 30px 20px;
+    align-items: start;
+  }
+
+  #projects-overlay .col-left {
+    border-bottom: none;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 0;
+    padding-right: 20px;
+  }
+  @media (dynamic-range: high) or (color-gamut: p3) {
+    #projects-overlay .col-left { border-right: 1px solid color(display-p3 1 1 1 / 0.05); }
+  }
+
+  #projects-overlay .video-container {
+    max-height: 40vh;
+    background: #000;
+  }
+
+  #projects-overlay .spec-panel {
+    gap: 8px;
+  }
+
+  #projects-overlay .playback-bar {
+    padding: 4px 0;
+  }
+
+  #projects-overlay .spec-details {
+    grid-template-columns: 70px 1fr;
+    font-size: 0.65rem;
   }
 }
 
