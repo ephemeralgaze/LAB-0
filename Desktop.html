@@ -4,9 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LAB-0</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
+<!-- Google Fonts - 异步加载，允许失败，使用 system fallback -->
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet"></noscript>
+
 <script>
 (function() {
   var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -14,16 +17,36 @@
     window.location.replace("Mobile.html");
   }
 })();
+
+// 网络状态管理
+window.networkStatus = {
+  isOnline: navigator.onLine,
+  offlineIndicator: null,
+  init: function() {
+    var self = this;
+    window.addEventListener('online', function() {
+      self.isOnline = true;
+      console.log('🟢 Network: ONLINE');
+      if (self.offlineIndicator) self.offlineIndicator.classList.remove('visible');
+    });
+    window.addEventListener('offline', function() {
+      self.isOnline = false;
+      console.log('🔴 Network: OFFLINE - 使用本地备用资源');
+      if (self.offlineIndicator) self.offlineIndicator.classList.add('visible');
+    });
+  }
+};
 </script>
+
 <style>
 :root {
   --bg-color: #050505;
   --overlay-bg: rgba(5, 5, 5, 0.7);
   --white: #ffffff;
   --grid-color: rgba(255, 255, 255, 0.1);
-  --font-header: "Syncopate", sans-serif;
-  --font-body: "Space Grotesk", sans-serif;
-  --font-mono: "Space Mono", monospace;
+  --font-header: "Syncopate", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-body: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "Space Mono", "Monaco", "Courier New", monospace;
   --ease: cubic-bezier(0.8, 0, 0.2, 1);
 }
 
@@ -39,7 +62,6 @@
   }
 }
 
-  
 * {
   margin: 0;
   padding: 0;
@@ -221,11 +243,7 @@ body, html {
   color: rgba(255, 255, 255, 0.4);
   letter-spacing: 0.1em;
 }
-@media (dynamic-range: high) or (color-gamut: p3) {
-  .coord {
-    color: color(display-p3 1 1 1 / 0.4);
-  }
-}
+
 .coord-tl { top: -20px; left: 0; }
 .coord-br { bottom: -20px; right: 0; }
 
@@ -239,23 +257,17 @@ body, html {
   pointer-events: auto;
 }
 
-#projects-overlay .content-grid {
-  grid-template-columns: 0.6fr 1.4fr;
-}
-
 .col-left {
   display: flex;
   flex-direction: column;
   justify-content: center;
   gap: 20px;
-  border-right: none;
 }
 
 .project-list {
   display: flex;
   flex-direction: column;
   gap: 15px;
-  width: 100%;
 }
 
 .project-entry {
@@ -264,41 +276,33 @@ body, html {
   justify-content: space-between;
   padding: 12px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);
+  transition: opacity 0.4s var(--ease);
   cursor: pointer;
   opacity: 0.5;
 }
-@media (dynamic-range: high) or (color-gamut: p3) {
-  .project-entry {
-    border-bottom: 1px solid color(display-p3 1 1 1 / 0.05);
-  }
-}
 
 .project-entry.selected { opacity: 1; }
+
 .project-info { display: flex; align-items: baseline; gap: 15px; font-family: var(--font-mono); text-transform: uppercase; }
 .project-id { font-size: 0.6rem; color: rgba(255, 255, 255, 0.3); }
-@media (dynamic-range: high) or (color-gamut: p3) {
-  .project-id { color: color(display-p3 1 1 1 / 0.3); }
-}
 .project-name { font-size: 0.9rem; letter-spacing: 0.15em; }
 .status-tag { font-size: 0.6rem; padding: 3px 8px; border: 1px solid rgba(255, 255, 255, 0.2); color: rgba(255, 255, 255, 0.7); font-family: var(--font-mono); }
-@media (dynamic-range: high) or (color-gamut: p3) {
-  .status-tag {
-    border: 1px solid color(display-p3 1 1 1 / 0.2);
-    color: color(display-p3 1 1 1 / 0.7);
-  }
-}
 
 .spec-panel { display: flex; flex-direction: column; gap: 20px; }
-.video-container { width: 100%; aspect-ratio: 16/9; border: 1px solid rgba(255, 255, 255, 0.1); position: relative; overflow: hidden; background: #000; z-index: 100000; isolation: isolate; transform: translateZ(0); }
-@media (dynamic-range: high) or (color-gamut: p3) {
-  .video-container {
-    border: 1px solid color(display-p3 1 1 1 / 0.1);
-  }
-}
-.video-container video { width: 100%; height: 100%; object-fit: cover; transform: translateZ(0); will-change: transform; }
 
-/* No Signal Styles */
+.video-container {
+  width: 100%;
+  aspect-ratio: 16/9;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+  background: #000;
+  z-index: 100000;
+  isolation: isolate;
+}
+
+.video-container video { width: 100%; height: 100%; object-fit: cover; }
+
 .no-signal-overlay {
   position: absolute;
   inset: 0;
@@ -308,8 +312,6 @@ body, html {
   background: #000;
   z-index: 10;
   display: none;
-}
-.no-signal-text {
   font-family: var(--font-mono);
   font-size: 0.8rem;
   letter-spacing: 0.2em;
@@ -322,7 +324,14 @@ body, html {
   gap: 15px;
   width: 100%;
 }
-.p-time { font-family: var(--font-mono); font-size: 0.65rem; color: var(--white); width: 40px; text-align: center; }
+
+.p-time {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--white);
+  width: 40px;
+  text-align: center;
+}
 
 #p-bar-container {
   flex-grow: 1;
@@ -331,12 +340,6 @@ body, html {
   position: relative;
   cursor: pointer;
   border: 1px solid rgba(255, 255, 255, 0.3);
-}
-@media (dynamic-range: high) or (color-gamut: p3) {
-  #p-bar-container {
-    background: color(display-p3 1 1 1 / 0.1);
-    border: 1px solid color(display-p3 1 1 1 / 0.3);
-  }
 }
 
 #p-bar-fill {
@@ -351,16 +354,10 @@ body, html {
 .playback-bar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 10px;
   padding: 15px 0;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
   width: 100%;
-}
-@media (dynamic-range: high) or (color-gamut: p3) {
-  .playback-bar {
-    border-top: 1px solid color(display-p3 1 1 1 / 0.05);
-  }
 }
 
 .p-btn {
@@ -377,15 +374,9 @@ body, html {
   align-items: center;
   justify-content: center;
   flex: 1;
-  min-width: 0;
   border-radius: 0;
 }
-@media (dynamic-range: high) or (color-gamut: p3) {
-  .p-btn {
-    border: 1px solid color(display-p3 1 1 1 / 0.1);
-    color: color(display-p3 1 1 1 / 0.5);
-  }
-}
+
 .p-btn:hover { border-color: var(--white); color: var(--white); }
 .p-btn.play-pause { flex: 0 0 48px; border-radius: 50%; padding: 0; }
 .play-pause svg { width: 20px; height: 20px; fill: currentColor; }
@@ -393,14 +384,18 @@ body, html {
 .play-pause.playing .play-icon { display: none; }
 .play-pause.playing .pause-icon { display: block; }
 
-.spec-details { display: grid; grid-template-columns: 100px 1fr; gap: 10px; font-size: 0.7rem; font-family: var(--font-mono); text-transform: uppercase; }
-.spec-label { color: rgba(255, 255, 255, 0.3); }
-@media (dynamic-range: high) or (color-gamut: p3) {
-  .spec-label { color: color(display-p3 1 1 1 / 0.3); }
+.spec-details {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 10px;
+  font-size: 0.7rem;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
 }
+
+.spec-label { color: rgba(255, 255, 255, 0.3); }
 .spec-value { color: var(--white); }
 
-/* About Specific Styles */
 .avatar {
   width: 160px;
   height: 160px;
@@ -409,60 +404,60 @@ body, html {
   background: #000;
   overflow: hidden;
 }
-.avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 0;
-}
-.info-item {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.info-label {
-  font-family: 'Space Mono', monospace;
-  font-size: 9px;
-  color: rgba(255,255,255,0.4);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-@media (dynamic-range: high) or (color-gamut: p3) {
-  .info-label { color: color(display-p3 1 1 1 / 0.4); }
-}
-.info-value {
-  font-size: 16px;
-  letter-spacing: 0.5px;
-  line-height: 1.5;
-}
+
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.info-item { display: flex; flex-direction: column; gap: 4px; }
+.info-label { font-family: var(--font-mono); font-size: 9px; color: rgba(255, 255, 255, 0.4); text-transform: uppercase; letter-spacing: 1px; }
+.info-value { font-size: 16px; letter-spacing: 0.5px; line-height: 1.5; }
+
 .mail-link {
   color: var(--white);
   text-decoration: underline;
   text-decoration-thickness: 1px;
-  border: none;
-  padding: 0;
-  transition: all 0.3s ease;
-  display: inline-block;
-  font-family: 'Space Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 12px;
+  cursor: pointer;
 }
-.mail-link:hover {
-  background: transparent;
-  color: var(--white);
-  opacity: 0.7;
+
+.mail-link:hover { opacity: 0.7; }
+
+/* 离线指示器 */
+.network-status-indicator {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 10000;
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  padding: 6px 10px;
+  border: 1px solid rgba(255, 100, 100, 0.5);
+  color: rgba(255, 100, 100, 0.7);
+  letter-spacing: 0.1em;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  text-transform: uppercase;
+}
+
+.network-status-indicator.visible {
+  opacity: 1;
 }
 </style>
     <link rel="icon" type="image/png" href="assets/LAB-0.png?v=20260612">
     <link rel="apple-touch-icon" href="LAB-0.png?v=20260612">
 </head>
 <body>
+
+<div class="network-status-indicator" id="network-indicator">OFFLINE MODE</div>
+
 <canvas id="dot-matrix-canvas"></canvas>
 <div id="bg-overlay"></div>
 <div class="ui-grid" id="grid"></div>
 
 <div class="stage">
 <div id="wordmark">
-<a id="nav-home" class="menu-item" style="font-family:inherit; font-size:inherit; letter-spacing:inherit; margin:0; padding:0; text-transform: none;">
+<a id="nav-home" class="menu-item" style="font-family:inherit; font-size:inherit; letter-spacing:inherit; margin:0; padding:0; text-transform: none; display: flex; align-items: center; justify-content: center;">
   <span>L</span><span class="ab0-reveal">AB-<svg class="desktop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
     <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
     <line x1="8" y1="21" x2="16" y2="21"></line>
@@ -489,7 +484,7 @@ body, html {
         <span class="status-tag">CONCERT</span>
       </div>
       <div class="project-entry" data-project="V2">
-        <div class="project-info"><span class="project-id">[02]</span><span class="project-name">Atoms</span></div>
+        <div class="project-info"><span class="project-id">[02]</span><span class="project-name">Atmos</span></div>
         <span class="status-tag">M/V</span>
       </div>
       <div class="project-entry" data-project="V3">
@@ -510,9 +505,7 @@ body, html {
     <div class="spec-panel">
       <div class="video-container">
         <video id="p-video" playsinline loop muted></video>
-        <div id="no-signal" class="no-signal-overlay">
-          <div class="no-signal-text">NO SIGNAL</div>
-        </div>
+        <div id="no-signal" class="no-signal-overlay">NO SIGNAL</div>
       </div>
       <div class="timeline-container">
         <div class="p-time" id="current-time">00:00</div>
@@ -547,12 +540,12 @@ body, html {
 <span class="coord coord-tl">[0000, 0000]</span>
 <span class="coord coord-br">[8888, 8888]</span>
 </div>
-<div class="content-grid" style="grid-template-columns: 0.6fr 1.4fr; background-color: #050505; color: var(--white); font-family: 'Space Grotesk', sans-serif; border: 1px solid rgba(255,255,255,0.1); padding: 60px;">
+<div class="content-grid" style="grid-template-columns: 0.6fr 1.4fr; background-color: #050505; color: var(--white); font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;">
   <div class="col-left" style="display: flex; flex-direction: column; align-items: center; justify-content: center; border-right: none; padding-right: 40px;">
     <a href="https://github.com/ephemeralgaze" target="_blank" class="avatar" style="display: block; cursor: pointer;">
-      <img src="https://github.com/ephemeralgaze.png" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
+      <img src="https://github.com/ephemeralgaze.png" alt="Avatar">
     </a>
-    <a href="https://github.com/ephemeralgaze" target="_blank" style="margin-top: 25px; font-family: 'Space Mono', monospace; font-size: 14px; text-align: center; letter-spacing: 2px; font-weight: bold; text-transform: uppercase; color: var(--white); text-decoration: none; display: block; cursor: pointer;">
+    <a href="https://github.com/ephemeralgaze" target="_blank" style="margin-top: 25px; font-family: 'Space Mono', 'Monaco', 'Courier New', monospace; font-size: 14px; text-align: center; letter-spacing: 2px; font-weight: 500; color: white; text-decoration: none; transition: opacity 0.3s ease;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">
       EPHEMERAL GAZE
     </a>
   </div>
@@ -578,6 +571,77 @@ body, html {
 </div>
 
 <script>
+// 初始化网络管理器
+window.networkStatus.offlineIndicator = document.getElementById('network-indicator');
+window.networkStatus.init();
+
+// ============ 视频容错加载系统 ============
+window.videoLoader = {
+  primarySources: {
+    V1: "BackitUp.mov",
+    V2: "Atmos.MOV",
+    V3: "",
+    V4: "",
+    V5: ""
+  },
+  
+  fallbackSources: {
+    V1: "./assets/videos/BackitUp.mov",
+    V2: "./assets/videos/Atmos.mov",
+    V3: "",
+    V4: "",
+    V5: ""
+  },
+  
+  loadVideo: function(projectId, primarySrc, fallbackSrc) {
+    var video = document.getElementById('p-video');
+    var noSignal = document.getElementById('no-signal');
+    
+    if (!video || !primarySrc) {
+      if (noSignal) noSignal.style.display = 'flex';
+      return;
+    }
+    
+    var fallbackTimer = null;
+    
+    var loadFallback = function() {
+      if (fallbackSrc && fallbackSrc !== primarySrc) {
+        console.log('⚠️ 主源失败，切换到本地: ' + fallbackSrc);
+        video.src = fallbackSrc;
+        video.load();
+        if (noSignal) noSignal.style.display = 'none';
+      } else {
+        console.log('❌ 无可用视频源');
+        if (noSignal) noSignal.style.display = 'flex';
+      }
+    };
+    
+    video.onerror = function() {
+      console.warn('视频加载出错: ' + video.src);
+      clearTimeout(fallbackTimer);
+      loadFallback();
+    };
+    
+    video.onloadstart = function() {
+      console.log('✅ 视频开始加载');
+      clearTimeout(fallbackTimer);
+      if (noSignal) noSignal.style.display = 'none';
+    };
+    
+    console.log('📹 加载主源: ' + primarySrc);
+    video.src = primarySrc;
+    video.load();
+    
+    // 3秒超时 fallback
+    fallbackTimer = setTimeout(function() {
+      if (video.readyState === 0 && video.src === primarySrc) {
+        console.log('⏱️ 加载超时，切换到备用源');
+        loadFallback();
+      }
+    }, 3000);
+  }
+};
+
 (function() {
   var canvas = document.getElementById("dot-matrix-canvas");
   if (!canvas) return;
@@ -685,8 +749,10 @@ document.addEventListener("DOMContentLoaded", function() {
       curTimeTxt.innerText = "00:00";
       durTimeTxt.innerText = "00:00";
       noSignal.style.display = "none";
-      pVideo.src = data.video;
-      pVideo.load();
+      
+      var primarySrc = data.video;
+      var fallbackSrc = window.videoLoader.fallbackSources[pid];
+      window.videoLoader.loadVideo(pid, primarySrc, fallbackSrc);
     } else {
       curTimeTxt.innerText = "--:--";
       durTimeTxt.innerText = "--:--";
@@ -704,8 +770,6 @@ document.addEventListener("DOMContentLoaded", function() {
     var selectedEntry = document.querySelector(".project-entry.selected");
     if (selectedEntry) {
       updateProject(selectedEntry.getAttribute("data-project"));
-    } else {
-      updateProject("void");
     }
   });
 
