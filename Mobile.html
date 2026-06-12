@@ -4,12 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LAB-0 | Mobile</title>
+  <link rel="apple-touch-icon" href="assets/LAB-0.png?v=20260612">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="LAB-0">
 <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" onerror="console.warn('Google Fonts 加载失败，使用系统字体')">
 
 <script>
-// 1. 监测移动设备重定向
+
 (function() {
   var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
   if (!isMobile && window.innerWidth >= 768) {
@@ -17,14 +21,13 @@
   }
 })();
 
-// 2. 监测 Google Fonts 加载状态
+
 window.fontsLoaded = false;
 window.addEventListener('load', function() {
   window.fontsLoaded = true;
   document.documentElement.classList.add('fonts-ready');
 });
 
-// 3. 设置字体加载超时降级（5秒后还没加载就放弃，防止白屏）
 setTimeout(function() {
   if (!window.fontsLoaded && !document.documentElement.classList.contains('fonts-ready')) {
     document.documentElement.classList.add('fonts-fback');
@@ -34,7 +37,7 @@ setTimeout(function() {
 </script>
 <style>
 :root {
-  /* 当字体加载超时，降级为系统安全字体，防止文字隐形或排版卡死 */
+
 html.fonts-fback {
   --font-header: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -655,16 +658,16 @@ body, html {
   opacity: 0.8;
 }
 
-/* ==================== ⚡ LAB-0 移动端横屏终极特效系统（第11次神级对齐版） ⚡ ==================== */
+
 @media (orientation: landscape) and (max-height: 500px) {
-  /* 1. 隐藏顶部的黑色遮罩块，释放垂直空间 */
+ 
   #mobile-header.active {
     opacity: 0 !important;
     visibility: hidden !important;
     pointer-events: none !important;
   }
 
-  /* 2. 空间避让核心：只要进入 Projects 或 About 页面，Logo 极其顺滑地朝左平移移出屏幕 */
+  
   #projects-overlay.active ~ .stage #wordmark.docked,
   #about-overlay.active ~ .stage #wordmark.docked {
     transform: translate(-200%, -50%) scale(0.8) !important;
@@ -672,7 +675,7 @@ body, html {
     pointer-events: none !important;
   }
 
-  /* 3. 汉堡按钮基座：向右平移，死死贴在屏幕最右侧操作边缘 (12px) */
+ 
   .hamburger {
     top: 20px !important;
     right: 30px;
@@ -685,58 +688,56 @@ body, html {
     right: 12px !important;
   }
 
-  /* 4. 🔥【向左箭头完美对齐 ( < )】利用你的兄弟选择器，完美向左弯曲折叠 */
-  /* 上弦：逆时针旋转 45 度，缩短，旋转锚点锁在左侧 (left center) */
+
   #projects-overlay.active ~ #hamburger span:nth-child(1),
   #about-overlay.active ~ #hamburger span:nth-child(1) {
     transform: translate(-3px, 3px) rotate(-45deg) scaleX(0.55) !important;
     transform-origin: left center !important;
   }
   
-  /* 中弦：直接隐形蒸发 */
+
   #projects-overlay.active ~ #hamburger span:nth-child(2),
   #about-overlay.active ~ #hamburger span:nth-child(2) {
     opacity: 0 !important;
     transform: scaleX(0) !important;
   }
   
-  /* 下弦：顺时针旋转 45 度，缩短，旋转锚点锁在左侧 (left center) */
+
   #projects-overlay.active ~ #hamburger span:nth-child(3),
   #about-overlay.active ~ #hamburger span:nth-child(3) {
     transform: translate(-3px, -3px) rotate(45deg) scaleX(0.55) !important;
     transform-origin: left center !important;
   }
 
-  /* 5. PROJECTS 横屏高级布局重组 */
+
   #projects-overlay .content-grid {
-    grid-template-columns: 1fr 1.3fr !important; /* 划定左右黄金比例 */
+    grid-template-columns: 1fr 1.3fr !important; 
     gap: 30px !important;
-    padding: 20px 55px 20px 20px !important; /* 右边留足 55px 给机械返回箭头 */
+    padding: 20px 55px 20px 20px !important; 
     height: 100vh !important;
     align-items: center !important;
     box-sizing: border-box !important;
   }
 
-  /* 🔥【左侧列表】变身独立高档滑动仓，且引入 100% 干净的单独翻页捕捉（Scroll Snap） */
+ 
   #projects-overlay .col-left {
     height: 80vh !important;
     overflow-y: auto !important;
     border-bottom: none !important;
     border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
     padding: 10px 15px 10px 0 !important;
-    scrollbar-width: none !important; /* 彻底隐藏滚动条 */
+    scrollbar-width: none !important; 
     
-    /* 开启高精度垂直滚动捕捉 */
     scroll-snap-type: y mandatory !important;
     scroll-behavior: smooth !important;
     
-    /* 高级游戏 UI 质感：用 CSS Mask 动态切出上下边缘的模糊淡出遮罩 */
+   
     -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%) !important;
     mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%) !important;
   }
   #projects-overlay .col-left::-webkit-scrollbar { display: none !important; }
 
-  /* 强行接管你原本的列表容器，注入滑动捕捉属性 */
+ 
   #projects-overlay .project-list {
     display: flex !important;
     flex-direction: column !important;
@@ -744,16 +745,15 @@ body, html {
     width: 100% !important;
   }
 
-  /* 🔥【精确翻页卡槽锁死】给每一个条目卡片强制绑定对齐锚点 */
   #projects-overlay .project-entry {
-    scroll-snap-align: center !important; /* 保证滑动时刚好把当前项死死居中对齐 */
-    scroll-snap-stop: always !important;  /* 每次操作只允许精准翻动一页，绝不脱手飞字 */
+    scroll-snap-align: center !important; 
+    scroll-snap-stop: always !important;  
     margin: 0 !important;
     width: 100% !important;
-    flex-shrink: 0 !important; /* 防止卡片被弹性压扁 */
+    flex-shrink: 0 !important;
   }
 
-  /* 🔥【右侧容器与视频】彻底修好 display: none 导致的蒸发毁灭坑 */
+
   #projects-overlay .col-right {
     height: 85vh !important;
     width: 100% !important;
@@ -762,7 +762,7 @@ body, html {
     justify-content: center !important;
   }
 
-  /* 强行保持面板容器可见（因为它包裹着视频），但把底下那些硬核参数深度格式化隐藏 */
+
   #projects-overlay .spec-panel {
     display: flex !important;
     flex-direction: column !important;
@@ -772,15 +772,15 @@ body, html {
     justify-content: center !important;
   }
 
-  /* 🚫 核心要求：横屏下右侧底下那些 Pipeline、Complexity 等参数、调试信息直接蒸发！ */
+
   #projects-overlay .spec-details {
     display: none !important; 
   }
 
-  /* 极其刚性的视频容器：横屏下强行100%撑满右侧，绝对绝不准不可见 */
+
   #projects-overlay .video-container {
     width: 100% !important;
-    height: 52vh !important; /* 极大地拉高视频面积，爽快感拉满 */
+    height: 52vh !important; 
     background: #000 !important;
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
     display: block !important;
@@ -788,17 +788,17 @@ body, html {
   #projects-overlay #p-video {
     width: 100% !important;
     height: 100% !important;
-    object-fit: contain !important; /* 保证特效视频绝对不拉伸、不失真 */
+    object-fit: contain !important; 
   }
 
-  /* 播放控制栏微调：让它紧紧贴在视频下方，极简精致 */
+ 
   #projects-overlay .playback-bar {
     width: 100% !important;
     padding: 4px 0 !important;
     margin-top: 8px !important;
   }
 
-  /* 6. ABOUT 横屏终极重构（双栏无缝展开） */
+ 
   #about-overlay .content-grid {
     grid-template-columns: 1fr 1fr !important;
     gap: 40px !important;
@@ -1095,7 +1095,9 @@ document.addEventListener("DOMContentLoaded", function() {
   var sComplexity = document.getElementById("s-complexity");
   var sBuffers = document.getElementById("s-buffers");
   var sStatus = document.getElementById("s-status");
-
+  
+/*Projects内显示*/
+  
   var projectData = {
     V1: {
       video: "BackitUp.mov",
@@ -1225,20 +1227,20 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   }
 
-  // ==================== 核心导航绑定区（已修复 About） ====================
   
-  // 1. HOME 键绑定
+  
+
   if (navHome) navHome.addEventListener("click", function(e) { e.stopPropagation(); switchPage("home", navHome); });
   if (mNavHome) mNavHome.addEventListener("click", function() { switchPage("home", mNavHome); });
 
-  // 2. 彻底复活 ABOUT 键点击
+
   if (mAboutTrigger) {
     mAboutTrigger.addEventListener("click", function() { 
       switchPage("about", mAboutTrigger); 
     });
   }
 
-  // 3. 完美的 PROJECTS 视频初始化逻辑（保持你刚才调好的不变）
+ 
   if (mProjectsTrigger) {
     mProjectsTrigger.addEventListener("click", function() { 
       switchPage("projects", mProjectsTrigger); 
@@ -1259,7 +1261,7 @@ document.addEventListener("DOMContentLoaded", function() {
       }, 100);
     });
   }
-  // ======================================================================
+  // 
 
 
   var projectEntries = document.querySelectorAll(".project-entry");
@@ -1333,45 +1335,39 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 </script>
  <style>
-/* ==================== ⚡ LAB-0 移动端横屏终极重构系统（第12次精准对齐版） ==================== */
+
 @media (orientation: landscape) and (max-height: 500px) {
-  /* 1. 隐藏顶部的黑色遮罩块，释放垂直空间 */
   #mobile-header {
     opacity: 0 !important;
     visibility: hidden !important;
     pointer-events: none !important;
   }
 
-  /* 2. PROJECTS 横屏终极重构 */
   #projects-overlay .content-grid {
-    grid-template-columns: 1fr 1.3fr !important; /* 调整列表与视频的黄金比例 */
+    grid-template-columns: 1fr 1.3fr !important; 
     gap: 25px !important;
-    padding: 20px 55px 20px 20px !important; /* 给右侧向左的箭头留出绝对操作空间 */
+    padding: 20px 55px 20px 20px !important; 
     height: 100vh !important;
     align-items: center !important;
     box-sizing: border-box !important;
   }
 
-  /* 🔥【左侧列表】变身独立滑动区域 + 100% 干净的单独翻页捕捉（Scroll Snap） */
   #projects-overlay .col-left {
     height: 85vh !important;
     overflow-y: auto !important;
     padding: 10px 10px 10px 0 !important;
     border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
     border-bottom: none !important;
-    scrollbar-width: none !important; /* 彻底隐藏滚动条 */
+    scrollbar-width: none !important; 
     
-    /* 核心物理：开启垂直滚动捕捉 */
     scroll-snap-type: y mandatory !important;
     scroll-behavior: smooth !important;
     
-    /* 用 CSS Mask 动态切出上下边缘的模糊淡出遮罩 */
     -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%) !important;
     mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%) !important;
   }
   #projects-overlay .col-left::-webkit-scrollbar { display: none !important; }
 
-  /* 绑定真正的列表容器 */
   #projects-overlay .project-list {
     display: flex !important;
     flex-direction: column !important;
@@ -1379,16 +1375,14 @@ document.addEventListener("DOMContentLoaded", function() {
     width: 100% !important;
   }
 
-  /* 给每一个项目条目强制绑定翻页对齐锚点 */
   #projects-overlay .project-entry {
-    scroll-snap-align: center !important; /* 保证滑动时刚好居中对齐 */
-    scroll-snap-stop: always !important;  /* 每次只允许翻一页，不脱手飞走 */
+    scroll-snap-align: center !important; 
+    scroll-snap-stop: always !important;  
     margin: 0 !important;
     width: 100% !important;
     flex-shrink: 0 !important;
   }
 
-  /* 【右侧容器】确保撑满，防止视频缩水不见 */
   #projects-overlay .col-right {
     display: flex !important;
     flex-direction: column !important;
@@ -1407,7 +1401,6 @@ document.addEventListener("DOMContentLoaded", function() {
     height: auto !important;
   }
 
- 
   #projects-overlay .video-container {
     width: 100% !important;
     height: 54vh !important; 
@@ -1418,17 +1411,15 @@ document.addEventListener("DOMContentLoaded", function() {
   #projects-overlay #p-video {
     width: 100% !important;
     height: 100% !important;
-    object-fit: contain !important; /* 确保特效视频不失真、不变形 */
+    object-fit: contain !important; 
   }
 
-  /* 播放控制栏微调，紧贴视频下方 */
   #projects-overlay .playback-bar {
     display: flex !important;
     width: 100% !important;
     margin-top: 8px !important;
   }
 
-  /* 🔥 真正蒸发横屏下右侧底下碍事的参数细节和调试信息 */
   #projects-overlay .spec-details {
     display: none !important; 
   }
@@ -1439,8 +1430,8 @@ document.addEventListener("DOMContentLoaded", function() {
     gap: 40px !important;
     padding: 20px 55px 20px 20px !important;
     height: 100vh !important;
-    align-items: flex-start !important; /* 整体靠上对齐 */
-    padding-top: 12vh !important;     /* 留出舒适的上方间隙 */
+    align-items: flex-start !important;
+    padding-top: 12vh !important; 
     box-sizing: border-box !important;
   }
   #about-overlay .col-left {
@@ -1448,17 +1439,16 @@ document.addEventListener("DOMContentLoaded", function() {
     padding-bottom: 0 !important;
     border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
     padding-right: 20px !important;
-    justify-content: flex-start !important; /* 头像上移 */
+    justify-content: flex-start !important;
   }
   #about-overlay .avatar {
-    width: 100px !important;  /* 横屏下稍微缩小头像，防挤压 */
+    width: 100px !important;
     height: 100px !important;
   }
   #about-overlay .col-right {
-    justify-content: flex-start !important; /* 个人信息栏上移 */
+    justify-content: flex-start !important; 
   }
 
-  /* 4. 强制解除按钮动画的样式枷锁 */
   #hamburger:not(.open) span {
     transform: var(--land-trans, none) !important;
     transform-origin: var(--land-origin, center) !important;
@@ -1487,22 +1477,18 @@ document.addEventListener("DOMContentLoaded", function() {
     var isProj = pOverlay && pOverlay.classList.contains("active");
     var isAbout = aOverlay && aOverlay.classList.contains("active");
 
-    // 🔥【关键锁死】只有当处于横屏，且真正打开了 Projects 或者 About 面板时，才触发左移和箭头折叠！
     if (isLandscape && (isProj || isAbout)) {
       
-      // 1. Logo (Wordmark) 向左平移出屏隐藏
       if (wMark) {
         wMark.style.setProperty("transform", "translate(-200%, -50%) scale(0.8)", "important");
         wMark.style.setProperty("opacity", "0", "important");
         wMark.style.setProperty("pointer-events", "none", "important");
       }
 
-      // 2. 按钮基座向右靠边站 (12px)
       if (hBurger) {
         hBurger.style.setProperty("right", "12px", "important");
       }
 
-      // 3. 三条杠反向折叠为向左箭头 ( < )
       if (hBurger) {
         var spans = hBurger.querySelectorAll("span");
         if (spans.length >= 3) {
@@ -1517,7 +1503,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
       }
     } else {
-      // 还原状态：如果是在主页横屏，或者返回竖屏，则清空所有行内破坏样式，回归最初的极简状态！
+
       if (wMark) {
         wMark.style.transform = "";
         wMark.style.opacity = "";
@@ -1538,7 +1524,6 @@ document.addEventListener("DOMContentLoaded", function() {
   window.addEventListener("resize", runLandscapeEngine);
   window.addEventListener("orientationchange", runLandscapeEngine);
 
-  // 挂钩底层切页函数，只要页面一换，顺发检测视口
   var rawSwitch = window.switchPage;
   window.switchPage = function(pId, trig) {
     if (typeof rawSwitch === "function") rawSwitch(pId, trig);
