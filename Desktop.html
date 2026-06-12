@@ -41,31 +41,21 @@ setTimeout(function() {
 // ============ 网络状态管理 ============
 window.networkStatus = {
   isOnline: navigator.onLine,
-
-  init() {
-    window.addEventListener("online", () => {
-      this.isOnline = true;
-      document.documentElement.classList.remove("offline-mode");
+  offlineIndicator: null,
+  init: function() {
+    var self = this;
+    window.addEventListener('online', function() {
+      self.isOnline = true;
+      console.log('🟢 网络: 在线');
+      if (self.offlineIndicator) self.offlineIndicator.classList.remove('visible');
     });
-
-    window.addEventListener("offline", () => {
-      this.isOnline = false;
-      document.documentElement.classList.add("offline-mode");
+    window.addEventListener('offline', function() {
+      self.isOnline = false;
+      console.log('🔴 网络: 离线 - 使用本地备用资源');
+      if (self.offlineIndicator) self.offlineIndicator.classList.add('visible');
     });
-
-    // 主动探测（防“假在线”）
-    setInterval(async () => {
-      try {
-        await fetch("https://github.com", { mode: "no-cors" });
-        document.documentElement.classList.remove("offline-mode");
-      } catch {
-        document.documentElement.classList.add("offline-mode");
-      }
-    }, 8000);
   }
 };
-
-window.networkStatus.init();
 </script>
 
 <style>
@@ -583,12 +573,9 @@ body, html {
     <div class="col-right">
       <div class="spec-panel">
         <div class="video-container">
-  <video id="project-video" autoplay muted playsinline></video>
-
-  <div class="no-signal-overlay" id="video-fallback">
-    NO SIGNAL · LOCAL MODE
-  </div>
-</div>
+          <video id="p-video" playsinline muted></video>
+          <div id="no-signal" class="no-signal-overlay">NO SIGNAL</div>
+        </div>
         <div class="timeline-container">
           <div class="p-time" id="current-time">00:00</div>
           <div id="p-bar-container">
@@ -981,45 +968,6 @@ document.addEventListener("DOMContentLoaded", function() {
     else if (pVideo.msRequestFullscreen) pVideo.msRequestFullscreen();
   });
 });
-  const video = document.getElementById('project-video');
-const fallback = document.getElementById('video-fallback');
-
-// 你的主视频源（GitHub / 外链）
-const sources = [
-  "https://your-primary-video-url.mp4",
-  "https://backup-video-url.mp4"
-];
-
-let current = 0;
-
-function tryPlayVideo() {
-  if (!video) return;
-
-  if (current >= sources.length) {
-    fallback.style.display = "flex";
-    video.style.display = "none";
-    return;
-  }
-
-  video.src = sources[current];
-
-  video.onerror = () => {
-    current++;
-    tryPlayVideo();
-  };
-
-  video.onloadeddata = () => {
-    fallback.style.display = "none";
-    video.style.display = "block";
-  };
-
-  video.play().catch(() => {
-    current++;
-    tryPlayVideo();
-  });
-}
-
-tryPlayVideo();
 </script>
 
 </body>
