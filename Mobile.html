@@ -726,9 +726,14 @@ body, html {
   }
 
   /* 🔥【左侧列表】变身独立高档滑动仓，且引入 100% 干净的单独翻页捕捉（Scroll Snap） */
-  #projects-overlay .col-left {
-    height: 80vh !important;
-    overflow-y: auto !important;
+ #projects-overlay .col-left {
+  height: auto !important; 
+  min-height: 40vh; /* 保证有一个最小高度 */
+  max-height: 70vh; /* 限制最大高度，防止撑爆屏幕 */
+  overflow-y: auto;
+  /* ...其他样式... */
+}
+
     border-bottom: none !important;
     border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
     padding: 10px 15px 10px 0 !important;
@@ -1503,6 +1508,17 @@ document.addEventListener("DOMContentLoaded", function() {
   .col-right {
     display: flex;
     align-items: center;
+  }
+}
+@media (orientation: portrait) {
+  #projects-overlay .content-grid {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  
+  #projects-overlay .col-right {
+    flex: 1 !important; /* 让视频容器自动填满剩下的空间 */
+    min-height: 300px;  /* 给视频一个最低高度，防止被压扁 */
   }
 }
 
