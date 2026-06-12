@@ -1051,7 +1051,7 @@ document.addEventListener("DOMContentLoaded", function() {
     } else if (pageId === "projects") {
       if (projectsOverlay) projectsOverlay.classList.add("active");
       if (mobileHeader) mobileHeader.classList.add("active");
-      updateProjectMedia("void");
+      
     }
     if (hamburger) hamburger.classList.remove("open");
     if (mobileNav) mobileNav.classList.remove("open");
@@ -1065,40 +1065,29 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
   if (navHome) navHome.addEventListener("click", function(e) { e.stopPropagation(); switchPage("home", navHome); });
- if (mProjectsTrigger) {
+if (mProjectsTrigger) {
   mProjectsTrigger.addEventListener("click", function() { 
-    // 1. 先执行原有的切页逻辑，让 Projects 界面在屏幕上渲染出来
+    // 1. 先执行你原有的切页逻辑
     switchPage("projects", mProjectsTrigger); 
     
-    // 2. 强力重置初始化
+    // 2. 加一个安全的微小延时，等待页面切过去后，强行激活第一个项目
     setTimeout(function() {
-      // 强制把所有项目的选中状态清空
-      document.querySelectorAll(".project-entry").forEach(function(el) {
-        el.classList.remove("selected");
-      });
+      // 擦除所有旧的选中状态，确保干净
+      var entries = document.querySelectorAll(".project-entry");
+      entries.forEach(function(e) { e.classList.remove("selected"); });
       
-      // 强制把第一个项目设为选中
+      // 强行把第一个项目高亮
       var firstEntry = document.querySelector(".project-entry");
       if (firstEntry) {
         firstEntry.classList.add("selected");
+        var pid = firstEntry.getAttribute("data-project");
         
-        // 3. 核心：拿到第一个项目的 ID，并强制重置视频和秒数
-        var projId = firstEntry.getAttribute("data-project");
-        if (projId && typeof updateProject === "function") {
-          
-          // 彻底叫醒视频元素：先清空，再强制加载
-          var pVideo = document.getElementById("p-video");
-          if (pVideo) {
-            pVideo.pause();
-            pVideo.src = ""; // 强行清空可能卡住的旧流
-            pVideo.load();
-          }
-          
-          // 运行你的更新函数，重新拉取封面、技术参数和 00:00 秒数
-          updateProject(projId);
+        // 调用你手机端真正的媒体更新函数，加载 V1 的视频和秒数！
+        if (pid && typeof updateProjectMedia === "function") {
+          updateProjectMedia(pid);
         }
       }
-    }, 150); // 稍微加大一点点延时到 150ms，给手机浏览器充分的切页准备时间
+    }, 100);
   });
 }
 
