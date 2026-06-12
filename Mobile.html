@@ -1220,79 +1220,104 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 });
 </script>
-  <style>
+ <style>
 @media (orientation: landscape) and (max-height: 500px) {
-  /* ---------------- 1. 顶部全局遮罩隐藏 ---------------- */
+  /* 1. 顶部全局遮罩隐藏 */
   #mobile-header {
     opacity: 0 !important;
     visibility: hidden !important;
     pointer-events: none !important;
   }
 
-  /* ---------------- 2. PROJECTS 横屏终极重构 ---------------- */
+  /* 2. PROJECTS 横屏终极重构 */
   #projects-overlay .content-grid {
-    grid-template-columns: 1.1fr 1fr !important; /* 调整黄金比例 */
-    gap: 25px !important;
-    padding: 20px 40px 20px 20px !important; /* 给右侧箭头留出绝对边缘空间 */
+    grid-template-columns: 1fr 1.2fr !important; /* 调整列表与视频的黄金比例 */
+    gap: 30px !important;
+    padding: 20px 45px 20px 20px !important; /* 给右侧向左的箭头留出绝对操作空间 */
     height: 100vh !important;
     align-items: center !important;
-    box-sizing: border-box;
+    box-sizing: border-box !important;
   }
 
-  /* 左侧列表变身独立滑动区域 */
+  /* 🔥【左侧列表】变身独立滑动区域 + 100% 干净的单独翻页捕捉（Scroll Snap） */
   #projects-overlay .col-left {
-    height: 85vh !important;
+    height: 80vh !important;
     overflow-y: auto !important;
     padding-right: 10px !important;
     border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
     border-bottom: none !important;
-    scrollbar-width: none; /* 彻底隐藏恶心的滚动条 */
+    scrollbar-width: none !important; /* 彻底隐藏滚动条 */
     
-    /* 🔥【神级细节】用 CSS Mask 动态切出上下边缘的模糊淡出遮罩 */
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 8%, #000 92%, transparent 100%);
-    mask-image: linear-gradient(to bottom, transparent 0%, #000 8%, #000 92%, transparent 100%);
+    /* 核心物理：开启垂直滚动捕捉 */
+    scroll-snap-type: y mandatory !important;
+    scroll-behavior: smooth !important;
+    
+    /* 用 CSS Mask 动态切出上下边缘的模糊淡出遮罩 */
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
   }
-  #projects-overlay .col-left::-webkit-scrollbar { display: none; }
+  #projects-overlay .col-left::-webkit-scrollbar { display: none !important; }
 
-  /* 右侧容器精简化 */
+  /* 给列表里的每一个项目卡片强制绑定翻页对齐锚点 */
+  #projects-overlay .project-item {
+    scroll-snap-align: center !important; /* 保证滑动时刚好居中对齐 */
+    scroll-snap-stop: always !important;  /* 每次只允许翻一页，不脱手飞走 */
+    margin-bottom: 15px !important;
+  }
+
+  /* 【右侧容器】确保撑满，防止视频缩水不见 */
   #projects-overlay .col-right {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    height: 100vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    height: 80vh !important;
+    width: 100% !important;
   }
 
-  /* 极简视频块 */
+  /* 极简视频块：强制横屏下100%撑满右侧，绝对不能不见 */
   #projects-overlay .video-container {
-    max-height: 60vh !important; /* 极大地拉高视频面积 */
-    background: #000;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 100% !important;
+    height: 55vh !important; /* 极大地拉高视频面积 */
+    background: #000 !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    display: block !important;
+  }
+  #projects-overlay #p-video {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important; /* 确保特效视频不失真、不变形 */
   }
 
-  /* 🚫 核心要求：横屏下右侧底下那些硬核参数面板、调试信息直接蒸发蒸发！ */
+  /* 播放控制栏微调，紧贴视频下方 */
+  #projects-overlay .playback-bar {
+    width: 100% !important;
+    margin-top: 8px !important;
+  }
+
+  /* 横屏下右侧底下那些参数面板、调试信息直接蒸发 */
   #projects-overlay .spec-panel {
     display: none !important;
   }
 
-  /* ---------------- 3. ABOUT 横屏终极重构 ---------------- */
+  /* 3. ABOUT 横屏终极重构 */
   #about-overlay .content-grid {
     grid-template-columns: 1fr 1fr !important;
     gap: 30px !important;
-    padding: 30px 40px !important;
+    padding: 30px 45px 30px 30px !important;
     height: 100vh !important;
     align-items: center !important;
   }
   #about-overlay .about-section {
     max-height: 80vh !important;
     overflow-y: auto !important;
-    scrollbar-width: none;
+    scrollbar-width: none !important;
     -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 10%, #000 90%, transparent 100%);
     mask-image: linear-gradient(to bottom, transparent 0%, #000 10%, #000 90%, transparent 100%);
   }
-  #about-overlay .about-section::-webkit-scrollbar { display: none; }
+  #about-overlay .about-section::-webkit-scrollbar { display: none !important; }
 
-  /* ---------------- 4. 强制解除按钮动画的样式枷锁 ---------------- */
-  /* 用最高的特异性强行解开原有 CSS 里的 !important 绑定 */
+  /* 4. 强制解除按钮动画的样式枷锁 */
   #hamburger:not(.open) span {
     transform: var(--land-trans, none) !important;
     transform-origin: var(--land-origin, center) !important;
@@ -1306,7 +1331,6 @@ document.addEventListener("DOMContentLoaded", function() {
   function runLandscapeEngine() {
     var isLandscape = window.innerHeight <= 500 && window.innerWidth > window.innerHeight;
     
-    // 获取核心节点
     var pOverlay = document.getElementById("projects-overlay");
     var aOverlay = document.getElementById("about-overlay");
     var wMark = document.getElementById("wordmark");
@@ -1315,40 +1339,39 @@ document.addEventListener("DOMContentLoaded", function() {
     var isProj = pOverlay && pOverlay.classList.contains("active");
     var isAbout = aOverlay && aOverlay.classList.contains("active");
 
-    // ⚡ 进入临战演示状态：只要在横屏，且处于 Projects 或 About 面板
     if (isLandscape && (isProj || isAbout)) {
       
-      // 1. Logo (Wordmark) 极其丝滑地朝左平移 200% 出屏隐藏
+      // 1. Logo (Wordmark) 向左平移出屏隐藏
       if (wMark) {
         wMark.style.setProperty("transform", "translate(-200%, -50%) scale(0.8)", "important");
         wMark.style.setProperty("opacity", "0", "important");
         wMark.style.setProperty("pointer-events", "none", "important");
       }
 
-      // 2. 按钮基座瞬间向右靠边站 (12px)，不占地方
+      // 2. 按钮基座向右靠边站 (12px)，不占地方
       if (hBurger) {
         hBurger.style.setProperty("right", "12px", "important");
       }
 
-      // 3. 驱动三条杠机械折叠变形为利落的右指向锐角返回指示器 ( > )
+      // 3. 🔥【方向修正】三条杠反向折叠，精准合并为一个指向左侧页面内部的返回箭头 ( < )
       if (hBurger) {
         var spans = hBurger.querySelectorAll("span");
         if (spans.length >= 3) {
-          // 上线条：顺时针转 45°，砍短，错位对接
-          spans[0].style.setProperty("--land-trans", "translate(3px, 3px) rotate(45deg) scaleX(0.55)");
-          spans[0].style.setProperty("--land-origin", "right center");
+          // 上线条：逆时针旋转 45°，砍短，锚点锁在左侧，折向左边
+          spans[0].style.setProperty("--land-trans", "translate(-3px, 3px) rotate(-45deg) scaleX(0.55)");
+          spans[0].style.setProperty("--land-origin", "left center");
           
-          // 中线条：直接物理隐形
+          // 中线条：物理隐形
           spans[1].style.setProperty("--land-op", "0");
           spans[1].style.setProperty("--land-trans", "scaleX(0)");
           
-          // 下线条：逆时针转 45°，砍短，错位对接
-          spans[2].style.setProperty("--land-trans", "translate(3px, -3px) rotate(-45deg) scaleX(0.55)");
-          spans[2].style.setProperty("--land-origin", "right center");
+          // 下线条：顺时针旋转 45°，砍短，锚点锁在左侧，折向左边
+          spans[2].style.setProperty("--land-trans", "translate(-3px, -3px) rotate(45deg) scaleX(0.55)");
+          spans[2].style.setProperty("--land-origin", "left center");
         }
       }
     } else {
-      // ⚡ 还原状态：转回竖屏，或者退回主页时，样式100%无污染恢复
+      // 还原状态：转回竖屏，或者退回主页
       if (wMark) {
         wMark.style.transform = "";
         wMark.style.opacity = "";
@@ -1366,18 +1389,17 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   }
 
-  // 挂载全局视口变化高频监听器
   window.addEventListener("resize", runLandscapeEngine);
   window.addEventListener("orientationchange", runLandscapeEngine);
 
-  // 劫持现有的页面切换核心逻辑，让切页瞬间触发刷新布局
   var rawSwitch = window.switchPage;
   window.switchPage = function(pId, trig) {
     if (typeof rawSwitch === "function") rawSwitch(pId, trig);
-    setTimeout(runLandscapeEngine, 40); // 延时 40ms 给 Class 添加流出计算时间
+    setTimeout(runLandscapeEngine, 40); 
   };
 })();
 </script>
+
 
 </body>
 </html>
