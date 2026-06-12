@@ -342,23 +342,15 @@ body, html {
 .col-left {
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: center;
   gap: 20px;
-  
-  /* ⚡ 添加这 4 行核心 CSS，锁死滚动区域 */
-  height: 80vh;              /* 限制高度，使其成为一个独立滚动区 */
-  overflow-y: auto;          /* 开启垂直滚动 */
-  -webkit-overflow-scrolling: touch; /* 保证 iOS 端的丝滑惯性 */
-  overscroll-behavior-y: contain;    /* 关键：阻止滚动冒泡到 Body */
-  
-  /* 隐藏滚动条（根据需要保留） */
-  scrollbar-width: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 30px;
 }
-
-.col-left::-webkit-scrollbar {
-  display: none;
+@media (dynamic-range: high) or (color-gamut: p3) {
+  .col-left { border-bottom: 1px solid color(display-p3 1 1 1 / 0.05); }
 }
-
 
 .avatar {
   width: 120px;
@@ -726,19 +718,18 @@ body, html {
   }
 
   /* 🔥【左侧列表】变身独立高档滑动仓，且引入 100% 干净的单独翻页捕捉（Scroll Snap） */
- #projects-overlay .col-left {
-  height: auto !important; 
-  min-height: 40vh; /* 保证有一个最小高度 */
-  max-height: 70vh; /* 限制最大高度，防止撑爆屏幕 */
-  overflow-y: auto;
-  /* ...其他样式... */
-}
-
+  #projects-overlay .col-left {
+    height: 80vh !important;
+    overflow-y: auto !important;
     border-bottom: none !important;
     border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
     padding: 10px 15px 10px 0 !important;
     scrollbar-width: none !important; /* 彻底隐藏滚动条 */
-    
+    touch-action: pan-y !important; 
+    overscroll-behavior-y: contain !important; /* 防止列表滚动到底后带动全屏滚动 */
+    -webkit-overflow-scrolling: touch !important; /* 保证 iOS 端的惯性滚动顺滑 */
+  }
+
     /* 开启高精度垂直滚动捕捉 */
     scroll-snap-type: y mandatory !important;
     scroll-behavior: smooth !important;
@@ -1345,9 +1336,161 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 });
 </script>
+ <style>
+/* ==================== ⚡ LAB-0 移动端横屏终极重构系统（第12次精准对齐版） ==================== */
+@media (orientation: landscape) and (max-height: 500px) {
+  /* 1. 隐藏顶部的黑色遮罩块，释放垂直空间 */
+  #mobile-header {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  /* 2. PROJECTS 横屏终极重构 */
+  #projects-overlay .content-grid {
+    grid-template-columns: 1fr 1.3fr !important; /* 调整列表与视频的黄金比例 */
+    gap: 25px !important;
+    padding: 20px 55px 20px 20px !important; /* 给右侧向左的箭头留出绝对操作空间 */
+    height: 100vh !important;
+    align-items: center !important;
+    box-sizing: border-box !important;
+  }
+
+  /* 🔥【左侧列表】变身独立滑动区域 + 100% 干净的单独翻页捕捉（Scroll Snap） */
+  #projects-overlay .col-left {
+    height: 85vh !important;
+    overflow-y: auto !important;
+    padding: 10px 10px 10px 0 !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-bottom: none !important;
+    scrollbar-width: none !important; /* 彻底隐藏滚动条 */
+    
+    /* 核心物理：开启垂直滚动捕捉 */
+    scroll-snap-type: y mandatory !important;
+    scroll-behavior: smooth !important;
+    
+    /* 用 CSS Mask 动态切出上下边缘的模糊淡出遮罩 */
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%) !important;
+    mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%) !important;
+  }
+  #projects-overlay .col-left::-webkit-scrollbar { display: none !important; }
+
+  /* 绑定真正的列表容器 */
+  #projects-overlay .project-list {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 15px !important;
+    width: 100% !important;
+  }
+
+  /* 给每一个项目条目强制绑定翻页对齐锚点 */
+  #projects-overlay .project-entry {
+    scroll-snap-align: center !important; /* 保证滑动时刚好居中对齐 */
+    scroll-snap-stop: always !important;  /* 每次只允许翻一页，不脱手飞走 */
+    margin: 0 !important;
+    width: 100% !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* 【右侧容器】确保撑满，防止视频缩水不见 */
+  #projects-overlay .col-right {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    height: 85vh !important;
+    width: 100% !important;
+  }
+
+  /* 🔥【父容器大解禁】参数面板容器必须可见（因为视频在它里面），但抹掉多余间距 */
+  #projects-overlay .spec-panel {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  /* 极其刚性的视频块：强制横屏下100%撑满右侧 */
+  #projects-overlay .video-container {
+    width: 100% !important;
+    height: 54vh !important; /* 极其舒适的横屏高度 */
+    background: #000 !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    display: block !important;
+  }
+  #projects-overlay #p-video {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important; /* 确保特效视频不失真、不变形 */
+  }
+
+  /* 播放控制栏微调，紧贴视频下方 */
+  #projects-overlay .playback-bar {
+    display: flex !important;
+    width: 100% !important;
+    margin-top: 8px !important;
+  }
+
+  /* 🔥 真正蒸发横屏下右侧底下碍事的参数细节和调试信息 */
+  #projects-overlay .spec-details {
+    display: none !important; 
+  }
+
+  /* 3. 🔥 ABOUT 横屏终极重构（头像与布局整体上移，防止被视口切掉） */
+  #about-overlay .content-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 40px !important;
+    padding: 20px 55px 20px 20px !important;
+    height: 100vh !important;
+    align-items: flex-start !important; /* 整体靠上对齐 */
+    padding-top: 12vh !important;     /* 留出舒适的上方间隙 */
+    box-sizing: border-box !important;
+  }
+  #about-overlay .col-left {
+    border-bottom: none !important;
+    padding-bottom: 0 !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
+    padding-right: 20px !important;
+    justify-content: flex-start !important; /* 头像上移 */
+  }
+  #about-overlay .avatar {
+    width: 100px !important;  /* 横屏下稍微缩小头像，防挤压 */
+    height: 100px !important;
+  }
+  #about-overlay .col-right {
+    justify-content: flex-start !important; /* 个人信息栏上移 */
+  }
+
+  /* 4. 强制解除按钮动画的样式枷锁 */
+  #hamburger:not(.open) span {
+    transform: var(--land-trans, none) !important;
+    transform-origin: var(--land-origin, center) !important;
+    opacity: var(--land-op, 1) !important;
+  }
+}
+
+.mail-link { text-decoration: underline; }
+
+.p-btn.playing, .p-btn.active {
+  border-color: rgba(255, 255, 255, 0.4);
+  color: var(--white);
+}
+</style>
 
 <script>
 (function() {
+  <script>
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var colLeft = document.querySelector('#projects-overlay .col-left');
+    if (colLeft) {
+      colLeft.addEventListener('touchmove', function(e) {
+        // e.stopPropagation() 不够，加上下面这句强行阻止默认行为
+        e.cancelable && e.stopPropagation();
+      }, { passive: true });
+    }
+  });
   function runLandscapeEngine() {
     var isLandscape = window.innerHeight <= 500 && window.innerWidth > window.innerHeight;
     
