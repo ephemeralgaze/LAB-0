@@ -1065,25 +1065,27 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
   if (navHome) navHome.addEventListener("click", function(e) { e.stopPropagation(); switchPage("home", navHome); });
-  if (mAboutTrigger) mAboutTrigger.addEventListener("click", function() { switchPage("about", mAboutTrigger); });
-  if (mProjectsTrigger) {
+ if (mProjectsTrigger) {
   mProjectsTrigger.addEventListener("click", function() { 
-    // 1. 执行原有的切页逻辑
+    // 1. 先执行原有的切页逻辑，让界面显示出来
     switchPage("projects", mProjectsTrigger); 
     
-    // 2. 新增：进入页面后自动选中第一个项目并初始化（加载封面、秒数等）
-    var selectedEntry = document.querySelector(".project-entry.selected");
-    if (!selectedEntry) {
-      var firstEntry = document.querySelector(".project-entry");
-      if (firstEntry) {
-        firstEntry.classList.add("selected");
-        selectedEntry = firstEntry;
+    // 2. 延迟 100 毫秒（眨眼间），等手机端页面完全展开、DOM元素就位后再初始化数据
+    setTimeout(function() {
+      var selectedEntry = document.querySelector(".project-entry.selected");
+      if (!selectedEntry) {
+        var firstEntry = document.querySelector(".project-entry");
+        if (firstEntry) {
+          firstEntry.classList.add("selected");
+          selectedEntry = firstEntry;
+        }
       }
-    }
-    // 自动读取并执行第一个项目的更新函数（同步出 00:00 秒数和参数）
-    if (selectedEntry) {
-      updateProject(selectedEntry.getAttribute("data-project"));
-    }
+      
+      // 3. 此时界面已完全可见，调用此函数就能完美读出第一项的秒数（00:00）和视频封面
+      if (selectedEntry) {
+        updateProject(selectedEntry.getAttribute("data-project"));
+      }
+    }, 100); 
   });
 }
 
