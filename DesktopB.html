@@ -39,6 +39,7 @@
   }
 }
 
+  
 * {
   margin: 0;
   padding: 0;
@@ -483,25 +484,25 @@ body, html {
 <div class="content-grid">
   <div class="col-left">
     <div class="project-list" id="p-list">
-      <div class="project-entry selected" data-project="void">
-        <div class="project-info"><span class="project-id">[01]</span><span class="project-name">VOID</span></div>
-        <span class="status-tag">ACTIVE</span>
+      <div class="project-entry selected" data-project="V1">
+        <div class="project-info"><span class="project-id">[01]</span><span class="project-name">Stack it,Stack it,Go up</span></div>
+        <span class="status-tag">CONCERT</span>
       </div>
-      <div class="project-entry" data-project="attractor">
-        <div class="project-info"><span class="project-id">[02]</span><span class="project-name">ATTRACTOR</span></div>
-        <span class="status-tag">STANDBY</span>
+      <div class="project-entry" data-project="V2">
+        <div class="project-info"><span class="project-id">[02]</span><span class="project-name">Atoms</span></div>
+        <span class="status-tag">M/V</span>
       </div>
-      <div class="project-entry" data-project="horizon">
-        <div class="project-info"><span class="project-id">[03]</span><span class="project-name">HORIZON</span></div>
-        <span class="status-tag">STANDBY</span>
+      <div class="project-entry" data-project="V3">
+        <div class="project-info"><span class="project-id">[03]</span><span class="project-name">Pineapple slice</span></div>
+        <span class="status-tag">M/V</span>
       </div>
-      <div class="project-entry" data-project="quantum">
-        <div class="project-info"><span class="project-id">[04]</span><span class="project-name">QUANTUM</span></div>
-        <span class="status-tag">ACTIVE</span>
+      <div class="project-entry" data-project="V4">
+        <div class="project-info"><span class="project-id">[04]</span><span class="project-name">Ephemeral Gaze</span></div>
+        <span class="status-tag">CONCERT</span>
       </div>
-      <div class="project-entry" data-project="monolith">
-        <div class="project-info"><span class="project-id">[05]</span><span class="project-name">MONOLITH</span></div>
-        <span class="status-tag">STANDBY</span>
+      <div class="project-entry" data-project="V5">
+        <div class="project-info"><span class="project-id">[05]</span><span class="project-name">all i got</span></div>
+        <span class="status-tag">MUSIC</span>
       </div>
     </div>
   </div>
@@ -652,11 +653,11 @@ document.addEventListener("DOMContentLoaded", function() {
   var noSignal = document.getElementById("no-signal");
 
   var projectData = {
-    void: { video: "void.mov", pipeline: "HLSL / Compute", complexity: "12.4M Particles" },
-    attractor: { video: "", pipeline: "GLSL / Vertex", complexity: "Lorenz / 60FPS" },
-    horizon: { video: "", pipeline: "PBR / Raycast", complexity: "Dynamic SDF" },
-    quantum: { video: "", pipeline: "VFX / Compute", complexity: "Q-Field Sim" },
-    monolith: { video: "", pipeline: "Geometry Shaders", complexity: "Instanced Mesh" }
+    V1: { video: "BackitUp.mov", pipeline: "HLSL / Compute", complexity: "12.4M Particles" },
+    V2: { video: "Atmos.MOV", pipeline: "GLSL / Vertex", complexity: "Lorenz / 60FPS" },
+    V3: { video: "", pipeline: "PBR / Raycast", complexity: "Dynamic SDF" },
+    V4: { video: "", pipeline: "VFX / Compute", complexity: "Q-Field Sim" },
+    V5: { video: "", pipeline: "Geometry Shaders", complexity: "Instanced Mesh" }
   };
 
   setTimeout(function() { if (wordmark) wordmark.classList.add("assembled"); }, 1500);
