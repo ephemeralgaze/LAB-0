@@ -1480,17 +1480,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
 <script>
 (function() {
-  <script>
-
-  document.addEventListener('DOMContentLoaded', function() {
-    var colLeft = document.querySelector('#projects-overlay .col-left');
-    if (colLeft) {
-      colLeft.addEventListener('touchmove', function(e) {
-        // e.stopPropagation() 不够，加上下面这句强行阻止默认行为
-        e.cancelable && e.stopPropagation();
-      }, { passive: true });
-    }
-  });
   function runLandscapeEngine() {
     var isLandscape = window.innerHeight <= 500 && window.innerWidth > window.innerHeight;
     
