@@ -1064,34 +1064,42 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   }
 
+  // ==================== 核心导航绑定区（已修复 About） ====================
+  
+  // 1. HOME 键绑定
   if (navHome) navHome.addEventListener("click", function(e) { e.stopPropagation(); switchPage("home", navHome); });
-if (mProjectsTrigger) {
-  mProjectsTrigger.addEventListener("click", function() { 
-    // 1. 先执行你原有的切页逻辑
-    switchPage("projects", mProjectsTrigger); 
-    
-    // 2. 加一个安全的微小延时，等待页面切过去后，强行激活第一个项目
-    setTimeout(function() {
-      // 擦除所有旧的选中状态，确保干净
-      var entries = document.querySelectorAll(".project-entry");
-      entries.forEach(function(e) { e.classList.remove("selected"); });
-      
-      // 强行把第一个项目高亮
-      var firstEntry = document.querySelector(".project-entry");
-      if (firstEntry) {
-        firstEntry.classList.add("selected");
-        var pid = firstEntry.getAttribute("data-project");
-        
-        // 调用你手机端真正的媒体更新函数，加载 V1 的视频和秒数！
-        if (pid && typeof updateProjectMedia === "function") {
-          updateProjectMedia(pid);
-        }
-      }
-    }, 100);
-  });
-}
-
   if (mNavHome) mNavHome.addEventListener("click", function() { switchPage("home", mNavHome); });
+
+  // 2. 彻底复活 ABOUT 键点击
+  if (mAboutTrigger) {
+    mAboutTrigger.addEventListener("click", function() { 
+      switchPage("about", mAboutTrigger); 
+    });
+  }
+
+  // 3. 完美的 PROJECTS 视频初始化逻辑（保持你刚才调好的不变）
+  if (mProjectsTrigger) {
+    mProjectsTrigger.addEventListener("click", function() { 
+      switchPage("projects", mProjectsTrigger); 
+      
+      setTimeout(function() {
+        var entries = document.querySelectorAll(".project-entry");
+        entries.forEach(function(e) { e.classList.remove("selected"); });
+        
+        var firstEntry = document.querySelector(".project-entry");
+        if (firstEntry) {
+          firstEntry.classList.add("selected");
+          var pid = firstEntry.getAttribute("data-project");
+          
+          if (pid && typeof updateProjectMedia === "function") {
+            updateProjectMedia(pid);
+          }
+        }
+      }, 100);
+    });
+  }
+  // ======================================================================
+
 
   var projectEntries = document.querySelectorAll(".project-entry");
   projectEntries.forEach(function(entry) {
