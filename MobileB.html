@@ -758,40 +758,40 @@ body, html {
 <div class="content-grid">
   <div class="col-left" style="align-items: flex-start; justify-content: flex-start; padding: 15px;">
     <div class="project-list" id="p-list">
-      <div class="project-entry selected" data-project="void">
+      <div class="project-entry selected" data-project="V1">
         <div class="project-info">
           <span class="project-id">[01]</span>
-          <span class="project-name">VOID</span>
+          <span class="project-name">Stack it,Stack it,Go up</span>
         </div>
-        <span class="status-tag">ACTIVE</span>
+        <span class="status-tag">CONCERT</span>
       </div>
-      <div class="project-entry" data-project="attractor">
+      <div class="project-entry" data-project="V2">
         <div class="project-info">
           <span class="project-id">[02]</span>
-          <span class="project-name">ATTRACTOR</span>
+          <span class="project-name">Atmos</span>
         </div>
-        <span class="status-tag">ACTIVE</span>
+        <span class="status-tag">M/V</span>
       </div>
-      <div class="project-entry" data-project="horizon">
+      <div class="project-entry" data-project="V3">
         <div class="project-info">
           <span class="project-id">[03]</span>
-          <span class="project-name">HORIZON</span>
+          <span class="project-name">Pineapple Slice</span>
         </div>
-        <span class="status-tag">STANDBY</span>
+        <span class="status-tag">M/V</span>
       </div>
-      <div class="project-entry" data-project="quantum">
+      <div class="project-entry" data-project="V4">
         <div class="project-info">
           <span class="project-id">[04]</span>
-          <span class="project-name">QUANTUM</span>
+          <span class="project-name">Ephemeral Gaze</span>
         </div>
-        <span class="status-tag">ACTIVE</span>
+        <span class="status-tag">CONCERT</span>
       </div>
-      <div class="project-entry" data-project="chroma">
+      <div class="project-entry" data-project="V5">
         <div class="project-info">
           <span class="project-id">[05]</span>
-          <span class="project-name">CHROMA</span>
+          <span class="project-name">All I Got</span>
         </div>
-        <span class="status-tag">DRAFT</span>
+        <span class="status-tag">MUSIC</span>
       </div>
     </div>
   </div>
@@ -921,35 +921,35 @@ document.addEventListener("DOMContentLoaded", function() {
   var sStatus = document.getElementById("s-status");
 
   var projectData = {
-    void: {
-      video: "void.mov",
+    V1: {
+      video: "BackitUp.mov",
       pipeline: "HLSL / Compute",
       complexity: "12.4M Particles",
       buffers: "Structured / UAV",
       status: "STABLE"
     },
-    attractor: {
-      video: "",
+    V2: {
+      video: "Atmos.MOV",
       pipeline: "GLSL / Vertex",
       complexity: "Lorenz / 60FPS",
       buffers: "VBO / VAO",
       status: "OPTIMIZING"
     },
-    horizon: {
+    V3: {
       video: "",
       pipeline: "PBR / Raycast",
       complexity: "Dynamic SDF",
       buffers: "GBuffer / Depth",
       status: "STANDBY"
     },
-    quantum: {
+    V4: {
       video: "",
       pipeline: "VFX / Compute",
       complexity: "Q-Field Sim",
       buffers: "Atomic / SSBO",
       status: "ACTIVE"
     },
-    chroma: {
+    V5: {
       video: "",
       pipeline: "Post / Kernel",
       complexity: "Multi-Pass LUT",
