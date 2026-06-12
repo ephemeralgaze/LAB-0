@@ -655,68 +655,149 @@ body, html {
   opacity: 0.8;
 }
 
+/* ==================== ⚡ LAB-0 移动端横屏终极重构系统 ⚡ ==================== */
 @media (orientation: landscape) and (max-height: 500px) {
-  /* 1. 隐藏顶部的黑色遮罩块，释放垂直空间 */
+  /* 1. 隐藏顶部的黑色遮罩块，释放全屏垂直空间 */
   #mobile-header.active {
     opacity: 0 !important;
     visibility: hidden !important;
     pointer-events: none !important;
   }
 
-  /* 2. 空间避让核心：只要进入 Projects 页面 (.active)，Logo 自动向左平移移出屏幕 */
-  #projects-overlay.active ~ .stage #wordmark.docked {
-    transform: translate(-180%, -50%) scale(0.85); /* 强行向左拉出屏幕 */
-    opacity: 0;
-    pointer-events: none;
+  /* 2. 空间避让核心：只要进入 Projects 或 About 页面，Logo 自动向左顺滑平移出屏幕 */
+  #projects-overlay.active ~ .stage #wordmark.docked,
+  #about-overlay.active ~ .stage #wordmark.docked {
+    transform: translate(-200%, -50%) scale(0.8) !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
   }
 
-  /* 3. 汉堡按钮基座：默认在右边 30px，只要进入 Projects 页面，位置立刻向右平移，死死贴在操作边上 */
+  /* 3. 汉堡按钮基座：向右平移，死死贴在屏幕最右侧操作边缘 (12px) */
   .hamburger {
-    top: 20px;
+    top: 20px !important;
     right: 30px;
     height: 24px;
-    transition: transform 0.4s var(--ease), right 0.4s var(--ease), opacity 0.4s ease;
+    transition: transform 0.4s var(--ease), right 0.4s var(--ease), opacity 0.4s ease !important;
     z-index: 10005;
   }
-
-  /* 只要进入 Projects 页面 (.active)，汉堡按钮右移到 12px 边缘（贴着右侧操作区边上） */
-  #projects-overlay.active ~ #hamburger {
+  #projects-overlay.active ~ #hamburger,
+  #about-overlay.active ~ #hamburger {
     right: 12px !important;
   }
 
-  /* 4. 核心几何变形：只要进入 Projects 页面，三条杠直接自动退化成两根线组成的干净锐角右指向箭头 ( > ) */
-  /* 上弦：顺时针旋转 45 度，长度砍掉，旋转锚点锁在右边 */
-  #projects-overlay.active ~ #hamburger span:nth-child(1) {
-    transform: translate(3px, 2px) rotate(45deg) scaleX(0.55);
-    transform-origin: right center;
+  /* 4. 🔥【箭头方向修正（ < ）】只要面板激活，三条杠直接自动机械折叠成干净的“向左”锐角返回箭头 */
+  /* 上弦：逆时针旋转 45 度，缩短，旋转锚点锁在左侧 (left center) -> 完美折向左边内部 */
+  #projects-overlay.active ~ #hamburger span:nth-child(1),
+  #about-overlay.active ~ #hamburger span:nth-child(1) {
+    transform: translate(-3px, 3px) rotate(-45deg) scaleX(0.55) !important;
+    transform-origin: left center !important;
   }
   
-  /* 中弦：直接隐形蒸发，不占地方 */
-  #projects-overlay.active ~ #hamburger span:nth-child(2) {
-    opacity: 0;
-    transform: scaleX(0);
+  /* 中弦：直接隐形蒸发 */
+  #projects-overlay.active ~ #hamburger span:nth-child(2),
+  #about-overlay.active ~ #hamburger span:nth-child(2) {
+    opacity: 0 !important;
+    transform: scaleX(0) !important;
   }
   
-  /* 下弦：逆时针旋转 45 度，长度砍掉，旋转锚点锁在右边 */
-  #projects-overlay.active ~ #hamburger span:nth-child(3) {
-    transform: translate(3px, -2px) rotate(-45deg) scaleX(0.55);
-    transform-origin: right center;
+  /* 下弦：顺时针旋转 45 度，缩短，旋转锚点锁在左侧 (left center) -> 完美折向左边内部 */
+  #projects-overlay.active ~ #hamburger span:nth-child(3),
+  #about-overlay.active ~ #hamburger span:nth-child(3) {
+    transform: translate(-3px, -3px) rotate(45deg) scaleX(0.55) !important;
+    transform-origin: left center !important;
   }
 
-  /* 5. 保留你原本完美的横屏双栏排版布局 */
+  /* 5. PROJECTS 横屏高级布局重组 */
   #projects-overlay .content-grid {
-    grid-template-columns: 1fr 1.2fr;
-    gap: 20px;
-    padding: 60px 30px 20px;
-    align-items: start;
+    grid-template-columns: 1fr 1.2fr !important; /* 划分左右黄金比例 */
+    gap: 30px !important;
+    padding: 20px 50px 20px 20px !important; /* 右边留足 50px 给返回箭头和操作空隙 */
+    height: 100vh !important;
+    align-items: center !important;
+    box-sizing: border-box !important;
   }
 
+  /* 🔥【左侧列表】变身独立高档滑动仓，且引入 100% 干净的单独翻页捕捉（Scroll Snap） */
   #projects-overlay .col-left {
-    border-bottom: none;
-    border-right: 1px solid rgba(255, 255, 255, 0.05);
-    padding-bottom: 0;
-    padding-right: 20px;
+    height: 80vh !important;
+    overflow-y: auto !important;
+    border-bottom: none !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
+    padding-bottom: 0 !important;
+    padding-right: 15px !important;
+    scrollbar-width: none !important; /* 彻底隐藏恶心的滚动条 */
+    
+    /* 核心滚动捕捉物理属性 */
+    scroll-snap-type: y mandatory !important;
+    scroll-behavior: smooth !important;
+    
+    /* 高级细节：用 CSS Mask 动态切出上下边缘的模糊淡出遮罩（游戏 UI 标准） */
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%) !important;
+    mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%) !important;
   }
+  #projects-overlay .col-left::-webkit-scrollbar { display: none !important; }
+
+  /* 给列表里的每一个项目卡片绑定翻页对齐锚点 */
+  #projects-overlay .project-entry {
+    scroll-snap-align: center !important; /* 保证每次滑动刚好居中对齐 */
+    scroll-snap-stop: always !important;  /* 每次只允许精准翻一页，绝不脱手乱飞 */
+    margin-bottom: 8px !important;
+    width: 100% !important;
+  }
+
+  /* 🔥【右侧容器】强行撑开宽度，绝对阻止视频尺寸坍缩 */
+  #projects-overlay .col-right {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    height: 80vh !important;
+    width: 100% !important; /* 锁死满宽 */
+  }
+
+  /* 极简视频块：横屏下在右侧完美居中显现 */
+  #projects-overlay .video-container {
+    width: 100% !important;
+    height: 52vh !important; /* 极其舒适的横屏高度占比 */
+    background: #000 !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    display: block !important;
+  }
+  #projects-overlay #p-video {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important; /* 确保特效视频比例完美，不被拉伸变形 */
+  }
+
+  /* 🚫 核心要求：右侧底部的参数面板（spec-panel）和多余调试数据在横屏下瞬间蒸发，不占空间 */
+  #projects-overlay .spec-panel {
+    display: block !important; /* 这里要让容器保持，但里面的参数细节隐蔽 */
+  }
+  #projects-overlay .spec-details {
+    display: none !important; /* 直接隐藏硬核参数 */
+  }
+  #projects-overlay .playback-bar {
+    width: 100% !important;
+    padding: 4px 0 !important;
+    margin-top: 5px !important;
+  }
+
+  /* 6. ABOUT 横屏终极独立重构（双栏舒展版） */
+  #about-overlay .content-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 40px !important;
+    padding: 20px 50px 20px 20px !important;
+    height: 100vh !important;
+    align-items: center !important;
+  }
+  #about-overlay .col-left {
+    border-bottom: none !important;
+    padding-bottom: 0 !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
+    padding-right: 20px !important;
+  }
+}
+
   @media (dynamic-range: high) or (color-gamut: p3) {
     #projects-overlay .col-left { border-right: 1px solid color(display-p3 1 1 1 / 0.05); }
   }
