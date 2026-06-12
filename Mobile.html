@@ -655,8 +655,6 @@ body, html {
   opacity: 0.8;
 }
 
-/* ==================== 终极横屏适配与汉堡按钮变箭头 ==================== */
-
 @media (orientation: landscape) and (max-height: 500px) {
   /* 1. 隐藏顶部的黑色遮罩块，释放垂直空间 */
   #mobile-header.active {
@@ -665,42 +663,42 @@ body, html {
     pointer-events: none !important;
   }
 
-  /* 2. 核心避让：当导航菜单打开时 (.open)，让 LAB-手机图标 顺滑地向左平移移出屏幕 */
-  #mobile-nav.open ~ .stage #wordmark.docked {
+  /* 2. 空间避让核心：只要进入 Projects 页面 (.active)，Logo 自动向左平移移出屏幕 */
+  #projects-overlay.active ~ .stage #wordmark.docked {
     transform: translate(-180%, -50%) scale(0.85); /* 强行向左拉出屏幕 */
     opacity: 0;
     pointer-events: none;
   }
 
-  /* 3. 汉堡按钮基座：默认在右边 30px，当菜单打开时，不仅变形，还要向右平移死死贴在操作边上 */
+  /* 3. 汉堡按钮基座：默认在右边 30px，只要进入 Projects 页面，位置立刻向右平移，死死贴在操作边上 */
   .hamburger {
     top: 20px;
     right: 30px;
     height: 24px;
     transition: transform 0.4s var(--ease), right 0.4s var(--ease), opacity 0.4s ease;
-    z-index: 10005; /* 确保在最上层可以被点击 */
+    z-index: 10005;
   }
 
-  /* 当菜单打开时，汉堡按钮右移到 12px 边缘（贴着右侧操作区边上） */
-  .hamburger.open {
+  /* 只要进入 Projects 页面 (.active)，汉堡按钮右移到 12px 边缘（贴着右侧操作区边上） */
+  #projects-overlay.active ~ #hamburger {
     right: 12px !important;
   }
 
-  /* 4. 核心几何变形：三条杠直接退化成两根线组成的干净锐角右指向箭头 ( > ) */
+  /* 4. 核心几何变形：只要进入 Projects 页面，三条杠直接自动退化成两根线组成的干净锐角右指向箭头 ( > ) */
   /* 上弦：顺时针旋转 45 度，长度砍掉，旋转锚点锁在右边 */
-  .hamburger.open span:nth-child(1) {
+  #projects-overlay.active ~ #hamburger span:nth-child(1) {
     transform: translate(3px, 2px) rotate(45deg) scaleX(0.55);
     transform-origin: right center;
   }
   
   /* 中弦：直接隐形蒸发，不占地方 */
-  .hamburger.open span:nth-child(2) {
+  #projects-overlay.active ~ #hamburger span:nth-child(2) {
     opacity: 0;
     transform: scaleX(0);
   }
   
   /* 下弦：逆时针旋转 45 度，长度砍掉，旋转锚点锁在右边 */
-  .hamburger.open span:nth-child(3) {
+  #projects-overlay.active ~ #hamburger span:nth-child(3) {
     transform: translate(3px, -2px) rotate(-45deg) scaleX(0.55);
     transform-origin: right center;
   }
