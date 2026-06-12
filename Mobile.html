@@ -342,15 +342,23 @@ body, html {
 .col-left {
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
   gap: 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  padding-bottom: 30px;
+  
+  /* ⚡ 添加这 4 行核心 CSS，锁死滚动区域 */
+  height: 80vh;              /* 限制高度，使其成为一个独立滚动区 */
+  overflow-y: auto;          /* 开启垂直滚动 */
+  -webkit-overflow-scrolling: touch; /* 保证 iOS 端的丝滑惯性 */
+  overscroll-behavior-y: contain;    /* 关键：阻止滚动冒泡到 Body */
+  
+  /* 隐藏滚动条（根据需要保留） */
+  scrollbar-width: none;
 }
-@media (dynamic-range: high) or (color-gamut: p3) {
-  .col-left { border-bottom: 1px solid color(display-p3 1 1 1 / 0.05); }
+
+.col-left::-webkit-scrollbar {
+  display: none;
 }
+
 
 .avatar {
   width: 120px;
