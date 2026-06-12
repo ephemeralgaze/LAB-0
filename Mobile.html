@@ -725,11 +725,7 @@ body, html {
     border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
     padding: 10px 15px 10px 0 !important;
     scrollbar-width: none !important; /* 彻底隐藏滚动条 */
-    touch-action: pan-y !important; 
-    overscroll-behavior-y: contain !important; /* 防止列表滚动到底后带动全屏滚动 */
-    -webkit-overflow-scrolling: touch !important; /* 保证 iOS 端的惯性滚动顺滑 */
-  }
-
+    
     /* 开启高精度垂直滚动捕捉 */
     scroll-snap-type: y mandatory !important;
     scroll-behavior: smooth !important;
@@ -955,7 +951,7 @@ body, html {
       <div class="project-entry" data-project="V4">
         <div class="project-info">
           <span class="project-id">[04]</span>
-          <span class="project-name">Deja Vu</span>
+          <span class="project-name">Ephemeral Gaze</span>
         </div>
         <span class="status-tag">CONCERT</span>
       </div>
@@ -1130,14 +1126,14 @@ document.addEventListener("DOMContentLoaded", function() {
       status: "ACTIVE"
     },
     V5: {
-      video: "AllIGot.MOV",
+      video: "AllIGot.mov",
       pipeline: "Post / Kernel",
       complexity: "Multi-Pass LUT",
       buffers: "Ping-Pong / FBO",
       status: "DRAFT"
     },
     V6: {
-      video: "Crazy.MOV",
+      video: "Crazy.mov",
       pipeline: "Post / Kernel",
       complexity: "Multi-Pass LUT",
       buffers: "Ping-Pong / FBO",
