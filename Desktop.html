@@ -568,6 +568,10 @@ body, html {
           <div class="project-info"><span class="project-id">[05]</span><span class="project-name">all i got</span></div>
           <span class="status-tag">MUSIC</span>
         </div>
+        <div class="project-entry" data-project="V6">
+          <div class="project-info"><span class="project-id">[06]</span><span class="project-name">Crazy</span></div>
+          <span class="status-tag">Stage</span>
+        </div>
       </div>
     </div>
     <div class="col-right">
@@ -660,18 +664,20 @@ window.videoLoader = {
   fallbackSources1: {
     V1: "./BackitUp.mov",
     V2: "./Atmos.MOV",
-    V3: "",
-    V4: "",
-    V5: ""
+    V3: "./PineappleSlice.MOV",
+    V4: "./DejaVu.MOV",
+    V5: "./AllIGot.MOV",
+    V6: "./Crazy.MOV"
   },
   
   // 备用源 2：assets 目录
   fallbackSources2: {
     V1: "./assets/videos/BackitUp.mov",
     V2: "./assets/videos/Atmos.mov",
-    V3: "",
-    V4: "",
-    V5: ""
+    V3: "./assets/videos/PineappleSlice.MOV",
+    V4: "./assets/videos/DejaVu.MOV",
+    V5: "./assets/videos/AllIGot.MOV",
+    V6: "./assets/videos/Crazy.MOV"
   },
   
   loadVideo: function(projectId, primarySrc, fallback1Src, fallback2Src) {
@@ -822,9 +828,10 @@ document.addEventListener("DOMContentLoaded", function() {
   var projectData = {
     V1: { video: "BackitUp.mov", pipeline: "HLSL / Compute", complexity: "12.4M Particles" },
     V2: { video: "Atmos.MOV", pipeline: "GLSL / Vertex", complexity: "Lorenz / 60FPS" },
-    V3: { video: "", pipeline: "PBR / Raycast", complexity: "Dynamic SDF" },
-    V4: { video: "", pipeline: "VFX / Compute", complexity: "Q-Field Sim" },
-    V5: { video: "", pipeline: "Geometry Shaders", complexity: "Instanced Mesh" }
+    V3: { video: "PineappleSlice.MOV", pipeline: "PBR / Raycast", complexity: "Dynamic SDF" },
+    V4: { video: "DejaVu.MOV", pipeline: "VFX / Compute", complexity: "Q-Field Sim" },
+    V5: { video: "AllIGot.MOV", pipeline: "Geometry Shaders", complexity: "Instanced Mesh" },
+    V6: { video: "Crazy.MOV", pipeline: "Geometry Shaders", complexity: "Instanced Mesh" }
   };
 
   // 动画序列
