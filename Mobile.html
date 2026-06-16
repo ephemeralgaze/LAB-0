@@ -335,10 +335,10 @@ body, html {
 
 .content-grid {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
   width: 100%;
-  padding: 114px 30px 60px;
+  padding: 114px 20px 60px;
   pointer-events: auto;
 }
 
@@ -348,6 +348,8 @@ body, html {
   align-items: center;
   justify-content: center;
   gap: 20px;
+  width: 100%;
+  margin-bottom: 40px;
 }
 
 .avatar {
@@ -357,12 +359,6 @@ body, html {
   border: 1px solid #ffffff;
   padding: 0;
   background: #000000;
-}
-@media (dynamic-range: high) or (color-gamut: p3) {
-  .avatar {
-    border: 1px solid #ffffff;
-    background: #000000;
-  }
 }
 
 .avatar img {
@@ -377,61 +373,48 @@ body, html {
   font-size: 1.1rem;
   letter-spacing: 0.3em;
   color: var(--white);
-  text-transform: lowercase;
+  text-transform: uppercase;
 }
 
 .col-right {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 8px;
+  width: 100%;
+  gap: 0;
   font-family: var(--font-mono);
 }
 
 .info-item {
   display: flex;
+  flex-direction: column;
   align-items: flex-start;
-  gap: 15px;
+  gap: 8px;
   color: #ffffff;
-  font-size: 0.75rem;
-  letter-spacing: 0.1em;
-  padding: 10px 0;
+  padding: 20px 0;
   border-bottom: 1px solid #ffffff;
 }
-@media (dynamic-range: high) or (color-gamut: p3) {
-  .info-item {
-    color: #ffffff;
-    border-bottom: 1px solid #ffffff;
-  }
-}
 
-.info-icon {
-  width: 16px;
-  height: 16px;
-  opacity: 0.8;
-  flex-shrink: 0;
+.info-item:first-child {
+  border-top: 1px solid #ffffff;
 }
 
 .info-label {
-  width: 80px;
   font-size: 0.55rem;
-  color: #ffffff;
+  color: rgba(255, 255, 255, 0.6);
   text-transform: uppercase;
-}
-@media (dynamic-range: high) or (color-gamut: p3) {
-  .info-label { color: #ffffff; }
+  letter-spacing: 0.2em;
 }
 
 .info-value {
   color: var(--white);
   text-transform: uppercase;
-  text-align: right;
-  flex: 1;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
 }
 
 .mail-link {
   color: var(--white);
-  text-decoration: none;
+  text-decoration: underline;
   word-break: break-all;
   transition: opacity 0.3s ease;
 }
@@ -501,6 +484,7 @@ body, html {
 
  
   #about-overlay .content-grid {
+    display: grid !important;
     grid-template-columns: 1fr 1fr !important;
     gap: 40px !important;
     padding: 20px 55px 20px 20px !important;
@@ -510,6 +494,7 @@ body, html {
   #about-overlay .col-left {
     border-bottom: none !important;
     padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
     border-right: 1px solid #ffffff !important;
     padding-right: 20px !important;
   }
@@ -517,9 +502,10 @@ body, html {
     width: 100px !important;
     height: 100px !important;
   }
+  #about-overlay .col-right .info-item:first-child {
+    border-top: none !important;
+  }
 }
-
-.mail-link { text-decoration: underline; }
 </style>
     <link rel="icon" type="image/png" href="assets/LAB-0.png?v=20260612">
     <link rel="apple-touch-icon" href="LAB-0.png?v=20260612">
@@ -570,25 +556,14 @@ body, html {
   </div>
   <div class="col-right">
     <div class="info-item">
-      <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-        <path d="M22 10v6M2 10v6M12 4L2 10l10 6 10-6-10-6zM12 18v-6" />
-      </svg>
       <span class="info-label">Education</span>
       <span class="info-value">College Degree / JLTC</span>
     </div>
     <div class="info-item">
-      <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-        <circle cx="12" cy="12" r="10" />
-        <polyline points="12 6 12 12 16 14" />
-      </svg>
       <span class="info-label">Status</span>
       <span class="info-value">Age 21 / BORN 2004</span>
     </div>
     <div class="info-item">
-      <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-        <polyline points="22,6 12,13 2,6" />
-      </svg>
       <span class="info-label">Contact</span>
       <span class="info-value" style="text-transform: none; overflow-wrap: anywhere; white-space: normal;"><a href="mailto:zgnx4ndcq5@privaterelay.appleid.com" class="mail-link">zgnx4ndcq5@privaterelay.appleid.com</a></span>
     </div>
