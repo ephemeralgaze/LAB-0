@@ -442,128 +442,6 @@ body, html {
   gap: 15px;
 }
 
-.no-signal-overlay {
-  position: absolute;
-  inset: 0;
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 5;
-  background: rgba(5, 5, 5, 0.9);
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.6);
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  pointer-events: none;
-}
-@media (dynamic-range: high) or (color-gamut: p3) {
-  .no-signal-overlay { color: color(display-p3 1 1 1 / 0.6); }
-}
-.no-signal-overlay.active { display: flex; }
-.no-signal-box {
-  padding: 15px 30px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
-.blink-text { animation: signal-blink 1.5s steps(1) infinite; }
-@keyframes signal-blink { 
-  0%, 100% { opacity: 1; } 
-  50% { opacity: 0; } 
-}
-
-.video-container {
-  width: 100%;
-  aspect-ratio: 16/9;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  position: relative; overflow: hidden;
-  background: #050505;
-  z-index: 10;
-  isolation: isolate;
-}
-@media (dynamic-range: high) or (color-gamut: p3) {
-  .video-container { border: 1px solid color(display-p3 1 1 1 / 0.1); }
-}
-
-.video-container video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  pointer-events: none;
-}
-@media (dynamic-range: high) or (color-gamut: p3) {
-  .video-container video {
-    filter: none !important;
-    background: transparent !important;
-  }
-}
-
-.playback-bar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  padding: 8px 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-@media (dynamic-range: high) or (color-gamut: p3) {
-  .playback-bar {
-    border-top: 1px solid color(display-p3 1 1 1 / 0.05);
-    border-bottom: 1px solid color(display-p3 1 1 1 / 0.05);
-  }
-}
-
-.p-btn {
-  background: none;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.5);
-  font-family: var(--font-mono);
-  font-size: 0.45rem;
-  padding: 6px 4px;
-  cursor: pointer;
-  transition: all 0.3s var(--ease);
-  letter-spacing: 0.05em;
-  border-radius: 0;
-  min-width: 34px;
-}
-@media (dynamic-range: high) or (color-gamut: p3) {
-  .p-btn {
-    border: 1px solid color(display-p3 1 1 1 / 0.1);
-    color: color(display-p3 1 1 1 / 0.5);
-  }
-}
-
-.p-btn:hover {
-  border-color: rgba(255, 255, 255, 0.4);
-  color: var(--white);
-}
-
-.p-btn.play-pause {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  min-width: 34px;
-}
-
-.play-pause svg {
-  width: 14px;
-  height: 14px;
-  fill: currentColor;
-  transition: transform 0.4s var(--ease);
-}
-
-.play-pause .pause-icon { display: none; }
-.play-pause.playing .play-icon { display: none; }
-.play-pause.playing .pause-icon { display: block; }
-
 .spec-details {
   display: grid;
   grid-template-columns: 80px 1fr;
@@ -651,17 +529,8 @@ body, html {
     #projects-overlay .col-left { border-right: 1px solid color(display-p3 1 1 1 / 0.05); }
   }
 
-  #projects-overlay .video-container {
-    max-height: 40vh;
-    background: #000;
-  }
-
   #projects-overlay .spec-panel {
     gap: 8px;
-  }
-
-  #projects-overlay .playback-bar {
-    padding: 4px 0;
   }
 
   #projects-overlay .spec-details {
@@ -670,11 +539,6 @@ body, html {
   }
 }
 .mail-link { text-decoration: underline; }
-
-.p-btn.playing, .p-btn.active {
-  border-color: rgba(255, 255, 255, 0.4);
-  color: var(--white);
-}
 </style>
     <link rel="icon" type="image/png" href="assets/LAB-0.png?v=20260612">
     <link rel="apple-touch-icon" href="LAB-0.png?v=20260612">
@@ -768,7 +632,7 @@ body, html {
       <div class="project-entry" data-project="V2">
         <div class="project-info">
           <span class="project-id">[02]</span>
-          <span class="project-name">Atmos</span>
+          <span class="project-name">Atoms</span>
         </div>
         <span class="status-tag">M/V</span>
       </div>
@@ -797,42 +661,9 @@ body, html {
   </div>
   <div class="col-right">
     <div class="spec-panel">
-      <div class="video-container" id="v-container">
-        <video id="p-video" playsinline muted loop></video>
-        <div class="no-signal-overlay" id="no-signal">
-          <div class="no-signal-box">
-            <span class="blink-text">[ NO SIGNAL ]</span>
-            <span style="font-size: 0.6rem; opacity: 0.5;">WAITING FOR DATA...</span>
-          </div>
-        </div>
-      </div>
-      
-      <div style="display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 0;">
-        <div id="current-time" style="font-family: 'Space Mono', monospace; font-size: 0.6rem; color: #ffffff; width: 35px;">--:--</div>
-        <div style="flex-grow: 1; height: 1px; background: rgba(255,255,255,0.1); position: relative;">
-          <div id="p-progress" style="position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: #ffffff;"></div>
-        </div>
-        <div id="duration-time" style="font-family: 'Space Mono', monospace; font-size: 0.6rem; color: #ffffff; width: 35px; text-align: right;">--:--</div>
-      </div>
-
-      <div class="playback-bar" id="playback-bar">
-        <button class="p-btn" id="p-volume-toggle">VOL</button>
-        <button class="p-btn" id="p-back-1s">-1S</button>
-        <button class="p-btn" id="p-back-1f">-1F</button>
-        <button class="p-btn play-pause" id="play-pause">
-          <svg class="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-          <svg class="pause-icon" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-        </button>
-        <button class="p-btn" id="p-fwd-1f">+1F</button>
-        <button class="p-btn" id="p-fwd-1s">+1S</button>
-        <button class="p-btn" id="p-fs-toggle">FS</button>
-      </div>
-
       <div class="spec-details" id="p-specs">
         <span class="spec-label">Pipeline:</span><span class="spec-value" id="s-pipeline">---</span>
         <span class="spec-label">Complexity:</span><span class="spec-value" id="s-complexity">---</span>
-        <span class="spec-label">Buffers:</span><span class="spec-value" id="s-buffers">---</span>
-        <span class="spec-label">Status:</span><span class="spec-value" id="s-status">---</span>
       </div>
     </div>
   </div>
@@ -908,87 +739,38 @@ document.addEventListener("DOMContentLoaded", function() {
   var mAboutTrigger = document.getElementById("m-about-trigger");
   var mobileHeader = document.getElementById("mobile-header");
 
-  var pVideo = document.getElementById("p-video");
-  var noSignal = document.getElementById("no-signal");
-  var playBtn = document.getElementById("play-pause");
-  var curTimeTxt = document.getElementById("current-time");
-  var durTimeTxt = document.getElementById("duration-time");
-  var pProgress = document.getElementById("p-progress");
-  
   var sPipeline = document.getElementById("s-pipeline");
   var sComplexity = document.getElementById("s-complexity");
-  var sBuffers = document.getElementById("s-buffers");
-  var sStatus = document.getElementById("s-status");
 
   var projectData = {
     V1: {
-      video: "BackitUp.mov",
       pipeline: "HLSL / Compute",
-      complexity: "12.4M Particles",
-      buffers: "Structured / UAV",
-      status: "STABLE"
+      complexity: "12.4M Particles"
     },
     V2: {
-      video: "Atmos.MOV",
       pipeline: "GLSL / Vertex",
-      complexity: "Lorenz / 60FPS",
-      buffers: "VBO / VAO",
-      status: "OPTIMIZING"
+      complexity: "Lorenz / 60FPS"
     },
     V3: {
-      video: "",
       pipeline: "PBR / Raycast",
-      complexity: "Dynamic SDF",
-      buffers: "GBuffer / Depth",
-      status: "STANDBY"
+      complexity: "Dynamic SDF"
     },
     V4: {
-      video: "",
       pipeline: "VFX / Compute",
-      complexity: "Q-Field Sim",
-      buffers: "Atomic / SSBO",
-      status: "ACTIVE"
+      complexity: "Q-Field Sim"
     },
     V5: {
-      video: "",
       pipeline: "Post / Kernel",
-      complexity: "Multi-Pass LUT",
-      buffers: "Ping-Pong / FBO",
-      status: "DRAFT"
+      complexity: "Multi-Pass LUT"
     }
   };
-
-  function formatTime(s) {
-    var m = Math.floor(s / 60);
-    var sec = Math.floor(s % 60);
-    return (m < 10 ? "0" + m : m) + ":" + (sec < 10 ? "0" + sec : sec);
-  }
 
   var updateProjectMedia = function(projectId) {
     var data = projectData[projectId];
     if (!data) return;
     
-    if (pVideo && noSignal) {
-      pVideo.pause();
-      if (pProgress) pProgress.style.width = "0%";
-      if (data.video && data.video !== "") {
-        if (curTimeTxt) curTimeTxt.innerText = "00:00";
-        if (durTimeTxt) durTimeTxt.innerText = "00:00";
-        noSignal.classList.remove("active");
-        pVideo.src = data.video + "#t=0.001";
-        pVideo.load();
-      } else {
-        if (curTimeTxt) curTimeTxt.innerText = "--:--";
-        if (durTimeTxt) durTimeTxt.innerText = "--:--";
-        pVideo.src = "";
-        noSignal.classList.add("active");
-      }
-    }
-    
     if (sPipeline) sPipeline.innerText = data.pipeline;
     if (sComplexity) sComplexity.innerText = data.complexity;
-    if (sBuffers) sBuffers.innerText = data.buffers;
-    if (sStatus) sStatus.innerText = data.status;
   };
 
   setTimeout(function() { 
@@ -1017,7 +799,6 @@ document.addEventListener("DOMContentLoaded", function() {
   setActiveNav(navHome);
 
   var switchPage = function(pageId, triggerEl) {
-    if (pageId !== "projects") { if (pVideo) pVideo.pause(); }
     setActiveNav(triggerEl);
     if (aboutOverlay) aboutOverlay.classList.remove("active");
     if (projectsOverlay) projectsOverlay.classList.remove("active");
@@ -1029,7 +810,6 @@ document.addEventListener("DOMContentLoaded", function() {
     } else if (pageId === "projects") {
       if (projectsOverlay) projectsOverlay.classList.add("active");
       if (mobileHeader) mobileHeader.classList.add("active");
-      updateProjectMedia("void");
     }
     if (hamburger) hamburger.classList.remove("open");
     if (mobileNav) mobileNav.classList.remove("open");
@@ -1055,65 +835,6 @@ document.addEventListener("DOMContentLoaded", function() {
       var pid = entry.getAttribute("data-project");
       updateProjectMedia(pid);
     });
-  });
-  if (pVideo && noSignal) {
-    pVideo.onerror = function() {
-      noSignal.classList.add("active");
-    };
-  }
-
-  if (playBtn && pVideo) {
-    playBtn.addEventListener("click", function() {
-      if (pVideo.paused) {
-        pVideo.play();
-      } else {
-        pVideo.pause();
-      }
-    });
-
-    pVideo.addEventListener("play", function() { if (playBtn) playBtn.classList.add("playing"); });
-    pVideo.addEventListener("pause", function() { if (playBtn) playBtn.classList.remove("playing"); });
-    pVideo.addEventListener("timeupdate", function() {
-      if (curTimeTxt && !isNaN(pVideo.duration) && pVideo.duration > 0) {
-        curTimeTxt.innerText = formatTime(pVideo.currentTime);
-        if (pProgress) {
-          var v = (pVideo.currentTime / pVideo.duration) * 100;
-          pProgress.style.width = v + "%";
-        }
-      }
-    });
-    pVideo.addEventListener("loadedmetadata", function() {
-      if (durTimeTxt) durTimeTxt.innerText = formatTime(pVideo.duration);
-    });
-    pVideo.addEventListener("webkitendfullscreen", function() {
-      pVideo.pause();
-      if (playBtn) playBtn.classList.remove("playing");
-    });
-  }
-
-  var FPS = 30;
-  var syncPause = function() { if (pVideo && !pVideo.paused) { pVideo.pause(); if (playBtn) playBtn.classList.remove("playing"); } };
-  var volBtn = document.getElementById("p-volume-toggle");
-  var updateVolUI = function() {
-    if (volBtn && pVideo) {
-      if (!pVideo.muted) { volBtn.classList.add("active"); }
-      else { volBtn.classList.remove("active"); }
-    }
-  };
-  if (volBtn) {
-    volBtn.addEventListener("click", function() { 
-      pVideo.muted = !pVideo.muted; 
-      updateVolUI();
-    });
-  }
-  updateVolUI();
-  document.getElementById("p-back-1s").addEventListener("click", function() { syncPause(); pVideo.currentTime -= 1; });
-  document.getElementById("p-back-1f").addEventListener("click", function() { syncPause(); pVideo.currentTime -= (1/FPS); });
-  document.getElementById("p-fwd-1f").addEventListener("click", function() { syncPause(); pVideo.currentTime += (1/FPS); });
-  document.getElementById("p-fwd-1s").addEventListener("click", function() { syncPause(); pVideo.currentTime += 1; });
-  document.getElementById("p-fs-toggle").addEventListener("click", function() {
-    if (pVideo.requestFullscreen) { pVideo.requestFullscreen(); }
-    else if (pVideo.webkitEnterFullscreen) { pVideo.webkitEnterFullscreen(); }
   });
 });
 </script>

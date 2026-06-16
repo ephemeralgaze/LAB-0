@@ -467,128 +467,6 @@ body, html {
   gap: 15px;
 }
 
-.no-signal-overlay {
-  position: absolute;
-  inset: 0;
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 5;
-  background: rgba(5, 5, 5, 0.9);
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.6);
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  pointer-events: none;
-}
-@media (dynamic-range: high) or (color-gamut: p3) {
-  .no-signal-overlay { color: color(display-p3 1 1 1 / 0.6); }
-}
-.no-signal-overlay.active { display: flex; }
-.no-signal-box {
-  padding: 15px 30px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
-.blink-text { animation: signal-blink 1.5s steps(1) infinite; }
-@keyframes signal-blink { 
-  0%, 100% { opacity: 1; } 
-  50% { opacity: 0; } 
-}
-
-.video-container {
-  width: 100%;
-  aspect-ratio: 16/9;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  position: relative; overflow: hidden;
-  background: #050505;
-  z-index: 10;
-  isolation: isolate;
-}
-@media (dynamic-range: high) or (color-gamut: p3) {
-  .video-container { border: 1px solid color(display-p3 1 1 1 / 0.1); }
-}
-
-.video-container video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  pointer-events: none;
-}
-@media (dynamic-range: high) or (color-gamut: p3) {
-  .video-container video {
-    filter: none !important;
-    background: transparent !important;
-  }
-}
-
-.playback-bar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  padding: 8px 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-@media (dynamic-range: high) or (color-gamut: p3) {
-  .playback-bar {
-    border-top: 1px solid color(display-p3 1 1 1 / 0.05);
-    border-bottom: 1px solid color(display-p3 1 1 1 / 0.05);
-  }
-}
-
-.p-btn {
-  background: none;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.5);
-  font-family: var(--font-mono);
-  font-size: 0.45rem;
-  padding: 6px 4px;
-  cursor: pointer;
-  transition: all 0.3s var(--ease);
-  letter-spacing: 0.05em;
-  border-radius: 0;
-  min-width: 34px;
-}
-@media (dynamic-range: high) or (color-gamut: p3) {
-  .p-btn {
-    border: 1px solid color(display-p3 1 1 1 / 0.1);
-    color: color(display-p3 1 1 1 / 0.5);
-  }
-}
-
-.p-btn:hover {
-  border-color: rgba(255, 255, 255, 0.4);
-  color: var(--white);
-}
-
-.p-btn.play-pause {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  min-width: 34px;
-}
-
-.play-pause svg {
-  width: 14px;
-  height: 14px;
-  fill: currentColor;
-  transition: transform 0.4s var(--ease);
-}
-
-.play-pause .pause-icon { display: none; }
-.play-pause.playing .play-icon { display: none; }
-.play-pause.playing .pause-icon { display: block; }
-
 .spec-details {
   display: grid;
   grid-template-columns: 80px 1fr;
@@ -777,27 +655,6 @@ body, html {
     display: none !important; 
   }
 
-
-  #projects-overlay .video-container {
-    width: 100% !important;
-    height: 52vh !important; 
-    background: #000 !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    display: block !important;
-  }
-  #projects-overlay #p-video {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: contain !important; 
-  }
-
- 
-  #projects-overlay .playback-bar {
-    width: 100% !important;
-    padding: 4px 0 !important;
-    margin-top: 8px !important;
-  }
-
  
   #about-overlay .content-grid {
     grid-template-columns: 1fr 1fr !important;
@@ -812,6 +669,10 @@ body, html {
     border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
     padding-right: 20px !important;
   }
+  #about-overlay .avatar {
+    width: 100px !important;
+    height: 100px !important;
+  }
 }
 
 
@@ -819,17 +680,8 @@ body, html {
     #projects-overlay .col-left { border-right: 1px solid color(display-p3 1 1 1 / 0.05); }
   }
 
-  #projects-overlay .video-container {
-    max-height: 40vh;
-    background: #000;
-  }
-
   #projects-overlay .spec-panel {
     gap: 8px;
-  }
-
-  #projects-overlay .playback-bar {
-    padding: 4px 0;
   }
 
   #projects-overlay .spec-details {
@@ -839,11 +691,6 @@ body, html {
 }
 
 .mail-link { text-decoration: underline; }
-
-.p-btn.playing, .p-btn.active {
-  border-color: rgba(255, 255, 255, 0.4);
-  color: var(--white);
-}
 </style>
     <link rel="icon" type="image/png" href="assets/LAB-0.png?v=20260612">
     <link rel="apple-touch-icon" href="LAB-0.png?v=20260612">
@@ -973,42 +820,9 @@ body, html {
   </div>
   <div class="col-right">
     <div class="spec-panel">
-      <div class="video-container" id="v-container">
-        <video id="p-video" playsinline muted loop></video>
-        <div class="no-signal-overlay" id="no-signal">
-          <div class="no-signal-box">
-            <span class="blink-text">[ NO SIGNAL ]</span>
-            <span style="font-size: 0.6rem; opacity: 0.5;">WAITING FOR DATA...</span>
-          </div>
-        </div>
-      </div>
-      
-      <div style="display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 0;">
-        <div id="current-time" style="font-family: 'Space Mono', monospace; font-size: 0.6rem; color: #ffffff; width: 35px;">--:--</div>
-        <div style="flex-grow: 1; height: 1px; background: rgba(255,255,255,0.1); position: relative;">
-          <div id="p-progress" style="position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: #ffffff;"></div>
-        </div>
-        <div id="duration-time" style="font-family: 'Space Mono', monospace; font-size: 0.6rem; color: #ffffff; width: 35px; text-align: right;">--:--</div>
-      </div>
-
-      <div class="playback-bar" id="playback-bar">
-        <button class="p-btn" id="p-volume-toggle">VOL</button>
-        <button class="p-btn" id="p-back-1s">-1S</button>
-        <button class="p-btn" id="p-back-1f">-1F</button>
-        <button class="p-btn play-pause" id="play-pause">
-          <svg class="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-          <svg class="pause-icon" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-        </button>
-        <button class="p-btn" id="p-fwd-1f">+1F</button>
-        <button class="p-btn" id="p-fwd-1s">+1S</button>
-        <button class="p-btn" id="p-fs-toggle">FS</button>
-      </div>
-
       <div class="spec-details" id="p-specs">
         <span class="spec-label">Pipeline:</span><span class="spec-value" id="s-pipeline">---</span>
         <span class="spec-label">Complexity:</span><span class="spec-value" id="s-complexity">---</span>
-        <span class="spec-label">Buffers:</span><span class="spec-value" id="s-buffers">---</span>
-        <span class="spec-label">Status:</span><span class="spec-value" id="s-status">---</span>
       </div>
     </div>
   </div>
@@ -1084,96 +898,42 @@ document.addEventListener("DOMContentLoaded", function() {
   var mAboutTrigger = document.getElementById("m-about-trigger");
   var mobileHeader = document.getElementById("mobile-header");
 
-  var pVideo = document.getElementById("p-video");
-  var noSignal = document.getElementById("no-signal");
-  var playBtn = document.getElementById("play-pause");
-  var curTimeTxt = document.getElementById("current-time");
-  var durTimeTxt = document.getElementById("duration-time");
-  var pProgress = document.getElementById("p-progress");
-  
   var sPipeline = document.getElementById("s-pipeline");
   var sComplexity = document.getElementById("s-complexity");
-  var sBuffers = document.getElementById("s-buffers");
-  var sStatus = document.getElementById("s-status");
-  
-/*Projects内显示*/
   
   var projectData = {
     V1: {
-      video: "BackitUp.mov",
       pipeline: "HLSL / Compute",
-      complexity: "12.4M Particles",
-      buffers: "Structured / UAV",
-      status: "STABLE"
+      complexity: "12.4M Particles"
     },
     V2: {
-      video: "Atmos.MOV",
       pipeline: "GLSL / Vertex",
-      complexity: "Lorenz / 60FPS",
-      buffers: "VBO / VAO",
-      status: "OPTIMIZING"
+      complexity: "Lorenz / 60FPS"
     },
     V3: {
-      video: "PineappleSlice.mov",
       pipeline: "PBR / Raycast",
-      complexity: "Dynamic SDF",
-      buffers: "GBuffer / Depth",
-      status: "STANDBY"
+      complexity: "Dynamic SDF"
     },
     V4: {
-      video: "DejaVu.mov",
       pipeline: "VFX / Compute",
-      complexity: "Q-Field Sim",
-      buffers: "Atomic / SSBO",
-      status: "ACTIVE"
+      complexity: "Q-Field Sim"
     },
     V5: {
-      video: "AllIGot.MOV",
       pipeline: "Post / Kernel",
-      complexity: "Multi-Pass LUT",
-      buffers: "Ping-Pong / FBO",
-      status: "DRAFT"
+      complexity: "Multi-Pass LUT"
     },
     V6: {
-      video: "Crazy.MOV",
       pipeline: "Post / Kernel",
-      complexity: "Multi-Pass LUT",
-      buffers: "Ping-Pong / FBO",
-      status: "DRAFT"
+      complexity: "Multi-Pass LUT"
     }
   };
-
-  function formatTime(s) {
-    var m = Math.floor(s / 60);
-    var sec = Math.floor(s % 60);
-    return (m < 10 ? "0" + m : m) + ":" + (sec < 10 ? "0" + sec : sec);
-  }
 
   var updateProjectMedia = function(projectId) {
     var data = projectData[projectId];
     if (!data) return;
     
-    if (pVideo && noSignal) {
-      pVideo.pause();
-      if (pProgress) pProgress.style.width = "0%";
-      if (data.video && data.video !== "") {
-        if (curTimeTxt) curTimeTxt.innerText = "00:00";
-        if (durTimeTxt) durTimeTxt.innerText = "00:00";
-        noSignal.classList.remove("active");
-        pVideo.src = data.video + "#t=0.001";
-        pVideo.load();
-      } else {
-        if (curTimeTxt) curTimeTxt.innerText = "--:--";
-        if (durTimeTxt) durTimeTxt.innerText = "--:--";
-        pVideo.src = "";
-        noSignal.classList.add("active");
-      }
-    }
-    
     if (sPipeline) sPipeline.innerText = data.pipeline;
     if (sComplexity) sComplexity.innerText = data.complexity;
-    if (sBuffers) sBuffers.innerText = data.buffers;
-    if (sStatus) sStatus.innerText = data.status;
   };
 
   setTimeout(function() { 
@@ -1202,7 +962,6 @@ document.addEventListener("DOMContentLoaded", function() {
   setActiveNav(navHome);
 
   var switchPage = function(pageId, triggerEl) {
-    if (pageId !== "projects") { if (pVideo) pVideo.pause(); }
     setActiveNav(triggerEl);
     if (aboutOverlay) aboutOverlay.classList.remove("active");
     if (projectsOverlay) projectsOverlay.classList.remove("active");
@@ -1214,7 +973,6 @@ document.addEventListener("DOMContentLoaded", function() {
     } else if (pageId === "projects") {
       if (projectsOverlay) projectsOverlay.classList.add("active");
       if (mobileHeader) mobileHeader.classList.add("active");
-      
     }
     if (hamburger) hamburger.classList.remove("open");
     if (mobileNav) mobileNav.classList.remove("open");
@@ -1227,12 +985,8 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   }
 
-  
-  
-
   if (navHome) navHome.addEventListener("click", function(e) { e.stopPropagation(); switchPage("home", navHome); });
   if (mNavHome) mNavHome.addEventListener("click", function() { switchPage("home", mNavHome); });
-
 
   if (mAboutTrigger) {
     mAboutTrigger.addEventListener("click", function() { 
@@ -1240,7 +994,6 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   }
 
- 
   if (mProjectsTrigger) {
     mProjectsTrigger.addEventListener("click", function() { 
       switchPage("projects", mProjectsTrigger); 
@@ -1261,8 +1014,6 @@ document.addEventListener("DOMContentLoaded", function() {
       }, 100);
     });
   }
-  // 
-
 
   var projectEntries = document.querySelectorAll(".project-entry");
   projectEntries.forEach(function(entry) {
@@ -1273,266 +1024,7 @@ document.addEventListener("DOMContentLoaded", function() {
       updateProjectMedia(pid);
     });
   });
-  if (pVideo && noSignal) {
-    pVideo.onerror = function() {
-      noSignal.classList.add("active");
-    };
-  }
-
-  if (playBtn && pVideo) {
-    playBtn.addEventListener("click", function() {
-      if (pVideo.paused) {
-        pVideo.play();
-      } else {
-        pVideo.pause();
-      }
-    });
-
-    pVideo.addEventListener("play", function() { if (playBtn) playBtn.classList.add("playing"); });
-    pVideo.addEventListener("pause", function() { if (playBtn) playBtn.classList.remove("playing"); });
-    pVideo.addEventListener("timeupdate", function() {
-      if (curTimeTxt && !isNaN(pVideo.duration) && pVideo.duration > 0) {
-        curTimeTxt.innerText = formatTime(pVideo.currentTime);
-        if (pProgress) {
-          var v = (pVideo.currentTime / pVideo.duration) * 100;
-          pProgress.style.width = v + "%";
-        }
-      }
-    });
-    pVideo.addEventListener("loadedmetadata", function() {
-      if (durTimeTxt) durTimeTxt.innerText = formatTime(pVideo.duration);
-    });
-    pVideo.addEventListener("webkitendfullscreen", function() {
-      pVideo.pause();
-      if (playBtn) playBtn.classList.remove("playing");
-    });
-  }
-
-  var FPS = 60;
-  var syncPause = function() { if (pVideo && !pVideo.paused) { pVideo.pause(); if (playBtn) playBtn.classList.remove("playing"); } };
-  var volBtn = document.getElementById("p-volume-toggle");
-  var updateVolUI = function() {
-    if (volBtn && pVideo) {
-      if (!pVideo.muted) { volBtn.classList.add("active"); }
-      else { volBtn.classList.remove("active"); }
-    }
-  };
-  if (volBtn) {
-    volBtn.addEventListener("click", function() { 
-      pVideo.muted = !pVideo.muted; 
-      updateVolUI();
-    });
-  }
-  updateVolUI();
-  document.getElementById("p-back-1s").addEventListener("click", function() { syncPause(); pVideo.currentTime -= 1; });
-  document.getElementById("p-back-1f").addEventListener("click", function() { syncPause(); pVideo.currentTime -= (1/FPS); });
-  document.getElementById("p-fwd-1f").addEventListener("click", function() { syncPause(); pVideo.currentTime += (1/FPS); });
-  document.getElementById("p-fwd-1s").addEventListener("click", function() { syncPause(); pVideo.currentTime += 1; });
-  document.getElementById("p-fs-toggle").addEventListener("click", function() {
-    if (pVideo.requestFullscreen) { pVideo.requestFullscreen(); }
-    else if (pVideo.webkitEnterFullscreen) { pVideo.webkitEnterFullscreen(); }
-  });
 });
 </script>
- <style>
-
-@media (orientation: landscape) and (max-height: 500px) {
-  #mobile-header {
-    opacity: 0 !important;
-    visibility: hidden !important;
-    pointer-events: none !important;
-  }
-
-  #projects-overlay .content-grid {
-    grid-template-columns: 1fr 1.3fr !important; 
-    gap: 25px !important;
-    padding: 20px 55px 20px 20px !important; 
-    height: 100vh !important;
-    align-items: center !important;
-    box-sizing: border-box !important;
-  }
-
-  #projects-overlay .col-left {
-    height: 85vh !important;
-    overflow-y: auto !important;
-    padding: 10px 10px 10px 0 !important;
-    border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
-    border-bottom: none !important;
-    scrollbar-width: none !important; 
-    
-    scroll-snap-type: y mandatory !important;
-    scroll-behavior: smooth !important;
-    
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%) !important;
-    mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%) !important;
-  }
-  #projects-overlay .col-left::-webkit-scrollbar { display: none !important; }
-
-  #projects-overlay .project-list {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 15px !important;
-    width: 100% !important;
-  }
-
-  #projects-overlay .project-entry {
-    scroll-snap-align: center !important; 
-    scroll-snap-stop: always !important;  
-    margin: 0 !important;
-    width: 100% !important;
-    flex-shrink: 0 !important;
-  }
-
-  #projects-overlay .col-right {
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: center !important;
-    align-items: center !important;
-    height: 85vh !important;
-    width: 100% !important;
-  }
-
-  
-  #projects-overlay .spec-panel {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 0 !important;
-    width: 100% !important;
-    height: auto !important;
-  }
-
-  #projects-overlay .video-container {
-    width: 100% !important;
-    height: 54vh !important; 
-    background: #000 !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    display: block !important;
-  }
-  #projects-overlay #p-video {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: contain !important; 
-  }
-
-  #projects-overlay .playback-bar {
-    display: flex !important;
-    width: 100% !important;
-    margin-top: 8px !important;
-  }
-
-  #projects-overlay .spec-details {
-    display: none !important; 
-  }
-
-  
-  #about-overlay .content-grid {
-    grid-template-columns: 1fr 1fr !important;
-    gap: 40px !important;
-    padding: 20px 55px 20px 20px !important;
-    height: 100vh !important;
-    align-items: flex-start !important;
-    padding-top: 12vh !important; 
-    box-sizing: border-box !important;
-  }
-  #about-overlay .col-left {
-    border-bottom: none !important;
-    padding-bottom: 0 !important;
-    border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
-    padding-right: 20px !important;
-    justify-content: flex-start !important;
-  }
-  #about-overlay .avatar {
-    width: 100px !important;
-    height: 100px !important;
-  }
-  #about-overlay .col-right {
-    justify-content: flex-start !important; 
-  }
-
-  #hamburger:not(.open) span {
-    transform: var(--land-trans, none) !important;
-    transform-origin: var(--land-origin, center) !important;
-    opacity: var(--land-op, 1) !important;
-  }
-}
-
-.mail-link { text-decoration: underline; }
-
-.p-btn.playing, .p-btn.active {
-  border-color: rgba(255, 255, 255, 0.4);
-  color: var(--white);
-}
-</style>
-
-<script>
-(function() {
-  function runLandscapeEngine() {
-    var isLandscape = window.innerHeight <= 500 && window.innerWidth > window.innerHeight;
-    
-    var pOverlay = document.getElementById("projects-overlay");
-    var aOverlay = document.getElementById("about-overlay");
-    var wMark = document.getElementById("wordmark");
-    var hBurger = document.getElementById("hamburger");
-
-    var isProj = pOverlay && pOverlay.classList.contains("active");
-    var isAbout = aOverlay && aOverlay.classList.contains("active");
-
-    if (isLandscape && (isProj || isAbout)) {
-      
-      if (wMark) {
-        wMark.style.setProperty("transform", "translate(-200%, -50%) scale(0.8)", "important");
-        wMark.style.setProperty("opacity", "0", "important");
-        wMark.style.setProperty("pointer-events", "none", "important");
-      }
-
-      if (hBurger) {
-        hBurger.style.setProperty("right", "12px", "important");
-      }
-
-      if (hBurger) {
-        var spans = hBurger.querySelectorAll("span");
-        if (spans.length >= 3) {
-          spans[0].style.setProperty("--land-trans", "translate(-3px, 3px) rotate(-45deg) scaleX(0.55)");
-          spans[0].style.setProperty("--land-origin", "left center");
-          
-          spans[1].style.setProperty("--land-op", "0");
-          spans[1].style.setProperty("--land-trans", "scaleX(0)");
-          
-          spans[2].style.setProperty("--land-trans", "translate(-3px, -3px) rotate(45deg) scaleX(0.55)");
-          spans[2].style.setProperty("--land-origin", "left center");
-        }
-      }
-    } else {
-
-      if (wMark) {
-        wMark.style.transform = "";
-        wMark.style.opacity = "";
-        wMark.style.pointerEvents = "";
-      }
-      if (hBurger) {
-        hBurger.style.right = "";
-        var spans = hBurger.querySelectorAll("span");
-        spans.forEach(function(s) {
-          s.style.removeProperty("--land-trans");
-          s.style.removeProperty("--land-origin");
-          s.style.removeProperty("--land-op");
-        });
-      }
-    }
-  }
-
-  window.addEventListener("resize", runLandscapeEngine);
-  window.addEventListener("orientationchange", runLandscapeEngine);
-
-  var rawSwitch = window.switchPage;
-  window.switchPage = function(pId, trig) {
-    if (typeof rawSwitch === "function") rawSwitch(pId, trig);
-    setTimeout(runLandscapeEngine, 50); 
-  };
-})();
-</script>
-
-
-
 </body>
 </html>
