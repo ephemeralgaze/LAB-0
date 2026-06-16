@@ -4,46 +4,26 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LAB-0 | Mobile</title>
-  <link rel="apple-touch-icon" href="assets/LAB-0.png?v=20260612">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="LAB-0">
+<link rel="apple-touch-icon" href="assets/LAB-0.png?v=20260612">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="LAB-0">
 <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" onerror="console.warn('Google Fonts 加载失败，使用系统字体')">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" onerror="console.warn('Google Fonts 加载失败')">
 
 <script>
-
 (function() {
   var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
   if (!isMobile && window.innerWidth >= 768) {
     window.location.replace("index.html");
   }
 })();
-
-
-window.fontsLoaded = false;
-window.addEventListener('load', function() {
-  window.fontsLoaded = true;
-  document.documentElement.classList.add('fonts-ready');
-});
-
-setTimeout(function() {
-  if (!window.fontsLoaded && !document.documentElement.classList.contains('fonts-ready')) {
-    document.documentElement.classList.add('fonts-fback');
-    console.log('⏱️ 字体加载超时，已降级为系统字体方案');
-  }
-}, 5000);
 </script>
 <style>
 :root {
-
-html.fonts-fback {
-  --font-header: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-}
   --bg-color: #050505;
-  --overlay-bg: rgba(5, 5, 5, 0.7);
+  --overlay-bg: #050505;
   --white: #ffffff;
   --grid-color: #ffffff;
   --font-header: "Syncopate", sans-serif;
@@ -52,17 +32,11 @@ html.fonts-fback {
   --ease: cubic-bezier(0.8, 0, 0.2, 1);
 }
 
-@media (dynamic-range: high) or (color-gamut: p3) {
-  :root {
-    --white: color(display-p3 1 1 1);
-    --grid-color: #ffffff;
-  }
-}
-
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  border-radius: 0 !important;
 }
 
 body, html {
@@ -88,22 +62,18 @@ body, html {
   position: fixed;
   inset: 0;
   background: var(--overlay-bg);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
   z-index: 1;
   pointer-events: none;
 }
 
 .ui-grid {
   position: fixed;
-  inset: 0;
-  border: 1px solid #ffffff;
-  margin: 10px;
+  inset: 10px;
+  border: 1px solid var(--grid-color);
   pointer-events: none;
   opacity: 0;
   transition: opacity 1s ease-out;
   z-index: 5;
-  border-color: var(--grid-color);
 }
 
 .stage {
@@ -125,26 +95,24 @@ body, html {
   justify-content: center;
   font-family: var(--font-header);
   font-weight: 700;
-  font-size: 1.5rem;
-  height: 24px;
-  line-height: 24px;
+  font-size: 1.1rem;
+  height: 20px;
+  line-height: 20px;
   white-space: nowrap;
   letter-spacing: 0;
-  transform: translate(-50%, -50%) scale(3.3333);
+  transform: translate(-50%, -50%) scale(3.3);
   transition: transform 1.2s var(--ease), top 1.2s var(--ease), left 1.2s var(--ease), opacity 0.8s ease;
-  will-change: transform, top, left;
   opacity: 1;
-  width: auto;
-  overflow: visible;
 }
 
-.l-char {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 24px;
-  line-height: 24px;
+#wordmark.docked {
+  top: 30px;
+  left: 25px;
+  transform: translate(0, -50%) scale(0.8);
+  pointer-events: auto;
 }
+
+.l-char { display: flex; align-items: center; height: 20px; }
 
 .ab0-reveal {
   position: absolute;
@@ -154,37 +122,25 @@ body, html {
   display: flex;
   align-items: center;
   white-space: nowrap;
-  clip-path: inset(0 100% 0 0) !important;
+  clip-path: inset(0 100% 0 0);
   opacity: 0;
   visibility: hidden;
   transition: clip-path 1.2s var(--ease), opacity 0.6s var(--ease), visibility 0.4s var(--ease);
-  will-change: clip-path;
-  height: 24px;
-  line-height: 24px;
-}
-
-#wordmark.docked {
-  top: 37px;
-  left: 30px;
-  transform: translate(0, -50%) scale(0.85);
-  pointer-events: auto;
 }
 
 #wordmark.docked-final .ab0-reveal {
-  opacity: 1 !important;
-  visibility: visible !important;
-  clip-path: inset(0 0 0 0) !important;
+  opacity: 1;
+  visibility: visible;
+  clip-path: inset(0 0 0 0);
 }
 
 .mobile-icon {
-  width: 1.1em;
-  height: 1.1em;
-  margin-left: 0.08em;
-  flex-shrink: 0;
+  width: 1em;
+  height: 1em;
+  margin-left: 2px;
   stroke: currentColor;
-  stroke-width: 2.5;
+  stroke-width: 2;
   fill: none;
-  display: block;
 }
 
 #mobile-header {
@@ -192,36 +148,21 @@ body, html {
   top: 0;
   left: 0;
   width: 100%;
-  height: 74px;
+  height: 60px;
   background: #050505;
   z-index: 10002;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.6s var(--ease), visibility 0.6s var(--ease);
 }
 
-#mobile-header.active {
-  opacity: 1;
-  visibility: visible;
-}
-
-#mobile-header::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 0;
-  width: 100%;
-  height: 40px;
-  background: linear-gradient(to bottom, #050505 0%, rgba(5, 5, 5, 0) 100%);
-  pointer-events: none;
-}
+#mobile-header.active { opacity: 1; visibility: visible; }
 
 .hamburger {
   position: fixed;
   top: 0;
-  right: 30px;
-  width: 24px;
-  height: 74px;
+  right: 25px;
+  width: 20px;
+  height: 60px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -229,17 +170,11 @@ body, html {
   z-index: 10003;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 1s ease-out;
-}
-
-.hamburger.ui-visible {
-  opacity: 1;
-  pointer-events: auto;
 }
 
 .hamburger-inner {
   width: 100%;
-  height: 14px;
+  height: 10px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -250,13 +185,7 @@ body, html {
   width: 100%;
   height: 1px;
   background-color: var(--white);
-  border-radius: 0;
-  transition: transform 0.4s var(--ease), opacity 0.4s var(--ease);
 }
-
-.hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
-.hamburger.open span:nth-child(2) { opacity: 0; }
-.hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
 
 .mobile-nav-overlay {
   position: fixed;
@@ -267,30 +196,24 @@ body, html {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 40px;
+  gap: 30px;
   transform: translateX(100%);
   transition: transform 0.6s var(--ease);
-  pointer-events: auto;
 }
 
-.mobile-nav-overlay.open {
-  transform: translateX(0);
-}
+.mobile-nav-overlay.open { transform: translateX(0); }
 
 .mobile-menu-item {
   font-family: var(--font-header);
-  font-size: 1.2rem;
-  letter-spacing: 0.3em;
+  font-size: 1rem;
+  letter-spacing: 0.2em;
   color: var(--white);
   text-decoration: none;
   text-transform: uppercase;
   opacity: 0.6;
-  transition: opacity 0.3s ease;
 }
 
 .mobile-menu-item.active { opacity: 1; }
-
-.ui-visible { opacity: 1 !important; }
 
 .overlay {
   position: fixed;
@@ -300,22 +223,18 @@ body, html {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transition: opacity 1.2s var(--ease), visibility 1.2s var(--ease);
+  transition: opacity 0.8s var(--ease);
   display: flex;
   justify-content: center;
   align-items: flex-start;
   overflow-y: auto;
 }
 
-.overlay.active {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-}
+.overlay.active { opacity: 1; visibility: visible; pointer-events: auto; }
 
 .overlay-frame {
   position: absolute;
-  inset: 20px;
+  inset: 10px;
   border: 1px solid #ffffff;
   pointer-events: none;
 }
@@ -323,56 +242,45 @@ body, html {
 .coord {
   position: absolute;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 8px;
   color: #ffffff;
   letter-spacing: 0.1em;
 }
-@media (dynamic-range: high) or (color-gamut: p3) {
-  .coord { color: #ffffff; }
-}
-.coord-tl { top: -20px; left: 0; }
-.coord-br { bottom: -20px; right: 0; }
+
+.coord-tl { top: -15px; left: 0; }
+.coord-br { bottom: -15px; right: 0; }
 
 .content-grid {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
-  padding: 114px 20px 60px;
-  pointer-events: auto;
+  padding: 80px 20px 40px;
 }
 
+/* About Layout Improvements */
 .col-left {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 20px;
+  gap: 15px;
   width: 100%;
-  margin-bottom: 40px;
+  margin-bottom: 30px;
 }
 
 .avatar {
-  width: 120px;
-  height: 120px;
-  border-radius: 0;
+  width: 90px;
+  height: 90px;
   border: 1px solid #ffffff;
-  padding: 0;
-  background: #000000;
+  background: #000;
 }
 
-.avatar img {
-  width: 100%;
-  height: 100%;
-  border-radius: 0;
-  object-fit: cover;
-}
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
 
 .username {
   font-family: var(--font-header);
-  font-size: 1.1rem;
-  letter-spacing: 0.3em;
-  color: var(--white);
+  font-size: 0.9rem;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
 }
 
@@ -380,135 +288,50 @@ body, html {
   display: flex;
   flex-direction: column;
   width: 100%;
-  gap: 0;
   font-family: var(--font-mono);
 }
 
 .info-item {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
-  color: #ffffff;
-  padding: 20px 0;
-  border-bottom: 1px solid #ffffff;
+  gap: 4px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.info-item:first-child {
-  border-top: 1px solid #ffffff;
-}
+.info-item:first-child { border-top: 1px solid rgba(255, 255, 255, 0.2); }
 
 .info-label {
-  font-size: 0.55rem;
-  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.5rem;
+  color: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.1em;
 }
 
 .info-value {
   color: var(--white);
   text-transform: uppercase;
-  font-size: 0.85rem;
-  letter-spacing: 0.1em;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
 }
 
 .mail-link {
   color: var(--white);
   text-decoration: underline;
+  text-decoration-thickness: 1px;
   word-break: break-all;
-  transition: opacity 0.3s ease;
 }
 
-.mail-link:hover {
-  opacity: 0.8;
+/* Projects - Conditional Border */
+#projects-overlay:not(.has-content) .overlay-frame {
+  border: none;
+}
+#projects-overlay:not(.has-content) .coord {
+  display: none;
 }
 
-
-@media (orientation: landscape) and (max-height: 500px) {
- 
-  #mobile-header.active {
-    opacity: 0 !important;
-    visibility: hidden !important;
-    pointer-events: none !important;
-  }
-
-  
-  #projects-overlay.active ~ .stage #wordmark.docked,
-  #about-overlay.active ~ .stage #wordmark.docked {
-    transform: translate(-200%, -50%) scale(0.8) !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
-  }
-
- 
-  .hamburger {
-    top: 20px !important;
-    right: 30px;
-    height: 24px;
-    transition: transform 0.4s var(--ease), right 0.4s var(--ease), opacity 0.4s ease !important;
-    z-index: 10005;
-  }
-  #projects-overlay.active ~ #hamburger,
-  #about-overlay.active ~ #hamburger {
-    right: 12px !important;
-  }
-
-
-  #projects-overlay.active ~ #hamburger span:nth-child(1),
-  #about-overlay.active ~ #hamburger span:nth-child(1) {
-    transform: translate(-3px, 3px) rotate(-45deg) scaleX(0.55) !important;
-    transform-origin: left center !important;
-  }
-  
-
-  #projects-overlay.active ~ #hamburger span:nth-child(2),
-  #about-overlay.active ~ #hamburger span:nth-child(2) {
-    opacity: 0 !important;
-    transform: scaleX(0) !important;
-  }
-  
-
-  #projects-overlay.active ~ #hamburger span:nth-child(3),
-  #about-overlay.active ~ #hamburger span:nth-child(3) {
-    transform: translate(-3px, -3px) rotate(45deg) scaleX(0.55) !important;
-    transform-origin: left center !important;
-  }
-
-
-  #projects-overlay .content-grid {
-    padding: 20px 55px 20px 20px !important; 
-    height: 100vh !important;
-    align-items: center !important;
-    box-sizing: border-box !important;
-  }
-
- 
-  #about-overlay .content-grid {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    gap: 40px !important;
-    padding: 20px 55px 20px 20px !important;
-    height: 100vh !important;
-    align-items: center !important;
-  }
-  #about-overlay .col-left {
-    border-bottom: none !important;
-    padding-bottom: 0 !important;
-    margin-bottom: 0 !important;
-    border-right: 1px solid #ffffff !important;
-    padding-right: 20px !important;
-  }
-  #about-overlay .avatar {
-    width: 100px !important;
-    height: 100px !important;
-  }
-  #about-overlay .col-right .info-item:first-child {
-    border-top: none !important;
-  }
-}
+.ui-visible { opacity: 1 !important; pointer-events: auto !important; }
 </style>
-    <link rel="icon" type="image/png" href="assets/LAB-0.png?v=20260612">
-    <link rel="apple-touch-icon" href="LAB-0.png?v=20260612">
 </head>
 <body>
 
@@ -533,175 +356,92 @@ body, html {
 
 <div class="stage">
 <div id="wordmark">
-<a id="nav-home" class="menu-item" style="font-family:inherit; font-size:inherit; letter-spacing:inherit; margin:0; padding:0; text-transform: none; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; color: inherit; text-decoration: none;">
-  <span class="l-char">L</span><span class="ab0-reveal">AB-<svg class="mobile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-    <rect x="5" y="2" width="14" height="20" rx="0" ry="0"></rect>
-    <line x1="12" y1="18" x2="12" y2="18"></line>
-  </svg></span>
+<a id="nav-home" style="color: inherit; text-decoration: none; display: flex; align-items: center;">
+  <span class="l-char">L</span><span class="ab0-reveal">AB-<svg class="mobile-icon" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20"></rect><line x1="12" y1="18" x2="12" y2="18"></line></svg></span>
 </a>
 </div>
 </div>
 
 <div id="about-overlay" class="overlay">
-<div class="overlay-frame">
-<span class="coord coord-tl">[0000, 0000]</span>
-<span class="coord coord-br">[0000, 0000]</span>
-</div>
+<div class="overlay-frame"><span class="coord coord-tl">[0000, 0000]</span><span class="coord coord-br">[8888, 8888]</span></div>
 <div class="content-grid">
   <div class="col-left">
-    <div class="avatar">
-      <img src="https://avatars.githubusercontent.com/u/291265014?v=4" alt="ephemeralgaze">
-    </div>
+    <div class="avatar"><img src="https://avatars.githubusercontent.com/u/291265014?v=4" alt="ephemeralgaze"></div>
     <div class="username">Jiang</div>
   </div>
   <div class="col-right">
-    <div class="info-item">
-      <span class="info-label">Education</span>
-      <span class="info-value">College Degree / JLTC</span>
-    </div>
-    <div class="info-item">
-      <span class="info-label">Status</span>
-      <span class="info-value">Age 21 / BORN 2004</span>
-    </div>
-    <div class="info-item">
-      <span class="info-label">Contact</span>
-      <span class="info-value" style="text-transform: none; overflow-wrap: anywhere; white-space: normal;"><a href="mailto:zgnx4ndcq5@privaterelay.appleid.com" class="mail-link">zgnx4ndcq5@privaterelay.appleid.com</a></span>
-    </div>
+    <div class="info-item"><span class="info-label">Education</span><span class="info-value">College Degree / JLTC</span></div>
+    <div class="info-item"><span class="info-label">Status</span><span class="info-value">Age 21 / BORN 2004</span></div>
+    <div class="info-item"><span class="info-label">Contact</span><span class="info-value" style="text-transform: none;"><a href="mailto:zgnx4ndcq5@privaterelay.appleid.com" class="mail-link">zgnx4ndcq5@privaterelay.appleid.com</a></span></div>
   </div>
 </div>
 </div>
 
 <div id="projects-overlay" class="overlay">
-<div class="overlay-frame">
-<span class="coord coord-tl">[1111, 1111]</span>
-</div>
-<div class="content-grid">
-  <!-- Projects container cleared per minimalist zero-options specification -->
-</div>
+<div class="overlay-frame"><span class="coord coord-tl">[1111, 1111]</span></div>
+<div class="content-grid"></div>
 </div>
 
 <script>
 (function() {
   var canvas = document.getElementById("dot-matrix-canvas");
-  if (!canvas) return;
   var ctx = canvas.getContext("2d");
   var dots = [];
   var width, height, dpr;
-
-  var GRID_SIZE = 30;
-  var DOT_RADIUS = 1.2;
-
   function init() {
     dpr = window.devicePixelRatio || 1;
-    width = window.innerWidth;
-    height = window.innerHeight;
-    canvas.width = width * dpr;
-    canvas.height = height * dpr;
+    width = window.innerWidth; height = window.innerHeight;
+    canvas.width = width * dpr; canvas.height = height * dpr;
     ctx.scale(dpr, dpr);
-    
     dots = [];
-    var cols = Math.ceil(width / GRID_SIZE);
-    var rows = Math.ceil(height / GRID_SIZE);
-
-    for (var i = 0; i < cols; i++) {
-      for (var j = 0; j < rows; j++) {
-        dots.push({
-          x: i * GRID_SIZE + GRID_SIZE / 2,
-          y: j * GRID_SIZE + GRID_SIZE / 2,
-          phase: Math.random() * Math.PI * 2,
-          freq: 0.02 + Math.random() * 0.03,
-          maxOpacity: 0.02 + Math.random() * 0.28
-        });
+    for (var i = 0; i < width/30; i++) {
+      for (var j = 0; j < height/30; j++) {
+        dots.push({x: i*30+15, y: j*30+15, phase: Math.random()*Math.PI*2, freq: 0.02+Math.random()*0.03, maxOpacity: 0.05+Math.random()*0.15});
       }
     }
   }
-
   function draw(time) {
     ctx.clearRect(0, 0, width, height);
-    
     dots.forEach(function(dot) {
-      var opacity = (Math.sin(time * 0.001 * dot.freq * 100 + dot.phase) * 0.5 + 0.5) * dot.maxOpacity;
-      ctx.beginPath();
-      ctx.arc(dot.x, dot.y, DOT_RADIUS, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(255, 255, 255, " + opacity.toFixed(3) + ")";
-      ctx.fill();
+      var opacity = (Math.sin(time*0.001*dot.freq*100+dot.phase)*0.5+0.5)*dot.maxOpacity;
+      ctx.beginPath(); ctx.arc(dot.x, dot.y, 1, 0, Math.PI*2);
+      ctx.fillStyle = "rgba(255,255,255,"+opacity.toFixed(3)+")"; ctx.fill();
     });
-
     requestAnimationFrame(draw);
   }
-
-  window.addEventListener("resize", init);
-  init();
-  requestAnimationFrame(draw);
+  window.addEventListener("resize", init); init(); requestAnimationFrame(draw);
 })();
 
 document.addEventListener("DOMContentLoaded", function() {
   var wordmark = document.getElementById("wordmark");
   var grid = document.getElementById("grid");
-  var navHome = document.getElementById("nav-home");
+  var hamburger = document.getElementById("hamburger");
+  var mobileNav = document.getElementById("mobile-nav");
+  var mobileHeader = document.getElementById("mobile-header");
   var aboutOverlay = document.getElementById("about-overlay");
   var projectsOverlay = document.getElementById("projects-overlay");
 
-  var hamburger = document.getElementById("hamburger");
-  var mobileNav = document.getElementById("mobile-nav");
-  var mNavHome = document.getElementById("m-nav-home");
-  var mProjectsTrigger = document.getElementById("m-projects-trigger");
-  var mAboutTrigger = document.getElementById("m-about-trigger");
-  var mobileHeader = document.getElementById("mobile-header");
-
-  setTimeout(function() { 
-    if (wordmark) wordmark.classList.add("docked");
-  }, 3500);
-
-  if (wordmark) {
-    wordmark.addEventListener("transitionend", function(e) {
-      if (e.propertyName === "top" || e.propertyName === "transform") {
-        if (wordmark.classList.contains("docked") && !wordmark.classList.contains("docked-final")) {
-          if (grid) grid.classList.add("ui-visible");
-          if (hamburger) hamburger.classList.add("ui-visible");
-          wordmark.classList.add("docked-final");
-        }
-      }
-    });
-  }
-
-  var navItems = [navHome, mNavHome, mProjectsTrigger, mAboutTrigger];
-
-  var setActiveNav = function(activeEl) {
-    navItems.forEach(function(item) { if (item) item.classList.remove("active"); });
-    if (activeEl) activeEl.classList.add("active");
-  };
-
-  setActiveNav(navHome);
-
-  var switchPage = function(pageId, triggerEl) {
-    setActiveNav(triggerEl);
-    if (aboutOverlay) aboutOverlay.classList.remove("active");
-    if (projectsOverlay) projectsOverlay.classList.remove("active");
-    if (mobileHeader) mobileHeader.classList.remove("active");
-
-    if (pageId === "about") {
-      if (aboutOverlay) aboutOverlay.classList.add("active");
-      if (mobileHeader) mobileHeader.classList.add("active");
-    } else if (pageId === "projects") {
-      if (projectsOverlay) projectsOverlay.classList.add("active");
-      if (mobileHeader) mobileHeader.classList.add("active");
+  setTimeout(function() { wordmark.classList.add("docked"); }, 1500);
+  wordmark.addEventListener("transitionend", function() {
+    if (wordmark.classList.contains("docked")) {
+      grid.classList.add("ui-visible");
+      hamburger.classList.add("ui-visible");
+      wordmark.classList.add("docked-final");
     }
-    if (hamburger) hamburger.classList.remove("open");
-    if (mobileNav) mobileNav.classList.remove("open");
-  };
+  });
 
-  if (hamburger) {
-    hamburger.addEventListener("click", function() {
-      hamburger.classList.toggle("open");
-      mobileNav.classList.toggle("open");
-    });
+  function switchPage(page) {
+    [aboutOverlay, projectsOverlay, mobileHeader, mobileNav].forEach(el => el.classList.remove("active", "open"));
+    hamburger.classList.remove("open");
+    if (page === "about") { aboutOverlay.classList.add("active"); mobileHeader.classList.add("active"); }
+    else if (page === "projects") { projectsOverlay.classList.add("active"); mobileHeader.classList.add("active"); }
   }
 
-  if (navHome) navHome.addEventListener("click", function(e) { e.stopPropagation(); switchPage("home", navHome); });
-  if (mAboutTrigger) mAboutTrigger.addEventListener("click", function() { switchPage("about", mAboutTrigger); });
-  if (mProjectsTrigger) mProjectsTrigger.addEventListener("click", function() { switchPage("projects", mProjectsTrigger); });
-  if (mNavHome) mNavHome.addEventListener("click", function() { switchPage("home", mNavHome); });
+  hamburger.onclick = function() { hamburger.classList.toggle("open"); mobileNav.classList.toggle("open"); };
+  document.getElementById("nav-home").onclick = function() { switchPage("home"); };
+  document.getElementById("m-nav-home").onclick = function() { switchPage("home"); };
+  document.getElementById("m-about-trigger").onclick = function() { switchPage("about"); };
+  document.getElementById("m-projects-trigger").onclick = function() { switchPage("projects"); };
 });
 </script>
 </body>

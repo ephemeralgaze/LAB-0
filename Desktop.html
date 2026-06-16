@@ -4,32 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LAB-0 | Desktop</title>
-
-<!-- ============ 网络友好的字体加载 ============ -->
-<!-- Google Fonts 异步加载，允许超时失败 -->
 <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" onerror="console.warn('Google Fonts 加载失败，使用系统字体')">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 
-<!-- 字体加载失败的备用策略 -->
-<script>
-// 监测 Google Fonts 加载状态
-window.fontsLoaded = false;
-window.addEventListener('load', function() {
-  window.fontsLoaded = true;
-  document.documentElement.classList.add('fonts-ready');
-});
-
-// 设置字体加载超时降级（5秒后还没加载就放弃）
-setTimeout(function() {
-  if (!window.fontsLoaded && !document.documentElement.classList.contains('fonts-ready')) {
-    document.documentElement.classList.add('fonts-fallback');
-    console.log('⏱️ 字体加载超时，使用系统字体');
-  }
-}, 5000);
-</script>
-
-<!-- ============ 移动设备检测 ============ -->
 <script>
 (function() {
   var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -37,64 +15,25 @@ setTimeout(function() {
     window.location.replace("Mobile.html");
   }
 })();
-
-// ============ 网络状态管理 ============
-window.networkStatus = {
-  isOnline: navigator.onLine,
-  offlineIndicator: null,
-  init: function() {
-    var self = this;
-    window.addEventListener('online', function() {
-      self.isOnline = true;
-      console.log('🟢 网络: 在线');
-      if (self.offlineIndicator) self.offlineIndicator.classList.remove('visible');
-    });
-    window.addEventListener('offline', function() {
-      self.isOnline = false;
-      console.log('🔴 网络: 离线 - 使用本地备用资源');
-      if (self.offlineIndicator) self.offlineIndicator.classList.add('visible');
-    });
-  }
-};
 </script>
 
 <style>
 :root {
   --bg-color: #050505;
-  --overlay-bg: rgba(5, 5, 5, 0.7);
+  --overlay-bg: rgba(5, 5, 5, 0.9);
   --white: #ffffff;
   --grid-color: #ffffff;
-  
-  /* 优先使用 Google Fonts，失败则自动降级到系统字体 */
-  --font-header: "Syncopate", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-body: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-mono: "Space Mono", "Monaco", "Courier New", monospace;
+  --font-header: "Syncopate", sans-serif;
+  --font-body: "Space Grotesk", sans-serif;
+  --font-mono: "Space Mono", monospace;
   --ease: cubic-bezier(0.8, 0, 0.2, 1);
-}
-
-/* 网络良好时使用高级特性 */
-@supports (backdrop-filter: blur(1px)) {
-  .overlay { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
-}
-
-/* 字体加载失败时的降级方案 */
-html.fonts-fallback {
-  --font-header: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-}
-
-/* 高色域显示支持 */
-@media (dynamic-range: high) or (color-gamut: p3) {
-  :root {
-    --white: color(display-p3 1 1 1);
-    --grid-color: #ffffff;
-  }
 }
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  border-radius: 0 !important;
 }
 
 body, html {
@@ -105,7 +44,6 @@ body, html {
   overflow: hidden;
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 #dot-matrix-canvas {
@@ -115,7 +53,6 @@ body, html {
   pointer-events: none;
   width: 100%;
   height: 100%;
-  will-change: auto;
 }
 
 #bg-overlay {
@@ -124,23 +61,16 @@ body, html {
   background: var(--overlay-bg);
   z-index: 1;
   pointer-events: none;
-  will-change: auto;
-}
-
-@supports (backdrop-filter: blur(1px)) {
-  #bg-overlay { backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 }
 
 .ui-grid {
   position: fixed;
-  inset: 0;
-  border: 1px solid #ffffff;
-  margin: 20px;
+  inset: 20px;
+  border: 1px solid var(--grid-color);
   pointer-events: none;
   opacity: 0;
   transition: opacity 1s ease-out;
   z-index: 5;
-  border-color: var(--grid-color);
 }
 
 .stage {
@@ -160,12 +90,11 @@ body, html {
   justify-content: center;
   font-family: var(--font-header);
   font-weight: 700;
-  font-size: 1.5rem;
+  font-size: 1.1rem;
   white-space: nowrap;
-  letter-spacing: 0.1em;
-  transform: scale(3.3333);
+  letter-spacing: 0.05em;
+  transform: scale(3.3);
   transition: transform 1.2s var(--ease), opacity 0.8s ease;
-  will-change: transform;
   opacity: 1;
 }
 
@@ -175,7 +104,6 @@ body, html {
   white-space: nowrap;
   clip-path: inset(0 100% 0 0);
   transition: clip-path 1.2s var(--ease), opacity 0.6s var(--ease);
-  will-change: clip-path;
   opacity: 0;
 }
 
@@ -185,19 +113,17 @@ body, html {
 }
 
 #wordmark.docked {
-  transform: translate(calc(-50vw + 60px + 1.9em), calc(-50vh + 45px + 0.4em)) scale(1);
+  transform: translate(calc(-50vw + 60px + 1.2em), calc(-50vh + 45px + 0.2em)) scale(1);
   pointer-events: auto;
 }
 
 .desktop-icon {
-  width: 1.1em;
-  height: 1.1em;
-  margin-left: 0.15em;
-  flex-shrink: 0;
+  width: 1em;
+  height: 1em;
+  margin-left: 4px;
   stroke: currentColor;
-  stroke-width: 2.5;
+  stroke-width: 2;
   fill: none;
-  display: inline-block;
 }
 
 .menu-items {
@@ -207,7 +133,7 @@ body, html {
   transform: translateY(-50%);
   display: inline-flex;
   align-items: center;
-  padding-left: 25px;
+  padding-left: 20px;
   pointer-events: none;
   opacity: 0;
   transition: opacity 1s var(--ease);
@@ -222,26 +148,14 @@ body, html {
   color: var(--white);
   text-decoration: none;
   font-family: var(--font-mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.2em;
-  margin-right: 25px;
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  margin-right: 20px;
   text-transform: uppercase;
-  transition: opacity 0.15s ease-out, filter 0.15s ease-out;
   cursor: pointer;
-  pointer-events: auto;
-  opacity: 1;
 }
-
-.menu-item.active {
-  opacity: 1 !important;
-  color: var(--white) !important;
-  pointer-events: none;
-}
-
-.ui-visible { opacity: 1 !important; }
 
 .overlay {
-  isolation: isolate;
   position: fixed;
   inset: 0;
   background: var(--overlay-bg);
@@ -249,21 +163,13 @@ body, html {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transition: opacity 1.2s var(--ease), visibility 1.2s var(--ease);
+  transition: opacity 1s var(--ease);
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-@supports (backdrop-filter: blur(1px)) {
-  .overlay { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
-}
-
-.overlay.active {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-}
+.overlay.active { opacity: 1; visibility: visible; pointer-events: auto; }
 
 .overlay-frame {
   position: absolute;
@@ -275,150 +181,85 @@ body, html {
 .coord {
   position: absolute;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 9px;
   color: #ffffff;
   letter-spacing: 0.1em;
 }
 
-.coord-tl { top: -20px; left: 0; }
-.coord-br { bottom: -20px; right: 0; }
+.coord-tl { top: -18px; left: 0; }
+.coord-br { bottom: -18px; right: 0; }
 
 .content-grid {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
-  max-width: 1000px;
-  padding: 80px;
-  pointer-events: auto;
+  max-width: 800px;
+  padding: 40px;
 }
 
 .col-left {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding-right: 60px;
+  padding-right: 40px;
   border-right: 1px solid #ffffff;
 }
 
 .avatar {
-  width: 160px;
-  height: 160px;
+  width: 110px;
+  height: 110px;
   border: 1px solid #ffffff;
-  border-radius: 0;
-  padding: 0;
   background: #000;
-  overflow: hidden;
 }
 
-.avatar img { 
-  width: 100%; 
-  height: 100%; 
-  object-fit: cover;
-  display: block;
-  border-radius: 0;
-}
+.avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
 .username {
-  margin-top: 25px;
+  margin-top: 15px;
   font-family: var(--font-header);
-  font-size: 1.1rem;
-  text-align: center;
-  letter-spacing: 0.3em;
-  color: var(--white);
+  font-size: 0.9rem;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
 }
 
 .col-right {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  padding-left: 60px;
-  gap: 30px;
+  padding-left: 40px;
+  gap: 20px;
   font-family: var(--font-mono);
 }
 
-.info-item { display: flex; flex-direction: column; gap: 6px; }
-.info-label { font-family: var(--font-mono); font-size: 10px; color: rgba(255, 255, 255, 0.6); text-transform: uppercase; letter-spacing: 2px; }
-.info-value { font-size: 1rem; letter-spacing: 1px; line-height: 1.5; text-transform: uppercase; }
+.info-item { display: flex; flex-direction: column; gap: 4px; }
+.info-label { font-size: 9px; color: rgba(255, 255, 255, 0.5); text-transform: uppercase; letter-spacing: 1px; }
+.info-value { font-size: 0.85rem; letter-spacing: 0.5px; line-height: 1.4; text-transform: uppercase; }
 
 .mail-link {
   color: var(--white);
   text-decoration: underline;
-  text-decoration-thickness: 1px;
-  font-family: var(--font-mono);
-  font-size: 0.9rem;
-  cursor: pointer;
+  font-size: 0.8rem;
   text-transform: none;
 }
 
-.mail-link:hover { opacity: 0.7; }
-
-/* ============ 网络状态指示器 ============ */
-.network-status-indicator {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 10000;
-  font-family: var(--font-mono);
-  font-size: 0.55rem;
-  padding: 6px 10px;
-  border: 1px solid #ffffff;
-  color: rgba(255, 100, 100, 0.7);
-  letter-spacing: 0.1em;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
-  text-transform: uppercase;
+#projects-overlay:not(.has-content) .overlay-frame,
+#projects-overlay:not(.has-content) .coord {
+  display: none;
 }
 
-.network-status-indicator.visible {
-  opacity: 1;
-}
-
-/* ============ 资源加载失败降级 ============ */
-.resource-failed {
-  background: #1a1a1a;
-  border: 1px solid #ffffff;
-}
-
-.resource-placeholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: #ffffff;
-  letter-spacing: 0.1em;
-}
+.ui-visible { opacity: 1 !important; }
 </style>
-
-<link rel="icon" type="image/png" href="assets/LAB-0.png?v=20260612">
-<link rel="apple-touch-icon" href="assets/LAB-0.png?v=20260612">
-
 </head>
 <body>
 
-<!-- 网络离线指示器 -->
-<div class="network-status-indicator" id="network-indicator">OFFLINE MODE</div>
-
-<!-- 背景图形元素（点阵动画） -->
 <canvas id="dot-matrix-canvas"></canvas>
 <div id="bg-overlay"></div>
 <div class="ui-grid" id="grid"></div>
 
-<!-- ============ 导航区域 ============ -->
 <div class="stage">
   <div id="wordmark">
-    <a id="nav-home" class="menu-item" style="font-family:inherit; font-size:inherit; letter-spacing:inherit; margin:0; padding:0; text-transform: none; display: flex; align-items: center; justify-content: center;">
-      <span>L</span><span class="ab0-reveal">AB-<svg class="desktop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="2" y="3" width="20" height="14" rx="0" ry="0"></rect>
-        <line x1="8" y1="21" x2="16" y2="21"></line>
-        <line x1="12" y1="17" x2="12" y2="21"></line>
-      </svg></span>
+    <a id="nav-home" style="color: inherit; text-decoration: none; display: flex; align-items: center; cursor: pointer;">
+      <span>L</span><span class="ab0-reveal">AB-<svg class="desktop-icon" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg></span>
     </a>
     <div class="menu-items" id="menu">
       <a id="projects-trigger" class="menu-item">PROJECTS</a>
@@ -427,144 +268,74 @@ body, html {
   </div>
 </div>
 
-<!-- ============ PROJECTS 页面 ============ -->
 <div id="projects-overlay" class="overlay">
-  <div class="overlay-frame">
-    <span class="coord coord-tl">[1111, 1111]</span>
-    <span class="coord coord-br">[9999, 9999]</span>
-  </div>
-  <div class="content-grid">
-    <!-- Projects container cleared per minimalist zero-options specification -->
-  </div>
+  <div class="overlay-frame"><span class="coord coord-tl">[1111, 1111]</span></div>
+  <div class="content-grid"></div>
 </div>
 
-<!-- ============ ABOUT 页面 ============ -->
 <div id="about-overlay" class="overlay">
-  <div class="overlay-frame">
-    <span class="coord coord-tl">[0000, 0000]</span>
-    <span class="coord coord-br">[8888, 8888]</span>
-  </div>
+  <div class="overlay-frame"><span class="coord coord-tl">[0000, 0000]</span><span class="coord coord-br">[8888, 8888]</span></div>
   <div class="content-grid">
     <div class="col-left">
-      <a href="https://github.com/ephemeralgaze" target="_blank" class="avatar" style="display: block; cursor: pointer;">
-        <img src="https://github.com/ephemeralgaze.png" alt="ephemeralgaze avatar" onerror="this.parentElement.classList.add('resource-failed'); this.style.display='none'; var ph = document.createElement('div'); ph.className='resource-placeholder'; ph.textContent='[AVATAR]'; this.parentElement.appendChild(ph);">
-      </a>
+      <div class="avatar"><img src="https://github.com/ephemeralgaze.png" alt="ephemeralgaze"></div>
       <div class="username">Jiang</div>
     </div>
     <div class="col-right">
-      <div class="info-item">
-        <span class="info-label">Status</span>
-        <span class="info-value">Age 21 / Born 2004</span>
-      </div>
-      <div class="info-item">
-        <span class="info-label">Educational</span>
-        <span class="info-value">College Degree / JLTC</span>
-      </div>
-      <div class="info-item">
-        <span class="info-label">Contact</span>
-        <a href="mailto:zgnx4ndcq5@privaterelay.appleid.com" class="mail-link">zgnx4ndcq5@privaterelay.appleid.com</a>
-      </div>
+      <div class="info-item"><span class="info-label">Status</span><span class="info-value">Age 21 / Born 2004</span></div>
+      <div class="info-item"><span class="info-label">Education</span><span class="info-value">College Degree / JLTC</span></div>
+      <div class="info-item"><span class="info-label">Contact</span><a href="mailto:zgnx4ndcq5@privaterelay.appleid.com" class="mail-link">zgnx4ndcq5@privaterelay.appleid.com</a></div>
     </div>
   </div>
 </div>
 
 <script>
-// ============ 网络管理器初始化 ============
-window.networkStatus.offlineIndicator = document.getElementById('network-indicator');
-window.networkStatus.init();
-
-// ============ 点阵背景动画（不依赖网络） ============
 (function() {
   var canvas = document.getElementById("dot-matrix-canvas");
-  if (!canvas) return;
   var ctx = canvas.getContext("2d");
   var dots = [];
   var width, height, dpr;
-
-  var GRID_SIZE = 30;
-  var DOT_RADIUS = 1.2;
-
   function init() {
     dpr = window.devicePixelRatio || 1;
-    width = window.innerWidth;
-    height = window.innerHeight;
-    canvas.width = width * dpr;
-    canvas.height = height * dpr;
+    width = window.innerWidth; height = window.innerHeight;
+    canvas.width = width * dpr; canvas.height = height * dpr;
     ctx.scale(dpr, dpr);
-    
     dots = [];
-    var cols = Math.ceil(width / GRID_SIZE);
-    var rows = Math.ceil(height / GRID_SIZE);
-
-    for (var i = 0; i < cols; i++) {
-      for (var j = 0; j < rows; j++) {
-        dots.push({
-          x: i * GRID_SIZE + GRID_SIZE / 2,
-          y: j * GRID_SIZE + GRID_SIZE / 2,
-          phase: Math.random() * Math.PI * 2,
-          freq: 0.02 + Math.random() * 0.03,
-          maxOpacity: 0.10 + Math.random() * 0.40
-        });
+    for (var i = 0; i < width/30; i++) {
+      for (var j = 0; j < height/30; j++) {
+        dots.push({x: i*30+15, y: j*30+15, phase: Math.random()*Math.PI*2, freq: 0.02+Math.random()*0.03, maxOpacity: 0.15});
       }
     }
   }
-
   function draw(time) {
     ctx.clearRect(0, 0, width, height);
-    
     dots.forEach(function(dot) {
-      var opacity = (Math.sin(time * 0.001 * dot.freq * 100 + dot.phase) * 0.5 + 0.5) * dot.maxOpacity;
-      ctx.beginPath();
-      ctx.arc(dot.x, dot.y, DOT_RADIUS, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(255, 255, 255, " + (opacity + 0.05).toFixed(3) + ")";
-      ctx.fill();
+      var opacity = (Math.sin(time*0.001*dot.freq*100+dot.phase)*0.5+0.5)*dot.maxOpacity;
+      ctx.beginPath(); ctx.arc(dot.x, dot.y, 1, 0, Math.PI*2);
+      ctx.fillStyle = "rgba(255,255,255,"+opacity.toFixed(3)+")"; ctx.fill();
     });
-
     requestAnimationFrame(draw);
   }
-
-  window.addEventListener("resize", init);
-  init();
-  requestAnimationFrame(draw);
+  window.addEventListener("resize", init); init(); requestAnimationFrame(draw);
 })();
 
-// ============ 主业务逻辑 ============
 document.addEventListener("DOMContentLoaded", function() {
   var wordmark = document.getElementById("wordmark");
   var grid = document.getElementById("grid");
   var menu = document.getElementById("menu");
+  var navHome = document.getElementById("nav-home");
   var projectsTrigger = document.getElementById("projects-trigger");
   var aboutTrigger = document.getElementById("about-trigger");
-  var navHome = document.getElementById("nav-home");
   var projectsOverlay = document.getElementById("projects-overlay");
   var aboutOverlay = document.getElementById("about-overlay");
 
-  // 动画序列
-  setTimeout(function() { if (wordmark) wordmark.classList.add("assembled"); }, 1500);
-  setTimeout(function() { if (wordmark) wordmark.classList.add("docked"); }, 3500);
-  setTimeout(function() { if (grid) grid.classList.add("ui-visible"); if (menu) menu.classList.add("visible"); }, 4700);
+  setTimeout(function() { wordmark.classList.add("assembled"); }, 1000);
+  setTimeout(function() { wordmark.classList.add("docked"); }, 2500);
+  setTimeout(function() { grid.classList.add("ui-visible"); menu.classList.add("visible"); }, 3700);
 
-  // 导航事件
-  if (projectsTrigger) projectsTrigger.addEventListener("click", function() {
-    aboutOverlay.classList.remove("active");
-    projectsOverlay.classList.add("active");
-  });
-
-  if (aboutTrigger) {
-    aboutTrigger.addEventListener("click", function() {
-      projectsOverlay.classList.remove("active");
-      aboutOverlay.classList.add("active");
-    });
-  }
-
-  if (navHome) {
-    navHome.addEventListener("click", function() { 
-      projectsOverlay.classList.remove("active"); 
-      aboutOverlay.classList.remove("active"); 
-    });
-  }
+  projectsTrigger.onclick = function() { aboutOverlay.classList.remove("active"); projectsOverlay.classList.add("active"); };
+  aboutTrigger.onclick = function() { projectsOverlay.classList.remove("active"); aboutOverlay.classList.add("active"); };
+  navHome.onclick = function() { projectsOverlay.classList.remove("active"); aboutOverlay.classList.remove("active"); };
 });
 </script>
-
 </body>
 </html>
