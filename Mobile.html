@@ -38,16 +38,14 @@
   box-sizing: border-box;
 }
 
-/* Global 0px border-radius doctrine for layout elements */
+/* Strict 0px radius for all layout components */
 div, section, article, nav, header, footer, a, span, button, input {
   border-radius: 0 !important;
 }
 
-/* Restored: SVGs, App Icons, and Avatars can have their inherent shapes or slight rounding if required for visual clarity, 
-   but we'll keep avatars square per 0px doctrine unless explicitly requested otherwise. 
-   The user specifically complained about "mobile icons" being squares. */
+/* Restore inherent SVG shapes and prevent global border-radius overrides on icons */
 svg, svg * {
-  border-radius: inherit !important;
+  border-radius: revert !important;
 }
 
 body, html {
@@ -58,6 +56,7 @@ body, html {
   overflow: hidden;
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
+  border: none !important; /* Remove outer border */
 }
 
 #dot-matrix-canvas {
@@ -77,10 +76,12 @@ body, html {
   pointer-events: none;
 }
 
+/* The grid dots (white points) are part of the canvas, but the UI grid lines are here. 
+   Removing the white border around the screen by hiding the ui-grid border. */
 .ui-grid {
   position: fixed;
   inset: 10px;
-  border: 1px solid var(--grid-color);
+  border: none !important; /* Removed white outer frame */
   pointer-events: none;
   opacity: 0;
   transition: opacity 1s ease-out;
@@ -154,10 +155,10 @@ body, html {
   fill: none;
 }
 
-/* Fix for icons: ensure SVGs can have rounded corners inside them */
+/* Original SVG phone icon properties */
 .mobile-icon rect {
-  rx: 2;
-  ry: 2;
+  rx: 3;
+  ry: 3;
 }
 
 #mobile-header {
@@ -249,23 +250,8 @@ body, html {
 
 .overlay.active { opacity: 1; visibility: visible; pointer-events: auto; }
 
-.overlay-frame {
-  position: absolute;
-  inset: 10px;
-  border: 1px solid #ffffff;
-  pointer-events: none;
-}
-
-.coord {
-  position: absolute;
-  font-family: var(--font-mono);
-  font-size: 8px;
-  color: #ffffff;
-  letter-spacing: 0.1em;
-}
-
-.coord-tl { top: -15px; left: 0; }
-.coord-br { bottom: -15px; right: 0; }
+/* Fully removed all overlay-frames and outer white boxes */
+.overlay-frame { display: none !important; }
 
 .content-grid {
   display: flex;
@@ -292,7 +278,6 @@ body, html {
   overflow: hidden;
 }
 
-/* RESTORED: Avatars should be square per doctrine, but icons inside SVGs should be correct. */
 .avatar img { width: 100%; height: 100%; object-fit: cover; }
 
 .username {
@@ -340,11 +325,36 @@ body, html {
   word-break: break-all;
 }
 
-#projects-overlay:not(.has-content) .overlay-frame {
-  border: none;
+/* Industrial Projects Layout */
+#projects-overlay .content-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  padding: 100px 20px 60px;
 }
-#projects-overlay:not(.has-content) .coord {
-  display: none;
+
+.project-item {
+  border: 1px solid var(--white);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.project-title {
+  font-family: var(--font-header);
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  color: var(--white);
+}
+
+.project-desc {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.5;
+  text-transform: uppercase;
 }
 
 .ui-visible { opacity: 1 !important; pointer-events: auto !important; }
@@ -380,7 +390,6 @@ body, html {
 </div>
 
 <div id="about-overlay" class="overlay">
-<div class="overlay-frame"><span class="coord coord-tl">[0000, 0000]</span><span class="coord coord-br">[8888, 8888]</span></div>
 <div class="content-grid">
   <div class="col-left">
     <div class="avatar"><img src="https://avatars.githubusercontent.com/u/291265014?v=4" alt="ephemeralgaze"></div>
@@ -395,8 +404,16 @@ body, html {
 </div>
 
 <div id="projects-overlay" class="overlay">
-<div class="overlay-frame"><span class="coord coord-tl">[1111, 1111]</span></div>
-<div class="content-grid"></div>
+<div class="content-grid">
+  <div class="project-item">
+    <div class="project-title">CORE_ARCHIVE</div>
+    <div class="project-desc">DIGITAL REPOSITORY CONFIGURED FOR BRUTALIST INTERACTIVE EXPERIENCES. HIGH CONTRAST RATIO.</div>
+  </div>
+  <div class="project-item">
+    <div class="project-title">OS_INTERFACE</div>
+    <div class="project-desc">EXPERIMENTAL WORKFLOWS FOR MINIMALIST DATA VISUALIZATION AND LAYOUT SYSTEMS.</div>
+  </div>
+</div>
 </div>
 
 <script>

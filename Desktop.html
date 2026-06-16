@@ -20,7 +20,7 @@
 <style>
 :root {
   --bg-color: #050505;
-  --overlay-bg: rgba(5, 5, 5, 0.9);
+  --overlay-bg: rgba(5, 5, 5, 0.95);
   --white: #ffffff;
   --grid-color: #ffffff;
   --font-header: "Syncopate", sans-serif;
@@ -35,14 +35,12 @@
   box-sizing: border-box;
 }
 
-/* Global 0px border-radius doctrine for layout elements */
 div, section, article, nav, header, footer, a, span, button, input {
   border-radius: 0 !important;
 }
 
-/* Restored: SVGs and inherent graphical shapes */
 svg, svg * {
-  border-radius: inherit !important;
+  border-radius: revert !important;
 }
 
 body, html {
@@ -53,6 +51,7 @@ body, html {
   overflow: hidden;
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
+  border: none !important;
 }
 
 #dot-matrix-canvas {
@@ -75,7 +74,7 @@ body, html {
 .ui-grid {
   position: fixed;
   inset: 20px;
-  border: 1px solid var(--grid-color);
+  border: none !important; /* Removed white outer frame */
   pointer-events: none;
   opacity: 0;
   transition: opacity 1s ease-out;
@@ -135,7 +134,7 @@ body, html {
   fill: none;
 }
 
-/* Restored Desktop Icon properties */
+/* Original SVG desktop icon properties */
 .desktop-icon rect {
   rx: 2;
   ry: 2;
@@ -186,30 +185,15 @@ body, html {
 
 .overlay.active { opacity: 1; visibility: visible; pointer-events: auto; }
 
-.overlay-frame {
-  position: absolute;
-  inset: 40px;
-  border: 1px solid #ffffff;
-  pointer-events: none;
-}
-
-.coord {
-  position: absolute;
-  font-family: var(--font-mono);
-  font-size: 9px;
-  color: #ffffff;
-  letter-spacing: 0.1em;
-}
-
-.coord-tl { top: -18px; left: 0; }
-.coord-br { bottom: -18px; right: 0; }
+/* Removed all overlay-frames and outer white boxes */
+.overlay-frame { display: none !important; }
 
 .content-grid {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
-  max-width: 800px;
+  max-width: 1000px;
   padding: 40px;
 }
 
@@ -217,8 +201,8 @@ body, html {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-right: 40px;
-  border-right: 1px solid #ffffff;
+  padding-right: 60px;
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .avatar {
@@ -232,9 +216,9 @@ body, html {
 .avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
 .username {
-  margin-top: 15px;
+  margin-top: 20px;
   font-family: var(--font-header);
-  font-size: 0.9rem;
+  font-size: 1rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
 }
@@ -242,14 +226,14 @@ body, html {
 .col-right {
   display: flex;
   flex-direction: column;
-  padding-left: 40px;
-  gap: 20px;
+  padding-left: 60px;
+  gap: 25px;
   font-family: var(--font-mono);
 }
 
-.info-item { display: flex; flex-direction: column; gap: 4px; }
-.info-label { font-size: 9px; color: rgba(255, 255, 255, 0.5); text-transform: uppercase; letter-spacing: 1px; }
-.info-value { font-size: 0.85rem; letter-spacing: 0.5px; line-height: 1.4; text-transform: uppercase; }
+.info-item { display: flex; flex-direction: column; gap: 6px; }
+.info-label { font-size: 9px; color: rgba(255, 255, 255, 0.4); text-transform: uppercase; letter-spacing: 2px; }
+.info-value { font-size: 0.8rem; letter-spacing: 1px; line-height: 1.4; text-transform: uppercase; }
 
 .mail-link {
   color: var(--white);
@@ -258,9 +242,39 @@ body, html {
   text-transform: none;
 }
 
-#projects-overlay:not(.has-content) .overlay-frame,
-#projects-overlay:not(.has-content) .coord {
-  display: none;
+/* Industrial Grid for Projects */
+#projects-overlay .content-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px;
+  width: 100%;
+}
+
+.project-item {
+  border: 1px solid var(--white);
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  transition: background 0.3s var(--ease);
+}
+
+.project-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.project-title {
+  font-family: var(--font-header);
+  font-size: 0.9rem;
+  letter-spacing: 0.2em;
+}
+
+.project-desc {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.6;
+  text-transform: uppercase;
 }
 
 .ui-visible { opacity: 1 !important; }
@@ -285,12 +299,19 @@ body, html {
 </div>
 
 <div id="projects-overlay" class="overlay">
-  <div class="overlay-frame"><span class="coord coord-tl">[1111, 1111]</span></div>
-  <div class="content-grid"></div>
+<div class="content-grid">
+  <div class="project-item">
+    <div class="project-title">PROJECT_ALPHA</div>
+    <div class="project-desc">HIGH-FIDELITY ARCHIVE. CONFIGURED FOR NEOTERIC DATA VISUALIZATION AND BRUTALIST INTERFACES.</div>
+  </div>
+  <div class="project-item">
+    <div class="project-title">SYSTEM_CORE</div>
+    <div class="project-desc">EXPERIMENTAL ARCHITECTURE FOR REACTIVE DIGITAL ECOSYSTEMS. OPTIMIZED FOR MINIMALIST DEPLOYMENTS.</div>
+  </div>
+</div>
 </div>
 
 <div id="about-overlay" class="overlay">
-  <div class="overlay-frame"><span class="coord coord-tl">[0000, 0000]</span><span class="coord coord-br">[8888, 8888]</span></div>
   <div class="content-grid">
     <div class="col-left">
       <div class="avatar"><img src="https://github.com/ephemeralgaze.png" alt="ephemeralgaze"></div>
