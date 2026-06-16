@@ -1,0 +1,8 @@
+[
+  {"name": "Back it up", "pipeline": "HLSL / Compute", "complexity": "12.4M Particles"},
+  {"name": "Atmos", "pipeline": "GLSL / Vertex", "complexity": "Lorenz / 60FPS"},
+  {"name": "Pineapple Slice", "pipeline": "PBR / Raycast", "complexity": "Dynamic SDF"},
+  {"name": "Deja Vu", "pipeline": "VFX / Compute", "complexity": "Q-Field Sim"},
+  {"name": "All I Got", "pipeline": "Geometry Shaders", "complexity": "Instanced Mesh"},
+  {"name": "Crazy", "pipeline": "Geometry Shaders", "complexity": "Instanced Mesh"}
+]
