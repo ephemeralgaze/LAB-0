@@ -309,9 +309,9 @@ body, html {
 .coord-br { bottom: -20px; right: 0; }
 
 .content-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100%;
   padding: 114px 30px 60px;
   pointer-events: auto;
@@ -323,11 +323,6 @@ body, html {
   align-items: center;
   justify-content: center;
   gap: 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  padding-bottom: 30px;
-}
-@media (dynamic-range: high) or (color-gamut: p3) {
-  .col-left { border-bottom: 1px solid color(display-p3 1 1 1 / 0.05); }
 }
 
 .avatar {
@@ -367,97 +362,6 @@ body, html {
   gap: 8px;
   font-family: var(--font-mono);
 }
-
-#projects-overlay .content-grid {
-  font-family: var(--font-mono);
-  text-transform: uppercase;
-}
-
-.project-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%;
-}
-
-.project-entry {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);
-  cursor: pointer;
-  opacity: 0.5;
-}
-@media (dynamic-range: high) or (color-gamut: p3) {
-  .project-entry { border-bottom: 1px solid color(display-p3 1 1 1 / 0.05); }
-}
-
-.project-entry.selected {
-  opacity: 1;
-  transform: scale(1.02);
-}
-
-.project-entry:last-child { border-bottom: none; }
-
-.project-info {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-}
-
-.project-id {
-  font-size: 0.55rem;
-  color: rgba(255, 255, 255, 0.3);
-}
-@media (dynamic-range: high) or (color-gamut: p3) {
-  .project-id { color: color(display-p3 1 1 1 / 0.3); }
-}
-
-.project-name {
-  font-size: 0.8rem;
-  letter-spacing: 0.15em;
-  transition: font-size 0.4s var(--ease);
-}
-
-.project-entry.selected .project-name { font-size: 0.95rem; }
-
-.status-tag {
-  font-size: 0.55rem;
-  padding: 2px 6px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: rgba(255, 255, 255, 0.7);
-}
-@media (dynamic-range: high) or (color-gamut: p3) {
-  .status-tag {
-    border: 1px solid color(display-p3 1 1 1 / 0.2);
-    color: color(display-p3 1 1 1 / 0.7);
-  }
-}
-
-.spec-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.spec-details {
-  display: grid;
-  grid-template-columns: 80px 1fr;
-  gap: 8px;
-  font-size: 0.65rem;
-  color: rgba(255, 255, 255, 0.5);
-}
-@media (dynamic-range: high) or (color-gamut: p3) {
-  .spec-details { color: color(display-p3 1 1 1 / 0.5); }
-}
-
-.spec-label { color: rgba(255, 255, 255, 0.3); }
-@media (dynamic-range: high) or (color-gamut: p3) {
-  .spec-label { color: color(display-p3 1 1 1 / 0.3); }
-}
-.spec-value { color: var(--white); }
 
 .info-item {
   display: flex;
@@ -527,15 +431,6 @@ body, html {
   }
   @media (dynamic-range: high) or (color-gamut: p3) {
     #projects-overlay .col-left { border-right: 1px solid color(display-p3 1 1 1 / 0.05); }
-  }
-
-  #projects-overlay .spec-panel {
-    gap: 8px;
-  }
-
-  #projects-overlay .spec-details {
-    grid-template-columns: 70px 1fr;
-    font-size: 0.65rem;
   }
 }
 .mail-link { text-decoration: underline; }
@@ -620,53 +515,7 @@ body, html {
 <span class="coord coord-tl">[1111, 1111]</span>
 </div>
 <div class="content-grid">
-  <div class="col-left" style="align-items: flex-start; justify-content: flex-start; padding: 15px;">
-    <div class="project-list" id="p-list">
-      <div class="project-entry selected" data-project="V1">
-        <div class="project-info">
-          <span class="project-id">[01]</span>
-          <span class="project-name">Stack it,Stack it,Go up</span>
-        </div>
-        <span class="status-tag">CONCERT</span>
-      </div>
-      <div class="project-entry" data-project="V2">
-        <div class="project-info">
-          <span class="project-id">[02]</span>
-          <span class="project-name">Atoms</span>
-        </div>
-        <span class="status-tag">M/V</span>
-      </div>
-      <div class="project-entry" data-project="V3">
-        <div class="project-info">
-          <span class="project-id">[03]</span>
-          <span class="project-name">Pineapple Slice</span>
-        </div>
-        <span class="status-tag">M/V</span>
-      </div>
-      <div class="project-entry" data-project="V4">
-        <div class="project-info">
-          <span class="project-id">[04]</span>
-          <span class="project-name">Ephemeral Gaze</span>
-        </div>
-        <span class="status-tag">CONCERT</span>
-      </div>
-      <div class="project-entry" data-project="V5">
-        <div class="project-info">
-          <span class="project-id">[05]</span>
-          <span class="project-name">All I Got</span>
-        </div>
-        <span class="status-tag">MUSIC</span>
-      </div>
-    </div>
-  </div>
-  <div class="col-right">
-    <div class="spec-panel">
-      <div class="spec-details" id="p-specs">
-        <span class="spec-label">Pipeline:</span><span class="spec-value" id="s-pipeline">---</span>
-        <span class="spec-label">Complexity:</span><span class="spec-value" id="s-complexity">---</span>
-      </div>
-    </div>
-  </div>
+  <!-- Projects container cleared per minimalist zero-options specification -->
 </div>
 </div>
 
@@ -739,40 +588,6 @@ document.addEventListener("DOMContentLoaded", function() {
   var mAboutTrigger = document.getElementById("m-about-trigger");
   var mobileHeader = document.getElementById("mobile-header");
 
-  var sPipeline = document.getElementById("s-pipeline");
-  var sComplexity = document.getElementById("s-complexity");
-
-  var projectData = {
-    V1: {
-      pipeline: "HLSL / Compute",
-      complexity: "12.4M Particles"
-    },
-    V2: {
-      pipeline: "GLSL / Vertex",
-      complexity: "Lorenz / 60FPS"
-    },
-    V3: {
-      pipeline: "PBR / Raycast",
-      complexity: "Dynamic SDF"
-    },
-    V4: {
-      pipeline: "VFX / Compute",
-      complexity: "Q-Field Sim"
-    },
-    V5: {
-      pipeline: "Post / Kernel",
-      complexity: "Multi-Pass LUT"
-    }
-  };
-
-  var updateProjectMedia = function(projectId) {
-    var data = projectData[projectId];
-    if (!data) return;
-    
-    if (sPipeline) sPipeline.innerText = data.pipeline;
-    if (sComplexity) sComplexity.innerText = data.complexity;
-  };
-
   setTimeout(function() { 
     if (wordmark) wordmark.classList.add("docked");
   }, 3500);
@@ -826,16 +641,6 @@ document.addEventListener("DOMContentLoaded", function() {
   if (mAboutTrigger) mAboutTrigger.addEventListener("click", function() { switchPage("about", mAboutTrigger); });
   if (mProjectsTrigger) mProjectsTrigger.addEventListener("click", function() { switchPage("projects", mProjectsTrigger); });
   if (mNavHome) mNavHome.addEventListener("click", function() { switchPage("home", mNavHome); });
-
-  var projectEntries = document.querySelectorAll(".project-entry");
-  projectEntries.forEach(function(entry) {
-    entry.addEventListener("click", function() {
-      projectEntries.forEach(function(e) { e.classList.remove("selected"); });
-      entry.classList.add("selected");
-      var pid = entry.getAttribute("data-project");
-      updateProjectMedia(pid);
-    });
-  });
 });
 </script>
 </body>

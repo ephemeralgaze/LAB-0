@@ -225,73 +225,14 @@ body, html {
 .coord-br { bottom: -20px; right: 0; }
 
 .content-grid {
-  display: grid;
-  grid-template-columns: 0.6fr 1.4fr;
-  gap: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100%;
   max-width: 1400px;
   padding: 80px;
   pointer-events: auto;
 }
-
-#projects-overlay .content-grid {
-  grid-template-columns: 0.6fr 1.4fr;
-}
-
-.col-left {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 20px;
-  border-right: none;
-}
-
-.project-list {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  width: 100%;
-}
-
-.project-entry {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);
-  cursor: pointer;
-  opacity: 0.5;
-}
-@media (dynamic-range: high) or (color-gamut: p3) {
-  .project-entry {
-    border-bottom: 1px solid color(display-p3 1 1 1 / 0.05);
-  }
-}
-
-.project-entry.selected { opacity: 1; }
-.project-info { display: flex; align-items: baseline; gap: 15px; font-family: var(--font-mono); text-transform: uppercase; }
-.project-id { font-size: 0.6rem; color: rgba(255, 255, 255, 0.3); }
-@media (dynamic-range: high) or (color-gamut: p3) {
-  .project-id { color: color(display-p3 1 1 1 / 0.3); }
-}
-.project-name { font-size: 0.9rem; letter-spacing: 0.15em; }
-.status-tag { font-size: 0.6rem; padding: 3px 8px; border: 1px solid rgba(255, 255, 255, 0.2); color: rgba(255, 255, 255, 0.7); font-family: var(--font-mono); }
-@media (dynamic-range: high) or (color-gamut: p3) {
-  .status-tag {
-    border: 1px solid color(display-p3 1 1 1 / 0.2);
-    color: color(display-p3 1 1 1 / 0.7);
-  }
-}
-
-.spec-panel { display: flex; flex-direction: column; gap: 20px; }
-
-.spec-details { display: grid; grid-template-columns: 100px 1fr; gap: 10px; font-size: 0.7rem; font-family: var(--font-mono); text-transform: uppercase; }
-.spec-label { color: rgba(255, 255, 255, 0.3); }
-@media (dynamic-range: high) or (color-gamut: p3) {
-  .spec-label { color: color(display-p3 1 1 1 / 0.3); }
-}
-.spec-value { color: var(--white); }
 
 /* About Specific Styles */
 .avatar {
@@ -375,38 +316,7 @@ body, html {
 <span class="coord coord-br">[9999, 9999]</span>
 </div>
 <div class="content-grid">
-  <div class="col-left">
-    <div class="project-list" id="p-list">
-      <div class="project-entry selected" data-project="V1">
-        <div class="project-info"><span class="project-id">[01]</span><span class="project-name">Stack it,Stack it,Go up</span></div>
-        <span class="status-tag">CONCERT</span>
-      </div>
-      <div class="project-entry" data-project="V2">
-        <div class="project-info"><span class="project-id">[02]</span><span class="project-name">Atoms</span></div>
-        <span class="status-tag">M/V</span>
-      </div>
-      <div class="project-entry" data-project="V3">
-        <div class="project-info"><span class="project-id">[03]</span><span class="project-name">Pineapple slice</span></div>
-        <span class="status-tag">M/V</span>
-      </div>
-      <div class="project-entry" data-project="V4">
-        <div class="project-info"><span class="project-id">[04]</span><span class="project-name">Ephemeral Gaze</span></div>
-        <span class="status-tag">CONCERT</span>
-      </div>
-      <div class="project-entry" data-project="V5">
-        <div class="project-info"><span class="project-id">[05]</span><span class="project-name">all i got</span></div>
-        <span class="status-tag">MUSIC</span>
-      </div>
-    </div>
-  </div>
-  <div class="col-right">
-    <div class="spec-panel">
-      <div class="spec-details">
-        <span class="spec-label">Pipeline:</span><span class="spec-value" id="s-pipeline">---</span>
-        <span class="spec-label">Complexity:</span><span class="spec-value" id="s-complexity">---</span>
-      </div>
-    </div>
-  </div>
+  <!-- Projects container cleared per minimalist zero-options specification -->
 </div>
 </div>
 
@@ -510,36 +420,13 @@ document.addEventListener("DOMContentLoaded", function() {
   var projectsOverlay = document.getElementById("projects-overlay");
   var aboutOverlay = document.getElementById("about-overlay");
 
-  var sPipeline = document.getElementById("s-pipeline");
-  var sComplexity = document.getElementById("s-complexity");
-
-  var projectData = {
-    V1: { pipeline: "HLSL / Compute", complexity: "12.4M Particles" },
-    V2: { pipeline: "GLSL / Vertex", complexity: "Lorenz / 60FPS" },
-    V3: { pipeline: "PBR / Raycast", complexity: "Dynamic SDF" },
-    V4: { pipeline: "VFX / Compute", complexity: "Q-Field Sim" },
-    V5: { pipeline: "Geometry Shaders", complexity: "Instanced Mesh" }
-  };
-
   setTimeout(function() { if (wordmark) wordmark.classList.add("assembled"); }, 1500);
   setTimeout(function() { if (wordmark) wordmark.classList.add("docked"); }, 3500);
   setTimeout(function() { if (grid) grid.classList.add("ui-visible"); if (menu) menu.classList.add("visible"); }, 4700);
 
-  function updateProject(pid) {
-    var data = projectData[pid];
-    if (!data) return;
-    
-    sPipeline.innerText = data.pipeline;
-    sComplexity.innerText = data.complexity;
-  }
-
   if (projectsTrigger) projectsTrigger.addEventListener("click", function() {
     aboutOverlay.classList.remove("active");
     projectsOverlay.classList.add("active");
-    var selectedEntry = document.querySelector(".project-entry.selected");
-    if (selectedEntry) {
-      updateProject(selectedEntry.getAttribute("data-project"));
-    }
   });
 
   if (aboutTrigger) {
@@ -555,15 +442,6 @@ document.addEventListener("DOMContentLoaded", function() {
       aboutOverlay.classList.remove("active"); 
     });
   }
-
-  var projectEntries = document.querySelectorAll(".project-entry");
-  projectEntries.forEach(function(entry) {
-    entry.addEventListener("click", function() {
-      projectEntries.forEach(function(e) { e.classList.remove("selected"); });
-      entry.classList.add("selected");
-      updateProject(entry.getAttribute("data-project"));
-    });
-  });
 });
 </script>
 </body>
