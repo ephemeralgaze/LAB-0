@@ -20,7 +20,7 @@
   --bg-color: #050505;
   --overlay-bg: rgba(5, 5, 5, 0.7);
   --white: #ffffff;
-  --grid-color: rgba(255, 255, 255, 0.1);
+  --grid-color: #ffffff;
   --font-header: "Syncopate", sans-serif;
   --font-body: "Space Grotesk", sans-serif;
   --font-mono: "Space Mono", monospace;
@@ -30,7 +30,7 @@
 @media (dynamic-range: high) or (color-gamut: p3) {
   :root {
     --white: color(display-p3 1 1 1);
-    --grid-color: color(display-p3 1 1 1 / 0.1);
+    --grid-color: #ffffff;
   }
 }
 
@@ -73,7 +73,7 @@ body, html {
 .ui-grid {
   position: fixed;
   inset: 0;
-  border: none;
+  border: 1px solid #ffffff;
   margin: 20px;
   pointer-events: none;
   opacity: 0;
@@ -205,7 +205,7 @@ body, html {
 .overlay-frame {
   position: absolute;
   inset: 40px;
-  border: none;
+  border: 1px solid #ffffff;
   pointer-events: none;
 }
 
@@ -213,12 +213,12 @@ body, html {
   position: absolute;
   font-family: var(--font-mono);
   font-size: 10px;
-  color: rgba(255, 255, 255, 0.4);
+  color: #ffffff;
   letter-spacing: 0.1em;
 }
 @media (dynamic-range: high) or (color-gamut: p3) {
   .coord {
-    color: color(display-p3 1 1 1 / 0.4);
+    color: #ffffff;
   }
 }
 .coord-tl { top: -20px; left: 0; }
@@ -238,7 +238,7 @@ body, html {
 .avatar {
   width: 160px;
   height: 160px;
-  border: 1px solid var(--white);
+  border: 1px solid #ffffff;
   padding: 0;
   background: #000;
   overflow: hidden;
@@ -247,7 +247,7 @@ body, html {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 0;
+  border-radius: 0 !important;
 }
 .info-item {
   display: flex;
@@ -257,12 +257,12 @@ body, html {
 .info-label {
   font-family: 'Space Mono', monospace;
   font-size: 9px;
-  color: rgba(255,255,255,0.4);
+  color: #ffffff;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
 @media (dynamic-range: high) or (color-gamut: p3) {
-  .info-label { color: color(display-p3 1 1 1 / 0.4); }
+  .info-label { color: #ffffff; }
 }
 .info-value {
   font-size: 16px;
@@ -273,7 +273,7 @@ body, html {
   color: var(--white);
   text-decoration: underline;
   text-decoration-thickness: 1px;
-  border: none;
+  border: 1px solid #ffffff;
   padding: 0;
   transition: all 0.3s ease;
   display: inline-block;
@@ -325,8 +325,8 @@ body, html {
 <span class="coord coord-tl">[0000, 0000]</span>
 <span class="coord coord-br">[8888, 8888]</span>
 </div>
-<div class="content-grid" style="grid-template-columns: 0.6fr 1.4fr; background-color: #050505; color: var(--white); font-family: 'Space Grotesk', sans-serif; border: 1px solid rgba(255,255,255,0.1); padding: 60px;">
-  <div class="col-left" style="display: flex; flex-direction: column; align-items: center; justify-content: center; border-right: none; padding-right: 40px;">
+<div class="content-grid" style="grid-template-columns: 0.6fr 1.4fr; background-color: #050505; color: var(--white); font-family: 'Space Grotesk', sans-serif; border: 1px solid #ffffff; padding: 60px;">
+  <div class="col-left" style="display: flex; flex-direction: column; align-items: center; justify-content: center; border-right: 1px solid #ffffff; padding-right: 40px;">
     <a href="https://github.com/ephemeralgaze" target="_blank" class="avatar" style="display: block; cursor: pointer;">
       <img src="https://github.com/ephemeralgaze.png" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
     </a>
