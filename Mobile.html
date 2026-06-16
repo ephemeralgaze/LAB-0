@@ -45,7 +45,7 @@ html.fonts-fback {
   --bg-color: #050505;
   --overlay-bg: rgba(5, 5, 5, 0.7);
   --white: #ffffff;
-  --grid-color: rgba(255, 255, 255, 0.1);
+  --grid-color: #ffffff;
   --font-header: "Syncopate", sans-serif;
   --font-body: "Space Grotesk", sans-serif;
   --font-mono: "Space Mono", monospace;
@@ -55,7 +55,7 @@ html.fonts-fback {
 @media (dynamic-range: high) or (color-gamut: p3) {
   :root {
     --white: color(display-p3 1 1 1);
-    --grid-color: color(display-p3 1 1 1 / 0.1);
+    --grid-color: #ffffff;
   }
 }
 
@@ -97,7 +97,7 @@ body, html {
 .ui-grid {
   position: fixed;
   inset: 0;
-  border: none;
+  border: 1px solid #ffffff;
   margin: 10px;
   pointer-events: none;
   opacity: 0;
@@ -316,7 +316,7 @@ body, html {
 .overlay-frame {
   position: absolute;
   inset: 20px;
-  border: none;
+  border: 1px solid #ffffff;
   pointer-events: none;
 }
 
@@ -324,11 +324,11 @@ body, html {
   position: absolute;
   font-family: var(--font-mono);
   font-size: 10px;
-  color: rgba(255, 255, 255, 0.4);
+  color: #ffffff;
   letter-spacing: 0.1em;
 }
 @media (dynamic-range: high) or (color-gamut: p3) {
-  .coord { color: color(display-p3 1 1 1 / 0.4); }
+  .coord { color: #ffffff; }
 }
 .coord-tl { top: -20px; left: 0; }
 .coord-br { bottom: -20px; right: 0; }
@@ -354,14 +354,14 @@ body, html {
   width: 120px;
   height: 120px;
   border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid #ffffff;
   padding: 6px;
-  background: rgba(255, 255, 255, 0.05);
+  background: #ffffff;
 }
 @media (dynamic-range: high) or (color-gamut: p3) {
   .avatar {
-    border: 1px solid color(display-p3 1 1 1 / 0.2);
-    background: color(display-p3 1 1 1 / 0.05);
+    border: 1px solid #ffffff;
+    background: #ffffff;
   }
 }
 
@@ -392,16 +392,16 @@ body, html {
   display: flex;
   align-items: flex-start;
   gap: 15px;
-  color: rgba(255, 255, 255, 0.7);
+  color: #ffffff;
   font-size: 0.75rem;
   letter-spacing: 0.1em;
   padding: 10px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid #ffffff;
 }
 @media (dynamic-range: high) or (color-gamut: p3) {
   .info-item {
-    color: color(display-p3 1 1 1 / 0.7);
-    border-bottom: 1px solid color(display-p3 1 1 1 / 0.1);
+    color: #ffffff;
+    border-bottom: 1px solid #ffffff;
   }
 }
 
@@ -415,11 +415,11 @@ body, html {
 .info-label {
   width: 80px;
   font-size: 0.55rem;
-  color: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
   text-transform: uppercase;
 }
 @media (dynamic-range: high) or (color-gamut: p3) {
-  .info-label { color: color(display-p3 1 1 1 / 0.3); }
+  .info-label { color: #ffffff; }
 }
 
 .info-value {
@@ -510,7 +510,7 @@ body, html {
   #about-overlay .col-left {
     border-bottom: none !important;
     padding-bottom: 0 !important;
-    border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-right: 1px solid #ffffff !important;
     padding-right: 20px !important;
   }
   #about-overlay .avatar {
@@ -724,19 +724,9 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
   if (navHome) navHome.addEventListener("click", function(e) { e.stopPropagation(); switchPage("home", navHome); });
+  if (mAboutTrigger) mAboutTrigger.addEventListener("click", function() { switchPage("about", mAboutTrigger); });
+  if (mProjectsTrigger) mProjectsTrigger.addEventListener("click", function() { switchPage("projects", mProjectsTrigger); });
   if (mNavHome) mNavHome.addEventListener("click", function() { switchPage("home", mNavHome); });
-
-  if (mAboutTrigger) {
-    mAboutTrigger.addEventListener("click", function() { 
-      switchPage("about", mAboutTrigger); 
-    });
-  }
-
-  if (mProjectsTrigger) {
-    mProjectsTrigger.addEventListener("click", function() { 
-      switchPage("projects", mProjectsTrigger); 
-    });
-  }
 });
 </script>
 </body>
