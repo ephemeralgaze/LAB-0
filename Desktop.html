@@ -63,7 +63,7 @@ window.networkStatus = {
   --bg-color: #050505;
   --overlay-bg: rgba(5, 5, 5, 0.7);
   --white: #ffffff;
-  --grid-color: rgba(255, 255, 255, 0.1);
+  --grid-color: #ffffff;
   
   /* 优先使用 Google Fonts，失败则自动降级到系统字体 */
   --font-header: "Syncopate", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -87,7 +87,7 @@ html.fonts-fallback {
 @media (dynamic-range: high) or (color-gamut: p3) {
   :root {
     --white: color(display-p3 1 1 1);
-    --grid-color: color(display-p3 1 1 1 / 0.1);
+    --grid-color: #ffffff;
   }
 }
 
@@ -134,7 +134,7 @@ body, html {
 .ui-grid {
   position: fixed;
   inset: 0;
-  border: none;
+  border: 1px solid #ffffff;
   margin: 20px;
   pointer-events: none;
   opacity: 0;
@@ -268,7 +268,7 @@ body, html {
 .overlay-frame {
   position: absolute;
   inset: 40px;
-  border: none;
+  border: 1px solid #ffffff;
   pointer-events: none;
 }
 
@@ -276,7 +276,7 @@ body, html {
   position: absolute;
   font-family: var(--font-mono);
   font-size: 10px;
-  color: rgba(255, 255, 255, 0.4);
+  color: #ffffff;
   letter-spacing: 0.1em;
 }
 
@@ -296,7 +296,7 @@ body, html {
 .avatar {
   width: 160px;
   height: 160px;
-  border: 1px solid var(--white);
+  border: 1px solid #ffffff;
   padding: 0;
   background: #000;
   overflow: hidden;
@@ -310,7 +310,7 @@ body, html {
 }
 
 .info-item { display: flex; flex-direction: column; gap: 4px; }
-.info-label { font-family: var(--font-mono); font-size: 9px; color: rgba(255, 255, 255, 0.4); text-transform: uppercase; letter-spacing: 1px; }
+.info-label { font-family: var(--font-mono); font-size: 9px; color: #ffffff; text-transform: uppercase; letter-spacing: 1px; }
 .info-value { font-size: 16px; letter-spacing: 0.5px; line-height: 1.5; }
 
 .mail-link {
@@ -333,7 +333,7 @@ body, html {
   font-family: var(--font-mono);
   font-size: 0.55rem;
   padding: 6px 10px;
-  border: 1px solid rgba(255, 100, 100, 0.5);
+  border: 1px solid #ffffff;
   color: rgba(255, 100, 100, 0.7);
   letter-spacing: 0.1em;
   opacity: 0;
@@ -349,7 +349,7 @@ body, html {
 /* ============ 资源加载失败降级 ============ */
 .resource-failed {
   background: #1a1a1a;
-  border: 1px dashed rgba(255, 255, 255, 0.2);
+  border: 1px solid #ffffff;
 }
 
 .resource-placeholder {
@@ -360,7 +360,7 @@ body, html {
   height: 100%;
   font-family: var(--font-mono);
   font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.4);
+  color: #ffffff;
   letter-spacing: 0.1em;
 }
 </style>
