@@ -288,9 +288,18 @@ body, html {
   justify-content: center;
   align-items: center;
   width: 100%;
-  max-width: 1400px;
+  max-width: 1000px;
   padding: 80px;
   pointer-events: auto;
+}
+
+.col-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-right: 60px;
+  border-right: 1px solid #ffffff;
 }
 
 .avatar {
@@ -311,17 +320,37 @@ body, html {
   border-radius: 0;
 }
 
-.info-item { display: flex; flex-direction: column; gap: 4px; }
-.info-label { font-family: var(--font-mono); font-size: 9px; color: #ffffff; text-transform: uppercase; letter-spacing: 1px; }
-.info-value { font-size: 16px; letter-spacing: 0.5px; line-height: 1.5; }
+.username {
+  margin-top: 25px;
+  font-family: var(--font-header);
+  font-size: 1.1rem;
+  text-align: center;
+  letter-spacing: 0.3em;
+  color: var(--white);
+  text-transform: uppercase;
+}
+
+.col-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-left: 60px;
+  gap: 30px;
+  font-family: var(--font-mono);
+}
+
+.info-item { display: flex; flex-direction: column; gap: 6px; }
+.info-label { font-family: var(--font-mono); font-size: 10px; color: rgba(255, 255, 255, 0.6); text-transform: uppercase; letter-spacing: 2px; }
+.info-value { font-size: 1rem; letter-spacing: 1px; line-height: 1.5; text-transform: uppercase; }
 
 .mail-link {
   color: var(--white);
   text-decoration: underline;
   text-decoration-thickness: 1px;
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 0.9rem;
   cursor: pointer;
+  text-transform: none;
 }
 
 .mail-link:hover { opacity: 0.7; }
@@ -415,30 +444,24 @@ body, html {
     <span class="coord coord-tl">[0000, 0000]</span>
     <span class="coord coord-br">[8888, 8888]</span>
   </div>
-  <div class="content-grid" style="display: grid; grid-template-columns: 0.6fr 1.4fr; gap: 80px;">
-    <div class="col-left" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding-right: 40px;">
+  <div class="content-grid">
+    <div class="col-left">
       <a href="https://github.com/ephemeralgaze" target="_blank" class="avatar" style="display: block; cursor: pointer;">
         <img src="https://github.com/ephemeralgaze.png" alt="ephemeralgaze avatar" onerror="this.parentElement.classList.add('resource-failed'); this.style.display='none'; var ph = document.createElement('div'); ph.className='resource-placeholder'; ph.textContent='[AVATAR]'; this.parentElement.appendChild(ph);">
       </a>
-      <a href="https://github.com/ephemeralgaze" target="_blank" style="margin-top: 25px; font-family: 'Space Mono', 'Monaco', 'Courier New', monospace; font-size: 14px; text-align: center; letter-spacing: 1px; color: inherit; text-decoration: none;">
-        EPHEMERAL GAZE
-      </a>
+      <div class="username">Jiang</div>
     </div>
-    <div class="col-right" style="padding-left: 60px; display: flex; flex-direction: column; justify-content: center; gap: 25px;">
-      <div class="info-item">
-        <span class="info-label">Name</span>
-        <span class="info-value" style="font-size: 18px; letter-spacing: 1px; font-weight: 500;">Jiang</span>
-      </div>
+    <div class="col-right">
       <div class="info-item">
         <span class="info-label">Status</span>
         <span class="info-value">Age 21 / Born 2004</span>
       </div>
       <div class="info-item">
-        <span class="info-label">EDUCATIONAL</span>
-        <span class="info-value">College Degree<br>JLTC</span>
+        <span class="info-label">Educational</span>
+        <span class="info-value">College Degree / JLTC</span>
       </div>
       <div class="info-item">
-        <span class="info-label">CONTACT</span>
+        <span class="info-label">Contact</span>
         <a href="mailto:zgnx4ndcq5@privaterelay.appleid.com" class="mail-link">zgnx4ndcq5@privaterelay.appleid.com</a>
       </div>
     </div>
