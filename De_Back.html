@@ -67,6 +67,12 @@
             gap: 20px;
         }
 
+        .nav-item {
+            font-family: var(--font-header);
+            font-size: 10px;
+            cursor: pointer;
+        }
+
         .panel-right {
             grid-column: 2;
             border-right: none;
@@ -242,8 +248,8 @@
 
     <aside class="panel">
         <div class="panel-title">SYSTEM_MODULES</div>
-        <div class="nav-item active" onclick="switchModule('01')" style="font-size: 10px; opacity: 0.8; cursor:pointer;">[01]GAMES</div>
-        <div class="nav-item" onclick="switchModule('02')" style="font-size: 10px; opacity: 0.6; cursor:pointer;">[02]NAME</div>
+        <div class="nav-item active" onclick="switchModule('01')" style="opacity: 0.8;">[01]GAMES</div>
+        <div class="nav-item" onclick="switchModule('02')" style="opacity: 0.6;">[02]NAME</div>
         <div style="margin-top: auto;" class="panel-title">
             ENGINE_STATUS<br>
             <span style="color:white">UNREAL_VFX_NIAGARA</span>
