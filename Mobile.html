@@ -6,273 +6,103 @@
     <title>LAB-0 | MOBILE TELEMETRY</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&family=Space+Mono:wght@400;700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg: #050505;
             --fg: #FFFFFF;
             --border: 1px solid rgba(255, 255, 255, 0.15);
-            --font-header: 'Syncopate', sans-serif;
-            --font-body: 'Space Grotesk', sans-serif;
             --font-mono: 'Space Mono', monospace;
-            --ue-bg: #1A1A1A;
+            --terminal-green: #00FF00;
         }
 
-        @keyframes blink {
-            0% { opacity: 1; }
-            50% { opacity: 0; }
-            100% { opacity: 1; }
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            border-radius: 0 !important;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; border-radius: 0 !important; }
 
         body {
             background-color: var(--bg);
             color: var(--fg);
-            font-family: var(--font-body);
+            font-family: var(--font-mono);
             width: 100vw;
             min-height: 100vh;
             overflow-x: hidden;
             display: flex;
             flex-direction: column;
-            background-image: 
-                linear-gradient(45deg, rgba(255,255,255,0.01) 25%, transparent 25%), 
-                linear-gradient(-45deg, rgba(255,255,255,0.01) 25%, transparent 25%), 
-                linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.01) 75%), 
-                linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.01) 75%);
-            background-size: 40px 40px;
         }
 
         header {
             border-bottom: var(--border);
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(5,5,5,0.8);
-        }
-
-        header h1 {
-            font-family: var(--font-header);
-            font-size: 9px;
-            letter-spacing: 3px;
-        }
-
-        .module-switcher {
-            display: flex;
-            border-bottom: var(--border);
-        }
-
-        .module-tab {
-            flex: 1;
             padding: 15px;
-            font-family: var(--font-mono);
-            font-size: 9px;
-            text-align: center;
-            opacity: 0.3;
-        }
-
-        .module-tab.active {
-            opacity: 1;
-            border-bottom: 2px solid #FFF;
-        }
-
-        .canvas-container {
-            height: 250px;
-            width: 100%;
-            position: relative;
-            border-bottom: var(--border);
-        }
-
-        #niagara-canvas {
-            width: 100%;
-            height: 100%;
-        }
-
-        .goal-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-family: var(--font-mono);
-            font-size: 10px;
-            color: #FFF;
-            background: #000;
-            padding: 5px 10px;
-            border: 1px solid #FFF;
-            animation: blink 0.5s infinite;
-            display: none;
-            pointer-events: none;
-        }
-
-        .details-panel {
-            background: var(--ue-bg);
-            padding-bottom: 40px;
-        }
-
-        .details-header {
-            background: #222;
-            padding: 8px 15px;
-            font-family: var(--font-mono);
-            font-size: 10px;
-            color: #AAA;
-            border-bottom: 1px solid #333;
-        }
-
-        .category-header {
-            background: #2A2A2A;
-            padding: 10px 15px;
-            font-family: var(--font-mono);
-            font-size: 9px;
-            font-weight: bold;
-            color: #EEE;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border-bottom: 1px solid #111;
-        }
-
-        .detail-row {
-            padding: 10px 15px;
-        }
-
-        .detail-label {
-            font-family: var(--font-mono);
-            font-size: 8px;
-            color: #888;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-        }
-
-        .input-group {
-            display: flex;
-            align-items: center;
-            background: #000;
-            border: 1px solid #333;
-            margin-bottom: 5px;
-        }
-
-        .input-prefix {
-            font-family: var(--font-mono);
-            font-size: 8px;
-            padding: 0 6px;
-            color: #555;
-            border-right: 1px solid #333;
-        }
-
-        .detail-input {
-            width: 100%;
-            background: transparent;
-            border: none;
-            color: #FFF;
-            font-family: var(--font-mono);
-            font-size: 11px;
-            padding: 8px;
-            outline: none;
-        }
-
-        .detail-slider {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 1px;
-            background: #444;
-            outline: none;
-            margin: 10px 0;
-        }
-
-        .detail-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 12px;
-            height: 20px;
-            background: #FFF;
-            cursor: pointer;
-        }
-
-        .time-display {
-            padding: 15px 20px;
-            border-top: var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .time-label {
-            font-family: var(--font-mono);
-            font-size: 8px;
-            color: rgba(255,255,255,0.3);
-        }
+        header h1 { font-size: 8px; letter-spacing: 2px; font-family: 'Syncopate'; }
 
-        .time-value {
-            font-family: var(--font-mono);
-            font-size: 14px;
-            color: #FFFFFF;
-        }
+        .level-tabs { display: flex; border-bottom: var(--border); }
+        .level-tab { flex: 1; padding: 12px; font-size: 9px; text-align: center; opacity: 0.4; border-right: 1px solid #222; }
+        .level-tab.active { opacity: 1; background: #111; }
+
+        .canvas-container { height: 280px; width: 100%; position: relative; border-bottom: var(--border); }
+        #niagara-canvas { width: 100%; height: 100%; }
+
+        .details-panel { background: #111; flex: 1; }
+        .details-header { background: #222; padding: 8px 15px; font-size: 10px; color: #AAA; }
+        
+        .category-header { background: #2A2A2A; padding: 8px 15px; font-size: 9px; font-weight: bold; border-bottom: 1px solid #111; }
+        .detail-row { padding: 10px 15px; }
+        .detail-label { font-size: 8px; color: #888; margin-bottom: 5px; text-transform: uppercase; }
+
+        .input-group { display: flex; align-items: center; background: #000; border: 1px solid #333; }
+        .input-prefix { font-size: 8px; padding: 0 6px; color: #555; border-right: 1px solid #333; }
+        .detail-input { width: 100%; background: transparent; border: none; color: #FFF; font-family: var(--font-mono); font-size: 11px; padding: 8px; outline: none; }
+        .detail-slider { -webkit-appearance: none; width: 100%; height: 1px; background: #444; outline: none; margin: 10px 0; }
+        .detail-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 20px; background: #FFF; }
+
+        .goal-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 10px; color: var(--terminal-green); background: #000; border: 1px solid var(--terminal-green); padding: 5px 10px; display: none; }
+        
+        .obj-toggle { display: flex; padding: 10px; gap: 5px; }
+        .obj-btn { flex: 1; padding: 8px; font-size: 8px; background: #222; border: 1px solid #333; color: #777; text-align: center; }
+        .obj-btn.active { color: #FFF; background: #333; border-color: #555; }
     </style>
 </head>
 <body>
     <header>
-        <h1>LAB-0 // MOBILE_TELEMETRY</h1>
-        <div style="font-size: 8px; color: #00FF00; opacity: 0.5;">LIVE</div>
+        <h1>LAB-0 // MOBILE</h1>
+        <div id="sim-status" style="font-size: 8px; color: #00FF00;">ACTIVE</div>
     </header>
 
-    <nav class="module-switcher">
-        <div class="module-tab active">LAB_01</div>
-        <div class="module-tab">VFX_02</div>
-    </nav>
+    <div class="level-tabs">
+        <div class="level-tab active" onclick="setLevel(1)">LEVEL_01</div>
+        <div class="level-tab" onclick="setLevel(2)">LEVEL_02</div>
+    </div>
 
     <div class="canvas-container">
         <canvas id="niagara-canvas"></canvas>
-        <div id="goal-notification" class="goal-text">GOAL_REACHED: [LEVEL_01_CLEARED]</div>
+        <div id="goal-notification" class="goal-text">GOAL_REACHED</div>
     </div>
 
-    <div class="time-display">
-        <div class="time-label">UTC_TELEMETRY</div>
-        <div class="time-value" id="live-clock">00:00:00:00</div>
+    <div class="obj-toggle">
+        <div id="btn-deflector" class="obj-btn active" onclick="selectObject('deflector')">DEFLECTOR</div>
+        <div id="btn-gravity" class="obj-btn" onclick="selectObject('gravity')" style="display:none">GRAVITY_WELL</div>
     </div>
 
     <section class="details-panel">
-        <div class="details-header">Details</div>
         <div class="category-header">TRANSFORM</div>
-        
         <div class="detail-row">
             <div class="detail-label">Position X</div>
-            <div class="input-group">
-                <span class="input-prefix">X</span>
-                <input type="number" id="posX" class="detail-input" value="150">
-            </div>
-            <input type="range" id="posX-slider" class="detail-slider" min="0" max="400" value="150">
+            <div class="input-group"><span class="input-prefix">X</span><input type="number" id="posX" class="detail-input"></div>
+            <input type="range" id="posX-slider" class="detail-slider" min="0" max="400">
         </div>
-
         <div class="detail-row">
             <div class="detail-label">Position Y</div>
-            <div class="input-group">
-                <span class="input-prefix">Y</span>
-                <input type="number" id="posY" class="detail-input" value="150">
-            </div>
-            <input type="range" id="posY-slider" class="detail-slider" min="0" max="300" value="150">
+            <div class="input-group"><span class="input-prefix">Y</span><input type="number" id="posY" class="detail-input"></div>
+            <input type="range" id="posY-slider" class="detail-slider" min="0" max="300">
         </div>
-
         <div class="detail-row">
             <div class="detail-label">Rotation</div>
-            <div class="input-group">
-                <span class="input-prefix">D</span>
-                <input type="number" id="rot" class="detail-input" value="45">
-            </div>
-            <input type="range" id="rot-slider" class="detail-slider" min="0" max="360" value="45">
-        </div>
-
-        <div class="detail-row">
-            <div class="detail-label">Scale X</div>
-            <div class="input-group">
-                <span class="input-prefix">X</span>
-                <input type="number" id="scaleX" class="detail-input" value="60">
-            </div>
-            <input type="range" id="scaleX-slider" class="detail-slider" min="10" max="200" value="60">
+            <div class="input-group"><span class="input-prefix">D</span><input type="number" id="rot" class="detail-input"></div>
+            <input type="range" id="rot-slider" class="detail-slider" min="0" max="360">
         </div>
     </section>
 
@@ -280,131 +110,148 @@
         const canvas = document.getElementById('niagara-canvas');
         const ctx = canvas.getContext('2d');
         const goalNotif = document.getElementById('goal-notification');
-        
-        let particles = [];
-        let deflector = { x: 150, y: 150, rotation: 45 * Math.PI / 180, length: 60 };
-        const goalZone = { x: 250, y: 180, w: 50, h: 50 };
-        let goalHits = 0;
 
-        const inputs = {
-            posX: document.getElementById('posX'),
-            posY: document.getElementById('posY'),
-            rot: document.getElementById('rot'),
-            scaleX: document.getElementById('scaleX'),
-            posX_s: document.getElementById('posX-slider'),
-            posY_s: document.getElementById('posY-slider'),
-            rot_s: document.getElementById('rot-slider'),
-            scaleX_s: document.getElementById('scaleX-slider')
+        let currentLevel = 1;
+        let particles = [];
+        let goalHits = 0;
+        let activeObjKey = 'deflector';
+
+        let gameState = {
+            deflector: { x: 150, y: 100, rotation: 45, length: 60 },
+            gravity: { x: 100, y: 150, pull: 0.5 },
+            goal: { x: 250, y: 180, w: 50, h: 50 },
+            obstacle: { x: 150, y: 120, w: 10, h: 100 }
         };
 
-        function syncUI(source) {
-            if (source.includes('slider')) {
-                inputs.posX.value = deflector.x = parseInt(inputs.posX_s.value);
-                inputs.posY.value = deflector.y = parseInt(inputs.posY_s.value);
-                inputs.rot.value = parseInt(inputs.rot_s.value);
-                deflector.rotation = inputs.rot.value * Math.PI / 180;
-                inputs.scaleX.value = deflector.length = parseInt(inputs.scaleX_s.value);
-            } else {
-                deflector.x = inputs.posX_s.value = parseInt(inputs.posX.value);
-                deflector.y = inputs.posY_s.value = parseInt(inputs.posY.value);
-                inputs.rot_s.value = parseInt(inputs.rot.value);
-                deflector.rotation = inputs.rot.value * Math.PI / 180;
-                deflector.length = inputs.scaleX_s.value = parseInt(inputs.scaleX.value);
-            }
+        const ui = {
+            posX: document.getElementById('posX'), posY: document.getElementById('posY'),
+            rot: document.getElementById('rot'),
+            posXs: document.getElementById('posX-slider'), posYs: document.getElementById('posY-slider'),
+            rots: document.getElementById('rot-slider')
+        };
+
+        function setLevel(lvl) {
+            currentLevel = lvl;
+            document.querySelectorAll('.level-tab').forEach((t, i) => t.classList.toggle('active', i === lvl-1));
+            document.getElementById('btn-gravity').style.display = lvl === 2 ? 'block' : 'none';
+            resetLevel();
         }
 
-        Object.keys(inputs).forEach(k => inputs[k].addEventListener('input', () => syncUI(k)));
+        function selectObject(key) {
+            activeObjKey = key;
+            document.getElementById('btn-deflector').classList.toggle('active', key === 'deflector');
+            document.getElementById('btn-gravity').classList.toggle('active', key === 'gravity');
+            syncUIFromState();
+        }
+
+        function syncUIFromState() {
+            const obj = gameState[activeObjKey];
+            ui.posX.value = ui.posXs.value = Math.round(obj.x);
+            ui.posY.value = ui.posYs.value = Math.round(obj.y);
+            if(obj.rotation !== undefined) ui.rot.value = ui.rots.value = Math.round(obj.rotation);
+            else ui.rot.value = ui.rots.value = 0;
+        }
+
+        function syncStateFromUI(source) {
+            const obj = gameState[activeObjKey];
+            if (source.includes('s')) {
+                obj.x = parseInt(ui.posXs.value);
+                obj.y = parseInt(ui.posYs.value);
+                if(obj.rotation !== undefined) obj.rotation = parseInt(ui.rots.value);
+            } else {
+                obj.x = parseInt(ui.posX.value) || 0;
+                obj.y = parseInt(ui.posY.value) || 0;
+                if(obj.rotation !== undefined) obj.rotation = parseInt(ui.rot.value) || 0;
+            }
+            syncUIFromState();
+        }
+
+        Object.keys(ui).forEach(k => ui[k].addEventListener('input', () => syncStateFromUI(k)));
+
+        function resetLevel() {
+            particles = [];
+            for (let i = 0; i < 30; i++) particles.push(new Particle());
+            goalHits = 0;
+            if (currentLevel === 1) {
+                gameState.goal = { x: canvas.width - 70, y: canvas.height - 70, w: 50, h: 50 };
+            } else {
+                gameState.goal = { x: canvas.width - 70, y: 30, w: 50, h: 50 };
+                gameState.obstacle = { x: canvas.width / 2, y: 50, w: 10, h: 100 };
+            }
+            syncUIFromState();
+        }
+
+        class Particle {
+            constructor() { this.reset(); }
+            reset() { this.x = 20; this.y = 20; this.vx = 1.5 + Math.random(); this.vy = 0.5 + Math.random(); }
+            update() {
+                this.x += this.vx; this.y += this.vy; this.vy += 0.05;
+                const d = gameState.deflector;
+                const dx = this.x - d.x; const dy = this.y - d.y;
+                const rad = d.rotation * Math.PI / 180;
+                const cos = Math.cos(-rad); const sin = Math.sin(-rad);
+                const lx = dx * cos - dy * sin; const ly = dx * sin + dy * cos;
+                if (Math.abs(ly) < 5 && Math.abs(lx) < d.length / 2) {
+                    const nx = Math.sin(rad); const ny = -Math.cos(rad);
+                    const dot = this.vx * nx + this.vy * ny;
+                    this.vx -= 2 * dot * nx; this.vy -= 2 * dot * ny;
+                }
+                if (currentLevel === 2) {
+                    const g = gameState.gravity;
+                    const gdx = g.x - this.x; const gdy = g.y - this.y;
+                    const dist = Math.hypot(gdx, gdy);
+                    if (dist < 150) {
+                        this.vx += (gdx / dist) * 0.2; this.vy += (gdy / dist) * 0.2;
+                    }
+                    const obs = gameState.obstacle;
+                    if (this.x > obs.x && this.x < obs.x + obs.w && this.y > obs.y && this.y < obs.y + obs.h) this.reset();
+                }
+                if (this.x > gameState.goal.x && this.x < gameState.goal.x + gameState.goal.w && 
+                    this.y > gameState.goal.y && this.y < gameState.goal.y + gameState.goal.h) {
+                    goalHits++; this.reset();
+                }
+                if (this.y > canvas.height || this.x > canvas.width || this.x < 0) this.reset();
+            }
+            draw() { ctx.fillStyle = "#FFF"; ctx.fillRect(this.x, this.y, 1, 1); }
+        }
 
         function resize() {
             canvas.width = canvas.offsetWidth;
             canvas.height = canvas.offsetHeight;
-            inputs.posX_s.max = canvas.width;
-            inputs.posY_s.max = canvas.height;
+            ui.posXs.max = canvas.width;
+            ui.posYs.max = canvas.height;
+            resetLevel();
         }
         window.addEventListener('resize', resize);
-        resize();
-
-        class Particle {
-            constructor() { this.reset(); }
-            reset() {
-                this.x = 20;
-                this.y = 20;
-                this.vx = 1.5 + Math.random();
-                this.vy = 0.5 + Math.random();
-            }
-            update() {
-                this.x += this.vx;
-                this.y += this.vy;
-                this.vy += 0.05;
-
-                const dx = this.x - deflector.x;
-                const dy = this.y - deflector.y;
-                const cos = Math.cos(-deflector.rotation);
-                const sin = Math.sin(-deflector.rotation);
-                const localX = dx * cos - dy * sin;
-                const localY = dx * sin + dy * cos;
-
-                if (Math.abs(localY) < 5 && Math.abs(localX) < deflector.length / 2) {
-                    const nx = Math.sin(deflector.rotation);
-                    const ny = -Math.cos(deflector.rotation);
-                    const dot = this.vx * nx + this.vy * ny;
-                    this.vx -= 2 * dot * nx;
-                    this.vy -= 2 * dot * ny;
-                }
-
-                if (this.x > goalZone.x && this.x < goalZone.x + goalZone.w && 
-                    this.y > goalZone.y && this.y < goalZone.y + goalZone.h) {
-                    goalHits++;
-                    this.reset();
-                }
-
-                if (this.y > canvas.height || this.x > canvas.width || this.x < 0) this.reset();
-            }
-            draw() {
-                ctx.fillStyle = "#FFF";
-                ctx.fillRect(this.x, this.y, 1, 1);
-            }
-        }
-
-        for (let i = 0; i < 30; i++) particles.push(new Particle());
 
         function animate() {
-            ctx.fillStyle = 'rgba(5,5,5,0.3)';
+            ctx.fillStyle = 'rgba(5,5,5,0.4)';
             ctx.fillRect(0,0,canvas.width, canvas.height);
-            
             ctx.setLineDash([2, 2]);
-            ctx.strokeStyle = "rgba(255,255,255,0.5)";
-            ctx.strokeRect(goalZone.x, goalZone.y, goalZone.w, goalZone.h);
+            ctx.strokeStyle = goalHits > 15 ? "#00FF00" : "rgba(255,255,255,0.5)";
+            ctx.strokeRect(gameState.goal.x, gameState.goal.y, gameState.goal.w, gameState.goal.h);
             ctx.setLineDash([]);
 
-            ctx.save();
-            ctx.translate(deflector.x, deflector.y);
-            ctx.rotate(deflector.rotation);
-            ctx.fillStyle = "#FFF";
-            ctx.fillRect(-deflector.length/2, -1, deflector.length, 2);
-            ctx.restore();
+            const d = gameState.deflector;
+            ctx.save(); ctx.translate(d.x, d.y); ctx.rotate(d.rotation * Math.PI / 180);
+            ctx.fillStyle = activeObjKey === 'deflector' ? "#00FF00" : "#FFF";
+            ctx.fillRect(-d.length/2, -1, d.length, 2); ctx.restore();
+
+            if (currentLevel === 2) {
+                const g = gameState.gravity;
+                ctx.strokeStyle = activeObjKey === 'gravity' ? "#00FF00" : "#FFF";
+                ctx.beginPath(); ctx.arc(g.x, g.y, 4, 0, Math.PI*2); ctx.stroke();
+                const obs = gameState.obstacle;
+                ctx.fillStyle = "#333"; ctx.fillRect(obs.x, obs.y, obs.w, obs.h);
+            }
 
             particles.forEach(p => { p.update(); p.draw(); });
-
-            if (goalHits > 10) {
-                goalNotif.style.display = 'block';
-            } else {
-                goalNotif.style.display = 'none';
-            }
-            if (goalHits > 0) goalHits -= 0.1;
+            goalNotif.style.display = goalHits > 15 ? 'block' : 'none';
+            if (goalHits > 0) goalHits -= 0.05;
             requestAnimationFrame(animate);
         }
+        resize();
         animate();
-
-        function updateClock() {
-            const now = new Date();
-            const h = String(now.getHours()).padStart(2, '0');
-            const m = String(now.getMinutes()).padStart(2, '0');
-            const s = String(now.getSeconds()).padStart(2, '0');
-            const ms = String(now.getMilliseconds()).padStart(3, '0').slice(0, 2);
-            document.getElementById('live-clock').innerText = `${h}:${m}:${s}:${ms}`;
-        }
-        setInterval(updateClock, 50);
     </script>
 </body>
 </html>
