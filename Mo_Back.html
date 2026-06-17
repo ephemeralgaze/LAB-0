@@ -2,169 +2,712 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>LAB-0 | MOBILE TELEMETRY</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400&family=Space+Mono:wght@400;700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #050505; --fg: #FFFFFF; --border: 1px solid rgba(255, 255, 255, 0.15); --font-header: 'Space Grotesk', sans-serif; --font-mono: 'Space Mono', monospace; --terminal-green: #00FF00; }
-        * { margin: 0; padding: 0; box-sizing: border-box; border-radius: 0 !important; }
-        body { background-color: var(--bg); color: var(--fg); font-family: var(--font-mono); width: 100vw; min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column; }
-        header { border-bottom: var(--border); padding: 15px; display: flex; justify-content: space-between; align-items: center; }
-        header h1 { font-size: 8px; letter-spacing: 2px; font-family: 'Space Grotesk'; text-transform: uppercase; }
-        .nav-scroller { display: flex; overflow-x: auto; border-bottom: var(--border); background: #111; }
-        .nav-item { flex: 0 0 auto; padding: 12px 20px; font-size: 9px; text-transform: uppercase; opacity: 0.4; border-right: 1px solid #222; }
-        .nav-item.active { opacity: 1; background: #1a1a1a; }
-        .module-content { display: none; flex: 1; flex-direction: column; }
-        .module-content.active { display: flex; }
-        .canvas-container { height: 280px; width: 100%; position: relative; border-bottom: var(--border); }
-        #niagara-canvas { width: 100%; height: 100%; }
-        .details-panel { background: #111; flex: 1; }
-        .category-header { background: #2A2A2A; padding: 8px 15px; font-size: 9px; font-weight: bold; border-bottom: 1px solid #111; }
-        .detail-row { padding: 10px 15px; }
-        .detail-label { font-size: 8px; color: #888; margin-bottom: 5px; text-transform: uppercase; }
-        .input-group { display: flex; align-items: center; background: #000; border: 1px solid #333; }
-        .input-prefix { font-size: 8px; padding: 0 6px; color: #555; border-right: 1px solid #333; }
-        .detail-input { width: 100%; background: transparent; border: none; color: #FFF; font-family: var(--font-mono); font-size: 11px; padding: 8px; outline: none; }
-        .detail-slider { -webkit-appearance: none; width: 100%; height: 1px; background: #444; outline: none; margin: 10px 0; }
-        .detail-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 20px; background: #FFF; }
-        .level-tabs { display: flex; background: #222; }
-        .level-tab { flex: 1; padding: 10px; font-size: 8px; text-align: center; color: #555; border-right: 1px solid #333; }
-        .level-tab.active { background: #111; color: #FFF; }
+        :root {
+            --bg: #000000;
+            --fg: #FFFFFF;
+            --border: 1px solid #FFFFFF;
+            --font-header: 'Syncopate', sans-serif;
+            --font-mono: 'Space Mono', monospace;
+            --font-body: 'Space Grotesk', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            border-radius: 0 !important;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--fg);
+            font-family: var(--font-body);
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            padding: 15px;
+            border-bottom: var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-family: var(--font-header);
+            font-size: 10px;
+            letter-spacing: 3px;
+            font-weight: 700;
+        }
+
+        #sim-status {
+            font-family: var(--font-mono);
+            font-size: 9px;
+            color: #FFF;
+        }
+
+        .nav-tabs {
+            display: flex;
+            border-bottom: var(--border);
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 12px;
+            font-family: var(--font-header);
+            font-size: 9px;
+            text-align: center;
+            border-right: var(--border);
+            background: #000;
+            opacity: 0.5;
+            cursor: pointer;
+        }
+
+        .nav-tab:last-child {
+            border-right: none;
+        }
+
+        .nav-tab.active {
+            opacity: 1;
+            background: #000;
+        }
+
+        .main-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .module-content {
+            display: none;
+            flex: 1;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .module-content.active {
+            display: flex;
+        }
+
+        /* Module 01 Styles */
+        .canvas-area {
+            height: 50%;
+            position: relative;
+            background: #000;
+            border-bottom: var(--border);
+        }
+
+        #niagara-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .controls-area {
+            flex: 1;
+            overflow-y: auto;
+            background: #000;
+        }
+
+        /* Module 02 Styles */
+        .video-viewport {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: var(--border);
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .video-viewport video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-controls {
+            padding: 15px;
+            border-bottom: var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .control-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .seek-wrap {
+            flex: 1;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .seek-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.5);
+            outline: none;
+        }
+
+        .seek-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 10px;
+            height: 20px;
+            background: #FFF;
+            cursor: pointer;
+            border: 1px solid #000;
+        }
+
+        .play-btn, .mute-btn {
+            background: transparent;
+            border: var(--border);
+            color: #FFF;
+            padding: 6px 12px;
+            font-family: var(--font-header);
+            font-size: 8px;
+            cursor: pointer;
+            letter-spacing: 1px;
+            white-space: nowrap;
+        }
+
+        .time-display {
+            font-family: var(--font-mono);
+            font-size: 7px;
+            color: #FFF;
+            position: absolute;
+            bottom: -12px;
+            right: 0;
+            text-align: right;
+            pointer-events: none;
+        }
+
+        .asset-info {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .info-header {
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+            padding-bottom: 10px;
+        }
+
+        .info-header h2 {
+            font-size: 14px;
+            font-family: var(--font-header);
+            letter-spacing: 2px;
+        }
+
+        .info-header p {
+            font-size: 9px;
+            font-family: var(--font-mono);
+            color: #AAA;
+            margin-top: 4px;
+        }
+
+        .category-header {
+            background: #111;
+            border-bottom: 1px solid rgba(255,255,255,0.5);
+            font-family: var(--font-header);
+            font-size: 9px;
+            padding: 6px 15px;
+            margin-bottom: 10px;
+        }
+
+        .info-text {
+            font-family: var(--font-body);
+            font-size: 11px;
+            line-height: 1.6;
+            color: #EEE;
+            margin-bottom: 20px;
+        }
+
+        /* Common Components */
+        .level-select {
+            display: flex;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .level-btn {
+            flex: 1;
+            padding: 10px;
+            font-family: var(--font-header);
+            font-size: 9px;
+            text-align: center;
+            border-right: 1px solid rgba(255,255,255,0.2);
+            color: #888;
+        }
+
+        .level-btn.active {
+            color: #FFF;
+            background: #222;
+        }
+
+        .property-row {
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .property-label {
+            font-family: var(--font-header);
+            font-size: 8px;
+            color: #AAA;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .input-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .slider {
+            flex: 1;
+            -webkit-appearance: none;
+            height: 1px;
+            background: #666;
+            outline: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            background: #FFF;
+            border: 1px solid #000;
+        }
+
+        .val-display {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            min-width: 40px;
+            text-align: right;
+        }
+
+        .terminal-overlay {
+            position: absolute;
+            bottom: 5px;
+            left: 5px;
+            font-family: var(--font-mono);
+            font-size: 7px;
+            color: rgba(255,255,255,0.4);
+            pointer-events: none;
+        }
+
+        #goal-notification {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 15px;
+            border: 1px solid #FFF;
+            color: #FFF;
+            background: #000;
+            font-family: var(--font-header);
+            font-size: 10px;
+            display: none;
+            z-index: 100;
+        }
     </style>
 </head>
 <body>
-    <header><h1>LAB-0 // MOBILE</h1><div id="sim-status" style="font-size: 8px; color: #00FF00;">READY</div></header>
-    <div class="nav-scroller"><div class="nav-item active" onclick="switchModule('01')">[01]GAMES</div><div class="nav-item" onclick="switchModule('02')">[02]NAME</div></div>
-    
-    <div id="module-01" class="module-content active">
-        <div class="canvas-container"><canvas id="niagara-canvas"></canvas><div id="goal-notification" class="goal-text">GOAL_REACHED</div></div>
-        <section class="details-panel"><div class="level-tabs" style="display:flex; background:#222;"><div class="level-tab active" style="flex:1; padding:10px; font-size:8px; text-align:center;">[LVL_01]</div><div class="level-tab" style="flex:1; padding:10px; font-size:8px; text-align:center; color:#555;">[LVL_02]</div><div class="level-tab" style="flex:1; padding:10px; font-size:8px; text-align:center; color:#555;">[LVL_03]</div></div>
-            <div class="category-header">TRANSFORM</div>
-            <div class="detail-row">
-                <div class="detail-label">Position X</div>
-                <div class="input-group"><span class="input-prefix">X</span><input type="number" id="posX" class="detail-input"></div>
-                <input type="range" id="posX-slider" class="detail-slider" min="0" max="400">
-            </div>
-            <div class="detail-row">
-                <div class="detail-label">Position Y</div>
-                <div class="input-group"><span class="input-prefix">Y</span><input type="number" id="posY" class="detail-input"></div>
-                <input type="range" id="posY-slider" class="detail-slider" min="0" max="500">
-            </div>
-            <div class="detail-row">
-                <div class="detail-label">Rotation</div>
-                <div class="input-group"><span class="input-prefix">Deg</span><input type="number" id="rotDeg" class="detail-input"></div>
-                <input type="range" id="rot-slider" class="detail-slider" min="0" max="360">
-            </div>
-            <div class="detail-row">
-                <div class="detail-label">Scale</div>
-                <div class="input-group"><span class="input-prefix">X</span><input type="number" id="scaleX" class="detail-input" step="0.1"></div>
-                <input type="range" id="scale-slider" class="detail-slider" min="0.1" max="3" step="0.1">
-            </div>
-        </section>
+    <header>
+        <h1>LAB-0 // COMMAND</h1>
+        <div id="sim-status">SIM_ACTIVE</div>
+    </header>
+
+    <div class="nav-tabs">
+        <div id="tab-01" class="nav-tab active" onclick="switchModule('01')">01_SYSTEM</div>
+        <div id="tab-02" class="nav-tab" onclick="switchModule('02')">02_ASSET</div>
     </div>
 
-    <div id="module-02" class="module-content">
-        <div style="display: flex; flex-direction: column; height: 100%; background: #000;">
-            <div class="video-viewport" style="flex: 1; min-height: 250px; display: flex; align-items: center; justify-content: center; border-bottom: var(--border); padding: 20px;">
-                <div class="placeholder-box" style="width: 100%; height: 100%; border: 1px dashed rgba(255,255,255,0.2); display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 9px; color: rgba(255,255,255,0.3); gap: 8px;">
-                    <span>[ VIDEO_NOT_FOUND ]</span>
-                    <span>[ DROP RECORDING HERE ]</span>
+    <div class="main-container">
+        <!-- Module 01: Games/System -->
+        <main id="module-01" class="module-content active">
+            <div class="canvas-area">
+                <canvas id="niagara-canvas"></canvas>
+                <div id="goal-notification">SUCCESS: TARGET_ACQUIRED</div>
+                <div class="terminal-overlay">
+                    FRM: <span id="fps">60</span> | OBJ: <span id="pcount">80</span><br>
+                    LEVEL: <span id="cur-lvl">01</span> | HITS: <span id="cur-hits">0</span>
                 </div>
             </div>
-            <section class="details-panel" style="padding: 20px; background: #111; display: flex; flex-direction: column; gap: 15px;">
-                <div>
-                    <h2 style="font-size: 12px; letter-spacing: 1px;">NS_FOUNTAIN</h2>
-                    <p style="font-size: 8px; color: #666;">NIAGARA_SYSTEM_ASSET</p>
+
+            <div class="controls-area">
+                <div class="level-select">
+                    <div class="level-btn active" onclick="setLevel(1)">L01</div>
+                    <div class="level-btn" onclick="setLevel(2)">L02</div>
+                    <div class="level-btn" onclick="setLevel(3)">L03</div>
                 </div>
-                <div>
-                    <div class="category-header" style="margin: 0 -20px 10px; background: #2A2A2A; padding: 8px 20px; font-size: 8px;">TECHNICAL_BRIEF</div>
-                    <p style="font-size: 9px; color: #AAA; line-height: 1.4;">GPU-accelerated particle simulation with vector field integration and dynamic gravity scaling.</p>
-                </div>
-                <div style="margin-top: 10px;">
-                    <div class="category-header" style="margin: 0 -20px 10px; background: #2A2A2A; padding: 8px 20px; font-size: 8px;">AUDIO_OUTPUT</div>
-                    <div style="display: flex; align-items: center; gap: 15px; padding-top: 10px;">
-                        <span style="font-size: 8px; color: #888;">VOL</span>
-                        <input type="range" class="detail-slider" min="0" max="100" value="75" style="flex: 1; height: 1px; background: #444; -webkit-appearance: none;">
+
+                <div class="property-row">
+                    <div class="property-label">Object Position X</div>
+                    <div class="input-wrap">
+                        <input type="range" id="posX" class="slider" min="0" max="400">
+                        <span class="val-display" id="v-posX">0</span>
                     </div>
                 </div>
-            </section>
-        </div>
+
+                <div class="property-row">
+                    <div class="property-label">Object Position Y</div>
+                    <div class="input-wrap">
+                        <input type="range" id="posY" class="slider" min="0" max="600">
+                        <span class="val-display" id="v-posY">0</span>
+                    </div>
+                </div>
+
+                <div class="property-row" id="rot-row">
+                    <div class="property-label">Rotation</div>
+                    <div class="input-wrap">
+                        <input type="range" id="rot" class="slider" min="0" max="360">
+                        <span class="val-display" id="v-rot">0</span>
+                    </div>
+                </div>
+
+                <div class="property-row" id="param-row">
+                    <div class="property-label" id="param-label">Strength</div>
+                    <div class="input-wrap">
+                        <input type="range" id="param" class="slider" min="-10" max="10" step="0.1">
+                        <span class="val-display" id="v-param">0</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Module 02: Asset Viewport -->
+        <main id="module-02" class="module-content">
+            <div class="video-viewport" onclick="toggleVideo()">
+                <video id="portfolio-video" playsinline loop>
+                    <source src="https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
+                </video>
+            </div>
+            
+            <div class="video-controls">
+                <div class="control-row">
+                    <button id="play-btn" class="play-btn" onclick="toggleVideo()">PLAY</button>
+                    <div class="seek-wrap">
+                        <input type="range" id="video-seek" class="seek-slider" min="0" max="100" value="0" step="0.1">
+                        <div class="time-display" id="time-display">0:00 / 0:00</div>
+                    </div>
+                    <button id="mute-btn" class="mute-btn" onclick="toggleMute(event)">MUTE</button>
+                </div>
+            </div>
+
+            <div class="asset-info">
+                <div class="info-header">
+                    <h2>NS_FOUNTAIN</h2>
+                    <p>NIAGARA_SYSTEM_ASSET</p>
+                </div>
+
+                <div class="info-section">
+                    <div class="category-header">TECHNICAL_BRIEF</div>
+                    <p class="info-text">High-density particle simulation utilizing GPU acceleration. Features complex vector field integration, dynamic gravity scaling, and color-over-life modules for realistic fluid-like motion.</p>
+                </div>
+            </div>
+        </main>
     </div>
 
     <script>
+        const canvas = document.getElementById('niagara-canvas');
+        const ctx = canvas.getContext('2d');
+        const goalNotif = document.getElementById('goal-notification');
+        const video = document.getElementById('portfolio-video');
+        const seekSlider = document.getElementById('video-seek');
+        const timeDisplay = document.getElementById('time-display');
+        const muteBtn = document.getElementById('mute-btn');
+        const playBtn = document.getElementById('play-btn');
+        
+        let currentLevel = 1;
+        let particles = [];
+        let goalHits = 0;
+        
+        let gameState = {
+            deflector: { x: 150, y: 150, rotation: 45, length: 80 },
+            gravity: { x: 150, y: 150, strength: 2.0, radius: 100 },
+            wind: { x: 150, y: 150, rotation: 0, strength: 0.2, w: 150, h: 150 },
+            goal: { x: 250, y: 350, w: 60, h: 60 }
+        };
+
         function switchModule(id) {
             document.querySelectorAll('.module-content').forEach(m => m.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            
             document.getElementById('module-' + id).classList.add('active');
-            event.currentTarget.classList.add('active'); if(id === '01') resize();
+            document.getElementById('tab-' + id).classList.add('active');
+            
+            if (id === '01') resize();
         }
-        const canvas = document.getElementById('niagara-canvas'); const ctx = canvas.getContext('2d');
-        let particles = []; let goalHits = 0; let activeObjKey = 'deflector'; let paused = false;
-        let gameState = { deflector: { x: 150, y: 100, rotation: 45, length: 60, scale: 1 }, goal: { x: 250, y: 180, w: 50, h: 50 } };
-        
-        const ui = { 
-            posX: document.getElementById('posX'), posY: document.getElementById('posY'), 
-            posXs: document.getElementById('posX-slider'), posYs: document.getElementById('posY-slider'),
-            rot: document.getElementById('rotDeg'), rots: document.getElementById('rot-slider'),
-            scale: document.getElementById('scaleX'), scales: document.getElementById('scale-slider')
-        };
-        function syncUIFromState() { 
-            const obj = gameState[activeObjKey]; 
-            if(!obj) return;
-            ui.posX.value = ui.posXs.value = Math.round(obj.x); 
-            ui.posY.value = ui.posYs.value = Math.round(obj.y); 
-            if(ui.rot) ui.rot.value = ui.rots.value = Math.round(obj.rotation || 0);
-            if(ui.scale) ui.scale.value = ui.scales.value = obj.scale || 1;
+
+        function toggleVideo() {
+            if (video.paused) {
+                video.play();
+                playBtn.innerText = 'PAUSE';
+            } else {
+                video.pause();
+                playBtn.innerText = 'PLAY';
+            }
         }
-        function syncStateFromUI(source) {
-            const obj = gameState[activeObjKey];
-            if(!obj) return;
-            if (source === 'posXs') obj.x = parseInt(ui.posXs.value);
-            else if (source === 'posX') obj.x = parseInt(ui.posX.value) || 0;
-            else if (source === 'posYs') obj.y = parseInt(ui.posYs.value);
-            else if (source === 'posY') obj.y = parseInt(ui.posY.value) || 0;
-            else if (source === 'rots') obj.rotation = parseInt(ui.rots.value);
-            else if (source === 'rot') obj.rotation = parseInt(ui.rot.value) || 0;
-            else if (source === 'scales') obj.scale = parseFloat(ui.scales.value);
-            else if (source === 'scale') obj.scale = parseFloat(ui.scale.value) || 1;
-            syncUIFromState();
+
+        function toggleMute(e) {
+            e.stopPropagation();
+            video.muted = !video.muted;
+            muteBtn.innerText = video.muted ? 'UNMUTE' : 'MUTE';
         }
-        Object.keys(ui).forEach(k => { if(ui[k]) ui[k].addEventListener('input', () => syncStateFromUI(k)); });
-        
-        window.addEventListener('keydown', (e) => {
-            if (document.activeElement.tagName === 'INPUT') return;
-            const obj = gameState[activeObjKey];
-            if(!obj) return;
-            const step = e.shiftKey ? 10 : 2;
-            if (e.key === 'ArrowLeft' || e.key === 'a') obj.x -= step;
-            if (e.key === 'ArrowRight' || e.key === 'd') obj.x += step;
-            if (e.key === 'ArrowUp' || e.key === 'w') obj.y -= step;
-            if (e.key === 'ArrowDown' || e.key === 's') obj.y += step;
-            if (e.key === 'q' || e.key === 'r') obj.rotation = ((obj.rotation || 0) + (e.key === 'q' ? -step : step)) % 360;
-            if (e.key === ' ') { paused = !paused; const simStatus = document.getElementById('sim-status'); if(simStatus) simStatus.innerText = paused ? "SIMULATION: PAUSED" : "SIMULATION: ACTIVE"; }
-            syncUIFromState();
+
+        function formatTime(seconds) {
+            if (isNaN(seconds)) return "0:00";
+            const m = Math.floor(seconds / 60);
+            const s = Math.floor(seconds % 60);
+            return `${m}:${s < 10 ? '0' : ''}${s}`;
+        }
+
+        video.addEventListener('loadedmetadata', () => {
+            seekSlider.max = video.duration;
+            updateTimeDisplay();
         });
 
-        function resetLevel() { particles = []; for (let i = 0; i < 30; i++) particles.push(new Particle()); goalHits = 0; syncUIFromState(); }
+        video.addEventListener('timeupdate', () => {
+            if (!seekSlider.dragging) {
+                seekSlider.value = video.currentTime;
+            }
+            updateTimeDisplay();
+        });
+
+        video.addEventListener('play', () => {
+            playBtn.innerText = 'PAUSE';
+        });
+
+        video.addEventListener('pause', () => {
+            playBtn.innerText = 'PLAY';
+        });
+
+        function updateTimeDisplay() {
+            timeDisplay.innerText = `${formatTime(video.currentTime)} / ${formatTime(video.duration)}`;
+        }
+
+        seekSlider.addEventListener('input', () => {
+            seekSlider.dragging = true;
+            video.currentTime = seekSlider.value;
+        });
+
+        seekSlider.addEventListener('change', () => {
+            seekSlider.dragging = false;
+        });
+
+        function setLevel(lvl) {
+            currentLevel = lvl;
+            document.querySelectorAll('.level-btn').forEach((b, i) => b.classList.toggle('active', i+1 === lvl));
+            document.getElementById('cur-lvl').innerText = '0' + lvl;
+            
+            document.getElementById('rot-row').style.display = lvl === 2 ? 'none' : 'block';
+            document.getElementById('param-row').style.display = lvl === 1 ? 'none' : 'block';
+            document.getElementById('param-label').innerText = lvl === 2 ? 'Gravity Strength' : 'Wind Speed';
+            
+            const p = document.getElementById('param');
+            if (lvl === 2) { p.min = -10; p.max = 10; }
+            else if (lvl === 3) { p.min = 0; p.max = 2; }
+
+            resetLevel();
+            syncUI();
+        }
+
+        function syncUI() {
+            const key = ['','deflector','gravity','wind'][currentLevel];
+            const obj = gameState[key];
+            document.getElementById('posX').value = obj.x;
+            document.getElementById('posY').value = obj.y;
+            if (obj.rotation !== undefined) document.getElementById('rot').value = obj.rotation;
+            if (obj.strength !== undefined) document.getElementById('param').value = obj.strength;
+            updateDisplays();
+        }
+
+        function updateDisplays() {
+            const key = ['','deflector','gravity','wind'][currentLevel];
+            const obj = gameState[key];
+            document.getElementById('v-posX').innerText = Math.round(obj.x);
+            document.getElementById('v-posY').innerText = Math.round(obj.y);
+            if (obj.rotation !== undefined) document.getElementById('v-rot').innerText = Math.round(obj.rotation);
+            if (obj.strength !== undefined) document.getElementById('v-param').innerText = obj.strength.toFixed(1);
+        }
+
+        // Input events
+        ['posX', 'posY', 'rot', 'param'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('input', (e) => {
+                    const key = ['','deflector','gravity','wind'][currentLevel];
+                    const val = parseFloat(e.target.value);
+                    if (id === 'posX') gameState[key].x = val;
+                    else if (id === 'posY') gameState[key].y = val;
+                    else if (id === 'rot') gameState[key].rotation = val;
+                    else if (id === 'param') gameState[key].strength = val;
+                    updateDisplays();
+                });
+            }
+        });
+
+        // Touch Interaction
+        let isDragging = false;
+        canvas.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            handleTouch(e);
+        });
+        canvas.addEventListener('touchmove', (e) => {
+            if (isDragging) handleTouch(e);
+            e.preventDefault();
+        }, { passive: false });
+        canvas.addEventListener('touchend', () => isDragging = false);
+
+        function handleTouch(e) {
+            const rect = canvas.getBoundingClientRect();
+            const touch = e.touches[0];
+            const x = touch.clientX - rect.left;
+            const y = touch.clientY - rect.top;
+            const key = ['','deflector','gravity','wind'][currentLevel];
+            gameState[key].x = x;
+            gameState[key].y = y;
+            syncUI();
+        }
+
+        function resize() {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            const posXSlider = document.getElementById('posX');
+            const posYSlider = document.getElementById('posY');
+            if (posXSlider) posXSlider.max = canvas.width;
+            if (posYSlider) posYSlider.max = canvas.height;
+            resetLevel();
+        }
+
         class Particle {
             constructor() { this.reset(); }
-            reset() { this.x = 20; this.y = 20; this.vx = 1.5 + Math.random(); this.vy = 0.5 + Math.random(); }
-            update() { if(paused) return; this.x += this.vx; this.y += this.vy; this.vy += 0.05; if (this.y > canvas.height || this.x > canvas.width || this.x < 0) this.reset(); }
-            draw() { ctx.fillStyle = "#FFF"; ctx.fillRect(this.x, this.y, 1, 1); }
+            reset() { 
+                this.x = 20; this.y = 20; 
+                this.vx = 1.2 + Math.random(); 
+                this.vy = 0.5 + Math.random(); 
+            }
+            update() {
+                this.vy += 0.04; // Gravity
+
+                if (currentLevel === 1) {
+                    const d = gameState.deflector;
+                    const dx = this.x - d.x; const dy = this.y - d.y;
+                    const rad = d.rotation * Math.PI / 180;
+                    const cos = Math.cos(-rad); const sin = Math.sin(-rad);
+                    const lx = dx * cos - dy * sin; const ly = dx * sin + dy * cos;
+                    if (Math.abs(ly) < 5 && Math.abs(lx) < d.length / 2) {
+                        const nx = Math.sin(rad); const ny = -Math.cos(rad);
+                        const dot = this.vx * nx + this.vy * ny;
+                        this.vx -= 2 * dot * nx; this.vy -= 2 * dot * ny;
+                    }
+                } else if (currentLevel === 2) {
+                    const g = gameState.gravity;
+                    const dx = g.x - this.x; const dy = g.y - this.y;
+                    const distSq = dx*dx + dy*dy;
+                    const dist = Math.sqrt(distSq);
+                    if (dist < g.radius && dist > 5) {
+                        const force = (g.strength * 60) / distSq;
+                        this.vx += (dx / dist) * force;
+                        this.vy += (dy / dist) * force;
+                    }
+                } else if (currentLevel === 3) {
+                    const w = gameState.wind;
+                    if (this.x > w.x - w.w/2 && this.x < w.x + w.w/2 &&
+                        this.y > w.y - w.h/2 && this.y < w.y + w.h/2) {
+                        const rad = w.rotation * Math.PI / 180;
+                        this.vx += Math.cos(rad) * w.strength;
+                        this.vy += Math.sin(rad) * w.strength;
+                        this.vx *= 0.98; this.vy *= 0.98;
+                    }
+                }
+
+                this.x += this.vx; this.y += this.vy;
+
+                if (this.x > gameState.goal.x && this.x < gameState.goal.x + gameState.goal.w && 
+                    this.y > gameState.goal.y && this.y < gameState.goal.y + gameState.goal.h) {
+                    goalHits++; this.reset();
+                    const hitsEl = document.getElementById('cur-hits');
+                    if (hitsEl) hitsEl.innerText = goalHits;
+                }
+                if (this.y > canvas.height || this.x > canvas.width || this.x < 0 || this.y < 0) this.reset();
+            }
+            draw() {
+                ctx.fillStyle = "#FFF";
+                ctx.fillRect(this.x, this.y, 1, 1);
+            }
         }
-        function resize() { if(document.getElementById('module-01').classList.contains('active')) { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; resetLevel(); } }
-        window.addEventListener('resize', resize);
+
+        function resetLevel() {
+            particles = []; for (let i = 0; i < 50; i++) particles.push(new Particle());
+            goalHits = 0;
+            const hitsEl = document.getElementById('cur-hits');
+            if (hitsEl) hitsEl.innerText = '0';
+            gameState.goal = { x: canvas.width - 80, y: canvas.height - 80, w: 60, h: 60 };
+        }
+
         function animate() {
-            if(document.getElementById('module-01').classList.contains('active')) {
-                ctx.fillStyle = 'rgba(5,5,5,0.4)'; ctx.fillRect(0,0,canvas.width, canvas.height);
-                ctx.strokeStyle = goalHits > 15 ? "#00FF00" : "#FFF"; ctx.strokeRect(gameState.goal.x, gameState.goal.y, gameState.goal.w, gameState.goal.h);
+            if (document.getElementById('module-01').classList.contains('active')) {
+                ctx.fillStyle = 'rgba(0,0,0,0.5)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Goal
+                ctx.strokeStyle = goalHits > 20 ? "#FFF" : "rgba(255,255,255,0.2)";
+                ctx.strokeRect(gameState.goal.x, gameState.goal.y, gameState.goal.w, gameState.goal.h);
+                
+                // Interaction Objects
+                if (currentLevel === 1) {
+                    const d = gameState.deflector;
+                    ctx.save(); ctx.translate(d.x, d.y); ctx.rotate(d.rotation * Math.PI / 180);
+                    ctx.fillStyle = "#FFF"; ctx.fillRect(-d.length/2, -1, d.length, 2);
+                    ctx.restore();
+                } else if (currentLevel === 2) {
+                    const g = gameState.gravity;
+                    ctx.beginPath(); ctx.arc(g.x, g.y, g.radius, 0, Math.PI*2);
+                    ctx.strokeStyle = "rgba(255,255,255,0.1)"; ctx.stroke();
+                    ctx.beginPath(); ctx.arc(g.x, g.y, 3, 0, Math.PI*2);
+                    ctx.fillStyle = "#FFF"; ctx.fill();
+                } else if (currentLevel === 3) {
+                    const w = gameState.wind;
+                    ctx.strokeStyle = "rgba(255,255,255,0.2)";
+                    ctx.strokeRect(w.x - w.w/2, w.y - w.h/2, w.w, w.h);
+                }
+
                 particles.forEach(p => { p.update(); p.draw(); });
+                if (goalNotif) goalNotif.style.display = goalHits > 20 ? 'block' : 'none';
             }
             requestAnimationFrame(animate);
         }
-        resize(); animate();
+
+        window.addEventListener('resize', resize);
+        resize();
+        animate();
+        setLevel(1);
     </script>
 </body>
 </html>
