@@ -130,7 +130,7 @@
             border-right: 1px solid rgba(255,255,255,0.1);
             display: flex;
             flex-direction: column;
-            gap: 15px; /* Tighter gap */
+            gap: 15px; /* Base vertical spacing between sections */
         }
 
         /* --- Menu Items --- */
@@ -145,7 +145,7 @@
             letter-spacing: 2px;
             text-transform: uppercase;
             color: var(--fg);
-            padding: 8px 0; /* Tighter padding */
+            padding: 8px 0;
             transition: color 0.3s ease;
             position: relative;
             z-index: 20;
@@ -171,9 +171,18 @@
         .project-list-wrapper {
             position: relative;
             padding-left: 22px;
+            display: grid;
+            grid-template-rows: 0fr; /* Collapsed by default */
+            transition: grid-template-rows var(--transition-smooth);
+            overflow: hidden;
+        }
+
+        .category-header.expanded ~ .project-list-wrapper {
+            grid-template-rows: 1fr; /* Expand to fit content */
         }
 
         .project-list {
+            min-height: 0; /* Important for grid-template-rows transition */
             list-style: none;
             display: flex;
             flex-direction: column;
@@ -182,7 +191,7 @@
         .project-item {
             font-family: var(--font-mono);
             font-size: 12px;
-            padding: 6px 0; /* Tighter spacing */
+            padding: 6px 0;
             cursor: pointer;
             color: var(--muted);
             transition: 
@@ -218,7 +227,12 @@
             color: var(--muted);
             padding: 0;
             /* Sit directly beneath "Projects" header */
-            transform: translateY(-30px); /* Adjusted for tighter spacing */
+            transform: translateY(-30px);
+        }
+
+        /* Keep the wrapper open enough to show the active item in collapsed mode */
+        .category-header:not(.expanded).has-selection ~ .project-list-wrapper {
+            grid-template-rows: 20px; /* Small allowance for the subtitle text */
         }
 
         /* Expanded State: All items return to list layout */
@@ -376,21 +390,23 @@
     </header>
 
     <aside class="sidebar sidebar-left" id="hud-left">
-        <div class="category-header" onclick="toggleCategory(this)">
-            <svg class="arrow-icon" viewBox="0 0 10 10">
-                <path d="M2 1 L8 5 L2 9 Z" />
-            </svg>
-            <span>Projects</span>
-        </div>
-        <div class="project-list-wrapper">
-            <ul class="project-list">
-                <li class="project-item" data-id="1" onclick="selectProject(1)">[01] LEVEL_01</li>
-                <li class="project-item" data-id="2" onclick="selectProject(2)">[02] LEVEL_02</li>
-                <li class="project-item" data-id="3" onclick="selectProject(3)">[03] LEVEL_03</li>
-            </ul>
+        <div id="projects-section">
+            <div id="projects-header" class="category-header" onclick="toggleCategory(this)">
+                <svg class="arrow-icon" viewBox="0 0 10 10">
+                    <path d="M2 1 L8 5 L2 9 Z" />
+                </svg>
+                <span>Projects</span>
+            </div>
+            <div class="project-list-wrapper">
+                <ul class="project-list">
+                    <li class="project-item" data-id="1" onclick="selectProject(1)">[01] LEVEL_01</li>
+                    <li class="project-item" data-id="2" onclick="selectProject(2)">[02] LEVEL_02</li>
+                    <li class="project-item" data-id="3" onclick="selectProject(3)">[03] LEVEL_03</li>
+                </ul>
+            </div>
         </div>
         <a href="#" class="about-link" onclick="handleAboutClick(event)">
-            <svg style="width:10px; height:10px; visibility:hidden;"></svg> <!-- Placeholder for alignment -->
+            <svg style="width:10px; height:10px; visibility:hidden;"></svg> <!-- Alignment Placeholder -->
             <span>About</span>
         </a>
     </aside>
@@ -479,7 +495,6 @@
         function handleAboutClick(e) {
             e.preventDefault();
             closeProject();
-            // Logic for "About" content can be added here
         }
 
         function scrambleText(element, finalString, duration, callback) {
@@ -544,6 +559,7 @@
             const video = document.getElementById('main-video');
             const source = document.getElementById('video-src');
             const closeBtn = document.getElementById('close-trigger');
+            const header = document.getElementById('projects-header');
 
             items.forEach(item => {
                 const itemId = parseInt(item.getAttribute('data-id'));
@@ -552,6 +568,8 @@
                     item.classList.add('active');
                 }
             });
+
+            header.classList.add('has-selection');
 
             const data = projects[id];
             title.innerText = data.title;
@@ -580,12 +598,14 @@
             const desc = document.getElementById('project-desc');
             const video = document.getElementById('main-video');
             const closeBtn = document.getElementById('close-trigger');
+            const header = document.getElementById('projects-header');
 
             container.style.opacity = '0'; title.style.opacity = '0'; desc.style.opacity = '0';
             closeBtn.classList.remove('active');
             canvas.style.opacity = '1.0';
             
             document.querySelectorAll('.project-item').forEach(i => i.classList.remove('active'));
+            header.classList.remove('has-selection');
             video.pause();
 
             setTimeout(() => {
