@@ -11,7 +11,7 @@
         :root {
             --bg: #050505;
             --fg: #FFFFFF;
-            --border: 1px solid #FFFFFF;
+            --border: 1px solid rgba(255, 255, 255, 0.15);
             --font-header: 'Syncopate', sans-serif;
             --font-body: 'Space Grotesk', sans-serif;
             --font-mono: 'Space Mono', monospace;
@@ -33,21 +33,21 @@
             overflow-x: hidden;
             display: flex;
             flex-direction: column;
-            /* Checkered Grid Background */
+            /* Subtle Checkered Grid Background */
             background-image: 
-                linear-gradient(45deg, #0a0a0a 25%, transparent 25%), 
-                linear-gradient(-45deg, #0a0a0a 25%, transparent 25%), 
-                linear-gradient(45deg, transparent 75%, #0a0a0a 75%), 
-                linear-gradient(-45deg, transparent 75%, #0a0a0a 75%);
+                linear-gradient(45deg, rgba(255,255,255,0.01) 25%, transparent 25%), 
+                linear-gradient(-45deg, rgba(255,255,255,0.01) 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.01) 75%), 
+                linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.01) 75%);
             background-size: 40px 40px;
             background-position: 0 0, 0 20px, 20px -20px, -20px 0px;
         }
 
         header {
             border-bottom: var(--border);
-            padding: 20px;
+            padding: 25px;
             z-index: 10;
-            background: var(--bg);
+            background: rgba(5,5,5,0.8);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -55,49 +55,39 @@
 
         header h1 {
             font-family: var(--font-header);
-            font-size: 10px;
-            letter-spacing: 2px;
-        }
-
-        .status-badge {
-            border: 1px solid #FFFFFF;
-            font-size: 8px;
-            padding: 2px 4px;
+            font-size: 9px;
+            letter-spacing: 3px;
+            opacity: 0.8;
         }
 
         /* Module Switcher */
         .module-switcher {
             display: flex;
-            overflow-x: auto;
             border-bottom: var(--border);
-            z-index: 10;
-            background: var(--bg);
+            background: transparent;
         }
 
         .module-tab {
-            flex-shrink: 0;
-            padding: 15px 20px;
+            flex: 1;
+            padding: 15px;
             font-family: var(--font-mono);
-            font-size: 10px;
-            border-right: var(--border);
-            cursor: pointer;
+            font-size: 9px;
+            text-align: center;
             text-transform: uppercase;
-            opacity: 0.5;
+            opacity: 0.3;
+            transition: opacity 0.3s ease;
         }
 
         .module-tab.active {
             opacity: 1;
-            background: #FFFFFF;
-            color: #050505;
+            letter-spacing: 1px;
         }
 
         /* Main Content */
         .main-section {
             width: 100%;
-            border-bottom: var(--border);
             position: relative;
             z-index: 5;
-            background: rgba(5,5,5,0.4);
         }
 
         .module-content {
@@ -110,7 +100,7 @@
         }
 
         .canvas-container {
-            height: 250px;
+            height: 300px;
             width: 100%;
         }
 
@@ -119,21 +109,18 @@
             height: 100%;
         }
 
-        /* Placeholder View */
+        /* Simplified Mobile View */
         .placeholder-view {
-            padding: 20px;
+            padding: 40px 25px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            align-items: center;
-            text-align: center;
-            background: rgba(5,5,5,0.8);
+            gap: 30px;
         }
 
         .video-box {
             width: 100%;
             aspect-ratio: 16/9;
-            border: 1px solid #FFFFFF;
+            border: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -141,30 +128,28 @@
         }
 
         .video-desc-block {
-            width: 100%;
-            border: 1px solid #FFFFFF;
-            padding: 15px;
             text-align: left;
         }
 
         .desc-title {
             font-family: var(--font-header);
             font-size: 14px;
-            margin-bottom: 8px;
-            letter-spacing: 1px;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
         }
 
         .desc-body {
             font-family: var(--font-mono);
-            font-size: 9px;
-            line-height: 1.4;
-            color: rgba(255,255,255,0.7);
-            margin-bottom: 12px;
+            font-size: 10px;
+            line-height: 1.8;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 30px;
         }
 
-        .time-box {
-            border-top: 1px solid rgba(255,255,255,0.2);
-            padding-top: 10px;
+        /* High-Frequency Time Display */
+        .time-display {
+            padding: 20px 25px;
+            border-top: var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -173,64 +158,59 @@
         .time-label {
             font-family: var(--font-mono);
             font-size: 8px;
-            color: rgba(255,255,255,0.4);
+            color: rgba(255,255,255,0.3);
+            letter-spacing: 1px;
         }
 
         .time-value {
             font-family: var(--font-mono);
-            font-size: 14px;
+            font-size: 16px;
             color: #FFFFFF;
         }
 
-        /* Terminal Section */
+        /* Terminal Feed */
         .terminal-section {
-            padding: 20px;
-            background: rgba(5,5,5,0.85);
-            z-index: 10;
+            padding: 25px;
             flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            min-height: 200px;
+            background: transparent;
         }
 
         .panel-title {
             font-family: var(--font-header);
-            font-size: 9px;
-            border-bottom: var(--border);
-            padding-bottom: 5px;
+            font-size: 8px;
+            color: rgba(255,255,255,0.2);
             margin-bottom: 15px;
-            color: rgba(255,255,255,0.5);
+            letter-spacing: 2px;
         }
 
         #diag-terminal {
-            flex-grow: 1;
             font-family: var(--font-mono);
-            font-size: 10px;
-            color: #FFFFFF;
-            overflow-y: hidden;
+            font-size: 9px;
+            color: rgba(255,255,255,0.4);
             white-space: pre-wrap;
-            line-height: 1.4;
+            line-height: 1.6;
         }
 
         footer {
             border-top: var(--border);
-            padding: 15px 20px;
+            padding: 20px 25px;
             font-family: var(--font-mono);
-            font-size: 9px;
-            background: var(--bg);
-            z-index: 10;
+            font-size: 8px;
+            color: rgba(255,255,255,0.2);
+            text-align: center;
+            letter-spacing: 1px;
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>LAB-0 // MOBILE_CMD</h1>
-        <div class="status-badge">ACTIVE</div>
+        <h1>LAB-0 // MOBILE_TELEMETRY</h1>
+        <div style="font-size: 8px; color: #00FF00; opacity: 0.5;">LIVE</div>
     </header>
 
     <nav class="module-switcher">
-        <div class="module-tab active" onclick="switchModule('01')">MOD_01</div>
-        <div class="module-tab" onclick="switchModule('02')">MOD_02</div>
+        <div class="module-tab active" onclick="switchModule('01')">LAB_01</div>
+        <div class="module-tab" onclick="switchModule('02')">VFX_02</div>
     </nav>
 
     <section class="main-section">
@@ -242,31 +222,30 @@
         <div id="content-02" class="module-content">
             <div class="placeholder-view">
                 <div class="video-box">
-                    <div style="font-family: var(--font-mono); font-size: 10px; opacity: 0.3;">[ VIDEO_NOT_FOUND ]</div>
+                    <div style="font-family: var(--font-mono); font-size: 9px; opacity: 0.2;">[ PENDING_SIGNAL ]</div>
                 </div>
                 <div class="video-desc-block">
-                    <div class="panel-title" style="border:none; margin-bottom:5px;">视频简介 // VIDEO DESCRIPTION</div>
                     <div class="desc-title">NS_FOUNTAIN</div>
                     <div class="desc-body">
-                        NIAGARA PARTICLE FOUNTAIN SYSTEM. IMPLEMENTS ADVANCED SCALE COLOR MODULES WITH DYNAMIC ALPHA CURVE FADING OVER A 2.4S LIFECYCLE. OPTIMIZED FOR HIGH-CONTRAST TELEMETRY VISUALIZATION. CORE SIMULATION DRIVEN BY HLSL VERTEX SHADERS.
-                    </div>
-                    <div class="time-box">
-                        <div class="time-label">SYS_TIME</div>
-                        <div class="time-value" id="live-clock">00:00:00:00</div>
+                        NIAGARA PARTICLE SYSTEM. HLSL INTEGRATION. DYNAMIC ALPHA CURVE VISUALIZATION.
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
+    <div class="time-display">
+        <div class="time-label">UTC_TELEMETRY</div>
+        <div class="time-value" id="live-clock">00:00:00:00</div>
+    </div>
+
     <section class="terminal-section">
-        <div class="panel-title">SYSTEM DIAGNOSTICS TERMINAL</div>
+        <div class="panel-title">DIAGNOSTICS_FEED</div>
         <div id="diag-terminal"></div>
     </section>
 
     <footer>
-        > DEVICE: MOBILE_TELEMETRY_ACTIVE<br>
-        > RES: <span id="sys-res">---</span>
+        STRICT_0PX_B_RADIUS // UE_5.2.4
     </footer>
 
     <script>
@@ -277,20 +256,12 @@
             document.getElementById('content-' + id).classList.add('active');
         }
 
-        // Terminal Logic
         const terminal = document.getElementById('diag-terminal');
         const logs = [
-            "[INIT] Core engine initialized...",
-            "[RENDER] GPU discrete override: ACTIVE",
-            "[NIAGARA] Loading asset: NS_Fountain...",
-            "[SHADER] Compiling global shaders...",
-            "[SHADER] 1,120 / 2,246 compiled...",
-            "[SHADER] Compilation SUCCESS.",
-            "[NIAGARA] Binding: ScaleColor.Alpha",
-            "[SYSTEM] Protocol v1.0.4 active.",
-            "[MEM] Allocating virtual buffers...",
-            "[NIAGARA] Particle count: 1.2M",
-            "[UI] Applying strict 1px borders..."
+            "[SYS] CORE_INIT...",
+            "[VFX] NS_FOUNTAIN_LOAD...",
+            "[GPU] SHADERS_OK...",
+            "[MEM] BUFFER_ALLOC..."
         ];
 
         function addLog() {
@@ -298,64 +269,43 @@
             const time = new Date().toLocaleTimeString('en-GB', { hour12: false });
             const lines = terminal.innerHTML.split('\n');
             terminal.innerHTML += `[${time}] ${log}\n`;
-            if (lines.length > 10) {
-                terminal.innerHTML = lines.slice(lines.length - 10).join('\n');
-            }
+            if (lines.length > 8) terminal.innerHTML = lines.slice(lines.length - 8).join('\n');
         }
-        setInterval(addLog, 1500);
+        setInterval(addLog, 2500);
 
         const canvas = document.getElementById('niagara-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
-        let touch = { x: null, y: null };
 
         function resize() {
             canvas.width = canvas.offsetWidth;
             canvas.height = canvas.offsetHeight;
-            document.getElementById('sys-res').innerText = `${window.screen.width * window.devicePixelRatio}x${window.screen.height * window.devicePixelRatio}`;
         }
         window.addEventListener('resize', resize);
         resize();
-
-        window.addEventListener('touchstart', (e) => {
-            const rect = canvas.getBoundingClientRect();
-            touch.x = e.touches[0].clientX - rect.left;
-            touch.y = e.touches[0].clientY - rect.top;
-        }, {passive: true});
-        window.addEventListener('touchend', () => { touch.x = null; touch.y = null; });
 
         class Particle {
             constructor() { this.reset(); }
             reset() {
                 this.x = Math.random() * canvas.width;
                 this.y = canvas.height + 10;
-                this.vx = (Math.random() - 0.5) * 1.5;
-                this.vy = -Math.random() * 3 - 1.5;
+                this.vx = (Math.random() - 0.5) * 1;
+                this.vy = -Math.random() * 2 - 1;
                 this.life = 1;
                 this.decay = Math.random() * 0.015 + 0.005;
             }
             update() {
-                if (touch.x !== null) {
-                    const dx = this.x - touch.x;
-                    const dy = this.y - touch.y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist < 80) {
-                        const force = (80 - dist) / 80;
-                        this.vx += (dx / dist) * force * 1.5;
-                        this.vy += (dy / dist) * force * 1.5;
-                    }
-                }
                 this.x += this.vx; this.y += this.vy;
                 this.life -= this.decay;
-                if (this.life <= 0 || this.y < -10) this.reset();
+                if (this.life <= 0) this.reset();
             }
             draw() {
-                ctx.fillStyle = `rgba(255, 255, 255, ${this.life})`;
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.life * 0.6})`;
                 ctx.fillRect(this.x, this.y, 1, 1);
             }
         }
 
-        for (let i = 0; i < 100; i++) particles.push(new Particle());
+        for (let i = 0; i < 80; i++) particles.push(new Particle());
 
         function animate() {
             if (document.getElementById('content-01').classList.contains('active')) {
