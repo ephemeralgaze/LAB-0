@@ -45,7 +45,7 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            z-index: 0;
+            z-index: 2; /* Above overlay */
             pointer-events: none;
             transition: opacity var(--transition-smooth);
         }
@@ -53,11 +53,9 @@
         #bg-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(5, 5, 5, 0.3);
+            background: #000000;
             z-index: 1;
             pointer-events: none;
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
         }
 
         /* --- Boot Sequence --- */
@@ -84,7 +82,7 @@
             font-size: 64px;
             letter-spacing: 12px;
             text-transform: uppercase;
-            transition: transform var(--transition-smooth), letter-spacing var(--transition-smooth);
+            transition: transform var(--transition-smooth), letter-spacing var(--transition-smooth), opacity 0.3s ease;
             transform-origin: center center;
             white-space: nowrap;
             z-index: 2100;
@@ -124,7 +122,9 @@
             letter-spacing: 6px;
             font-weight: 700;
             opacity: 0;
-            transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            /* Instant hand-off to prevent blink */
+            transition: none; 
+            transform: translateZ(0);
         }
 
         .sidebar {
@@ -188,13 +188,15 @@
             max-width: 960px;
             aspect-ratio: 16/9;
             background: #050505;
-            border: var(--border);
+            box-shadow: 0 0 0 1px #ffffff; /* Crisp 1px border */
             position: relative;
             display: none;
             flex-direction: column;
             overflow: visible;
             opacity: 0;
             transition: opacity var(--transition-smooth);
+            transform: translateZ(0);
+            backface-visibility: hidden;
         }
 
         #main-video {
@@ -519,7 +521,10 @@
             
             // 5. Landing
             overlay.style.opacity = '0';
+            
+            // Instant swap at the end of transform
             headerLogo.style.opacity = '1';
+            container.style.opacity = '0';
             document.getElementById('hud-header').classList.add('visible');
             document.getElementById('hud-left').classList.add('visible');
             document.getElementById('hud-center').classList.add('visible');
