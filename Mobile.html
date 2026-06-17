@@ -11,7 +11,7 @@
         :root {
             --bg: #050505;
             --fg: #FFFFFF;
-            --border: 1px solid #FFFFFF;
+            --border: 1px solid rgba(255, 255, 255, 0.15);
             --font-header: 'Syncopate', sans-serif;
             --font-mono: 'Space Mono', monospace;
             --accent: #00FF00;
@@ -38,7 +38,7 @@
 
         header {
             padding: 15px;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
+            border-bottom: var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -47,7 +47,7 @@
         header h1 {
             font-family: var(--font-header);
             font-size: 10px;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
             font-weight: 700;
         }
 
@@ -58,16 +58,15 @@
 
         .nav-tabs {
             display: flex;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
+            border-bottom: var(--border);
         }
 
         .nav-tab {
             flex: 1;
             padding: 12px;
-            font-family: var(--font-header);
             font-size: 9px;
             text-align: center;
-            border-right: 1px solid rgba(255,255,255,0.1);
+            border-right: var(--border);
             background: #111;
             opacity: 0.5;
             cursor: pointer;
@@ -86,23 +85,25 @@
             flex-direction: column;
         }
 
-        .module {
+        .module-content {
             display: none;
             flex: 1;
             flex-direction: column;
             width: 100%;
             height: 100%;
+            overflow-y: auto;
         }
 
-        .module.active {
+        .module-content.active {
             display: flex;
         }
 
+        /* Module 01 Styles */
         .canvas-area {
-            flex: 1;
+            height: 50%;
             position: relative;
             background: #000;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
+            border-bottom: var(--border);
         }
 
         #niagara-canvas {
@@ -112,11 +113,133 @@
         }
 
         .controls-area {
-            height: 40%;
+            flex: 1;
             overflow-y: auto;
             background: #050505;
         }
 
+        /* Module 02 Styles */
+        .video-viewport {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-bottom: var(--border);
+            position: relative;
+        }
+
+        .placeholder-box {
+            width: 100%;
+            height: 100%;
+            border: 1px dashed rgba(255,255,255,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            color: rgba(255,255,255,0.3);
+            gap: 8px;
+        }
+
+        .video-controls {
+            padding: 15px;
+            border-bottom: var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: stretch;
+        }
+
+        .control-row-top {
+            display: flex;
+            justify-content: center;
+        }
+
+        .control-btn {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.5);
+            color: #FFF;
+            padding: 10px 30px;
+            font-family: var(--font-header);
+            font-size: 9px;
+            cursor: pointer;
+            letter-spacing: 1px;
+            width: 100%;
+            max-width: 200px;
+        }
+
+        .seek-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 2px;
+            background: #333;
+            outline: none;
+        }
+
+        .seek-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 10px;
+            height: 20px;
+            background: #FFF;
+            cursor: pointer;
+            border: 1px solid #000;
+        }
+
+        .asset-info {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .info-header {
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+        }
+
+        .info-header h2 {
+            font-size: 14px;
+            font-family: var(--font-header);
+            letter-spacing: 2px;
+        }
+
+        .info-header p {
+            font-size: 9px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .category-header {
+            background: #2A2A2A;
+            font-size: 9px;
+            padding: 6px 15px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .info-text {
+            font-size: 10px;
+            line-height: 1.6;
+            color: #AAA;
+            margin-bottom: 20px;
+        }
+
+        .terminal-block {
+            background: #0A0A0A;
+            border: var(--border);
+            padding: 10px;
+            font-family: var(--font-mono);
+            font-size: 8px;
+            color: var(--accent);
+            height: 100px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+
+        /* Common Components */
         .level-select {
             display: flex;
             border-bottom: 1px solid rgba(255,255,255,0.1);
@@ -198,47 +321,6 @@
             display: none;
             z-index: 100;
         }
-
-        #log-container {
-            padding: 20px;
-            font-size: 9px;
-            color: #888;
-            line-height: 1.6;
-            overflow-y: auto;
-        }
-
-        .log-entry {
-            margin-bottom: 5px;
-        }
-
-        .log-entry span {
-            color: var(--accent);
-            margin-right: 10px;
-        }
-
-        /* Portfolio specific styles */
-        .video-viewport {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #000;
-        }
-
-        .placeholder-box {
-            width: 80%;
-            height: 60%;
-            border: 1px dashed rgba(255,255,255,0.2);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-size: 9px;
-            color: rgba(255,255,255,0.3);
-            gap: 8px;
-            text-align: center;
-        }
     </style>
 </head>
 <body>
@@ -248,13 +330,13 @@
     </header>
 
     <div class="nav-tabs">
-        <div class="nav-tab active" onclick="switchModule(0)">01_SYSTEM</div>
-        <div class="nav-tab" onclick="switchModule(1)">02_NAME</div>
+        <div id="tab-01" class="nav-tab active" onclick="switchModule('01')">01_SYSTEM</div>
+        <div id="tab-02" class="nav-tab" onclick="switchModule('02')">02_LOGS</div>
     </div>
 
     <div class="main-container">
-        <!-- Module 01: System -->
-        <div id="module-system" class="module active">
+        <!-- Module 01: Games/System -->
+        <main id="module-01" class="module-content active">
             <div class="canvas-area">
                 <canvas id="niagara-canvas"></canvas>
                 <div id="goal-notification">SUCCESS: TARGET_ACQUIRED</div>
@@ -303,52 +385,67 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </main>
 
-        <!-- Module 02: Portfolio/Name -->
-        <div id="module-portfolio" class="module">
-            <div class="canvas-area" style="min-height: 220px; flex: none;">
-                 <div class="video-viewport">
-                    <div class="placeholder-box">
-                        <span>[ VIDEO_NOT_FOUND ]</span>
-                        <span>[ ASSET: NS_FOUNTAIN ]</span>
+        <!-- Module 02: Logs/Asset Info -->
+        <main id="module-02" class="module-content">
+            <div class="video-viewport">
+                <div class="placeholder-box">
+                    <span>[ NS_FOUNTAIN_PREVIEW ]</span>
+                    <video id="portfolio-video" width="100%" height="100%" style="display:none;"></video>
+                    <span>[ ASSET_READY ]</span>
+                </div>
+            </div>
+            
+            <div class="video-controls">
+                <div class="control-row-top">
+                    <button id="play-pause-btn" class="control-btn" onclick="toggleVideo()">PLAY / PAUSE</button>
+                </div>
+                <input type="range" id="video-seek" class="seek-slider" min="0" max="100" value="0" step="0.1">
+            </div>
+
+            <div class="asset-info">
+                <div class="info-header">
+                    <h2>NS_FOUNTAIN</h2>
+                    <p>NIAGARA_SYSTEM_ASSET</p>
+                </div>
+
+                <div class="info-section">
+                    <div class="category-header">TECHNICAL_BRIEF</div>
+                    <p class="info-text">High-density particle simulation utilizing GPU acceleration. Features complex vector field integration, dynamic gravity scaling, and color-over-life modules for realistic fluid-like motion.</p>
+                </div>
+
+                <div class="info-section">
+                    <div class="category-header">PARAMETER_CONTROLS</div>
+                    <div class="property-row" style="padding: 0; border: none;">
+                        <div class="property-label">Volume</div>
+                        <div class="input-wrap">
+                            <input type="range" class="slider" min="0" max="1" step="0.1" value="0.5" id="volume-control">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <div class="category-header">SYSTEM_DIAGNOSTICS_TERMINAL</div>
+                    <div class="terminal-block" id="telemetry-terminal">
+                        > INITIALIZING TELEMETRY...<br>
+                        > CONNECTION ESTABLISHED<br>
+                        > MONITORING NS_FOUNTAIN...<br>
+                        > GPU_LOAD: 24%<br>
+                        > PARTICLE_COUNT: 124,000<br>
+                        > STATUS: NOMINAL
                     </div>
                 </div>
             </div>
-
-            <div class="controls-area" style="height: auto; flex: 1;">
-                <div style="padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                    <h2 style="font-size: 12px; font-family: var(--font-header); letter-spacing: 2px;">NS_FOUNTAIN</h2>
-                    <p style="font-size: 8px; color: #666; margin-top: 4px;">NIAGARA_SYSTEM_ASSET</p>
-                </div>
-                
-                <div class="property-row">
-                    <div class="property-label">TECHNICAL_BRIEF</div>
-                    <p style="font-size: 9px; line-height: 1.5; color: #888;">High-density particle simulation utilizing GPU acceleration. Features complex vector field integration, dynamic gravity scaling, and color-over-life modules for realistic fluid-like motion.</p>
-                </div>
-
-                <div class="property-row">
-                    <div class="property-label">ASSET_VOLUME</div>
-                    <div class="input-wrap">
-                        <input type="range" id="volume" class="slider" min="0" max="100" value="75">
-                        <span class="val-display" id="v-volume">75%</span>
-                    </div>
-                </div>
-
-                <div id="log-container" style="border-top: 1px solid rgba(255,255,255,0.1); background: #000; min-height: 150px; flex: 1;">
-                    <div class="log-entry"><span>[2026.06.17-20:27:54]</span> INITIALIZING_TELEMETRY_STREAM...</div>
-                    <div class="log-entry"><span>[2026.06.17-20:27:55]</span> CONNECTION_ESTABLISHED_PORT_8080</div>
-                    <div class="log-entry"><span>[2026.06.17-20:27:56]</span> SYNC_COMPLETE: CORE_ASSETS_LOADED</div>
-                    <div class="log-entry"><span>[2026.06.17-20:28:01]</span> SIM_STATE_ACTIVE: BEGIN_MONITORING</div>
-                </div>
-            </div>
-        </div>
+        </main>
     </div>
 
     <script>
         const canvas = document.getElementById('niagara-canvas');
         const ctx = canvas.getContext('2d');
         const goalNotif = document.getElementById('goal-notification');
+        const video = document.getElementById('portfolio-video');
+        const seekSlider = document.getElementById('video-seek');
         
         let currentLevel = 1;
         let particles = [];
@@ -361,17 +458,39 @@
             goal: { x: 250, y: 350, w: 60, h: 60 }
         };
 
-        function switchModule(index) {
-            const tabs = document.querySelectorAll('.nav-tab');
-            const modules = document.querySelectorAll('.module');
+        function switchModule(id) {
+            document.querySelectorAll('.module-content').forEach(m => m.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
             
-            tabs.forEach((tab, i) => tab.classList.toggle('active', i === index));
-            modules.forEach((mod, i) => mod.classList.toggle('active', i === index));
+            document.getElementById('module-' + id).classList.add('active');
+            document.getElementById('tab-' + id).classList.add('active');
             
-            if (index === 0) {
-                resize(); // Re-sync canvas size
-            }
+            if (id === '01') resize();
         }
+
+        function toggleVideo() {
+            if (video.paused) video.play(); else video.pause();
+        }
+
+        // Seek Slider Logic
+        video.addEventListener('loadedmetadata', () => {
+            seekSlider.max = video.duration;
+        });
+
+        video.addEventListener('timeupdate', () => {
+            if (!seekSlider.dragging) {
+                seekSlider.value = video.currentTime;
+            }
+        });
+
+        seekSlider.addEventListener('input', () => {
+            seekSlider.dragging = true;
+            video.currentTime = seekSlider.value;
+        });
+
+        seekSlider.addEventListener('change', () => {
+            seekSlider.dragging = false;
+        });
 
         function setLevel(lvl) {
             currentLevel = lvl;
@@ -410,14 +529,10 @@
         }
 
         // Input events
-        ['posX', 'posY', 'rot', 'param', 'volume'].forEach(id => {
+        ['posX', 'posY', 'rot', 'param'].forEach(id => {
             const el = document.getElementById(id);
             if (el) {
                 el.addEventListener('input', (e) => {
-                    if (id === 'volume') {
-                        document.getElementById('v-volume').innerText = e.target.value + '%';
-                        return;
-                    }
                     const key = ['','deflector','gravity','wind'][currentLevel];
                     const val = parseFloat(e.target.value);
                     if (id === 'posX') gameState[key].x = val;
@@ -453,11 +568,12 @@
         }
 
         function resize() {
-            if (!canvas.offsetWidth) return;
             canvas.width = canvas.offsetWidth;
             canvas.height = canvas.offsetHeight;
-            document.getElementById('posX').max = canvas.width;
-            document.getElementById('posY').max = canvas.height;
+            const posXSlider = document.getElementById('posX');
+            const posYSlider = document.getElementById('posY');
+            if (posXSlider) posXSlider.max = canvas.width;
+            if (posYSlider) posYSlider.max = canvas.height;
             resetLevel();
         }
 
@@ -528,7 +644,7 @@
         }
 
         function animate() {
-            if (document.getElementById('module-system').classList.contains('active')) {
+            if (document.getElementById('module-01').classList.contains('active')) {
                 ctx.fillStyle = 'rgba(5,5,5,0.4)';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 
@@ -564,6 +680,30 @@
         resize();
         animate();
         setLevel(1);
+        
+        // Terminal simulation
+        const terminal = document.getElementById('telemetry-terminal');
+        setInterval(() => {
+            if (document.getElementById('module-02').classList.contains('active')) {
+                const logs = [
+                    `> GPU_LOAD: ${Math.floor(20 + Math.random() * 10)}%`,
+                    `> MEMORY_USAGE: ${Math.floor(150 + Math.random() * 50)}MB`,
+                    `> LATENCY: ${Math.floor(2 + Math.random() * 5)}ms`,
+                    `> PARTICLE_COUNT: ${120000 + Math.floor(Math.random() * 10000)}`
+                ];
+                const log = logs[Math.floor(Math.random() * logs.length)];
+                terminal.innerHTML += `<br>${log}`;
+                terminal.scrollTop = terminal.scrollHeight;
+            }
+        }, 2000);
+        
+        // Volume Control
+        const volSlider = document.getElementById('volume-control');
+        if (volSlider) {
+            volSlider.addEventListener('input', (e) => {
+                video.volume = e.target.value;
+            });
+        }
     </script>
 </body>
 </html>
