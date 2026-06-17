@@ -1,1 +1,433 @@
-<!DOCTYPE html><html></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAB-0 // MOBILE COMMAND</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&family=Space+Mono:wght@400;700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #000000;
+            --overlay-bg: #050505;
+            --fg: #FFFFFF;
+            --muted: #666666;
+            --font-header: 'Syncopate', sans-serif;
+            --font-mono: 'Space Mono', monospace;
+            --font-body: 'Space Grotesk', sans-serif;
+            --transition-smooth: 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            border-radius: 0 !important;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--fg);
+            font-family: var(--font-body);
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Z-Index / Layer Ordering --- */
+        #dot-matrix-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        #bg-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--overlay-bg);
+            opacity: 0.85;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        /* --- Header --- */
+        header {
+            height: 60px;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            z-index: 10;
+            background: var(--bg);
+            position: relative;
+        }
+
+        #logo {
+            font-family: var(--font-header);
+            font-size: 14px;
+            letter-spacing: 4px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        /* --- Main Content --- */
+        main {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* --- Accordion --- */
+        .category-header, .about-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            user-select: none;
+            font-family: var(--font-mono);
+            font-size: 13px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--fg);
+            padding: 12px 0;
+            transition: color 0.3s ease;
+            text-decoration: none;
+        }
+
+        .arrow-icon {
+            width: 8px;
+            height: 8px;
+            transition: transform var(--transition-smooth);
+            fill: currentColor;
+        }
+
+        .category-header.expanded .arrow-icon {
+            transform: rotate(90deg);
+        }
+
+        .project-list-wrapper {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows var(--transition-smooth);
+            overflow: hidden;
+            padding-left: 20px;
+        }
+
+        .category-header.expanded ~ .project-list-wrapper {
+            grid-template-rows: 1fr;
+        }
+
+        .project-list {
+            min-height: 0;
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .project-item {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            padding: 10px 0;
+            cursor: pointer;
+            color: var(--muted);
+            transition: 
+                transform var(--transition-smooth), 
+                opacity var(--transition-smooth), 
+                color var(--transition-smooth),
+                font-size var(--transition-smooth),
+                padding var(--transition-smooth);
+            text-transform: uppercase;
+            white-space: nowrap;
+            transform-origin: left center;
+        }
+
+        .project-item.active {
+            color: var(--fg);
+            font-weight: 700;
+        }
+
+        /* --- One-Take Mobile Logic --- */
+        .category-header:not(.expanded) ~ .project-list-wrapper .project-item:not(.active) {
+            opacity: 0;
+            transform: translateX(-20px);
+            pointer-events: none;
+        }
+
+        .category-header:not(.expanded) ~ .project-list-wrapper .project-item.active {
+            font-size: 8px;
+            color: var(--muted);
+            padding: 0;
+            transform: translateY(-38px);
+        }
+
+        .category-header:not(.expanded).has-selection ~ .project-list-wrapper {
+            grid-template-rows: 15px;
+        }
+
+        /* --- Preview / Split View --- */
+        #preview-section {
+            position: fixed;
+            top: 60px;
+            bottom: 40px;
+            left: 0;
+            right: 0;
+            background: var(--bg);
+            z-index: 100;
+            display: none;
+            flex-direction: column;
+            opacity: 0;
+            transition: opacity var(--transition-smooth);
+        }
+
+        #video-container {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #000;
+            border-bottom: 1px solid #FFF;
+            position: relative;
+        }
+
+        #main-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        #metadata-container {
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
+            background: var(--overlay-bg);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        #project-title {
+            font-family: var(--font-header);
+            font-size: 18px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        #project-desc {
+            font-family: var(--font-body);
+            font-size: 12px;
+            line-height: 1.8;
+            color: var(--muted);
+            text-transform: uppercase;
+        }
+
+        #close-trigger {
+            background: transparent;
+            border: 1px solid var(--fg);
+            color: var(--fg);
+            font-family: var(--font-mono);
+            font-size: 10px;
+            padding: 10px;
+            width: fit-content;
+            margin-top: auto;
+            cursor: pointer;
+            letter-spacing: 2px;
+        }
+
+        /* --- Footer HUD --- */
+        footer {
+            height: 40px;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            z-index: 10;
+            background: var(--bg);
+            font-family: var(--font-mono);
+            font-size: 9px;
+            color: var(--muted);
+            letter-spacing: 1px;
+        }
+
+        .visible { display: flex !important; opacity: 1 !important; }
+    </style>
+</head>
+<body>
+
+    <canvas id="dot-matrix-canvas"></canvas>
+    <div id="bg-overlay"></div>
+
+    <header>
+        <div id="logo">LAB-0</div>
+    </header>
+
+    <main id="main-content">
+        <div id="projects-section">
+            <div id="projects-header" class="category-header" onclick="toggleCategory(this)">
+                <svg class="arrow-icon" viewBox="0 0 10 10">
+                    <path d="M2 1 L8 5 L2 9 Z" />
+                </svg>
+                <span>Projects</span>
+            </div>
+            <div class="project-list-wrapper">
+                <ul class="project-list">
+                    <li class="project-item" data-id="1" onclick="selectProject(1)">[01] LEVEL_01</li>
+                    <li class="project-item" data-id="2" onclick="selectProject(2)">[02] LEVEL_02</li>
+                    <li class="project-item" data-id="3" onclick="selectProject(3)">[03] LEVEL_03</li>
+                </ul>
+            </div>
+        </div>
+        <a href="#" class="about-link" onclick="handleAboutClick(event)">
+            <svg style="width:8px; height:8px; visibility:hidden;"></svg>
+            <span>About</span>
+        </a>
+    </main>
+
+    <div id="preview-section">
+        <div id="video-container">
+            <video id="main-video" playsinline crossorigin="anonymous">
+                <source id="video-src" src="" type="video/mp4">
+            </video>
+        </div>
+        <div id="metadata-container">
+            <h2 id="project-title"></h2>
+            <p id="project-desc"></p>
+            <button id="close-trigger" onclick="closeProject()">EXIT_STATION [X]</button>
+        </div>
+    </div>
+
+    <footer>
+        <div id="hud-status">SYSTEM_ACTIVE // STABLE</div>
+        <div id="hud-clock">00:00:00</div>
+    </footer>
+
+    <script>
+        const projects = {
+            1: { title: "LEVEL_01 // NIAGARA", desc: "INITIAL PARTICLE COLLISION TESTS. ANALYZING KINETIC ENERGY TRANSFER IN FLUID ENVIRONMENTS.", video: "https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" },
+            2: { title: "LEVEL_02 // GRAVITY", desc: "STRESS TESTING POINT-GRAVITY NODES. OBSERVING ORBITAL DECAY IN CONTROLLED VACUUM.", video: "https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" },
+            3: { title: "LEVEL_03 // WIND", desc: "INTEGRATION OF DIRECTIONAL WIND FIELDS. MEASURING AERODYNAMIC RESISTANCE ON PARTICLE AGGREGATES.", video: "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" }
+        };
+
+        const canvas = document.getElementById('dot-matrix-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 1.5 + 0.1;
+                this.speedX = Math.random() * 1 - 0.5;
+                this.speedY = Math.random() * 1 - 0.5;
+                this.color = 'rgba(255, 255, 255, ' + (Math.random() * 0.4 + 0.1) + ')';
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x > canvas.width) this.x = 0;
+                else if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                else if (this.y < 0) this.y = canvas.height;
+            }
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            particles = [];
+            for (let i = 0; i < 60; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+            }
+            requestAnimationFrame(animate);
+        }
+
+        function toggleCategory(header) {
+            header.classList.toggle('expanded');
+        }
+
+        function handleAboutClick(e) {
+            e.preventDefault();
+            closeProject();
+        }
+
+        function updateClock() {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            const s = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('hud-clock').innerText = `${h}:${m}:${s}`;
+        }
+
+        function selectProject(id) {
+            const items = document.querySelectorAll('.project-item');
+            const preview = document.getElementById('preview-section');
+            const title = document.getElementById('project-title');
+            const desc = document.getElementById('project-desc');
+            const video = document.getElementById('main-video');
+            const source = document.getElementById('video-src');
+            const header = document.getElementById('projects-header');
+
+            items.forEach(item => {
+                item.classList.remove('active');
+                if (parseInt(item.getAttribute('data-id')) === id) {
+                    item.classList.add('active');
+                }
+            });
+
+            header.classList.add('has-selection');
+            const data = projects[id];
+            title.innerText = data.title;
+            desc.innerText = data.desc;
+            source.src = data.video;
+
+            preview.classList.add('visible');
+            video.load();
+            video.play();
+        }
+
+        function closeProject() {
+            const preview = document.getElementById('preview-section');
+            const video = document.getElementById('main-video');
+            const header = document.getElementById('projects-header');
+
+            preview.classList.remove('visible');
+            document.querySelectorAll('.project-item').forEach(i => i.classList.remove('active'));
+            header.classList.remove('has-selection');
+            video.pause();
+        }
+
+        window.onload = () => {
+            initParticles();
+            animate();
+            setInterval(updateClock, 1000);
+            updateClock();
+        };
+
+        window.onresize = initParticles;
+    </script>
+</body>
+</html>
