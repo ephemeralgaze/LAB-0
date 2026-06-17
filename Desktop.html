@@ -164,6 +164,23 @@
             transform: rotate(90deg);
         }
 
+        #selection-info {
+            font-family: var(--font-mono);
+            font-size: 9px;
+            letter-spacing: 1px;
+            color: var(--muted);
+            padding-left: 22px;
+            margin-top: -8px;
+            text-transform: uppercase;
+            opacity: 0;
+            transition: opacity var(--transition-smooth);
+            pointer-events: none;
+        }
+
+        .category-header:not(.expanded) + #selection-info.active {
+            opacity: 1;
+        }
+
         .project-list-wrapper {
             display: grid;
             grid-template-rows: 0fr;
@@ -171,7 +188,7 @@
             overflow: hidden;
         }
 
-        .category-header.expanded + .project-list-wrapper {
+        .category-header.expanded ~ .project-list-wrapper {
             grid-template-rows: 1fr;
         }
 
@@ -180,7 +197,7 @@
             list-style: none;
             display: flex;
             flex-direction: column;
-            padding-left: 22px; /* Offset for alignment with "Projects" text */
+            padding-left: 22px;
         }
 
         .project-item {
@@ -355,6 +372,7 @@
             </svg>
             <span>Projects</span>
         </div>
+        <div id="selection-info"></div>
         <div class="project-list-wrapper">
             <ul class="project-list">
                 <li class="project-item" data-id="1" onclick="selectProject(1)">[01] LEVEL_01</li>
@@ -394,7 +412,6 @@
             3: { title: "LEVEL_03 // WIND", desc: "INTEGRATION OF DIRECTIONAL WIND FIELDS...", video: "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" }
         };
 
-        // --- Verbatim Particle Implementation from Media ID 42e02494-82a2-5292-b9fe-0a02c2dde9b8 ---
         const canvas = document.getElementById('dot-matrix-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -441,7 +458,6 @@
             }
             requestAnimationFrame(animate);
         }
-        // --- End of Verbatim Particle Code ---
 
         function toggleCategory(header) {
             header.classList.toggle('expanded');
@@ -509,12 +525,20 @@
             const video = document.getElementById('main-video');
             const source = document.getElementById('video-src');
             const closeBtn = document.getElementById('close-trigger');
+            const infoText = document.getElementById('selection-info');
 
+            let selectedText = "";
             items.forEach(item => {
                 const itemId = parseInt(item.getAttribute('data-id'));
                 item.classList.remove('active');
-                if (itemId === id) item.classList.add('active');
+                if (itemId === id) {
+                    item.classList.add('active');
+                    selectedText = item.innerText;
+                }
             });
+
+            infoText.innerText = selectedText;
+            infoText.classList.add('active');
 
             const data = projects[id];
             title.innerText = data.title;
@@ -543,11 +567,14 @@
             const desc = document.getElementById('project-desc');
             const video = document.getElementById('main-video');
             const closeBtn = document.getElementById('close-trigger');
+            const infoText = document.getElementById('selection-info');
 
             container.style.opacity = '0'; title.style.opacity = '0'; desc.style.opacity = '0';
             closeBtn.classList.remove('active');
             canvas.style.opacity = '1.0';
+            
             document.querySelectorAll('.project-item').forEach(i => i.classList.remove('active'));
+            infoText.classList.remove('active');
             video.pause();
 
             setTimeout(() => {
