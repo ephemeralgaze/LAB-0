@@ -6,12 +6,13 @@
     <title>LAB-0 | MOBILE TELEMETRY</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg: #050505;
             --fg: #FFFFFF;
             --border: 1px solid #FFFFFF;
+            --font-header: 'Syncopate', sans-serif;
             --font-mono: 'Space Mono', monospace;
             --accent: #00FF00;
         }
@@ -44,6 +45,7 @@
         }
 
         header h1 {
+            font-family: var(--font-header);
             font-size: 10px;
             letter-spacing: 2px;
             font-weight: 700;
@@ -62,6 +64,7 @@
         .nav-tab {
             flex: 1;
             padding: 12px;
+            font-family: var(--font-header);
             font-size: 9px;
             text-align: center;
             border-right: 1px solid rgba(255,255,255,0.1);
@@ -355,15 +358,18 @@
 
         // Input events
         ['posX', 'posY', 'rot', 'param'].forEach(id => {
-            document.getElementById(id).addEventListener('input', (e) => {
-                const key = ['','deflector','gravity','wind'][currentLevel];
-                const val = parseFloat(e.target.value);
-                if (id === 'posX') gameState[key].x = val;
-                else if (id === 'posY') gameState[key].y = val;
-                else if (id === 'rot') gameState[key].rotation = val;
-                else if (id === 'param') gameState[key].strength = val;
-                updateDisplays();
-            });
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('input', (e) => {
+                    const key = ['','deflector','gravity','wind'][currentLevel];
+                    const val = parseFloat(e.target.value);
+                    if (id === 'posX') gameState[key].x = val;
+                    else if (id === 'posY') gameState[key].y = val;
+                    else if (id === 'rot') gameState[key].rotation = val;
+                    else if (id === 'param') gameState[key].strength = val;
+                    updateDisplays();
+                });
+            }
         });
 
         // Touch Interaction
