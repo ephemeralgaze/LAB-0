@@ -32,10 +32,14 @@ setTimeout(function() {
 <!-- ============ 移动设备检测 ============ -->
 <script>
 (function() {
-  var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-  if (isMobile || window.innerWidth < 768) {
-    window.location.replace("Mobile.html");
+  function checkDevice() {
+    var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    if (isMobile || window.innerWidth < 768) {
+      window.location.replace("Mobile.html");
+    }
   }
+  checkDevice();
+  window.addEventListener('resize', checkDevice);
 })();
 
 // ============ 网络状态管理 ============
@@ -330,8 +334,7 @@ body, html {
   width: 100%;
   aspect-ratio: 16/9;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  position: relative;
-  overflow: hidden;
+  position: relative; overflow: hidden;
   background: #000;
   z-index: 100000;
   isolation: isolate;
@@ -613,9 +616,9 @@ body, html {
   <div class="content-grid">
     <div class="col-left" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding-right: 40px;">
       <a href="https://github.com/ephemeralgaze" target="_blank" class="avatar" style="display: block; cursor: pointer;">
-        <img src="https://github.com/ephemeralgaze.png" alt="ephemeralgaze avatar" onerror="this.parentElement.classList.add('resource-failed'); this.style.display='none'; var ph = document.createElement('div'); ph.className='resource-placeholder'; ph.textContent='[AVATAR]'; this.parentElement.appendChild(ph);">
+        <img src="https://github.com/ephemeralgaze.png" alt="ephemeralgaze avatar" onerror="this.parentElement.classList.add(\'resource-failed\'); this.style.display=\'none\'; var ph = document.createElement(\'div\'); ph.className=\'resource-placeholder\'; ph.textContent=\'[AVATAR]\'; this.parentElement.appendChild(ph);">
       </a>
-      <a href="https://github.com/ephemeralgaze" target="_blank" style="margin-top: 25px; font-family: 'Space Mono', 'Monaco', 'Courier New', monospace; font-size: 14px; text-align: center; letter-spacing: 1px; color: inherit; text-decoration: none;">
+      <a href="https://github.com/ephemeralgaze" target="_blank" style="margin-top: 25px; font-family: \'Space Mono\', \'Monaco\', \'Courier New\', monospace; font-size: 14px; text-align: center; letter-spacing: 1px; color: inherit; text-decoration: none;">
         EPHEMERAL GAZE
       </a>
     </div>
@@ -642,7 +645,7 @@ body, html {
 
 <script>
 // ============ 网络管理器初始化 ============
-window.networkStatus.offlineIndicator = document.getElementById('network-indicator');
+window.networkStatus.offlineIndicator = document.getElementById(\'network-indicator\');
 window.networkStatus.init();
 
 // ============ 视频容错加载 system（双网络兼容） ============
@@ -675,11 +678,11 @@ window.videoLoader = {
   },
   
   loadVideo: function(projectId, primarySrc, fallback1Src, fallback2Src) {
-    var video = document.getElementById('p-video');
-    var noSignal = document.getElementById('no-signal');
+    var video = document.getElementById(\'p-video\');
+    var noSignal = document.getElementById(\'no-signal\');
     
     if (!video || !primarySrc) {
-      if (noSignal) noSignal.style.display = 'flex';
+      if (noSignal) noSignal.style.display = \'flex\';
       return;
     }
     
@@ -689,12 +692,12 @@ window.videoLoader = {
     
     var trySource = function(src, label) {
       if (!src) {
-        console.log('❌ 无可用视频源');
-        if (noSignal) noSignal.style.display = 'flex';
+        console.log(\'❌ 无可用视频源\');
+        if (noSignal) noSignal.style.display = \'flex\';
         return;
       }
       
-      console.log('📹 ' + label + ': ' + src);
+      console.log(\'📹 \' + label + \': \' + src);
       video.src = src;
       video.load();
       
@@ -702,44 +705,44 @@ window.videoLoader = {
       if (fallbackTimer) clearTimeout(fallbackTimer);
       fallbackTimer = setTimeout(function() {
         if (video.readyState === 0 && video.src === src) {
-          console.log('⏱️ ' + label + ' 超时或失败，尝试下一个源...');
+          console.log(\'⏱️ \' + label + \' 超时或失败，尝试下一个源...\');
           fallbackAttempt++;
           
           if (fallbackAttempt === 1 && fallback1Src) {
-            trySource(fallback1Src, '备用源1（本地相对路径）');
+            trySource(fallback1Src, \'备用源1（本地相对路径）\');
           } else if (fallbackAttempt === 2 && fallback2Src) {
-            trySource(fallback2Src, '备用源2（assets目录）');
+            trySource(fallback2Src, \'备用源2（assets目录）\');
           } else {
-            console.log('❌ 所有源都已失败');
-            if (noSignal) noSignal.style.display = 'flex';
+            console.log(\'❌ 所有源都已失败\');
+            if (noSignal) noSignal.style.display = \'flex\';
           }
         }
       }, 10000);
     };
     
     video.onerror = function(e) {
-      console.warn('⚠️ 视频加载出错: ' + video.src);
+      console.warn(\'⚠️ 视频加载出错: \' + video.src);
       if (fallbackTimer) clearTimeout(fallbackTimer);
       
       fallbackAttempt++;
       if (fallbackAttempt === 1 && fallback1Src) {
-        trySource(fallback1Src, '备用源1（本地相对路径）');
+        trySource(fallback1Src, \'备用源1（本地相对路径）\');
       } else if (fallbackAttempt === 2 && fallback2Src) {
-        trySource(fallback2Src, '备用源2（assets目录）');
+        trySource(fallback2Src, \'备用源2（assets目录）\');
       } else {
-        console.log('❌ 所有源都已失败');
-        if (noSignal) noSignal.style.display = 'flex';
+        console.log(\'❌ 所有源都已失败\');
+        if (noSignal) noSignal.style.display = \'flex\';
       }
     };
     
     video.onloadstart = function() {
-      console.log('✅ 视频开始加载');
+      console.log(\'✅ 视频开始加载\');
       if (fallbackTimer) clearTimeout(fallbackTimer);
-      if (noSignal) noSignal.style.display = 'none';
+      if (noSignal) noSignal.style.display = \'none\';
     };
     
     // 尝试主源
-    trySource(primarySrc, '主源（GitHub CDN）');
+    trySource(primarySrc, \'主源（GitHub CDN）\');
   }
 };
 
