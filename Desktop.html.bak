@@ -43,21 +43,23 @@
         #dot-matrix-canvas {
             position: fixed;
             inset: 0;
-            z-index: 1; /* Above body background */
+            z-index: 1;
             pointer-events: none;
             display: block;
+            width: 100%;
+            height: 100%;
         }
 
         #bg-overlay {
             position: fixed;
             inset: 0;
             background: var(--overlay-bg);
-            opacity: 0.85; /* Precision opacity for depth */
+            opacity: 0.85;
             z-index: 2;
             pointer-events: none;
         }
 
-        /* --- Boot Sequence (Independent Logo) --- */
+        /* --- Boot Sequence --- */
         #boot-screen-bg {
             position: fixed;
             inset: 0;
@@ -88,7 +90,7 @@
 
         #boot-lab { 
             display: inline-block;
-            margin-right: -0.1em; /* Tighten the LAB- and 0 gap per Kyungsoo */
+            margin-right: -0.1em;
         }
         
         #boot-variant { 
@@ -97,7 +99,7 @@
             text-align: left;
         }
 
-        /* --- Layout HUD --- */
+        /* --- HUD --- */
         header {
             grid-column: 1 / -1;
             padding: 0 40px;
@@ -131,31 +133,73 @@
             gap: 20px;
         }
 
+        /* --- Accordion Projects Section --- */
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            user-select: none;
+            font-family: var(--font-mono);
+            font-size: 14px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--fg);
+            padding: 10px 0;
+            transition: color 0.3s ease;
+        }
+
+        .category-header:hover {
+            color: var(--muted);
+        }
+
+        .arrow-icon {
+            width: 10px;
+            height: 10px;
+            transition: transform var(--transition-smooth);
+            fill: currentColor;
+        }
+
+        .category-header.expanded .arrow-icon {
+            transform: rotate(90deg);
+        }
+
+        .project-list-wrapper {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows var(--transition-smooth);
+            overflow: hidden;
+        }
+
+        .category-header.expanded + .project-list-wrapper {
+            grid-template-rows: 1fr;
+        }
+
         .project-list {
+            min-height: 0;
             list-style: none;
             display: flex;
             flex-direction: column;
+            padding-left: 22px; /* Offset for alignment with "Projects" text */
         }
 
         .project-item {
             font-family: var(--font-mono);
-            font-size: 14px;
-            padding: 20px 0;
+            font-size: 12px;
+            padding: 12px 0;
             cursor: pointer;
             color: var(--muted);
             transition: all var(--transition-smooth);
             text-transform: uppercase;
+            white-space: nowrap;
         }
 
         .project-item.active {
             color: var(--fg);
             font-weight: 700;
-            transform: scale(1.1);
-            padding: 40px 0;
+            transform: scale(1.05);
+            padding: 20px 0;
         }
-
-        .project-item.shift-up { transform: translateY(-15px); }
-        .project-item.shift-down { transform: translateY(15px); }
 
         .main-stage {
             position: relative;
@@ -293,10 +337,8 @@
 
     <canvas id="dot-matrix-canvas"></canvas>
     <div id="bg-overlay"></div>
-
     <div id="boot-screen-bg"></div>
 
-    <!-- Independent Logo stays above HUD and Boot BG -->
     <div class="boot-logo-container" id="logo-main">
         <span id="boot-lab">LAB-</span>
         <div id="boot-variant"><span id="char-target">0</span></div>
@@ -307,11 +349,19 @@
     </header>
 
     <aside class="sidebar sidebar-left" id="hud-left">
-        <ul class="project-list">
-            <li class="project-item" data-id="1" onclick="selectProject(1)">[01] LEVEL_01</li>
-            <li class="project-item" data-id="2" onclick="selectProject(2)">[02] LEVEL_02</li>
-            <li class="project-item" data-id="3" onclick="selectProject(3)">[03] LEVEL_03</li>
-        </ul>
+        <div class="category-header expanded" onclick="toggleCategory(this)">
+            <svg class="arrow-icon" viewBox="0 0 10 10">
+                <path d="M2 1 L8 5 L2 9 Z" />
+            </svg>
+            <span>Projects</span>
+        </div>
+        <div class="project-list-wrapper">
+            <ul class="project-list">
+                <li class="project-item" data-id="1" onclick="selectProject(1)">[01] LEVEL_01</li>
+                <li class="project-item" data-id="2" onclick="selectProject(2)">[02] LEVEL_02</li>
+                <li class="project-item" data-id="3" onclick="selectProject(3)">[03] LEVEL_03</li>
+            </ul>
+        </div>
     </aside>
 
     <main class="main-stage" id="hud-center">
@@ -344,7 +394,7 @@
             3: { title: "LEVEL_03 // WIND", desc: "INTEGRATION OF DIRECTIONAL WIND FIELDS...", video: "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" }
         };
 
-        // --- Verbatim Particle Implementation ---
+        // --- Verbatim Particle Implementation from Media ID 42e02494-82a2-5292-b9fe-0a02c2dde9b8 ---
         const canvas = document.getElementById('dot-matrix-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -391,6 +441,11 @@
             }
             requestAnimationFrame(animate);
         }
+        // --- End of Verbatim Particle Code ---
+
+        function toggleCategory(header) {
+            header.classList.toggle('expanded');
+        }
 
         function scrambleText(element, finalString, duration, callback) {
             const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ#$';
@@ -418,7 +473,6 @@
             const logo = document.getElementById('logo-main');
             const targetChar = document.getElementById('char-target');
             const anchor = document.getElementById('logo-placeholder');
-            
             const bootText = window.innerWidth <= 768 ? 'MOBILE' : 'DESKTOP';
 
             await sleep(600);
@@ -438,7 +492,6 @@
 
             await sleep(1000);
             bg.style.opacity = '0';
-            
             document.getElementById('hud-header').classList.add('visible');
             document.getElementById('hud-left').classList.add('visible');
             document.getElementById('hud-center').classList.add('visible');
@@ -459,10 +512,8 @@
 
             items.forEach(item => {
                 const itemId = parseInt(item.getAttribute('data-id'));
-                item.classList.remove('active', 'shift-up', 'shift-down');
+                item.classList.remove('active');
                 if (itemId === id) item.classList.add('active');
-                else if (itemId < id) item.classList.add('shift-up');
-                else item.classList.add('shift-down');
             });
 
             const data = projects[id];
@@ -496,8 +547,7 @@
             container.style.opacity = '0'; title.style.opacity = '0'; desc.style.opacity = '0';
             closeBtn.classList.remove('active');
             canvas.style.opacity = '1.0';
-
-            document.querySelectorAll('.project-item').forEach(i => i.classList.remove('active', 'shift-up', 'shift-down'));
+            document.querySelectorAll('.project-item').forEach(i => i.classList.remove('active'));
             video.pause();
 
             setTimeout(() => {
