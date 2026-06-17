@@ -6,7 +6,7 @@
     <title>LAB-0 | MOBILE TELEMETRY</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syncopate:wght@400;700&family=Space+Grotesk:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg: #050505;
@@ -14,6 +14,7 @@
             --border: 1px solid rgba(255, 255, 255, 0.15);
             --font-header: 'Syncopate', sans-serif;
             --font-mono: 'Space Mono', monospace;
+            --font-grotesk: 'Space Grotesk', sans-serif;
             --accent: #00FF00;
         }
 
@@ -124,119 +125,94 @@
             aspect-ratio: 16/9;
             background: #000;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             border-bottom: var(--border);
             position: relative;
+            overflow: hidden;
         }
 
-        .placeholder-box {
+        .video-viewport video {
             width: 100%;
             height: 100%;
-            border: 1px dashed rgba(255,255,255,0.1);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-size: 9px;
-            color: rgba(255,255,255,0.3);
-            gap: 8px;
+            object-fit: cover;
         }
 
-        .video-controls {
-            padding: 15px;
+        .direct-controls-row {
+            padding: 10px 15px;
             border-bottom: var(--border);
             display: flex;
-            flex-direction: column;
-            gap: 15px;
-            align-items: stretch;
+            align-items: center;
+            gap: 12px;
         }
 
-        .control-row-top {
-            display: flex;
-            justify-content: center;
-        }
-
-        .control-btn {
-            background: transparent;
-            border: 1px solid rgba(255,255,255,0.5);
-            color: #FFF;
-            padding: 10px 30px;
-            font-family: var(--font-header);
-            font-size: 9px;
-            cursor: pointer;
-            letter-spacing: 1px;
-            width: 100%;
-            max-width: 200px;
-        }
-
-        .seek-slider {
+        .seek-slider-minimal {
+            flex: 1;
             -webkit-appearance: none;
-            width: 100%;
-            height: 2px;
-            background: #333;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.3);
             outline: none;
+            border: none;
         }
 
-        .seek-slider::-webkit-slider-thumb {
+        .seek-slider-minimal::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 10px;
-            height: 20px;
+            width: 1px;
+            height: 10px;
             background: #FFF;
             cursor: pointer;
-            border: 1px solid #000;
+        }
+
+        .mute-toggle-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            color: #FFF;
+            font-family: var(--font-mono);
+            font-size: 8px;
+            padding: 4px 6px;
+            cursor: pointer;
+            min-width: 45px;
+        }
+
+        .time-display {
+            font-family: var(--font-mono);
+            font-size: 8px;
+            color: #AAA;
+            white-space: nowrap;
         }
 
         .asset-info {
-            padding: 20px;
+            padding: 20px 15px;
             display: flex;
             flex-direction: column;
             gap: 20px;
         }
 
-        .info-header {
-            border-bottom: 1px solid #333;
-            padding-bottom: 10px;
-        }
-
-        .info-header h2 {
-            font-size: 14px;
+        .asset-title {
             font-family: var(--font-header);
+            font-size: 14px;
             letter-spacing: 2px;
+            margin-bottom: 4px;
         }
 
-        .info-header p {
+        .spec-category {
+            font-family: var(--font-grotesk);
+            font-weight: 700;
             font-size: 9px;
-            color: #666;
-            margin-top: 4px;
+            color: #FFF;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+            border-left: 2px solid #FFF;
+            padding-left: 8px;
         }
 
-        .category-header {
-            background: #2A2A2A;
-            font-size: 9px;
-            padding: 6px 15px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .info-text {
-            font-size: 10px;
+        .spec-content {
+            font-family: var(--font-grotesk);
+            font-size: 11px;
             line-height: 1.6;
-            color: #AAA;
-            margin-bottom: 20px;
-        }
-
-        .terminal-block {
-            background: #0A0A0A;
-            border: var(--border);
-            padding: 10px;
-            font-family: var(--font-mono);
-            font-size: 8px;
-            color: var(--accent);
-            height: 100px;
-            overflow-y: auto;
-            margin-top: 10px;
+            color: #BBB;
+            margin-bottom: 16px;
         }
 
         /* Common Components */
@@ -387,54 +363,36 @@
             </div>
         </main>
 
-        <!-- Module 02: Logs/Asset Info -->
+        <!-- Module 02: Asset Telemetry -->
         <main id="module-02" class="module-content">
-            <div class="video-viewport">
-                <div class="placeholder-box">
-                    <span>[ NS_FOUNTAIN_PREVIEW ]</span>
-                    <video id="portfolio-video" width="100%" height="100%" style="display:none;"></video>
-                    <span>[ ASSET_READY ]</span>
-                </div>
+            <div class="video-viewport" onclick="toggleVideo()">
+                <video id="portfolio-video" playsinline loop muted>
+                    <source src="https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
+                </video>
             </div>
             
-            <div class="video-controls">
-                <div class="control-row-top">
-                    <button id="play-pause-btn" class="control-btn" onclick="toggleVideo()">PLAY / PAUSE</button>
-                </div>
-                <input type="range" id="video-seek" class="seek-slider" min="0" max="100" value="0" step="0.1">
+            <div class="direct-controls-row">
+                <input type="range" id="video-seek" class="seek-slider-minimal" min="0" max="100" value="0" step="0.1">
+                <button id="mute-toggle" class="mute-toggle-btn">MUTE</button>
+                <div id="time-display" class="time-display">0:00 / 0:00</div>
             </div>
 
             <div class="asset-info">
-                <div class="info-header">
-                    <h2>NS_FOUNTAIN</h2>
-                    <p>NIAGARA_SYSTEM_ASSET</p>
+                <h2 class="asset-title">NS_FOUNTAIN</h2>
+
+                <div class="info-section">
+                    <div class="spec-category">TECHNICAL_BRIEF</div>
+                    <p class="spec-content">High-density particle simulation utilizing GPU acceleration. Features complex vector field integration, dynamic gravity scaling, and color-over-life modules for realistic fluid-like motion.</p>
                 </div>
 
                 <div class="info-section">
-                    <div class="category-header">TECHNICAL_BRIEF</div>
-                    <p class="info-text">High-density particle simulation utilizing GPU acceleration. Features complex vector field integration, dynamic gravity scaling, and color-over-life modules for realistic fluid-like motion.</p>
-                </div>
-
-                <div class="info-section">
-                    <div class="category-header">PARAMETER_CONTROLS</div>
-                    <div class="property-row" style="padding: 0; border: none;">
-                        <div class="property-label">Volume</div>
-                        <div class="input-wrap">
-                            <input type="range" class="slider" min="0" max="1" step="0.1" value="0.5" id="volume-control">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="info-section">
-                    <div class="category-header">SYSTEM_DIAGNOSTICS_TERMINAL</div>
-                    <div class="terminal-block" id="telemetry-terminal">
-                        > INITIALIZING TELEMETRY...<br>
-                        > CONNECTION ESTABLISHED<br>
-                        > MONITORING NS_FOUNTAIN...<br>
-                        > GPU_LOAD: 24%<br>
-                        > PARTICLE_COUNT: 124,000<br>
-                        > STATUS: NOMINAL
-                    </div>
+                    <div class="spec-category">SPECIFICATIONS</div>
+                    <p class="spec-content">
+                        KERNEL: GPU_ACCELERATED<br>
+                        PARTICLE_COUNT: 124,000<br>
+                        EMISSION_RATE: DYNAMIC<br>
+                        SOLVER: PBD_SIM
+                    </p>
                 </div>
             </div>
         </main>
@@ -446,6 +404,8 @@
         const goalNotif = document.getElementById('goal-notification');
         const video = document.getElementById('portfolio-video');
         const seekSlider = document.getElementById('video-seek');
+        const muteToggle = document.getElementById('mute-toggle');
+        const timeDisplay = document.getElementById('time-display');
         
         let currentLevel = 1;
         let particles = [];
@@ -472,16 +432,35 @@
             if (video.paused) video.play(); else video.pause();
         }
 
+        function formatTime(seconds) {
+            const m = Math.floor(seconds / 60);
+            const s = Math.floor(seconds % 60);
+            return `${m}:${s < 10 ? '0' : ''}${s}`;
+        }
+
+        // Mute Toggle
+        muteToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            video.muted = !video.muted;
+            muteToggle.innerText = video.muted ? 'UNMUTE' : 'MUTE';
+        });
+
         // Seek Slider Logic
         video.addEventListener('loadedmetadata', () => {
             seekSlider.max = video.duration;
+            updateTimeDisplay();
         });
 
         video.addEventListener('timeupdate', () => {
             if (!seekSlider.dragging) {
                 seekSlider.value = video.currentTime;
             }
+            updateTimeDisplay();
         });
+
+        function updateTimeDisplay() {
+            timeDisplay.innerText = `${formatTime(video.currentTime)} / ${formatTime(video.duration || 0)}`;
+        }
 
         seekSlider.addEventListener('input', () => {
             seekSlider.dragging = true;
@@ -680,30 +659,6 @@
         resize();
         animate();
         setLevel(1);
-        
-        // Terminal simulation
-        const terminal = document.getElementById('telemetry-terminal');
-        setInterval(() => {
-            if (document.getElementById('module-02').classList.contains('active')) {
-                const logs = [
-                    `> GPU_LOAD: ${Math.floor(20 + Math.random() * 10)}%`,
-                    `> MEMORY_USAGE: ${Math.floor(150 + Math.random() * 50)}MB`,
-                    `> LATENCY: ${Math.floor(2 + Math.random() * 5)}ms`,
-                    `> PARTICLE_COUNT: ${120000 + Math.floor(Math.random() * 10000)}`
-                ];
-                const log = logs[Math.floor(Math.random() * logs.length)];
-                terminal.innerHTML += `<br>${log}`;
-                terminal.scrollTop = terminal.scrollHeight;
-            }
-        }, 2000);
-        
-        // Volume Control
-        const volSlider = document.getElementById('volume-control');
-        if (volSlider) {
-            volSlider.addEventListener('input', (e) => {
-                video.volume = e.target.value;
-            });
-        }
     </script>
 </body>
 </html>
