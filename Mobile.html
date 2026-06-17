@@ -67,6 +67,7 @@
             border-right: 1px solid rgba(255,255,255,0.1);
             background: #111;
             opacity: 0.5;
+            cursor: pointer;
         }
 
         .nav-tab.active {
@@ -80,6 +81,18 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
+        }
+
+        .module {
+            display: none;
+            flex: 1;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+        }
+
+        .module.active {
+            display: flex;
         }
 
         .canvas-area {
@@ -182,6 +195,23 @@
             display: none;
             z-index: 100;
         }
+
+        #log-container {
+            padding: 20px;
+            font-size: 9px;
+            color: #888;
+            line-height: 1.6;
+            overflow-y: auto;
+        }
+
+        .log-entry {
+            margin-bottom: 5px;
+        }
+
+        .log-entry span {
+            color: var(--accent);
+            margin-right: 10px;
+        }
     </style>
 </head>
 <body>
@@ -191,57 +221,70 @@
     </header>
 
     <div class="nav-tabs">
-        <div class="nav-tab active">01_SYSTEM</div>
-        <div class="nav-tab">02_LOGS</div>
+        <div class="nav-tab active" onclick="switchModule(0)">01_SYSTEM</div>
+        <div class="nav-tab" onclick="switchModule(1)">02_LOGS</div>
     </div>
 
     <div class="main-container">
-        <div class="canvas-area">
-            <canvas id="niagara-canvas"></canvas>
-            <div id="goal-notification">SUCCESS: TARGET_ACQUIRED</div>
-            <div class="terminal-overlay">
-                FRM: <span id="fps">60</span> | OBJ: <span id="pcount">80</span><br>
-                LEVEL: <span id="cur-lvl">01</span> | HITS: <span id="cur-hits">0</span>
+        <!-- Module 01: System -->
+        <div id="module-system" class="module active">
+            <div class="canvas-area">
+                <canvas id="niagara-canvas"></canvas>
+                <div id="goal-notification">SUCCESS: TARGET_ACQUIRED</div>
+                <div class="terminal-overlay">
+                    FRM: <span id="fps">60</span> | OBJ: <span id="pcount">80</span><br>
+                    LEVEL: <span id="cur-lvl">01</span> | HITS: <span id="cur-hits">0</span>
+                </div>
+            </div>
+
+            <div class="controls-area">
+                <div class="level-select">
+                    <div class="level-btn active" onclick="setLevel(1)">L01</div>
+                    <div class="level-btn" onclick="setLevel(2)">L02</div>
+                    <div class="level-btn" onclick="setLevel(3)">L03</div>
+                </div>
+
+                <div class="property-row">
+                    <div class="property-label">Object Position X</div>
+                    <div class="input-wrap">
+                        <input type="range" id="posX" class="slider" min="0" max="400">
+                        <span class="val-display" id="v-posX">0</span>
+                    </div>
+                </div>
+
+                <div class="property-row">
+                    <div class="property-label">Object Position Y</div>
+                    <div class="input-wrap">
+                        <input type="range" id="posY" class="slider" min="0" max="600">
+                        <span class="val-display" id="v-posY">0</span>
+                    </div>
+                </div>
+
+                <div class="property-row" id="rot-row">
+                    <div class="property-label">Rotation</div>
+                    <div class="input-wrap">
+                        <input type="range" id="rot" class="slider" min="0" max="360">
+                        <span class="val-display" id="v-rot">0</span>
+                    </div>
+                </div>
+
+                <div class="property-row" id="param-row">
+                    <div class="property-label" id="param-label">Strength</div>
+                    <div class="input-wrap">
+                        <input type="range" id="param" class="slider" min="-10" max="10" step="0.1">
+                        <span class="val-display" id="v-param">0</span>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="controls-area">
-            <div class="level-select">
-                <div class="level-btn active" onclick="setLevel(1)">L01</div>
-                <div class="level-btn" onclick="setLevel(2)">L02</div>
-                <div class="level-btn" onclick="setLevel(3)">L03</div>
-            </div>
-
-            <div class="property-row">
-                <div class="property-label">Object Position X</div>
-                <div class="input-wrap">
-                    <input type="range" id="posX" class="slider" min="0" max="400">
-                    <span class="val-display" id="v-posX">0</span>
-                </div>
-            </div>
-
-            <div class="property-row">
-                <div class="property-label">Object Position Y</div>
-                <div class="input-wrap">
-                    <input type="range" id="posY" class="slider" min="0" max="600">
-                    <span class="val-display" id="v-posY">0</span>
-                </div>
-            </div>
-
-            <div class="property-row" id="rot-row">
-                <div class="property-label">Rotation</div>
-                <div class="input-wrap">
-                    <input type="range" id="rot" class="slider" min="0" max="360">
-                    <span class="val-display" id="v-rot">0</span>
-                </div>
-            </div>
-
-            <div class="property-row" id="param-row">
-                <div class="property-label" id="param-label">Strength</div>
-                <div class="input-wrap">
-                    <input type="range" id="param" class="slider" min="-10" max="10" step="0.1">
-                    <span class="val-display" id="v-param">0</span>
-                </div>
+        <!-- Module 02: Logs -->
+        <div id="module-logs" class="module">
+            <div id="log-container">
+                <div class="log-entry"><span>[2026.06.17-20:27:54]</span> INITIALIZING_TELEMETRY_STREAM...</div>
+                <div class="log-entry"><span>[2026.06.17-20:27:55]</span> CONNECTION_ESTABLISHED_PORT_8080</div>
+                <div class="log-entry"><span>[2026.06.17-20:27:56]</span> SYNC_COMPLETE: CORE_ASSETS_LOADED</div>
+                <div class="log-entry"><span>[2026.06.17-20:28:01]</span> SIM_STATE_ACTIVE: BEGIN_MONITORING</div>
             </div>
         </div>
     </div>
@@ -261,6 +304,18 @@
             wind: { x: 150, y: 150, rotation: 0, strength: 0.2, w: 150, h: 150 },
             goal: { x: 250, y: 350, w: 60, h: 60 }
         };
+
+        function switchModule(index) {
+            const tabs = document.querySelectorAll('.nav-tab');
+            const modules = document.querySelectorAll('.module');
+            
+            tabs.forEach((tab, i) => tab.classList.toggle('active', i === index));
+            modules.forEach((mod, i) => mod.classList.toggle('active', i === index));
+            
+            if (index === 0) {
+                resize(); // Re-sync canvas size
+            }
+        }
 
         function setLevel(lvl) {
             currentLevel = lvl;
@@ -335,6 +390,7 @@
         }
 
         function resize() {
+            if (!canvas.offsetWidth) return;
             canvas.width = canvas.offsetWidth;
             canvas.height = canvas.offsetHeight;
             document.getElementById('posX').max = canvas.width;
@@ -389,7 +445,8 @@
                 if (this.x > gameState.goal.x && this.x < gameState.goal.x + gameState.goal.w && 
                     this.y > gameState.goal.y && this.y < gameState.goal.y + gameState.goal.h) {
                     goalHits++; this.reset();
-                    document.getElementById('cur-hits').innerText = goalHits;
+                    const hitsEl = document.getElementById('cur-hits');
+                    if (hitsEl) hitsEl.innerText = goalHits;
                 }
                 if (this.y > canvas.height || this.x > canvas.width || this.x < 0 || this.y < 0) this.reset();
             }
@@ -402,7 +459,8 @@
         function resetLevel() {
             particles = []; for (let i = 0; i < 50; i++) particles.push(new Particle());
             goalHits = 0;
-            document.getElementById('cur-hits').innerText = '0';
+            const hitsEl = document.getElementById('cur-hits');
+            if (hitsEl) hitsEl.innerText = '0';
             gameState.goal = { x: canvas.width - 80, y: canvas.height - 80, w: 60, h: 60 };
         }
 
@@ -433,7 +491,7 @@
             }
 
             particles.forEach(p => { p.update(); p.draw(); });
-            goalNotif.style.display = goalHits > 20 ? 'block' : 'none';
+            if (goalNotif) goalNotif.style.display = goalHits > 20 ? 'block' : 'none';
             requestAnimationFrame(animate);
         }
 
