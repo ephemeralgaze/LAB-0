@@ -141,27 +141,6 @@
             height: 100%;
         }
 
-        /* Vector Field Overlay */
-        .vf-overlay {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: rgba(5,5,5,0.7);
-            padding: 10px;
-            border: 1px solid rgba(255,255,255,0.1);
-            pointer-events: none;
-            font-family: var(--font-mono);
-            font-size: 9px;
-            color: rgba(255,255,255,0.8);
-            z-index: 15;
-            min-width: 180px;
-        }
-
-        .vf-overlay div {
-            margin-bottom: 4px;
-            white-space: nowrap;
-        }
-
         /* Simplified Video Description Overlay */
         .placeholder-card {
             width: 90%;
@@ -183,6 +162,12 @@
             align-items: center;
             justify-content: center;
             background: #000;
+        }
+
+        .video-box-content {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            opacity: 0.2;
         }
 
         .video-desc-block {
@@ -281,18 +266,12 @@
 
     <main class="main-view">
         <div id="content-01" class="module-content active">
-            <div class="vf-overlay">
-                <div id="tele-pos">POS: 000, 000</div>
-                <div id="tele-vel">VEL: 0.000</div>
-                <div id="tele-alloc">[VIRTUAL_BUFFER_ALLOC]</div>
-                <div id="tele-sys">SYS_TIME: 00:00:00:00</div>
-            </div>
             <canvas id="niagara-canvas"></canvas>
         </div>
         <div id="content-02" class="module-content">
             <div class="placeholder-card">
                 <div class="video-box">
-                    <div style="font-family: var(--font-mono); font-size: 10px; opacity: 0.2;">[ VIDEO_SIGNAL_PENDING ]</div>
+                    <div class="video-box-content">[ VIDEO_SIGNAL_PENDING ]</div>
                 </div>
                 <div class="video-desc-block">
                     <div class="desc-title">NS_FOUNTAIN</div>
@@ -343,143 +322,65 @@
         }
         setInterval(addLog, 2000);
 
-        // Vector Field Implementation
         const canvas = document.getElementById('niagara-canvas');
         const ctx = canvas.getContext('2d');
-        const telePos = document.getElementById('tele-pos');
-        const teleVel = document.getElementById('tele-vel');
-        const teleSys = document.getElementById('tele-sys');
-
         let particles = [];
-        let mouse = { x: 0, y: 0 };
-        let grid = [];
-        const resolution = 30;
-        let cols, rows;
+        let mouse = { x: null, y: null };
 
         function resize() {
             canvas.width = canvas.offsetWidth;
             canvas.height = canvas.offsetHeight;
-            cols = Math.floor(canvas.width / resolution) + 1;
-            rows = Math.floor(canvas.height / resolution) + 1;
             document.getElementById('sys-res').innerText = `RES: ${window.innerWidth}x${window.innerHeight}`;
-            initParticles();
         }
-
         window.addEventListener('resize', resize);
-        
+        resize();
+
         window.addEventListener('mousemove', (e) => {
             const rect = canvas.getBoundingClientRect();
             mouse.x = e.clientX - rect.left;
             mouse.y = e.clientY - rect.top;
-            telePos.innerText = `POS: ${Math.floor(mouse.x).toString().padStart(3, '0')}, ${Math.floor(mouse.y).toString().padStart(3, '0')}`;
         });
 
         class Particle {
-            constructor() {
-                this.init();
-            }
-            init() {
+            constructor() { this.reset(); }
+            reset() {
                 this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.prevX = this.x;
-                this.prevY = this.y;
-                this.velX = 0;
-                this.velY = 0;
-                this.accX = 0;
-                this.accY = 0;
-                this.maxSpeed = 2 + Math.random() * 2;
-                this.life = 100 + Math.random() * 100;
+                this.y = canvas.height + 10;
+                this.vx = (Math.random() - 0.5) * 1.5;
+                this.vy = -Math.random() * 3 - 1;
+                this.life = 1;
+                this.decay = Math.random() * 0.01 + 0.005;
             }
-            update(field) {
-                const c = Math.floor(this.x / resolution);
-                const r = Math.floor(this.y / resolution);
-                if (c >= 0 && c < cols && r >= 0 && r < rows) {
-                    const force = field[c][r];
-                    this.accX += force.x;
-                    this.accY += force.y;
-                }
-
-                // Mouse Force
-                const dx = this.x - mouse.x;
-                const dy = this.y - mouse.y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist < 150) {
-                    const mForce = (150 - dist) / 1500;
-                    this.accX += (dx / dist) * mForce;
-                    this.accY += (dy / dist) * mForce;
-                }
-
-                this.prevX = this.x;
-                this.prevY = this.y;
-                this.velX += this.accX;
-                this.velY += this.accY;
-                
-                const speed = Math.sqrt(this.velX**2 + this.velY**2);
-                if (speed > this.maxSpeed) {
-                    this.velX = (this.velX / speed) * this.maxSpeed;
-                    this.velY = (this.velY / speed) * this.maxSpeed;
-                }
-
-                this.x += this.velX;
-                this.y += this.velY;
-                this.accX = 0;
-                this.accY = 0;
-                this.life--;
-
-                if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height || this.life <= 0) {
-                    this.init();
-                }
-            }
-            draw() {
-                ctx.beginPath();
-                ctx.moveTo(this.prevX, this.prevY);
-                ctx.lineTo(this.x, this.y);
-                ctx.strokeStyle = '#FFFFFF';
-                ctx.lineWidth = 1;
-                ctx.stroke();
-            }
-        }
-
-        function initParticles() {
-            particles = [];
-            const count = (canvas.width * canvas.height) / 4000;
-            for (let i = 0; i < count; i++) {
-                particles.push(new Particle());
-            }
-        }
-
-        let time = 0;
-        function animate() {
-            if (document.getElementById('content-01').classList.contains('active')) {
-                time += 0.005;
-                // Generate Field
-                grid = [];
-                for (let i = 0; i < cols; i++) {
-                    grid[i] = [];
-                    for (let j = 0; j < rows; j++) {
-                        const angle = (Math.sin(i * 0.1 + time) + Math.cos(j * 0.1 + time)) * Math.PI;
-                        grid[i][j] = { x: Math.cos(angle) * 0.1, y: Math.sin(angle) * 0.1 };
+            update() {
+                if (mouse.x !== null) {
+                    const dx = this.x - mouse.x;
+                    const dy = this.y - mouse.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 100) {
+                        const force = (100 - dist) / 100;
+                        this.vx += (dx / dist) * force * 1.5;
+                        this.vy += (dy / dist) * force * 1.5;
                     }
                 }
+                this.x += this.vx; this.y += this.vy;
+                this.life -= this.decay;
+                if (this.life <= 0 || this.y < -10) this.reset();
+            }
+            draw() {
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.life * 0.8})`;
+                ctx.fillRect(this.x, this.y, 1, 1);
+            }
+        }
 
-                ctx.fillStyle = 'rgba(5, 5, 5, 0.15)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
-                let avgVel = 0;
-                particles.forEach(p => {
-                    p.update(grid);
-                    p.draw();
-                    avgVel += Math.sqrt(p.velX**2 + p.velY**2);
-                });
-                
-                teleVel.innerText = `VEL: ${(avgVel / (particles.length || 1)).toFixed(3)}`;
-                const now = new Date();
-                teleSys.innerText = `SYS_TIME: ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}:${Math.floor(now.getMilliseconds()/10).toString().padStart(2, '0')}`;
+        for (let i = 0; i < 150; i++) particles.push(new Particle());
+
+        function animate() {
+            if (document.getElementById('content-01').classList.contains('active')) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => { p.update(); p.draw(); });
             }
             requestAnimationFrame(animate);
         }
-
-        resize();
         animate();
 
         function updateClock() {
