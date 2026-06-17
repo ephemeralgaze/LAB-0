@@ -102,11 +102,27 @@
         .canvas-container {
             height: 300px;
             width: 100%;
+            position: relative;
         }
 
         #niagara-canvas {
             width: 100%;
             height: 100%;
+        }
+
+        /* Vector Field Overlay */
+        .vf-overlay {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(5,5,5,0.7);
+            padding: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+            pointer-events: none;
+            font-family: var(--font-mono);
+            font-size: 8px;
+            color: rgba(255,255,255,0.7);
+            z-index: 15;
         }
 
         /* Simplified Mobile View */
@@ -216,6 +232,11 @@
     <section class="main-section">
         <div id="content-01" class="module-content active">
             <div class="canvas-container">
+                <div class="vf-overlay">
+                    <div id="tele-pos">POS: 000, 000</div>
+                    <div id="tele-vel">VEL: 0.000</div>
+                    <div id="tele-alloc">[VIRTUAL_BUFFER_ALLOC]</div>
+                </div>
                 <canvas id="niagara-canvas"></canvas>
             </div>
         </div>
@@ -273,47 +294,145 @@
         }
         setInterval(addLog, 2500);
 
+        // Vector Field Implementation
         const canvas = document.getElementById('niagara-canvas');
         const ctx = canvas.getContext('2d');
+        const telePos = document.getElementById('tele-pos');
+        const teleVel = document.getElementById('tele-vel');
+
         let particles = [];
+        let mouse = { x: 0, y: 0 };
+        let grid = [];
+        const resolution = 25;
+        let cols, rows;
 
         function resize() {
             canvas.width = canvas.offsetWidth;
             canvas.height = canvas.offsetHeight;
+            cols = Math.floor(canvas.width / resolution) + 1;
+            rows = Math.floor(canvas.height / resolution) + 1;
+            initParticles();
         }
+
         window.addEventListener('resize', resize);
-        resize();
+        
+        canvas.addEventListener('touchmove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            mouse.x = e.touches[0].clientX - rect.left;
+            mouse.y = e.touches[0].clientY - rect.top;
+            telePos.innerText = `POS: ${Math.floor(mouse.x).toString().padStart(3, '0')}, ${Math.floor(mouse.y).toString().padStart(3, '0')}`;
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            mouse.x = e.clientX - rect.left;
+            mouse.y = e.clientY - rect.top;
+            telePos.innerText = `POS: ${Math.floor(mouse.x).toString().padStart(3, '0')}, ${Math.floor(mouse.y).toString().padStart(3, '0')}`;
+        });
 
         class Particle {
-            constructor() { this.reset(); }
-            reset() {
-                this.x = Math.random() * canvas.width;
-                this.y = canvas.height + 10;
-                this.vx = (Math.random() - 0.5) * 1;
-                this.vy = -Math.random() * 2 - 1;
-                this.life = 1;
-                this.decay = Math.random() * 0.015 + 0.005;
+            constructor() {
+                this.init();
             }
-            update() {
-                this.x += this.vx; this.y += this.vy;
-                this.life -= this.decay;
-                if (this.life <= 0) this.reset();
+            init() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.prevX = this.x;
+                this.prevY = this.y;
+                this.velX = 0;
+                this.velY = 0;
+                this.accX = 0;
+                this.accY = 0;
+                this.maxSpeed = 1.5 + Math.random() * 1.5;
+                this.life = 80 + Math.random() * 80;
+            }
+            update(field) {
+                const c = Math.floor(this.x / resolution);
+                const r = Math.floor(this.y / resolution);
+                if (c >= 0 && c < cols && r >= 0 && r < rows) {
+                    const force = field[c][r];
+                    this.accX += force.x;
+                    this.accY += force.y;
+                }
+
+                // Mouse Force
+                const dx = this.x - mouse.x;
+                const dy = this.y - mouse.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < 100) {
+                    const mForce = (100 - dist) / 1000;
+                    this.accX += (dx / dist) * mForce;
+                    this.accY += (dy / dist) * mForce;
+                }
+
+                this.prevX = this.x;
+                this.prevY = this.y;
+                this.velX += this.accX;
+                this.velY += this.accY;
+                
+                const speed = Math.sqrt(this.velX**2 + this.velY**2);
+                if (speed > this.maxSpeed) {
+                    this.velX = (this.velX / speed) * this.maxSpeed;
+                    this.velY = (this.velY / speed) * this.maxSpeed;
+                }
+
+                this.x += this.velX;
+                this.y += this.velY;
+                this.accX = 0;
+                this.accY = 0;
+                this.life--;
+
+                if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height || this.life <= 0) {
+                    this.init();
+                }
             }
             draw() {
-                ctx.fillStyle = `rgba(255, 255, 255, ${this.life * 0.6})`;
-                ctx.fillRect(this.x, this.y, 1, 1);
+                ctx.beginPath();
+                ctx.moveTo(this.prevX, this.prevY);
+                ctx.lineTo(this.x, this.y);
+                ctx.strokeStyle = `rgba(255, 255, 255, ${Math.min(1, this.life/20)})`;
+                ctx.lineWidth = 1;
+                ctx.stroke();
             }
         }
 
-        for (let i = 0; i < 80; i++) particles.push(new Particle());
+        function initParticles() {
+            particles = [];
+            const count = (canvas.width * canvas.height) / 3000;
+            for (let i = 0; i < count; i++) {
+                particles.push(new Particle());
+            }
+        }
 
+        let time = 0;
         function animate() {
             if (document.getElementById('content-01').classList.contains('active')) {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                particles.forEach(p => { p.update(); p.draw(); });
+                time += 0.005;
+                grid = [];
+                for (let i = 0; i < cols; i++) {
+                    grid[i] = [];
+                    for (let j = 0; j < rows; j++) {
+                        const angle = (Math.sin(i * 0.15 + time) + Math.cos(j * 0.15 + time)) * Math.PI;
+                        grid[i][j] = { x: Math.cos(angle) * 0.1, y: Math.sin(angle) * 0.1 };
+                    }
+                }
+
+                ctx.fillStyle = 'rgba(5, 5, 5, 0.2)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                let avgVel = 0;
+                particles.forEach(p => {
+                    p.update(grid);
+                    p.draw();
+                    avgVel += Math.sqrt(p.velX**2 + p.velY**2);
+                });
+                
+                teleVel.innerText = `VEL: ${(avgVel / (particles.length || 1)).toFixed(3)}`;
             }
             requestAnimationFrame(animate);
         }
+
+        resize();
         animate();
 
         function updateClock() {
