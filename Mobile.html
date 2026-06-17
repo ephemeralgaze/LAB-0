@@ -159,40 +159,27 @@
             font-size: 9px;
             line-height: 1.4;
             color: rgba(255,255,255,0.7);
-        }
-
-        /* Protocols Section */
-        .protocols-section {
-            padding: 20px;
-            border-bottom: var(--border);
-            z-index: 10;
-            background: rgba(5,5,5,0.85);
-        }
-
-        .panel-title {
-            font-family: var(--font-header);
-            font-size: 9px;
-            border-bottom: var(--border);
-            padding-bottom: 5px;
-            margin-bottom: 15px;
-            color: rgba(255,255,255,0.5);
-        }
-
-        .protocol-item {
             margin-bottom: 12px;
         }
 
-        .protocol-label {
-            font-family: var(--font-mono);
-            font-size: 8px;
-            text-transform: uppercase;
-            color: rgba(255,255,255,0.4);
-            margin-bottom: 2px;
+        .time-box {
+            border-top: 1px solid rgba(255,255,255,0.2);
+            padding-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .protocol-value {
+        .time-label {
             font-family: var(--font-mono);
-            font-size: 10px;
+            font-size: 8px;
+            color: rgba(255,255,255,0.4);
+        }
+
+        .time-value {
+            font-family: var(--font-mono);
+            font-size: 14px;
+            color: #FFFFFF;
         }
 
         /* Terminal Section */
@@ -204,6 +191,15 @@
             display: flex;
             flex-direction: column;
             min-height: 200px;
+        }
+
+        .panel-title {
+            font-family: var(--font-header);
+            font-size: 9px;
+            border-bottom: var(--border);
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+            color: rgba(255,255,255,0.5);
         }
 
         #diag-terminal {
@@ -254,32 +250,12 @@
                     <div class="desc-body">
                         NIAGARA PARTICLE FOUNTAIN SYSTEM. IMPLEMENTS ADVANCED SCALE COLOR MODULES WITH DYNAMIC ALPHA CURVE FADING OVER A 2.4S LIFECYCLE. OPTIMIZED FOR HIGH-CONTRAST TELEMETRY VISUALIZATION. CORE SIMULATION DRIVEN BY HLSL VERTEX SHADERS.
                     </div>
+                    <div class="time-box">
+                        <div class="time-label">SYS_TIME</div>
+                        <div class="time-value" id="live-clock">00:00:00:00</div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </nav>
-
-    <section class="protocols-section">
-        <div class="panel-title">CORE SYSTEM PROTOCOLS</div>
-        <div class="protocol-item">
-            <div class="protocol-label">ENGINE</div>
-            <div class="protocol-value">UE 5.2.4 [ONLINE]</div>
-        </div>
-        <div class="protocol-item">
-            <div class="protocol-label">VFX</div>
-            <div class="protocol-value">NIAGARA [ACTIVE]</div>
-        </div>
-        <div class="protocol-item">
-            <div class="protocol-label">STACK</div>
-            <div class="protocol-value">HLSL & C# [STABLE]</div>
-        </div>
-        <div class="protocol-item">
-            <div class="protocol-label">DESIGN</div>
-            <div class="protocol-value">STRICT 0PX BORDER_RADIUS</div>
-        </div>
-        <div class="protocol-item">
-            <div class="protocol-label">SYS_TIME</div>
-            <div class="protocol-value" id="live-clock">00:00:00:00</div>
         </div>
     </section>
 
