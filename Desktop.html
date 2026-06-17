@@ -45,7 +45,7 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            z-index: 2;
+            z-index: 0;
             pointer-events: none;
             transition: opacity var(--transition-smooth);
         }
@@ -53,7 +53,7 @@
         #bg-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(5, 5, 5, 0.7);
+            background: rgba(5, 5, 5, 0.3);
             z-index: 1;
             pointer-events: none;
             backdrop-filter: blur(8px);
@@ -123,7 +123,8 @@
             font-size: 16px;
             letter-spacing: 6px;
             font-weight: 700;
-            visibility: hidden; /* Reference only, boot container becomes the logo */
+            opacity: 0;
+            transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .sidebar {
@@ -380,43 +381,53 @@
             }
         };
 
-        // --- Particle Background ---
+        // --- Dot-Matrix Background ---
         const canvas = document.getElementById('particle-canvas');
         const ctx = canvas.getContext('2d');
-        let particles = [];
+        let dots = [];
+
+        class Dot {
+            constructor() {
+                this.init();
+            }
+            init() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.size = Math.random() * 1.2 + 0.5;
+                this.baseOpacity = Math.random() * 0.5 + 0.2;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.x > canvas.width) this.x = 0;
+                if (this.y < 0) this.y = canvas.height;
+                if (this.y > canvas.height) this.y = 0;
+            }
+            draw() {
+                ctx.fillStyle = "rgba(255, 255, 255, " + this.baseOpacity + ")";
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
 
         function initParticles() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            particles = [];
-            const count = 150;
-            for(let i=0; i<count; i++) {
-                particles.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    vx: (Math.random() - 0.5) * 0.5,
-                    vy: (Math.random() - 0.5) * 0.5,
-                    size: Math.random() * 1.5
-                });
+            dots = [];
+            for (let i = 0; i < 180; i++) {
+                dots.push(new Dot());
             }
         }
 
         function drawParticles() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#FFFFFF';
-            particles.forEach(p => {
-                p.x += p.vx;
-                p.y += p.vy;
-                
-                // Wrap around motion
-                if(p.x < 0) p.x = canvas.width;
-                if(p.x > canvas.width) p.x = 0;
-                if(p.y < 0) p.y = canvas.height;
-                if(p.y > canvas.height) p.y = 0;
-                
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                ctx.fill();
+            dots.forEach(dot => {
+                dot.update();
+                dot.draw();
             });
             requestAnimationFrame(drawParticles);
         }
@@ -508,6 +519,7 @@
             
             // 5. Landing
             overlay.style.opacity = '0';
+            headerLogo.style.opacity = '1';
             document.getElementById('hud-header').classList.add('visible');
             document.getElementById('hud-left').classList.add('visible');
             document.getElementById('hud-center').classList.add('visible');
