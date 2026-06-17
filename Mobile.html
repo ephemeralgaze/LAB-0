@@ -94,12 +94,7 @@
             color: #050505;
         }
 
-        .module-tab.locked {
-            opacity: 0.2;
-            border-style: dashed;
-        }
-
-        /* Niagara Section */
+        /* Main Content */
         .main-section {
             width: 100%;
             border-bottom: var(--border);
@@ -127,28 +122,8 @@
             height: 100%;
         }
 
-        .placeholder-view {
-            padding: 40px 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            align-items: center;
-            text-align: center;
-        }
-
-        .locked-view {
-            padding: 60px 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            font-family: var(--font-header);
-            font-size: 12px;
-            opacity: 0.5;
-        }
-
-        /* Metrics */
-        .metrics-section {
+        /* Protocols Section */
+        .protocols-section {
             padding: 20px;
             border-bottom: var(--border);
             z-index: 10;
@@ -164,11 +139,11 @@
             color: rgba(255,255,255,0.5);
         }
 
-        .metric-group {
-            margin-bottom: 20px;
+        .protocol-item {
+            margin-bottom: 12px;
         }
 
-        .metric-label {
+        .protocol-label {
             font-family: var(--font-mono);
             font-size: 8px;
             text-transform: uppercase;
@@ -176,15 +151,33 @@
             margin-bottom: 2px;
         }
 
-        .metric-value {
+        .protocol-value {
             font-family: var(--font-mono);
-            font-size: 11px;
-            margin-bottom: 8px;
-            word-break: break-all;
+            font-size: 10px;
+        }
+
+        /* Terminal Section */
+        .terminal-section {
+            padding: 20px;
+            background: var(--bg);
+            z-index: 10;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 200px;
+        }
+
+        #diag-terminal {
+            flex-grow: 1;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: #FFFFFF;
+            overflow-y: hidden;
+            white-space: pre-wrap;
+            line-height: 1.4;
         }
 
         footer {
-            margin-top: auto;
             border-top: var(--border);
             padding: 15px 20px;
             font-family: var(--font-mono);
@@ -198,79 +191,55 @@
     <div class="grid-overlay"></div>
 
     <header>
-        <h1>LAB-0 // PORTFOLIO_M</h1>
+        <h1>LAB-0 // MOBILE_CMD</h1>
         <div class="status-badge">ACTIVE</div>
     </header>
 
     <nav class="module-switcher">
         <div class="module-tab active" onclick="switchModule('01')">MOD_01</div>
         <div class="module-tab" onclick="switchModule('02')">MOD_02</div>
-        <div class="module-tab locked" onclick="switchModule('03')">MOD_03</div>
-        <div class="module-tab locked" onclick="switchModule('04')">MOD_04</div>
     </nav>
 
     <section class="main-section">
-        <!-- MOD 01 -->
         <div id="content-01" class="module-content active">
             <div class="canvas-container">
                 <canvas id="niagara-canvas"></canvas>
             </div>
         </div>
-
-        <!-- MOD 02 -->
         <div id="content-02" class="module-content">
-            <div class="placeholder-view">
-                <div style="font-family: var(--font-header); font-size: 10px;">NS_FOUNTAIN // VISUALIZER</div>
-                <div style="width: 100%; aspect-ratio: 16/9; border: 1px solid #FFFFFF; display: flex; align-items: center; justify-content: center; background: #000;">
-                    <div style="font-family: var(--font-mono); font-size: 10px; opacity: 0.3;">[ VIDEO_NOT_FOUND ]</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- MOD 03 -->
-        <div id="content-03" class="module-content">
-            <div class="locked-view">
-                <div>SYSTEM OFFLINE</div>
-                <div style="font-size: 8px; border: 1px solid #FFFFFF; padding: 4px 8px;">DAY 2: FORCE & COLLISION</div>
-            </div>
-        </div>
-
-        <!-- MOD 04 -->
-        <div id="content-04" class="module-content">
-            <div class="locked-view">
-                <div>SYSTEM OFFLINE</div>
-                <div style="font-size: 8px; border: 1px solid #FFFFFF; padding: 4px 8px;">DAY 3: BLUEPRINT TRIGGER</div>
+            <div style="padding: 60px 20px; text-align: center; font-family: var(--font-header); font-size: 10px; opacity: 0.5;">
+                NIAGARA_SIMULATION // ACTIVE
             </div>
         </div>
     </section>
 
-    <section class="metrics-section">
-        <div id="info-01" class="module-info">
-            <div class="panel-title">HARDWARE_TELEMETRY</div>
-            <div class="metric-group">
-                <div class="metric-label">GPU RENDERER</div>
-                <div class="metric-value" id="val-gpu">DETECTING...</div>
-                <div class="metric-label">CPU CORES</div>
-                <div class="metric-value" id="val-cpu">DETECTING...</div>
-            </div>
+    <section class="protocols-section">
+        <div class="panel-title">CORE SYSTEM PROTOCOLS</div>
+        <div class="protocol-item">
+            <div class="protocol-label">ENGINE</div>
+            <div class="protocol-value">UE 5.2.4 [ONLINE]</div>
         </div>
+        <div class="protocol-item">
+            <div class="protocol-label">VFX</div>
+            <div class="protocol-value">NIAGARA [ACTIVE]</div>
+        </div>
+        <div class="protocol-item">
+            <div class="protocol-label">STACK</div>
+            <div class="protocol-value">HLSL & C# [STABLE]</div>
+        </div>
+        <div class="protocol-item">
+            <div class="protocol-label">DESIGN</div>
+            <div class="protocol-value">STRICT 0PX BORDER_RADIUS</div>
+        </div>
+        <div class="protocol-item">
+            <div class="protocol-label">SYS_TIME</div>
+            <div class="protocol-value" id="live-clock">00:00:00:00</div>
+        </div>
+    </section>
 
-        <div id="info-02" class="module-info" style="display: none;">
-            <div class="panel-title">TECHNICAL_SPECS</div>
-            <div class="metric-group">
-                <div class="metric-label">SCALE FACTOR</div>
-                <div class="metric-value">1.5 (LINEAR_FADE)</div>
-                <div class="metric-label">LIFECYCLE</div>
-                <div class="metric-value">2.4S</div>
-                <div class="metric-label">SHORTCUT</div>
-                <div class="metric-value">CTRL + SPACE</div>
-            </div>
-        </div>
-
-        <div class="metric-group">
-            <div class="metric-label">SYS_TIME</div>
-            <div class="metric-value" id="live-clock">00:00:00:00</div>
-        </div>
+    <section class="terminal-section">
+        <div class="panel-title">SYSTEM DIAGNOSTICS TERMINAL</div>
+        <div id="diag-terminal"></div>
     </section>
 
     <footer>
@@ -282,14 +251,36 @@
         function switchModule(id) {
             document.querySelectorAll('.module-tab').forEach(el => el.classList.remove('active'));
             event.currentTarget.classList.add('active');
-
             document.querySelectorAll('.module-content').forEach(el => el.classList.remove('active'));
             document.getElementById('content-' + id).classList.add('active');
-
-            document.querySelectorAll('.module-info').forEach(el => el.style.display = 'none');
-            const info = document.getElementById('info-' + id);
-            if (info) info.style.display = 'block';
         }
+
+        // Terminal Logic
+        const terminal = document.getElementById('diag-terminal');
+        const logs = [
+            "[INIT] Core engine initialized...",
+            "[RENDER] GPU discrete override: ACTIVE",
+            "[NIAGARA] Loading asset: NS_Fountain...",
+            "[SHADER] Compiling global shaders...",
+            "[SHADER] 1,120 / 2,246 compiled...",
+            "[SHADER] Compilation SUCCESS.",
+            "[NIAGARA] Binding: ScaleColor.Alpha",
+            "[SYSTEM] Protocol v1.0.4 active.",
+            "[MEM] Allocating virtual buffers...",
+            "[NIAGARA] Particle count: 1.2M",
+            "[UI] Applying strict 1px borders..."
+        ];
+
+        function addLog() {
+            const log = logs[Math.floor(Math.random() * logs.length)];
+            const time = new Date().toLocaleTimeString('en-GB', { hour12: false });
+            const lines = terminal.innerHTML.split('\n');
+            terminal.innerHTML += `[${time}] ${log}\n`;
+            if (lines.length > 10) {
+                terminal.innerHTML = lines.slice(lines.length - 10).join('\n');
+            }
+        }
+        setInterval(addLog, 1500);
 
         const canvas = document.getElementById('niagara-canvas');
         const ctx = canvas.getContext('2d');
@@ -299,9 +290,7 @@
         function resize() {
             canvas.width = canvas.offsetWidth;
             canvas.height = canvas.offsetHeight;
-            const w = window.screen.width * window.devicePixelRatio;
-            const h = window.screen.height * window.devicePixelRatio;
-            document.getElementById('sys-res').innerText = `${w}x${h} @ ${window.devicePixelRatio}x`;
+            document.getElementById('sys-res').innerText = `${window.screen.width * window.devicePixelRatio}x${window.screen.height * window.devicePixelRatio}`;
         }
         window.addEventListener('resize', resize);
         resize();
@@ -311,7 +300,6 @@
             touch.x = e.touches[0].clientX - rect.left;
             touch.y = e.touches[0].clientY - rect.top;
         }, {passive: true});
-
         window.addEventListener('touchend', () => { touch.x = null; touch.y = null; });
 
         class Particle {
@@ -365,18 +353,6 @@
             document.getElementById('live-clock').innerText = `${h}:${m}:${s}:${ms}`;
         }
         setInterval(updateClock, 50);
-
-        (function detectHardware() {
-            const glCanvas = document.createElement('canvas');
-            const gl = glCanvas.getContext('webgl') || glCanvas.getContext('experimental-webgl');
-            let gpu = 'UNKNOWN';
-            if (gl) {
-                const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
-                if (debugInfo) { gpu = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL); }
-            }
-            document.getElementById('val-gpu').innerText = gpu;
-            document.getElementById('val-cpu').innerText = `CORES: ${navigator.hardwareConcurrency || 'UNKNOWN'}`;
-        })();
     </script>
 </body>
 </html>
