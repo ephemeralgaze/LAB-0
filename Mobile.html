@@ -191,12 +191,13 @@
             transition: opacity var(--transition-smooth);
         }
 
-        #video-container {
+        #video-container-wrapper {
             width: 100%;
             aspect-ratio: 16/9;
             background: #000;
             border-bottom: 1px solid #FFF;
             position: relative;
+            cursor: pointer;
         }
 
         #main-video {
@@ -230,7 +231,7 @@
             text-transform: uppercase;
         }
 
-        #close-trigger {
+        #close-trigger-btn {
             background: transparent;
             border: 1px solid var(--fg);
             color: var(--fg);
@@ -241,6 +242,167 @@
             margin-top: auto;
             cursor: pointer;
             letter-spacing: 2px;
+        }
+
+        /* --- Player Modal (Apple Music Style) --- */
+        #player-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            transform: translateY(100%);
+            transition: transform var(--transition-smooth);
+        }
+
+        #player-modal.active {
+            transform: translateY(0);
+        }
+
+        #player-header {
+            height: 80px;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        #player-user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        #player-avatar {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #FFF;
+            object-fit: cover;
+        }
+
+        #player-titles {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #player-project-name {
+            font-family: var(--font-body);
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        #player-username {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--muted);
+        }
+
+        #player-dismiss {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #player-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        #player-video-container {
+            width: 100%;
+            max-height: 100%;
+            aspect-ratio: 16/9;
+            background: #000;
+            border: 1px solid #FFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #player-controls {
+            padding: 40px 25px 60px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .player-slider-row {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .player-slider-track {
+            width: 100%;
+            height: 1px;
+            background: #333;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .player-slider-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: #FFF;
+            width: 0%;
+        }
+
+        .player-time-labels {
+            display: flex;
+            justify-content: space-between;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--muted);
+        }
+
+        #player-playback-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 50px;
+        }
+
+        .playback-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: #FFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+        }
+
+        .playback-btn:active {
+            opacity: 0.5;
+        }
+
+        .player-volume-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 0 10px;
+        }
+
+        .volume-icon {
+            width: 16px;
+            height: 16px;
+            fill: var(--muted);
         }
 
         /* --- Footer HUD --- */
@@ -294,15 +456,77 @@
     </main>
 
     <div id="preview-section">
-        <div id="video-container">
-            <video id="main-video" playsinline crossorigin="anonymous">
+        <div id="video-container-wrapper" onclick="openPlayer()">
+            <video id="main-video" playsinline crossorigin="anonymous" muted loop>
                 <source id="video-src" src="" type="video/mp4">
             </video>
         </div>
         <div id="metadata-container">
             <h2 id="project-title"></h2>
             <p id="project-desc"></p>
-            <button id="close-trigger" onclick="closeProject()">EXIT_STATION [X]</button>
+            <button id="close-trigger-btn" onclick="closeProject()">EXIT_STATION [X]</button>
+        </div>
+    </div>
+
+    <div id="player-modal">
+        <div id="player-header">
+            <div id="player-user-info">
+                <img id="player-avatar" src="https://github.com/ephemeralgaze.png" alt="Avatar">
+                <div id="player-titles">
+                    <span id="player-project-name">PROJECT_NAME</span>
+                    <span id="player-username">ephemeralgaze</span>
+                </div>
+            </div>
+            <div id="player-dismiss" onclick="closePlayer()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M6 9l6 6 6-6" />
+                </svg>
+            </div>
+        </div>
+        <div id="player-content">
+            <div id="player-video-container">
+                <!-- Video will be moved here when player is open -->
+            </div>
+        </div>
+        <div id="player-controls">
+            <div class="player-slider-row">
+                <div class="player-slider-track" id="progress-track" onclick="seekVideo(event)">
+                    <div class="player-slider-fill" id="progress-fill"></div>
+                </div>
+                <div class="player-time-labels">
+                    <span id="time-elapsed">0:00</span>
+                    <span id="time-remaining">-0:00</span>
+                </div>
+            </div>
+
+            <div id="player-playback-row">
+                <button class="playback-btn" onclick="skip(-5)">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
+                    </svg>
+                </button>
+                <button class="playback-btn" onclick="togglePlay()" id="play-pause-btn">
+                    <svg id="play-icon" width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M8 5v14l11-7z"/>
+                    </svg>
+                    <svg id="pause-icon" width="48" height="48" viewBox="0 0 24 24" fill="currentColor" style="display:none">
+                        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+                    </svg>
+                </button>
+                <button class="playback-btn" onclick="skip(5)">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="player-volume-row">
+                <svg class="volume-icon" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+                <div class="player-slider-track" style="flex:1">
+                    <div class="player-slider-fill" style="width:70%"></div>
+                </div>
+                <svg class="volume-icon" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+            </div>
         </div>
     </div>
 
@@ -382,7 +606,10 @@
             document.getElementById('hud-clock').innerText = `${h}:${m}:${s}`;
         }
 
+        let currentActiveId = null;
+
         function selectProject(id) {
+            currentActiveId = id;
             const items = document.querySelectorAll('.project-item');
             const preview = document.getElementById('preview-section');
             const title = document.getElementById('project-title');
@@ -390,6 +617,7 @@
             const video = document.getElementById('main-video');
             const source = document.getElementById('video-src');
             const header = document.getElementById('projects-header');
+            const playerName = document.getElementById('player-project-name');
 
             items.forEach(item => {
                 item.classList.remove('active');
@@ -402,6 +630,7 @@
             const data = projects[id];
             title.innerText = data.title;
             desc.innerText = data.desc;
+            playerName.innerText = data.title.split(' // ')[0];
             source.src = data.video;
 
             preview.classList.add('visible');
@@ -418,7 +647,76 @@
             document.querySelectorAll('.project-item').forEach(i => i.classList.remove('active'));
             header.classList.remove('has-selection');
             video.pause();
+            currentActiveId = null;
         }
+
+        /* --- Player Modal Logic --- */
+        const playerModal = document.getElementById('player-modal');
+        const video = document.getElementById('main-video');
+        const playerVideoContainer = document.getElementById('player-video-container');
+        const previewVideoContainer = document.getElementById('video-container-wrapper');
+        const playIcon = document.getElementById('play-icon');
+        const pauseIcon = document.getElementById('pause-icon');
+        const progressFill = document.getElementById('progress-fill');
+        const timeElapsed = document.getElementById('time-elapsed');
+        const timeRemaining = document.getElementById('time-remaining');
+
+        function openPlayer() {
+            if (!currentActiveId) return;
+            playerVideoContainer.appendChild(video);
+            video.muted = false;
+            playerModal.classList.add('active');
+            updateUI();
+        }
+
+        function closePlayer() {
+            previewVideoContainer.appendChild(video);
+            video.muted = true;
+            playerModal.classList.remove('active');
+        }
+
+        function togglePlay() {
+            if (video.paused) video.play();
+            else video.pause();
+            updateUI();
+        }
+
+        function skip(time) {
+            video.currentTime += time;
+        }
+
+        function seekVideo(e) {
+            const track = document.getElementById('progress-track');
+            const rect = track.getBoundingClientRect();
+            const pos = (e.clientX - rect.left) / rect.width;
+            video.currentTime = pos * video.duration;
+        }
+
+        function formatTime(seconds) {
+            const m = Math.floor(seconds / 60);
+            const s = Math.floor(seconds % 60);
+            return `${m}:${String(s).padStart(2, '0')}`;
+        }
+
+        function updateUI() {
+            if (video.paused) {
+                playIcon.style.display = 'block';
+                pauseIcon.style.display = 'none';
+            } else {
+                playIcon.style.display = 'none';
+                pauseIcon.style.display = 'block';
+            }
+        }
+
+        video.addEventListener('timeupdate', () => {
+            const progress = (video.currentTime / video.duration) * 100;
+            progressFill.style.width = `${progress}%`;
+            timeElapsed.innerText = formatTime(video.currentTime);
+            timeRemaining.innerText = `-${formatTime(video.duration - video.currentTime)}`;
+        });
+
+        video.addEventListener('play', updateUI);
+        video.addEventListener('pause', updateUI);
 
         window.onload = () => {
             initParticles();
