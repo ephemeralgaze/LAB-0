@@ -32,7 +32,7 @@
             height: 100vh;
             overflow: hidden;
             display: grid;
-            grid-template-columns: 260px 1fr 320px;
+            grid-template-columns: 320px 1fr 320px;
             grid-template-rows: 60px 1fr;
         }
 
@@ -74,20 +74,32 @@
         .nav-menu {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 20px;
         }
 
         .nav-item {
             font-family: var(--font-header);
-            font-size: 10px;
+            font-size: 20px;
             cursor: pointer;
             opacity: 0.5;
-            transition: opacity 0.2s;
+            transition: all 0.2s ease;
             text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
-        .nav-item.active, .nav-item:hover {
+        .nav-item.active {
             opacity: 1;
+            font-size: 28px;
+        }
+
+        .nav-item .arrow {
+            display: none;
+        }
+
+        .nav-item.active .arrow {
+            display: inline;
         }
 
         .contact-trigger {
@@ -282,11 +294,26 @@
         <div class="sys-clock" id="sys-clock">00:00:00:000</div>
         
         <nav class="nav-menu">
-            <div class="nav-item active" onclick="switchModule('01')">[01] GAME</div>
-            <div class="nav-item" onclick="switchModule('02')">[02] NAME</div>
-            <div class="nav-item" onclick="switchModule('03')">[03] NAME</div>
-            <div class="nav-item" onclick="switchModule('04')">[04] NAME</div>
-            <div class="nav-item" onclick="switchModule('05')">[05] NAME</div>
+            <div class="nav-item active" onclick="switchModule('01')">
+                <span>[01] GAME</span>
+                <span class="arrow">&lt;</span>
+            </div>
+            <div class="nav-item" onclick="switchModule('02')">
+                <span>[02] NAME</span>
+                <span class="arrow">&lt;</span>
+            </div>
+            <div class="nav-item" onclick="switchModule('03')">
+                <span>[03] NAME</span>
+                <span class="arrow">&lt;</span>
+            </div>
+            <div class="nav-item" onclick="switchModule('04')">
+                <span>[04] NAME</span>
+                <span class="arrow">&lt;</span>
+            </div>
+            <div class="nav-item" onclick="switchModule('05')">
+                <span>[05] NAME</span>
+                <span class="arrow">&lt;</span>
+            </div>
         </nav>
 
         <button class="contact-trigger" onclick="toggleContact(true)">[CONTACT]</button>
@@ -305,7 +332,7 @@
         <!-- Video Modules Placeholder (02-05) -->
         <div id="video-module" class="module-view">
             <div class="video-container">
-                <video id="main-video" playsinline loop>
+                <video id="main-video" playsinline loop crossorigin="anonymous">
                     <source src="https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
                 </video>
             </div>
@@ -320,12 +347,12 @@
     </main>
 
     <aside class="sidebar-right">
-        <div class="asset-title" id="asset-name">NS_FOUNTAIN</div>
+        <div class="asset-title" id="asset-name">NS_SYSTEM</div>
         
         <div>
             <div class="category-label">TECHNICAL_BRIEF</div>
             <p class="asset-desc" id="asset-desc">
-                High-density particle simulation utilizing GPU acceleration. Features complex vector field integration, dynamic gravity scaling, and color-over-life modules.
+                Niagara particle physics environment. Real-time collision and vector field simulation.
             </p>
         </div>
     </aside>
@@ -356,8 +383,12 @@
 
         // --- Navigation ---
         function switchModule(id) {
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            event.target.classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(el => {
+                el.classList.remove('active');
+                if (el.innerText.includes(id)) {
+                    el.classList.add('active');
+                }
+            });
 
             if (id === '01') {
                 document.getElementById('module-01').classList.add('active');
@@ -418,13 +449,21 @@
         function resize() {
             canvas.width = canvas.offsetWidth;
             canvas.height = canvas.offsetHeight;
+            // Center deflector on resize if needed
+            // deflector.x = canvas.width / 2;
+            // deflector.y = canvas.height / 2;
         }
         window.addEventListener('resize', resize);
         resize();
 
         class Particle {
             constructor() { this.reset(); }
-            reset() { this.x = 50; this.y = 50; this.vx = 2 + Math.random(); this.vy = 1 + Math.random(); }
+            reset() { 
+                this.x = 50; 
+                this.y = 50; 
+                this.vx = 2 + Math.random() * 2; 
+                this.vy = 1 + Math.random() * 2; 
+            }
             update() {
                 if (paused) return;
                 this.vy += 0.05; // Gravity
@@ -433,22 +472,42 @@
                 const dx = this.x - deflector.x;
                 const dy = this.y - deflector.y;
                 const rad = deflector.rotation * Math.PI / 180;
-                const lx = dx * Math.cos(-rad) - dy * Math.sin(-rad);
-                const ly = dx * Math.sin(-rad) + dy * Math.cos(-rad);
+                const cos = Math.cos(-rad);
+                const sin = Math.sin(-rad);
+                const lx = dx * cos - dy * sin;
+                const ly = dx * sin + dy * cos;
                 
                 if (Math.abs(ly) < 5 && Math.abs(lx) < deflector.length / 2) {
-                    const nx = Math.sin(rad); const ny = -Math.cos(rad);
+                    const nx = Math.sin(rad); 
+                    const ny = -Math.cos(rad);
                     const dot = this.vx * nx + this.vy * ny;
-                    this.vx -= 2 * dot * nx; this.vy -= 2 * dot * ny;
+                    this.vx -= 2 * dot * nx; 
+                    this.vy -= 2 * dot * ny;
+                    // Push out slightly to avoid sticking
+                    this.x += nx * 5;
+                    this.y += ny * 5;
                 }
                 
-                this.x += this.vx; this.y += this.vy;
-                if (this.y > canvas.height || this.x > canvas.width || this.x < 0) this.reset();
+                this.x += this.vx; 
+                this.y += this.vy;
+                
+                if (this.y > canvas.height || this.x > canvas.width || this.x < 0 || this.y < 0) {
+                    this.reset();
+                }
             }
-            draw() { ctx.fillStyle = "#FFF"; ctx.fillRect(this.x, this.y, 1.5, 1.5); }
+            draw() { 
+                ctx.fillStyle = "#FFF"; 
+                ctx.fillRect(this.x, this.y, 1.5, 1.5); 
+            }
         }
 
-        for (let i = 0; i < 100; i++) particles.push(new Particle());
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < 100; i++) {
+                particles.push(new Particle());
+            }
+        }
+        initParticles();
 
         function animate() {
             if (document.getElementById('module-01').classList.contains('active')) {
@@ -476,8 +535,11 @@
             if (e.key === 'd') deflector.x += step;
             if (e.key === 'q') deflector.rotation -= 5;
             if (e.key === 'e') deflector.rotation += 5;
-            if (e.key === ' ') paused = !paused;
-            if (e.key === 'r') particles.forEach(p => p.reset());
+            if (e.key === ' ') {
+                e.preventDefault();
+                paused = !paused;
+            }
+            if (e.key === 'r') initParticles();
         });
     </script>
 </body>
