@@ -34,18 +34,14 @@
             display: grid;
             grid-template-columns: 350px 1fr 350px;
             grid-template-rows: 60px 1fr 200px;
-        }
-
-        /* Grid Overlay */
-        .grid-overlay {
-            position: fixed;
-            inset: 0;
+            /* Checkered Grid Background */
             background-image: 
-                linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px);
+                linear-gradient(45deg, #0a0a0a 25%, transparent 25%), 
+                linear-gradient(-45deg, #0a0a0a 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, #0a0a0a 75%), 
+                linear-gradient(-45deg, transparent 75%, #0a0a0a 75%);
             background-size: 40px 40px;
-            pointer-events: none;
-            z-index: 1;
+            background-position: 0 0, 0 20px, 20px -20px, -20px 0px;
         }
 
         header {
@@ -71,7 +67,7 @@
             border-right: var(--border);
             padding: 20px;
             z-index: 10;
-            background: rgba(5,5,5,0.8);
+            background: rgba(5,5,5,0.85);
             display: flex;
             flex-direction: column;
             gap: 15px;
@@ -126,6 +122,7 @@
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            background: rgba(5,5,5,0.4);
         }
 
         .module-content {
@@ -145,28 +142,19 @@
 
         /* Placeholder Styles */
         .placeholder-card {
-            width: 80%;
-            height: 80%;
-            border: 1px solid #FFFFFF;
+            width: 85%;
+            height: 90%;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 40px;
-            text-align: center;
+            gap: 20px;
+            padding: 20px;
             background: rgba(5,5,5,0.9);
             margin: auto;
         }
 
-        .log-header {
-            font-family: var(--font-header);
-            font-size: 11px;
-            margin-bottom: 8px;
-        }
-
         .video-box {
             width: 100%;
-            aspect-ratio: 16/9;
+            flex-grow: 1;
             border: 1px solid #FFFFFF;
             display: flex;
             align-items: center;
@@ -174,11 +162,24 @@
             background: #000;
         }
 
-        .log-body {
+        .video-desc-block {
+            border: 1px solid #FFFFFF;
+            padding: 15px;
+            text-align: left;
+        }
+
+        .desc-title {
+            font-family: var(--font-header);
+            font-size: 16px;
+            margin-bottom: 8px;
+            letter-spacing: 2px;
+        }
+
+        .desc-body {
             font-family: var(--font-mono);
-            font-size: 12px;
-            opacity: 0.5;
-            color: rgba(255,255,255,0.8);
+            font-size: 10px;
+            line-height: 1.4;
+            color: rgba(255,255,255,0.7);
         }
 
         /* Right Panel - Terminal */
@@ -188,7 +189,7 @@
             border-left: var(--border);
             padding: 20px;
             z-index: 10;
-            background: rgba(5,5,5,0.8);
+            background: rgba(5,5,5,0.85);
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -238,8 +239,6 @@
     </style>
 </head>
 <body>
-    <div class="grid-overlay"></div>
-
     <header>
         <h1>LAB-0 // PORTFOLIO_CMD_CENTER</h1>
         <div class="status-badge">OS: STABLE</div>
@@ -282,9 +281,15 @@
         </div>
         <div id="content-02" class="module-content">
             <div class="placeholder-card">
-                <div class="log-header" style="font-size: 18px; margin-bottom: 20px;">NS_FOUNTAIN // VISUALIZER</div>
                 <div class="video-box">
-                    <div class="log-body">[ DROP RECORDING HERE ]<br>OR<br>VIEW TECHNICAL BREAKDOWN -></div>
+                    <div style="font-family: var(--font-mono); font-size: 12px; opacity: 0.5; color: #FFF;">[ DROP RECORDING HERE ]<br>OR<br>VIEW TECHNICAL BREAKDOWN -></div>
+                </div>
+                <div class="video-desc-block">
+                    <div class="panel-title" style="border:none; margin-bottom:5px;">视频简介 // VIDEO DESCRIPTION</div>
+                    <div class="desc-title">NS_FOUNTAIN</div>
+                    <div class="desc-body">
+                        NIAGARA PARTICLE FOUNTAIN SYSTEM. IMPLEMENTS ADVANCED SCALE COLOR MODULES WITH DYNAMIC ALPHA CURVE FADING OVER A 2.4S LIFECYCLE. OPTIMIZED FOR HIGH-CONTRAST TELEMETRY VISUALIZATION. CORE SIMULATION DRIVEN BY HLSL VERTEX SHADERS.
+                    </div>
                 </div>
             </div>
         </div>
@@ -309,7 +314,8 @@
     <script>
         function switchModule(id) {
             document.querySelectorAll('.module-item').forEach(el => el.classList.remove('active'));
-            event.currentTarget.classList.add('active');
+            const clickedItem = event.currentTarget;
+            clickedItem.classList.add('active');
             document.querySelectorAll('.module-content').forEach(el => el.classList.remove('active'));
             document.getElementById('content-' + id).classList.add('active');
         }
