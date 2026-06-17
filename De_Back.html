@@ -6,7 +6,7 @@
     <title>LAB-0 | DESKTOP COMMAND</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400&family=Space+Mono:wght@400;700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&family=Space+Mono:wght@400;700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg: #000000;
@@ -32,8 +32,8 @@
             height: 100vh;
             overflow: hidden;
             display: grid;
-            grid-template-columns: 320px 1fr 320px;
-            grid-template-rows: 60px 1fr;
+            grid-template-columns: 240px 1fr 280px;
+            grid-template-rows: 50px 1fr;
         }
 
         /* --- Header --- */
@@ -49,9 +49,11 @@
 
         header h1 {
             font-family: var(--font-header);
-            font-size: 12px;
+            font-size: 10px;
             letter-spacing: 4px;
             font-weight: 700;
+            text-transform: uppercase;
+            color: #FFF;
         }
 
         /* --- Left Sidebar --- */
@@ -60,38 +62,40 @@
             border-right: var(--border);
             display: flex;
             flex-direction: column;
-            padding: 20px;
+            padding: 15px;
         }
 
         .sys-clock {
             font-family: var(--font-mono);
-            font-size: 14px;
-            margin-bottom: 40px;
-            padding-bottom: 10px;
+            font-size: 11px;
+            margin-bottom: 30px;
+            padding-bottom: 8px;
             border-bottom: 1px solid rgba(255,255,255,0.2);
+            opacity: 0.7;
         }
 
         .nav-menu {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 12px;
         }
 
         .nav-item {
             font-family: var(--font-header);
-            font-size: 20px;
+            font-size: 11px;
             cursor: pointer;
-            opacity: 0.5;
+            opacity: 0.4;
             transition: all 0.2s ease;
             text-transform: uppercase;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            letter-spacing: 1px;
         }
 
         .nav-item.active {
             opacity: 1;
-            font-size: 28px;
+            font-size: 14px;
         }
 
         .nav-item .arrow {
@@ -100,19 +104,22 @@
 
         .nav-item.active .arrow {
             display: inline;
+            font-size: 10px;
         }
 
         .contact-trigger {
             margin-top: auto;
             border: var(--border);
-            padding: 12px;
+            padding: 10px;
             font-family: var(--font-header);
-            font-size: 9px;
+            font-size: 8px;
             text-align: center;
             cursor: pointer;
             background: transparent;
             color: #FFF;
+            opacity: 0.6;
         }
+        .contact-trigger:hover { opacity: 1; }
 
         /* --- Middle Area --- */
         .main-content {
@@ -160,12 +167,12 @@
         }
 
         .viewport-control-bar {
-            height: 50px;
+            height: 40px;
             border-top: var(--border);
             display: flex;
             align-items: center;
-            padding: 0 20px;
-            gap: 15px;
+            padding: 0 15px;
+            gap: 12px;
         }
 
         .v-btn {
@@ -174,14 +181,14 @@
             color: #FFF;
             font-family: var(--font-header);
             font-size: 8px;
-            padding: 6px 10px;
+            padding: 4px 8px;
             cursor: pointer;
         }
 
         .v-time {
             font-family: var(--font-mono);
-            font-size: 10px;
-            min-width: 45px;
+            font-size: 9px;
+            min-width: 40px;
         }
 
         .v-seekbar {
@@ -194,8 +201,8 @@
 
         .v-seekbar::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 8px;
-            height: 14px;
+            width: 6px;
+            height: 10px;
             background: #FFF;
             cursor: pointer;
             border: 1px solid #000;
@@ -205,52 +212,53 @@
         .sidebar-right {
             grid-row: 2;
             border-left: var(--border);
-            padding: 20px;
+            padding: 15px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 15px;
             background: #000;
             overflow-y: auto;
         }
 
         .asset-title {
             font-family: var(--font-header);
-            font-size: 14px;
-            letter-spacing: 2px;
+            font-size: 11px;
+            letter-spacing: 1px;
             border-bottom: 1px solid rgba(255,255,255,0.3);
-            padding-bottom: 10px;
+            padding-bottom: 8px;
         }
 
         .category-label {
             background: #111;
             font-family: var(--font-header);
-            font-size: 8px;
-            padding: 6px 12px;
+            font-size: 7px;
+            padding: 4px 10px;
             border-bottom: 1px solid rgba(255,255,255,0.5);
-            margin-bottom: 10px;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
         }
 
         .asset-desc {
-            font-size: 11px;
-            line-height: 1.6;
-            color: #AAA;
+            font-size: 10px;
+            line-height: 1.5;
+            color: #888;
         }
 
         /* Interactive Controls */
         .level-tabs {
             display: flex;
             border-bottom: 1px solid #333;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .level-tab {
             flex: 1;
-            padding: 10px;
-            font-size: 9px;
+            padding: 8px;
+            font-size: 8px;
             text-align: center;
             cursor: pointer;
             background: #111;
-            color: #888;
+            color: #666;
             border-right: 1px solid #333;
             font-family: var(--font-mono);
         }
@@ -263,20 +271,20 @@
         .control-group {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            margin-top: 10px;
+            gap: 10px;
+            margin-top: 5px;
         }
 
         .control-item {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 4px;
         }
 
         .control-label {
             font-family: var(--font-mono);
-            font-size: 9px;
-            color: #888;
+            font-size: 8px;
+            color: #666;
             text-transform: uppercase;
             display: flex;
             justify-content: space-between;
@@ -290,14 +298,14 @@
             -webkit-appearance: none;
             width: 100%;
             height: 1px;
-            background: #333;
+            background: #222;
             outline: none;
         }
 
         .control-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 8px;
-            height: 14px;
+            width: 6px;
+            height: 10px;
             background: #FFF;
             cursor: pointer;
             border: 1px solid #000;
@@ -309,11 +317,11 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 320px;
+            width: 300px;
             background: #000;
             border: var(--border);
             z-index: 1000;
-            padding: 30px;
+            padding: 25px;
             display: none;
             flex-direction: column;
             align-items: center;
@@ -321,23 +329,23 @@
         }
 
         #contact-card img {
-            width: 80px;
-            height: 80px;
+            width: 60px;
+            height: 60px;
             border: 1px solid #FFF;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .contact-info {
             font-family: var(--font-mono);
-            font-size: 10px;
-            line-height: 2;
-            margin-bottom: 20px;
+            font-size: 9px;
+            line-height: 1.8;
+            margin-bottom: 15px;
         }
 
         .close-card {
             font-family: var(--font-header);
             font-size: 8px;
-            color: #AAA;
+            color: #888;
             cursor: pointer;
             text-decoration: underline;
         }
@@ -345,11 +353,11 @@
         /* Game Overlays */
         .game-controls-hint {
             position: absolute;
-            bottom: 60px;
-            left: 20px;
+            bottom: 50px;
+            left: 15px;
             font-family: var(--font-mono);
-            font-size: 8px;
-            color: rgba(255,255,255,0.4);
+            font-size: 7px;
+            color: rgba(255,255,255,0.3);
             pointer-events: none;
         }
 
@@ -358,10 +366,10 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 14px;
+            font-size: 12px;
             color: #00FF00;
             background: #000;
-            padding: 10px 20px;
+            padding: 8px 16px;
             border: 1px solid #00FF00;
             display: none;
             pointer-events: none;
@@ -425,9 +433,9 @@
             </div>
             <div class="viewport-control-bar">
                 <button class="v-btn" id="play-pause-btn" onclick="togglePlay()">PLAY</button>
-                <div class="v-time" id="cur-time">00:00</div>
+                <div class="v-time" id="cur-time">--:--</div>
                 <input type="range" class="v-seekbar" id="v-seek" min="0" max="100" value="0" step="0.1">
-                <div class="v-time" id="total-dur">03:00</div>
+                <div class="v-time" id="total-dur">--:--</div>
                 <button class="v-btn" id="mute-btn" onclick="toggleMute()">MUTE</button>
             </div>
         </div>
@@ -546,6 +554,8 @@
         const playBtn = document.getElementById('play-pause-btn');
         const muteBtn = document.getElementById('mute-btn');
         const seek = document.getElementById('v-seek');
+        const curTimeDisplay = document.getElementById('cur-time');
+        const totalDurDisplay = document.getElementById('total-dur');
 
         function togglePlay() {
             if (video.paused) video.play(); else video.pause();
@@ -558,16 +568,17 @@
         video.addEventListener('pause', () => playBtn.innerText = 'PLAY');
         video.addEventListener('timeupdate', () => {
             if (!seek.dragging) seek.value = video.currentTime;
-            document.getElementById('cur-time').innerText = formatVTime(video.currentTime);
+            curTimeDisplay.innerText = formatVTime(video.currentTime);
         });
         video.addEventListener('loadedmetadata', () => {
             seek.max = video.duration;
-            document.getElementById('total-dur').innerText = formatVTime(video.duration);
+            totalDurDisplay.innerText = formatVTime(video.duration);
         });
         seek.addEventListener('input', () => { seek.dragging = true; video.currentTime = seek.value; });
         seek.addEventListener('change', () => { seek.dragging = false; });
 
         function formatVTime(s) {
+            if (isNaN(s) || s === Infinity || s === null) return "--:--";
             const m = Math.floor(s / 60);
             const sec = Math.floor(s % 60);
             return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
