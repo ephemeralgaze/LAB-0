@@ -1,1 +1,492 @@
-<!DOCTYPE html><html></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAB-0 // DESKTOP COMMAND</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&family=Space+Mono:wght@400;700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #000000;
+            --fg: #FFFFFF;
+            --muted: #666666;
+            --border: 1px solid #FFFFFF;
+            --font-header: 'Syncopate', sans-serif;
+            --font-mono: 'Space Mono', monospace;
+            --font-body: 'Space Grotesk', sans-serif;
+            --transition-smooth: 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            border-radius: 0 !important;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--fg);
+            font-family: var(--font-body);
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 320px 1fr 320px;
+            grid-template-rows: 80px 1fr;
+        }
+
+        /* --- Background Particles --- */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+            transition: opacity var(--transition-smooth);
+        }
+
+        /* --- Boot Sequence --- */
+        #boot-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: var(--bg);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .boot-logo-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            font-family: var(--font-header);
+            font-weight: 700;
+            font-size: 64px;
+            letter-spacing: 12px;
+            text-transform: uppercase;
+        }
+
+        #boot-lab { transform: translateX(0); transition: transform var(--transition-smooth); }
+        #boot-variant { 
+            position: relative; 
+            display: inline-block;
+            min-width: 80px;
+            text-align: center;
+        }
+        
+        .variant-char {
+            display: inline-block;
+            transition: transform var(--transition-smooth), opacity var(--transition-smooth);
+        }
+
+        /* --- Layout HUD --- */
+        header {
+            grid-column: 1 / -1;
+            padding: 0 40px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            z-index: 100;
+            opacity: 0;
+            transition: opacity var(--transition-smooth);
+        }
+
+        header h1 {
+            font-family: var(--font-header);
+            font-size: 14px;
+            letter-spacing: 6px;
+            font-weight: 700;
+        }
+
+        .sidebar {
+            padding: 40px;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity var(--transition-smooth);
+        }
+
+        /* --- Left Sidebar: Projects --- */
+        .sidebar-left {
+            border-right: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .project-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .project-item {
+            font-family: var(--font-mono);
+            font-size: 14px;
+            padding: 20px 0;
+            cursor: pointer;
+            color: var(--muted);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            text-transform: uppercase;
+        }
+
+        .project-item.active {
+            color: var(--fg);
+            font-weight: 700;
+            transform: scale(1.1);
+            padding: 40px 0; /* Breathing slot */
+        }
+
+        .project-item.shift-up { transform: translateY(-15px); }
+        .project-item.shift-down { transform: translateY(15px); }
+
+        /* --- Center Screen: Video --- */
+        .main-stage {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            opacity: 0;
+            transition: opacity var(--transition-smooth);
+        }
+
+        #video-container {
+            width: 100%;
+            max-width: 960px;
+            aspect-ratio: 16/9;
+            background: #050505;
+            border: var(--border);
+            position: relative;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        #main-video {
+            width: 100%;
+            height: calc(100% - 40px);
+            object-fit: cover;
+        }
+
+        .custom-controls {
+            height: 40px;
+            border-top: var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            gap: 20px;
+            background: #000;
+        }
+
+        .control-btn {
+            background: transparent;
+            border: none;
+            color: var(--fg);
+            font-family: var(--font-mono);
+            font-size: 10px;
+            cursor: pointer;
+            letter-spacing: 1px;
+            min-width: 60px;
+            text-align: left;
+        }
+
+        .seekbar-container {
+            flex: 1;
+            height: 1px;
+            background: #333;
+            position: relative;
+            cursor: pointer;
+        }
+
+        #seekbar-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: #FFF;
+            width: 0%;
+        }
+
+        .v-time {
+            font-family: var(--font-mono);
+            font-size: 9px;
+            color: var(--muted);
+            min-width: 45px;
+        }
+
+        /* --- Right Sidebar: Details --- */
+        .sidebar-right {
+            border-left: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        #project-title {
+            font-family: var(--font-header);
+            font-size: 24px;
+            letter-spacing: 2px;
+            line-height: 1.2;
+            text-transform: uppercase;
+            display: none;
+        }
+
+        #project-desc {
+            font-family: var(--font-body);
+            font-size: 12px;
+            line-height: 1.8;
+            color: var(--muted);
+            display: none;
+        }
+
+        /* --- Utilities --- */
+        .visible { opacity: 1 !important; }
+
+    </style>
+</head>
+<body>
+
+    <canvas id="particle-canvas"></canvas>
+
+    <div id="boot-overlay">
+        <div class="boot-logo-container">
+            <span id="boot-lab">LAB-</span>
+            <div id="boot-variant">
+                <span id="char-target" class="variant-char">0</span>
+            </div>
+        </div>
+    </div>
+
+    <header id="hud-header">
+        <h1 id="permanent-logo">LAB-0 // DESKTOP</h1>
+    </header>
+
+    <aside class="sidebar sidebar-left" id="hud-left">
+        <ul class="project-list" id="project-list">
+            <li class="project-item" data-id="1" onclick="selectProject(1)">[01] LEVEL_01</li>
+            <li class="project-item" data-id="2" onclick="selectProject(2)">[02] LEVEL_02</li>
+            <li class="project-item" data-id="3" onclick="selectProject(3)">[03] LEVEL_03</li>
+        </ul>
+    </aside>
+
+    <main class="main-stage" id="hud-center">
+        <div id="video-container">
+            <video id="main-video" playsinline crossorigin="anonymous">
+                <source id="video-src" src="" type="video/mp4">
+            </video>
+            <div class="custom-controls">
+                <button class="control-btn" id="play-pause" onclick="togglePlay()">[PLAY]</button>
+                <span class="v-time" id="time-cur">00:00</span>
+                <div class="seekbar-container" id="seekbar-root" onclick="seek(event)">
+                    <div id="seekbar-fill"></div>
+                </div>
+                <span class="v-time" id="time-total">--:--</span>
+                <button class="control-btn" onclick="toggleMute()" id="mute-toggle" style="text-align:right">MUTE</button>
+            </div>
+        </div>
+    </main>
+
+    <aside class="sidebar sidebar-right" id="hud-right">
+        <h2 id="project-title">PROJECT_NAME</h2>
+        <p id="project-desc">DESCRIPTION_TEXT</p>
+    </aside>
+
+    <script>
+        // --- Configuration & Data ---
+        const projects = {
+            1: {
+                title: "LEVEL_01 // NIAGARA",
+                desc: "INITIAL PARTICLE COLLISION TESTS. EXPLORING REAL-TIME VECTOR FIELD MANIPULATION WITHIN THE UNREAL ENGINE NIAGARA SYSTEM. FOCUS ON FLUID DYNAMICS AND COLLISION STABILITY.",
+                video: "https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+            },
+            2: {
+                title: "LEVEL_02 // GRAVITY",
+                desc: "STRESS TESTING POINT-GRAVITY NODES. SIMULATING MASSIVE PARTICLE ATTRACTION AND RELEVANT LIGHTING CALCULATIONS ACROSS 1,000,000 INDIVIDUAL GPU-CALCULATED SPRITES.",
+                video: "https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
+            },
+            3: {
+                title: "LEVEL_03 // WIND",
+                desc: "INTEGRATION OF DIRECTIONAL WIND FIELDS WITH DYNAMIC TURBULENCE. ANALYSIS OF VOLUMETRIC NOISE IMPACT ON PARTICLE LIFESPAN AND COLOR-OVER-LIFE TRANSITIONS.",
+                video: "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
+            }
+        };
+
+        // --- Particle Background ---
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function initParticles() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            particles = [];
+            const count = 150;
+            for(let i=0; i<count; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: (Math.random() - 0.5) * 0.5,
+                    size: Math.random() * 1.5
+                });
+            }
+        }
+
+        function drawParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#FFFFFF';
+            particles.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            requestAnimationFrame(drawParticles);
+        }
+
+        // --- Boot Sequence Logic ---
+        async function runBootSequence() {
+            const overlay = document.getElementById('boot-overlay');
+            const lab = document.getElementById('boot-lab');
+            const target = document.getElementById('char-target');
+            
+            // Stage 1: Display "LAB-0" (Default state)
+            await sleep(1000);
+
+            // Stage 2: 0 slides up/out, Desktop slides in
+            target.style.transform = 'translateY(-20px)';
+            target.style.opacity = '0';
+            
+            await sleep(400);
+            target.innerText = 'Desktop';
+            target.style.transform = 'translateY(20px)';
+            await sleep(50);
+            target.style.transform = 'translateY(0px)';
+            target.style.opacity = '1';
+
+            await sleep(1500);
+
+            // Stage 3: LAB- slides to corner, Desktop fades
+            target.style.opacity = '0';
+            const rect = lab.getBoundingClientRect();
+            lab.style.transform = `translate(-${rect.left - 40}px, -${rect.top - 30}px)`;
+
+            await sleep(800);
+            overlay.style.opacity = '0';
+            await sleep(800);
+            overlay.style.display = 'none';
+
+            // Stage 4: Fade in HUD
+            document.getElementById('hud-header').classList.add('visible');
+            document.getElementById('hud-left').classList.add('visible');
+            document.getElementById('hud-center').classList.add('visible');
+            document.getElementById('hud-right').classList.add('visible');
+        }
+
+        // --- Selection Logic ---
+        function selectProject(id) {
+            const items = document.querySelectorAll('.project-item');
+            const container = document.getElementById('video-container');
+            const title = document.getElementById('project-title');
+            const desc = document.getElementById('project-desc');
+            const video = document.getElementById('main-video');
+            const source = document.getElementById('video-src');
+
+            // Handle HUD interactions
+            items.forEach((item, index) => {
+                const itemId = parseInt(item.getAttribute('data-id'));
+                item.classList.remove('active', 'shift-up', 'shift-down');
+                
+                if (itemId === id) {
+                    item.classList.add('active');
+                } else if (itemId < id) {
+                    item.classList.add('shift-up');
+                } else if (itemId > id) {
+                    item.classList.add('shift-down');
+                }
+            });
+
+            // Update Content
+            const data = projects[id];
+            title.innerText = data.title;
+            desc.innerText = data.desc;
+            source.src = data.video;
+            
+            // Show Content
+            canvas.style.opacity = '0.1';
+            container.style.display = 'flex';
+            title.style.display = 'block';
+            desc.style.display = 'block';
+            
+            video.load();
+            video.play();
+        }
+
+        // --- Video Player Functions ---
+        const video = document.getElementById('main-video');
+        const playBtn = document.getElementById('play-pause');
+        const muteBtn = document.getElementById('mute-toggle');
+        const seekFill = document.getElementById('seekbar-fill');
+        const timeCur = document.getElementById('time-cur');
+        const timeTotal = document.getElementById('time-total');
+
+        function togglePlay() {
+            if (video.paused) { video.play(); playBtn.innerText = '[PAUSE]'; }
+            else { video.pause(); playBtn.innerText = '[PLAY]'; }
+        }
+
+        function toggleMute() {
+            video.muted = !video.muted;
+            muteBtn.innerText = video.muted ? 'UNMUTE' : 'MUTE';
+        }
+
+        video.addEventListener('timeupdate', () => {
+            const pct = (video.currentTime / video.duration) * 100;
+            seekFill.style.width = `${pct}%`;
+            timeCur.innerText = formatTime(video.currentTime);
+        });
+
+        video.addEventListener('loadedmetadata', () => {
+            timeTotal.innerText = formatTime(video.duration);
+        });
+
+        function seek(e) {
+            const rect = document.getElementById('seekbar-root').getBoundingClientRect();
+            const pos = (e.clientX - rect.left) / rect.width;
+            video.currentTime = pos * video.duration;
+        }
+
+        function formatTime(s) {
+            const m = Math.floor(s / 60);
+            const sec = Math.floor(s % 60);
+            return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+        }
+
+        // --- Lifecycle ---
+        function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+
+        window.onload = () => {
+            initParticles();
+            drawParticles();
+            runBootSequence();
+        };
+
+        window.onresize = initParticles;
+    </script>
+</body>
+</html>
