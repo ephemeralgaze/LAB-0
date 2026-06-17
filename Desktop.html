@@ -147,6 +147,8 @@
             color: var(--fg);
             padding: 10px 0;
             transition: color 0.3s ease;
+            position: relative;
+            z-index: 20;
         }
 
         .category-header:hover {
@@ -164,40 +166,16 @@
             transform: rotate(90deg);
         }
 
-        #selection-info {
-            font-family: var(--font-mono);
-            font-size: 9px;
-            letter-spacing: 1px;
-            color: var(--muted);
-            padding-left: 22px;
-            margin-top: -8px;
-            text-transform: uppercase;
-            opacity: 0;
-            transition: opacity var(--transition-smooth);
-            pointer-events: none;
-        }
-
-        .category-header:not(.expanded) + #selection-info.active {
-            opacity: 1;
-        }
-
+        /* Selection List Container */
         .project-list-wrapper {
-            display: grid;
-            grid-template-rows: 0fr;
-            transition: grid-template-rows var(--transition-smooth);
-            overflow: hidden;
-        }
-
-        .category-header.expanded ~ .project-list-wrapper {
-            grid-template-rows: 1fr;
+            position: relative;
+            padding-left: 22px;
         }
 
         .project-list {
-            min-height: 0;
             list-style: none;
             display: flex;
             flex-direction: column;
-            padding-left: 22px;
         }
 
         .project-item {
@@ -206,16 +184,47 @@
             padding: 12px 0;
             cursor: pointer;
             color: var(--muted);
-            transition: all var(--transition-smooth);
+            transition: 
+                transform var(--transition-smooth), 
+                opacity var(--transition-smooth), 
+                color var(--transition-smooth),
+                font-size var(--transition-smooth),
+                letter-spacing var(--transition-smooth),
+                padding var(--transition-smooth);
             text-transform: uppercase;
             white-space: nowrap;
+            transform-origin: left center;
         }
 
         .project-item.active {
             color: var(--fg);
             font-weight: 700;
-            transform: scale(1.05);
-            padding: 20px 0;
+        }
+
+        /* --- Kyungsoo's 'One-Take' Animation Logic --- */
+        
+        /* Collapsed State: Unselected items fade and slide left */
+        .category-header:not(.expanded) ~ .project-list-wrapper .project-item:not(.active) {
+            opacity: 0;
+            transform: translateX(-20px);
+            pointer-events: none;
+        }
+
+        /* Collapsed State: Selected item transitions to subtitle style */
+        .category-header:not(.expanded) ~ .project-list-wrapper .project-item.active {
+            font-size: 9px;
+            letter-spacing: 1px;
+            color: var(--muted);
+            padding: 0;
+            /* Sit directly beneath "Projects" header */
+            transform: translateY(-40px);
+        }
+
+        /* Expanded State: All items return to list layout */
+        .category-header.expanded ~ .project-list-wrapper .project-item {
+            opacity: 1;
+            transform: translateY(0) translateX(0);
+            pointer-events: auto;
         }
 
         .main-stage {
@@ -372,7 +381,6 @@
             </svg>
             <span>Projects</span>
         </div>
-        <div id="selection-info"></div>
         <div class="project-list-wrapper">
             <ul class="project-list">
                 <li class="project-item" data-id="1" onclick="selectProject(1)">[01] LEVEL_01</li>
@@ -525,20 +533,14 @@
             const video = document.getElementById('main-video');
             const source = document.getElementById('video-src');
             const closeBtn = document.getElementById('close-trigger');
-            const infoText = document.getElementById('selection-info');
 
-            let selectedText = "";
             items.forEach(item => {
                 const itemId = parseInt(item.getAttribute('data-id'));
                 item.classList.remove('active');
                 if (itemId === id) {
                     item.classList.add('active');
-                    selectedText = item.innerText;
                 }
             });
-
-            infoText.innerText = selectedText;
-            infoText.classList.add('active');
 
             const data = projects[id];
             title.innerText = data.title;
@@ -567,14 +569,12 @@
             const desc = document.getElementById('project-desc');
             const video = document.getElementById('main-video');
             const closeBtn = document.getElementById('close-trigger');
-            const infoText = document.getElementById('selection-info');
 
             container.style.opacity = '0'; title.style.opacity = '0'; desc.style.opacity = '0';
             closeBtn.classList.remove('active');
             canvas.style.opacity = '1.0';
             
             document.querySelectorAll('.project-item').forEach(i => i.classList.remove('active'));
-            infoText.classList.remove('active');
             video.pause();
 
             setTimeout(() => {
