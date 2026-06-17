@@ -6,7 +6,7 @@
     <title>LAB-0 | DESKTOP COMMAND</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400&family=Space+Mono:wght@400;700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&family=Space+Mono:wght@400;700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg: #000000;
@@ -48,22 +48,39 @@
         }
 
         header h1 {
-            font-family: var(--font-header);
-            font-size: 10px;
-            letter-spacing: 3px;
+            font-family: var(--font-body); /* Switching to Space Grotesk for the bold geometric look */
+            font-size: 14px;
+            letter-spacing: 2px;
             font-weight: 700;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 4px;
+            text-transform: uppercase;
         }
 
-        .monitor-icon {
-            width: 14px;
-            height: 14px;
-            fill: none;
-            stroke: currentColor;
-            stroke-width: 1.5;
-            display: inline-block;
+        header h1 .brand-lab {
+            font-weight: 700;
+        }
+
+        header h1 .brand-zero {
+            font-weight: 700;
+            padding: 0 4px;
+            border: 1px solid #FFF;
+            line-height: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 18px;
+            height: 18px;
+            margin: 0 2px;
+        }
+
+        header h1 .brand-suffix {
+            font-family: var(--font-header); /* Keep Syncopate for the 'DESKTOP' part for contrast */
+            font-size: 10px;
+            letter-spacing: 3px;
+            margin-left: 10px;
+            opacity: 0.8;
         }
 
         /* --- Left Sidebar --- */
@@ -392,13 +409,7 @@
 
     <header>
         <h1>
-            <span>LAB-</span>
-            <svg class="monitor-icon" viewBox="0 0 24 24">
-                <rect x="2" y="3" width="20" height="14" />
-                <line x1="8" y1="21" x2="16" y2="21" />
-                <line x1="12" y1="17" x2="12" y2="21" />
-            </svg>
-            <span> // DESKTOP</span>
+            <span class="brand-lab">LAB-</span><span class="brand-zero">0</span><span class="brand-suffix">// DESKTOP</span>
         </h1>
     </header>
 
