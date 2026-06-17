@@ -38,27 +38,26 @@
             grid-template-rows: 80px 1fr;
         }
 
-        /* --- Background Particles --- */
-        #particle-canvas {
+        /* --- Z-Index / Layer Ordering --- */
+        #dot-matrix-canvas {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 2; /* Above overlay */
+            inset: 0;
+            z-index: 2; /* Next: above body background */
             pointer-events: none;
+            width: 100%;
+            height: 100%;
             transition: opacity var(--transition-smooth);
         }
 
         #bg-overlay {
             position: fixed;
             inset: 0;
-            background: #000000;
-            z-index: 1;
+            background: rgba(0, 0, 0, 0.8); /* Next: Semi-transparent overlay */
+            z-index: 5;
             pointer-events: none;
         }
 
-        /* --- Boot Sequence --- */
+        /* --- Boot Sequence (Highest) --- */
         #boot-overlay {
             position: fixed;
             top: 0;
@@ -74,7 +73,7 @@
         }
 
         .boot-logo-container {
-            position: relative;
+            position: fixed; /* Fixed for one-take move */
             display: flex;
             align-items: center;
             font-family: var(--font-header);
@@ -82,7 +81,7 @@
             font-size: 64px;
             letter-spacing: 12px;
             text-transform: uppercase;
-            transition: transform var(--transition-smooth), letter-spacing var(--transition-smooth), opacity 0.3s ease;
+            transition: transform var(--transition-smooth), letter-spacing var(--transition-smooth), opacity 0.5s ease;
             transform-origin: center center;
             white-space: nowrap;
             z-index: 2100;
@@ -104,14 +103,14 @@
             display: inline-block;
         }
 
-        /* --- Layout HUD --- */
+        /* --- Layout HUD (Highest UI) --- */
         header {
             grid-column: 1 / -1;
             padding: 0 40px;
             display: flex;
             align-items: center;
             border-bottom: 1px solid rgba(255,255,255,0.1);
-            z-index: 100;
+            z-index: 10;
             opacity: 0;
             transition: opacity var(--transition-smooth);
         }
@@ -121,10 +120,8 @@
             font-size: 16px;
             letter-spacing: 6px;
             font-weight: 700;
-            opacity: 0;
-            /* Instant hand-off to prevent blink */
-            transition: none; 
-            transform: translateZ(0);
+            opacity: 0; /* Initially hidden, becomes target for logo move */
+            visibility: hidden;
         }
 
         .sidebar {
@@ -134,7 +131,6 @@
             transition: opacity var(--transition-smooth);
         }
 
-        /* --- Left Sidebar: Projects --- */
         .sidebar-left {
             border-right: 1px solid rgba(255,255,255,0.1);
             display: flex;
@@ -170,7 +166,6 @@
         .project-item.shift-up { transform: translateY(-15px); }
         .project-item.shift-down { transform: translateY(15px); }
 
-        /* --- Center Screen: Video --- */
         .main-stage {
             position: relative;
             display: flex;
@@ -180,23 +175,21 @@
             padding: 40px;
             opacity: 0;
             transition: opacity var(--transition-smooth);
+            z-index: 10;
         }
 
-        /* --- Modified for Responsive Video Container --- */
         #video-container {
             width: 100%;
             max-width: 960px;
             aspect-ratio: 16/9;
             background: #050505;
-            box-shadow: 0 0 0 1px #ffffff; /* Crisp 1px border */
+            box-shadow: 0 0 0 1px #ffffff; /* Sharp 1px border */
             position: relative;
             display: none;
             flex-direction: column;
             overflow: visible;
             opacity: 0;
             transition: opacity var(--transition-smooth);
-            transform: translateZ(0);
-            backface-visibility: hidden;
         }
 
         #main-video {
@@ -251,7 +244,6 @@
             min-width: 45px;
         }
 
-        /* --- Right Sidebar: Details --- */
         .sidebar-right {
             border-left: 1px solid rgba(255,255,255,0.1);
             display: flex;
@@ -281,7 +273,6 @@
             transition: opacity var(--transition-smooth);
         }
 
-        /* --- Close Button --- */
         #close-trigger {
             position: absolute;
             top: -30px;
@@ -309,18 +300,18 @@
             opacity: 1;
         }
 
-        /* --- Utilities --- */
         .visible { opacity: 1 !important; }
 
     </style>
 </head>
 <body>
 
-    <canvas id="particle-canvas"></canvas>
+    <canvas id="dot-matrix-canvas"></canvas>
     <div id="bg-overlay"></div>
 
     <div id="boot-overlay">
-        <div class="boot-logo-container">
+        <!-- THE ONLY LOGO ELEMENT -->
+        <div class="boot-logo-container" id="logo-main">
             <span id="boot-lab">LAB-</span>
             <div id="boot-variant">
                 <span id="char-target" class="variant-char">0</span>
@@ -329,7 +320,7 @@
     </div>
 
     <header id="hud-header">
-        <h1 id="permanent-logo">LAB-0</h1>
+        <h1 id="logo-target">LAB-0</h1>
     </header>
 
     <aside class="sidebar sidebar-left" id="hud-left">
@@ -383,33 +374,30 @@
             }
         };
 
-        // --- Dot-Matrix Background ---
-        const canvas = document.getElementById('particle-canvas');
+        // --- Verbatim Particle Implementation from Reference ---
+        const canvas = document.getElementById('dot-matrix-canvas');
         const ctx = canvas.getContext('2d');
-        let dots = [];
+        let particles = [];
 
-        class Dot {
+        class Particle {
             constructor() {
-                this.init();
-            }
-            init() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
-                this.vx = (Math.random() - 0.5) * 0.5;
-                this.vy = (Math.random() - 0.5) * 0.5;
-                this.size = Math.random() * 1.2 + 0.5;
-                this.baseOpacity = Math.random() * 0.5 + 0.2;
+                this.size = Math.random() * 2 + 0.1;
+                this.speedX = Math.random() * 2 - 1;
+                this.speedY = Math.random() * 2 - 1;
+                this.color = 'rgba(255, 255, 255, ' + (Math.random() * 0.5 + 0.1) + ')';
             }
             update() {
-                this.x += this.vx;
-                this.y += this.vy;
-                if (this.x < 0) this.x = canvas.width;
+                this.x += this.speedX;
+                this.y += this.speedY;
                 if (this.x > canvas.width) this.x = 0;
-                if (this.y < 0) this.y = canvas.height;
+                else if (this.x < 0) this.x = canvas.width;
                 if (this.y > canvas.height) this.y = 0;
+                else if (this.y < 0) this.y = canvas.height;
             }
             draw() {
-                ctx.fillStyle = "rgba(255, 255, 255, " + this.baseOpacity + ")";
+                ctx.fillStyle = this.color;
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 ctx.fill();
@@ -419,19 +407,19 @@
         function initParticles() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            dots = [];
-            for (let i = 0; i < 180; i++) {
-                dots.push(new Dot());
+            particles = [];
+            for (let i = 0; i < 150; i++) {
+                particles.push(new Particle());
             }
         }
 
-        function drawParticles() {
+        function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            dots.forEach(dot => {
-                dot.update();
-                dot.draw();
-            });
-            requestAnimationFrame(drawParticles);
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+            }
+            requestAnimationFrame(animate);
         }
 
         // --- Glitch Utility ---
@@ -468,36 +456,30 @@
             requestAnimationFrame(update);
         }
 
-        // --- Boot Sequence Logic ---
+        // --- Boot Sequence: One-Take Logo Placement ---
         async function runBootSequence() {
             const overlay = document.getElementById('boot-overlay');
-            const container = document.querySelector('.boot-logo-container');
+            const logo = document.getElementById('logo-main');
             const lab = document.getElementById('boot-lab');
-            const target = document.getElementById('char-target');
-            const headerLogo = document.getElementById('permanent-logo');
+            const targetChar = document.getElementById('char-target');
+            const targetEl = document.getElementById('logo-target');
             
-            // 1. Detection
             const width = window.innerWidth;
-            const isMobile = width <= 768 || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-            const targetText = isMobile ? 'Mobile' : 'Desktop';
+            const isMobile = width <= 768;
+            const bootText = isMobile ? 'MOBILE' : 'DESKTOP';
 
-            // Start State
             await sleep(800);
 
-            // 3. Recognition Anim
+            // Scramble to variant
             lab.style.transform = 'translateX(-40px)';
-            scrambleText(target, targetText, 800);
+            scrambleText(targetChar, bootText, 800);
             
             await sleep(1800);
 
-            // 4. One-Take Sliding-Scale Reversion
-            const targetRect = headerLogo.getBoundingClientRect();
-            const currentRect = container.getBoundingClientRect();
+            // Move to final position
+            const targetRect = targetEl.getBoundingClientRect();
+            const currentRect = logo.getBoundingClientRect();
 
-            // Transform origin: center so movement logic is simpler
-            container.style.transformOrigin = "center center";
-            
-            // Calculate center points for delta
             const targetCenterX = targetRect.left + (targetRect.width * 0.5);
             const targetCenterY = targetRect.top + (targetRect.height * 0.5);
             const currentCenterX = currentRect.left + (currentRect.width * 0.5);
@@ -506,25 +488,16 @@
             const deltaX = targetCenterX - currentCenterX;
             const deltaY = targetCenterY - currentCenterY;
 
-            // Start scramble back to 0 as we move
-            scrambleText(target, '0', 1200);
+            scrambleText(targetChar, '0', 1200);
             lab.style.transform = 'translateX(0px)';
             
-            // Interpolate spacing: transition from compact to spaced-out look
-            // Spacing in header is 6px, so we need 6 / 0.25 = 24px relative spacing
-            container.style.letterSpacing = '24px';
-            
-            // Smoothly slide and scale
-            container.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(0.25)`;
+            logo.style.letterSpacing = '6px';
+            logo.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(0.25)`;
 
             await sleep(1300);
             
-            // 5. Landing
+            // Lock position permanently
             overlay.style.opacity = '0';
-            
-            // Instant swap at the end of transform
-            headerLogo.style.opacity = '1';
-            container.style.opacity = '0';
             document.getElementById('hud-header').classList.add('visible');
             document.getElementById('hud-left').classList.add('visible');
             document.getElementById('hud-center').classList.add('visible');
@@ -544,7 +517,7 @@
             const source = document.getElementById('video-src');
             const closeBtn = document.getElementById('close-trigger');
 
-            items.forEach((item, index) => {
+            items.forEach((item) => {
                 const itemId = parseInt(item.getAttribute('data-id'));
                 item.classList.remove('active', 'shift-up', 'shift-down');
                 if (itemId === id) { item.classList.add('active'); }
@@ -642,7 +615,7 @@
 
         window.onload = () => {
             initParticles();
-            drawParticles();
+            animate();
             runBootSequence();
         };
 
