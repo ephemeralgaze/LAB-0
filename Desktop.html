@@ -36,6 +36,83 @@
             grid-template-rows: 50px 1fr;
         }
 
+        /* --- Device Entry Overlay --- */
+        #entry-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #000;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.8s;
+            padding: 40px;
+        }
+
+        #entry-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .entry-content {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            gap: 60px;
+        }
+
+        .entry-title {
+            font-family: var(--font-header);
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 12px;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .entry-telemetry {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            letter-spacing: 1px;
+            opacity: 0.6;
+        }
+
+        .telemetry-line {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 4px;
+        }
+
+        .entry-trigger {
+            align-self: center;
+            background: transparent;
+            border: 1px solid #FFF;
+            color: #FFF;
+            font-family: var(--font-header);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 4px;
+            padding: 20px 40px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .entry-trigger:hover {
+            background: #FFF;
+            color: #000;
+        }
+
         /* --- Header --- */
         header {
             grid-column: 1 / -1;
@@ -380,6 +457,33 @@
 </head>
 <body>
 
+    <div id="entry-overlay">
+        <div class="entry-content">
+            <h2 class="entry-title">LAB-0 // SYSTEM ENTRY</h2>
+            
+            <div class="entry-telemetry">
+                <div class="telemetry-line">
+                    <span>SYS_STATUS</span>
+                    <span>LOCKED</span>
+                </div>
+                <div class="telemetry-line">
+                    <span>HARDWARE</span>
+                    <span>NVIDIA GeForce RTX 4060</span>
+                </div>
+                <div class="telemetry-line">
+                    <span>LOCATION</span>
+                    <span>SECTOR_8_COMMAND</span>
+                </div>
+                <div class="telemetry-line">
+                    <span>SYS_TIME</span>
+                    <span id="entry-clock">00:00:00:000</span>
+                </div>
+            </div>
+
+            <button class="entry-trigger" onclick="enterSystem()">INITIATE SYSTEM CONNECTION</button>
+        </div>
+    </div>
+
     <header>
         <h1>LAB-0 // DESKTOP</h1>
     </header>
@@ -513,10 +617,21 @@
             const m = String(now.getMinutes()).padStart(2, '0');
             const s = String(now.getSeconds()).padStart(2, '0');
             const ms = String(now.getMilliseconds()).padStart(3, '0');
-            document.getElementById('sys-clock').innerText = `${h}:${m}:${s}:${ms}`;
+            const timeStr = `${h}:${m}:${s}:${ms}`;
+            
+            document.getElementById('sys-clock').innerText = timeStr;
+            const entryClock = document.getElementById('entry-clock');
+            if (entryClock) entryClock.innerText = timeStr;
+            
             requestAnimationFrame(updateClock);
         }
         updateClock();
+
+        // --- Entry Transition ---
+        function enterSystem() {
+            const overlay = document.getElementById('entry-overlay');
+            overlay.classList.add('hidden');
+        }
 
         // --- Navigation ---
         function switchModule(id) {
