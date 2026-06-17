@@ -62,6 +62,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: opacity 0.8s ease;
         }
 
         .boot-logo-container {
@@ -73,17 +74,16 @@
             font-size: 64px;
             letter-spacing: 12px;
             text-transform: uppercase;
+            transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         #boot-lab { 
-            transform: translate(0, 0) scale(1); 
-            transition: transform var(--transition-smooth); 
             display: inline-block;
         }
         #boot-variant { 
             position: relative; 
             display: inline-block;
-            min-width: 80px;
+            min-width: 40px;
             text-align: center;
         }
         
@@ -309,7 +309,7 @@
     </div>
 
     <header id="hud-header">
-        <h1 id="permanent-logo">LAB-0 // DESKTOP</h1>
+        <h1 id="permanent-logo">LAB-0</h1>
     </header>
 
     <aside class="sidebar sidebar-left" id="hud-left">
@@ -402,13 +402,14 @@
         // --- Boot Sequence Logic ---
         async function runBootSequence() {
             const overlay = document.getElementById('boot-overlay');
-            const lab = document.getElementById('boot-lab');
+            const container = document.querySelector('.boot-logo-container');
             const target = document.getElementById('char-target');
+            const headerLogo = document.getElementById('permanent-logo');
             
             // Stage 1: Display "LAB-0" (Default state)
             await sleep(1000);
 
-            // Stage 2: 0 slides up/out, Desktop slides in
+            // Stage 2: 0 slides up/out, Desktop slides in (Machine Recognition Phase)
             target.style.transform = 'translateY(-20px)';
             target.style.opacity = '0';
             
@@ -421,25 +422,35 @@
 
             await sleep(1500);
 
-            // Stage 3: LAB- slides to corner + scale down smoothly
+            // Stage 3: Seamless One-Take Transition to Top-Left
+            // Revert Desktop back to 0 for the final "LAB-0" state
             target.style.opacity = '0';
-            const rect = lab.getBoundingClientRect();
+            await sleep(200);
+            target.innerText = '0';
+            target.style.opacity = '1';
+
+            const targetRect = headerLogo.getBoundingClientRect();
+            const currentRect = container.getBoundingClientRect();
+
+            // Calculate exact distance to final header position
+            const deltaX = targetRect.left - currentRect.left;
+            const deltaY = targetRect.top - currentRect.top;
+
+            // Smoothly slide the whole container to its final destination
+            container.style.transformOrigin = "top left";
+            container.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(0.25)`;
+
+            await sleep(1200);
             
-            // Final target: ~40px left, ~32px top. Final scale: ~16px / 64px = 0.25
-            const finalX = -(rect.left - 40);
-            const finalY = -(rect.top - 32);
-            lab.style.transform = `translate(${finalX}px, ${finalY}px) scale(0.25)`;
-
-            await sleep(800);
+            // Reveal HUD elements
             overlay.style.opacity = '0';
-            await sleep(800);
-            overlay.style.display = 'none';
-
-            // Stage 4: Fade in HUD
             document.getElementById('hud-header').classList.add('visible');
             document.getElementById('hud-left').classList.add('visible');
             document.getElementById('hud-center').classList.add('visible');
             document.getElementById('hud-right').classList.add('visible');
+
+            await sleep(800);
+            overlay.style.display = 'none';
         }
 
         // --- Selection Logic ---
