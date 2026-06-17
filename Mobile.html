@@ -115,6 +115,7 @@
             font-family: var(--font-mono);
             font-size: 11px;
             margin-bottom: 8px;
+            word-break: break-all;
         }
 
         /* Logs */
@@ -164,25 +165,28 @@
     </section>
 
     <section class="metrics-section">
-        <div class="panel-title">TELEMETRY_DATAFEED</div>
+        <div class="panel-title">HARDWARE_TELEMETRY</div>
         
         <div class="metric-group">
-            <div class="metric-label">GPU</div>
-            <div class="metric-value">RTX 4060 LPT (HIGH PERF)</div>
+            <div class="metric-label">GPU RENDERER</div>
+            <div class="metric-value" id="val-gpu">DETECTING...</div>
             
-            <div class="metric-label">PROJECT</div>
-            <div class="metric-value">LAB_TEST (UE 5.2.4)</div>
+            <div class="metric-label">CPU CORES</div>
+            <div class="metric-value" id="val-cpu">DETECTING...</div>
             
-            <div class="metric-label">MODULE</div>
-            <div class="metric-value">NIAGARA SPARK SYSTEM</div>
+            <div class="metric-label">OS / PLATFORM</div>
+            <div class="metric-value" id="val-os">DETECTING...</div>
         </div>
 
+        <div class="panel-title">PROJECT_DATAFEED</div>
+
         <div class="metric-group">
+            <div class="metric-label">ACTIVE PROJECT</div>
+            <div class="metric-value">LAB_TEST (UE 5.2.4)</div>
+
             <div class="metric-label">7-DAY FILTER</div>
             <div class="metric-value">Day 1: OK / Day 2: ACTIVE</div>
-        </div>
-
-        <div class="metric-group">
+            
             <div class="metric-label">SHIELD</div>
             <div class="metric-value">100% (COGNITIVE_EVASION)</div>
         </div>
@@ -219,7 +223,9 @@
         function resize() {
             canvas.width = canvas.offsetWidth;
             canvas.height = canvas.offsetHeight;
-            document.getElementById('sys-res').innerText = `${window.innerWidth}x${window.innerHeight}`;
+            const w = window.screen.width * window.devicePixelRatio;
+            const h = window.screen.height * window.devicePixelRatio;
+            document.getElementById('sys-res').innerText = `${w}x${h} @ ${window.devicePixelRatio}x`;
         }
         window.addEventListener('resize', resize);
         resize();
@@ -285,6 +291,36 @@
             document.getElementById('live-clock').innerText = `${h}:${m}:${s}:${ms}`;
         }
         setInterval(updateClock, 50);
+
+        // Hardware Detection
+        (function detectHardware() {
+            // GPU
+            const glCanvas = document.createElement('canvas');
+            const gl = glCanvas.getContext('webgl') || glCanvas.getContext('experimental-webgl');
+            let gpu = 'UNKNOWN';
+            if (gl) {
+                const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                if (debugInfo) {
+                    gpu = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+                }
+            }
+            document.getElementById('val-gpu').innerText = gpu;
+
+            // CPU
+            const cores = navigator.hardwareConcurrency || 'UNKNOWN';
+            document.getElementById('val-cpu').innerText = `CORES: ${cores}`;
+
+            // OS / Platform
+            const ua = navigator.userAgent;
+            let os = "OTHER";
+            if (/android/i.test(ua)) os = "ANDROID";
+            else if (/iPad|iPhone|iPod/.test(ua)) os = "IOS";
+            else if (/Mac/.test(ua)) os = "MACOS";
+            else if (/Win/.test(ua)) os = "WINDOWS";
+            
+            const engine = /WebKit/i.test(ua) ? "WEBKIT" : (/Gecko/i.test(ua) ? "GECKO" : "UNKNOWN");
+            document.getElementById('val-os').innerText = `${os} / ${engine}`;
+        })();
     </script>
 </body>
 </html>
