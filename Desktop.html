@@ -209,6 +209,7 @@
             flex-direction: column;
             gap: 20px;
             background: #000;
+            overflow-y: auto;
         }
 
         .asset-title {
@@ -225,12 +226,57 @@
             font-size: 8px;
             padding: 6px 12px;
             border-bottom: 1px solid rgba(255,255,255,0.5);
+            margin-bottom: 10px;
         }
 
         .asset-desc {
             font-size: 11px;
             line-height: 1.6;
             color: #AAA;
+        }
+
+        /* Interactive Controls */
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .control-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .control-label {
+            font-family: var(--font-mono);
+            font-size: 9px;
+            color: #888;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .control-val {
+            color: #FFF;
+        }
+
+        .control-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 1px;
+            background: #333;
+            outline: none;
+        }
+
+        .control-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 8px;
+            height: 14px;
+            background: #FFF;
+            cursor: pointer;
+            border: 1px solid #000;
         }
 
         /* Contact Card Overlay */
@@ -349,11 +395,35 @@
     <aside class="sidebar-right">
         <div class="asset-title" id="asset-name">NS_SYSTEM</div>
         
-        <div>
+        <div id="asset-info-section">
             <div class="category-label">TECHNICAL_BRIEF</div>
             <p class="asset-desc" id="asset-desc">
                 Niagara particle physics environment. Real-time collision and vector field simulation.
             </p>
+        </div>
+
+        <div id="game-controls-section" class="control-group">
+            <div class="category-label">PHYSICS_PARAMETERS</div>
+            
+            <div class="control-item">
+                <div class="control-label">GRAVITY <span class="control-val" id="val-gravity">0.05</span></div>
+                <input type="range" id="param-gravity" class="control-slider" min="0" max="0.2" step="0.01" value="0.05">
+            </div>
+
+            <div class="control-item">
+                <div class="control-label">PARTICLE_COUNT <span class="control-val" id="val-count">100</span></div>
+                <input type="range" id="param-count" class="control-slider" min="10" max="500" step="1" value="100">
+            </div>
+
+            <div class="control-item">
+                <div class="control-label">DEFLECTOR_SIZE <span class="control-val" id="val-size">120</span></div>
+                <input type="range" id="param-size" class="control-slider" min="40" max="300" step="1" value="120">
+            </div>
+
+            <div class="control-item">
+                <div class="control-label">EMISSION_SPEED <span class="control-val" id="val-speed">2.0</span></div>
+                <input type="range" id="param-speed" class="control-slider" min="0.5" max="5.0" step="0.1" value="2.0">
+            </div>
         </div>
     </aside>
 
@@ -390,16 +460,20 @@
                 }
             });
 
+            const gameControls = document.getElementById('game-controls-section');
+
             if (id === '01') {
                 document.getElementById('module-01').classList.add('active');
                 document.getElementById('video-module').classList.remove('active');
                 document.getElementById('asset-name').innerText = "NS_SYSTEM";
                 document.getElementById('asset-desc').innerText = "Niagara particle physics environment. Real-time collision and vector field simulation.";
+                gameControls.style.display = 'flex';
             } else {
                 document.getElementById('module-01').classList.remove('active');
                 document.getElementById('video-module').classList.add('active');
                 document.getElementById('asset-name').innerText = "NS_ASSET_0" + id;
                 document.getElementById('asset-desc').innerText = "Production render of high-fidelity VFX assets. Exported from Unreal Engine 5 via Command Line interface.";
+                gameControls.style.display = 'none';
             }
         }
 
@@ -444,14 +518,57 @@
         const ctx = canvas.getContext('2d');
         let particles = [];
         let paused = false;
-        let deflector = { x: 400, y: 300, rotation: 45, length: 120 };
+        
+        // Physics Params
+        let config = {
+            gravity: 0.05,
+            particleCount: 100,
+            deflectorSize: 120,
+            emissionSpeed: 2.0
+        };
+
+        let deflector = { x: 400, y: 300, rotation: 45, length: config.deflectorSize };
+
+        // UI Hookup
+        const params = {
+            gravity: document.getElementById('param-gravity'),
+            count: document.getElementById('param-count'),
+            size: document.getElementById('param-size'),
+            speed: document.getElementById('param-speed')
+        };
+
+        const displays = {
+            gravity: document.getElementById('val-gravity'),
+            count: document.getElementById('val-count'),
+            size: document.getElementById('val-size'),
+            speed: document.getElementById('val-speed')
+        };
+
+        params.gravity.addEventListener('input', (e) => {
+            config.gravity = parseFloat(e.target.value);
+            displays.gravity.innerText = config.gravity.toFixed(2);
+        });
+
+        params.count.addEventListener('input', (e) => {
+            config.particleCount = parseInt(e.target.value);
+            displays.count.innerText = config.particleCount;
+            initParticles();
+        });
+
+        params.size.addEventListener('input', (e) => {
+            config.deflectorSize = parseInt(e.target.value);
+            deflector.length = config.deflectorSize;
+            displays.size.innerText = config.deflectorSize;
+        });
+
+        params.speed.addEventListener('input', (e) => {
+            config.emissionSpeed = parseFloat(e.target.value);
+            displays.speed.innerText = config.emissionSpeed.toFixed(1);
+        });
 
         function resize() {
             canvas.width = canvas.offsetWidth;
             canvas.height = canvas.offsetHeight;
-            // Center deflector on resize if needed
-            // deflector.x = canvas.width / 2;
-            // deflector.y = canvas.height / 2;
         }
         window.addEventListener('resize', resize);
         resize();
@@ -461,12 +578,12 @@
             reset() { 
                 this.x = 50; 
                 this.y = 50; 
-                this.vx = 2 + Math.random() * 2; 
-                this.vy = 1 + Math.random() * 2; 
+                this.vx = config.emissionSpeed + Math.random() * config.emissionSpeed; 
+                this.vy = (config.emissionSpeed / 2) + Math.random() * (config.emissionSpeed / 2); 
             }
             update() {
                 if (paused) return;
-                this.vy += 0.05; // Gravity
+                this.vy += config.gravity;
                 
                 // Collision with deflector
                 const dx = this.x - deflector.x;
@@ -503,7 +620,7 @@
 
         function initParticles() {
             particles = [];
-            for (let i = 0; i < 100; i++) {
+            for (let i = 0; i < config.particleCount; i++) {
                 particles.push(new Particle());
             }
         }
