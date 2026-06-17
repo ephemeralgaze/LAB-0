@@ -16,11 +16,19 @@
             --font-body: 'Space Grotesk', sans-serif;
             --font-mono: 'Space Mono', monospace;
             --terminal-green: #00FF00;
+            --ue-bg: #1A1A1A;
+            --ue-border: #2A2A2A;
         }
 
         @keyframes pulse {
             0% { opacity: 1; }
             50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0; }
             100% { opacity: 1; }
         }
 
@@ -41,7 +49,6 @@
             display: grid;
             grid-template-columns: 320px 1fr 320px;
             grid-template-rows: 60px 1fr;
-            /* Subtle Checkered Grid Background */
             background-image: 
                 linear-gradient(45deg, rgba(255,255,255,0.02) 25%, transparent 25%), 
                 linear-gradient(-45deg, rgba(255,255,255,0.02) 25%, transparent 25%), 
@@ -110,7 +117,10 @@
             grid-column: 3;
             grid-row: 2;
             border-left: var(--border);
-            overflow: hidden;
+            padding: 0;
+            background: var(--ue-bg);
+            display: flex;
+            flex-direction: column;
         }
 
         .panel-title {
@@ -120,6 +130,110 @@
             color: rgba(255,255,255,0.3);
             text-transform: uppercase;
             margin-bottom: 10px;
+        }
+
+        /* UE5 Details Style */
+        .details-header {
+            background: #222;
+            padding: 8px 15px;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: #AAA;
+            border-bottom: 1px solid #333;
+        }
+
+        .category-header {
+            background: #2A2A2A;
+            padding: 6px 15px;
+            font-family: var(--font-mono);
+            font-size: 9px;
+            font-weight: bold;
+            color: #EEE;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid #111;
+        }
+
+        .category-header::before {
+            content: '▼';
+            font-size: 7px;
+        }
+
+        .category-header.collapsed::before {
+            content: '▶';
+        }
+
+        .category-content {
+            padding: 10px 0;
+        }
+
+        .category-content.collapsed {
+            display: none;
+        }
+
+        .detail-row {
+            display: grid;
+            grid-template-columns: 80px 1fr;
+            padding: 4px 15px;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .detail-label {
+            font-family: var(--font-mono);
+            font-size: 9px;
+            color: #888;
+        }
+
+        .detail-inputs {
+            display: flex;
+            gap: 5px;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            background: #000;
+            border: 1px solid #333;
+            flex: 1;
+        }
+
+        .input-prefix {
+            font-family: var(--font-mono);
+            font-size: 8px;
+            padding: 0 4px;
+            color: #555;
+            border-right: 1px solid #333;
+        }
+
+        .detail-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: #FFF;
+            font-family: var(--font-mono);
+            font-size: 9px;
+            padding: 4px;
+            outline: none;
+        }
+
+        .detail-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 1px;
+            background: #444;
+            outline: none;
+            margin-top: 8px;
+        }
+
+        .detail-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 6px;
+            height: 10px;
+            background: #FFF;
+            cursor: pointer;
         }
 
         .module-item {
@@ -170,66 +284,21 @@
             height: 100%;
         }
 
-        /* Simplified Video Description Overlay */
-        .placeholder-card {
-            width: 90%;
-            height: 90%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 40px;
-            margin: auto;
-        }
-
-        .video-box {
-            width: 100%;
-            max-width: 800px;
-            aspect-ratio: 16/9;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .goal-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: var(--font-mono);
+            font-size: 14px;
+            color: #FFF;
             background: #000;
+            padding: 10px 20px;
+            border: 1px solid #FFF;
+            animation: blink 0.5s infinite;
+            display: none;
+            pointer-events: none;
         }
-
-        .video-box-content {
-            font-family: var(--font-mono);
-            font-size: 10px;
-            opacity: 0.2;
-        }
-
-        .video-desc-block {
-            max-width: 600px;
-            text-align: center;
-        }
-
-        .desc-title {
-            font-family: var(--font-header);
-            font-size: 16px;
-            margin-bottom: 15px;
-            letter-spacing: 4px;
-        }
-
-        .desc-body {
-            font-family: var(--font-mono);
-            font-size: 10px;
-            line-height: 1.8;
-            color: rgba(255,255,255,0.5);
-            letter-spacing: 0.5px;
-        }
-
-        #diag-terminal {
-            flex-grow: 1;
-            font-family: var(--font-mono);
-            font-size: 10px;
-            color: rgba(255,255,255,0.6);
-            overflow-y: auto;
-            white-space: pre-wrap;
-            line-height: 1.6;
-        }
-
-        #diag-terminal::-webkit-scrollbar { width: 0px; }
 
         .footer-info {
             font-family: var(--font-mono);
@@ -280,112 +349,188 @@
     <main class="main-view">
         <div id="content-01" class="module-content active">
             <canvas id="niagara-canvas"></canvas>
+            <div id="goal-notification" class="goal-text">GOAL_REACHED: [LEVEL_01_CLEARED]</div>
         </div>
         <div id="content-02" class="module-content">
-            <div class="placeholder-card">
-                <div class="video-box">
-                    <div class="video-box-content">[ VIDEO_SIGNAL_PENDING ]</div>
-                </div>
-                <div class="video-desc-block">
-                    <div class="desc-title">NS_FOUNTAIN</div>
-                    <div class="desc-body">
-                        ADVANCED NIAGARA PARTICLE SYSTEM. DYNAMIC ALPHA CURVE INTEGRATION VIA HLSL. OPTIMIZED FOR HIGH-CONTRAST INDUSTRIAL TELEMETRY.
-                    </div>
-                </div>
-            </div>
+            <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); opacity: 0.2;">[ VIDEO_SIGNAL_PENDING ]</div>
         </div>
     </main>
 
     <aside class="panel panel-right">
-        <div class="panel-title">DIAGNOSTICS_FEED</div>
-        <div id="diag-terminal"></div>
+        <div class="details-header">Details</div>
+        <div class="category-header" onclick="toggleCategory(this)">TRANSFORM</div>
+        <div class="category-content">
+            <div class="detail-row">
+                <div class="detail-label">Position</div>
+                <div class="detail-inputs">
+                    <div class="input-group">
+                        <span class="input-prefix">X</span>
+                        <input type="number" id="posX" class="detail-input" value="400" step="1">
+                    </div>
+                    <div class="input-group">
+                        <span class="input-prefix">Y</span>
+                        <input type="number" id="posY" class="detail-input" value="300" step="1">
+                    </div>
+                </div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Rotation</div>
+                <div class="input-group">
+                    <span class="input-prefix">D</span>
+                    <input type="number" id="rot" class="detail-input" value="45" step="1">
+                </div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Scale</div>
+                <div class="input-group">
+                    <span class="input-prefix">X</span>
+                    <input type="number" id="scaleX" class="detail-input" value="100" step="1">
+                </div>
+            </div>
+            <div class="detail-row" style="display:block; padding-top: 10px;">
+                <input type="range" id="posX-slider" class="detail-slider" min="0" max="800" value="400">
+                <input type="range" id="posY-slider" class="detail-slider" min="0" max="600" value="300">
+                <input type="range" id="rot-slider" class="detail-slider" min="0" max="360" value="45">
+                <input type="range" id="scaleX-slider" class="detail-slider" min="10" max="300" value="100">
+            </div>
+        </div>
     </aside>
 
     <script>
+        function toggleCategory(el) {
+            el.classList.toggle('collapsed');
+            el.nextElementSibling.classList.toggle('collapsed');
+        }
+
         function switchModule(id) {
             document.querySelectorAll('.module-item').forEach(el => el.classList.remove('active'));
-            if (event && event.currentTarget) {
-                event.currentTarget.classList.add('active');
-            }
+            if (event && event.currentTarget) event.currentTarget.classList.add('active');
             document.querySelectorAll('.module-content').forEach(el => el.classList.remove('active'));
             document.getElementById('content-' + id).classList.add('active');
         }
 
-        const terminal = document.getElementById('diag-terminal');
-        const logs = [
-            "[INIT] CORE ENGINE...",
-            "[VFX] LOADING NS_FOUNTAIN...",
-            "[GPU] SHADER COMPILATION...",
-            "[SYS] PROTOCOL STABLE...",
-            "[MEM] BUFFER ALLOCATION...",
-            "[UI] BORDER_RADIUS: 0PX"
-        ];
-
-        function addLog() {
-            const log = logs[Math.floor(Math.random() * logs.length)];
-            const time = new Date().toLocaleTimeString('en-GB', { hour12: false });
-            terminal.innerHTML += `[${time}] ${log}\n`;
-            terminal.scrollTop = terminal.scrollHeight;
-            const lines = terminal.innerHTML.split('\n');
-            if (lines.length > 30) terminal.innerHTML = lines.slice(lines.length - 30).join('\n');
-        }
-        setInterval(addLog, 2000);
-
         const canvas = document.getElementById('niagara-canvas');
         const ctx = canvas.getContext('2d');
+        const goalNotif = document.getElementById('goal-notification');
+        
         let particles = [];
-        let mouse = { x: null, y: null };
+        let deflector = { x: 400, y: 300, rotation: 45 * Math.PI / 180, length: 100 };
+        const goalZone = { x: 700, y: 500, w: 80, h: 80 };
+        let goalHits = 0;
+
+        // UI Binding
+        const inputs = {
+            posX: document.getElementById('posX'),
+            posY: document.getElementById('posY'),
+            rot: document.getElementById('rot'),
+            scaleX: document.getElementById('scaleX'),
+            posX_s: document.getElementById('posX-slider'),
+            posY_s: document.getElementById('posY-slider'),
+            rot_s: document.getElementById('rot-slider'),
+            scaleX_s: document.getElementById('scaleX-slider')
+        };
+
+        function syncUI(source) {
+            if (source.includes('slider')) {
+                inputs.posX.value = deflector.x = parseInt(inputs.posX_s.value);
+                inputs.posY.value = deflector.y = parseInt(inputs.posY_s.value);
+                inputs.rot.value = parseInt(inputs.rot_s.value);
+                deflector.rotation = inputs.rot.value * Math.PI / 180;
+                inputs.scaleX.value = deflector.length = parseInt(inputs.scaleX_s.value);
+            } else {
+                deflector.x = inputs.posX_s.value = parseInt(inputs.posX.value);
+                deflector.y = inputs.posY_s.value = parseInt(inputs.posY.value);
+                inputs.rot_s.value = parseInt(inputs.rot.value);
+                deflector.rotation = inputs.rot.value * Math.PI / 180;
+                deflector.length = inputs.scaleX_s.value = parseInt(inputs.scaleX.value);
+            }
+        }
+
+        Object.keys(inputs).forEach(k => inputs[k].addEventListener('input', () => syncUI(k)));
 
         function resize() {
             canvas.width = canvas.offsetWidth;
             canvas.height = canvas.offsetHeight;
+            inputs.posX_s.max = canvas.width;
+            inputs.posY_s.max = canvas.height;
         }
         window.addEventListener('resize', resize);
         resize();
 
-        window.addEventListener('mousemove', (e) => {
-            const rect = canvas.getBoundingClientRect();
-            mouse.x = e.clientX - rect.left;
-            mouse.y = e.clientY - rect.top;
-        });
-
         class Particle {
             constructor() { this.reset(); }
             reset() {
-                this.x = Math.random() * canvas.width;
-                this.y = canvas.height + 10;
-                this.vx = (Math.random() - 0.5) * 1.5;
-                this.vy = -Math.random() * 3 - 1;
-                this.life = 1;
-                this.decay = Math.random() * 0.01 + 0.005;
+                this.x = 50;
+                this.y = 50;
+                this.vx = 2 + Math.random();
+                this.vy = 1 + Math.random();
+                this.active = true;
             }
             update() {
-                if (mouse.x !== null) {
-                    const dx = this.x - mouse.x;
-                    const dy = this.y - mouse.y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist < 100) {
-                        const force = (100 - dist) / 100;
-                        this.vx += (dx / dist) * force * 1.5;
-                        this.vy += (dy / dist) * force * 1.5;
-                    }
+                this.x += this.vx;
+                this.y += this.vy;
+                this.vy += 0.05; // Gravity
+
+                // Deflector Collision
+                const dx = this.x - deflector.x;
+                const dy = this.y - deflector.y;
+                const cos = Math.cos(-deflector.rotation);
+                const sin = Math.sin(-deflector.rotation);
+                const localX = dx * cos - dy * sin;
+                const localY = dx * sin + dy * cos;
+
+                if (Math.abs(localY) < 5 && Math.abs(localX) < deflector.length / 2) {
+                    const nx = Math.sin(deflector.rotation);
+                    const ny = -Math.cos(deflector.rotation);
+                    const dot = this.vx * nx + this.vy * ny;
+                    this.vx -= 2 * dot * nx;
+                    this.vy -= 2 * dot * ny;
+                    this.y -= 5; 
                 }
-                this.x += this.vx; this.y += this.vy;
-                this.life -= this.decay;
-                if (this.life <= 0 || this.y < -10) this.reset();
+
+                if (this.x > goalZone.x && this.x < goalZone.x + goalZone.w && 
+                    this.y > goalZone.y && this.y < goalZone.y + goalZone.h) {
+                    goalHits++;
+                    this.reset();
+                }
+
+                if (this.y > canvas.height || this.x > canvas.width || this.x < 0) this.reset();
             }
             draw() {
-                ctx.fillStyle = `rgba(255, 255, 255, ${this.life * 0.8})`;
+                ctx.fillStyle = "#FFF";
                 ctx.fillRect(this.x, this.y, 1, 1);
             }
         }
 
-        for (let i = 0; i < 150; i++) particles.push(new Particle());
+        for (let i = 0; i < 50; i++) particles.push(new Particle());
 
         function animate() {
             if (document.getElementById('content-01').classList.contains('active')) {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = 'rgba(5,5,5,0.3)';
+                ctx.fillRect(0,0,canvas.width, canvas.height);
+                
+                // Draw Goal
+                ctx.setLineDash([2, 2]);
+                ctx.strokeStyle = "rgba(255,255,255,0.5)";
+                ctx.strokeRect(goalZone.x, goalZone.y, goalZone.w, goalZone.h);
+                ctx.setLineDash([]);
+
+                // Draw Deflector
+                ctx.save();
+                ctx.translate(deflector.x, deflector.y);
+                ctx.rotate(deflector.rotation);
+                ctx.fillStyle = "#FFF";
+                ctx.fillRect(-deflector.length/2, -1, deflector.length, 2);
+                ctx.restore();
+
                 particles.forEach(p => { p.update(); p.draw(); });
+
+                if (goalHits > 10) {
+                    goalNotif.style.display = 'block';
+                } else {
+                    goalNotif.style.display = 'none';
+                }
+                if (goalHits > 0) goalHits -= 0.1; 
             }
             requestAnimationFrame(animate);
         }
@@ -397,8 +542,7 @@
             const m = String(now.getMinutes()).padStart(2, '0');
             const s = String(now.getSeconds()).padStart(2, '0');
             const ms = String(now.getMilliseconds()).padStart(3, '0').slice(0, 2);
-            const timeStr = `${h}:${m}:${s}:${ms}`;
-            document.getElementById('live-clock-left').innerText = timeStr;
+            document.getElementById('live-clock-left').innerText = `${h}:${m}:${s}:${ms}`;
         }
         setInterval(updateClock, 50);
     </script>

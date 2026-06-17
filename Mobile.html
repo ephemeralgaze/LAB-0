@@ -15,6 +15,13 @@
             --font-header: 'Syncopate', sans-serif;
             --font-body: 'Space Grotesk', sans-serif;
             --font-mono: 'Space Mono', monospace;
+            --ue-bg: #1A1A1A;
+        }
+
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0; }
+            100% { opacity: 1; }
         }
 
         * {
@@ -33,38 +40,32 @@
             overflow-x: hidden;
             display: flex;
             flex-direction: column;
-            /* Subtle Checkered Grid Background */
             background-image: 
                 linear-gradient(45deg, rgba(255,255,255,0.01) 25%, transparent 25%), 
                 linear-gradient(-45deg, rgba(255,255,255,0.01) 25%, transparent 25%), 
                 linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.01) 75%), 
                 linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.01) 75%);
             background-size: 40px 40px;
-            background-position: 0 0, 0 20px, 20px -20px, -20px 0px;
         }
 
         header {
             border-bottom: var(--border);
-            padding: 25px;
-            z-index: 10;
-            background: rgba(5,5,5,0.8);
+            padding: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            background: rgba(5,5,5,0.8);
         }
 
         header h1 {
             font-family: var(--font-header);
             font-size: 9px;
             letter-spacing: 3px;
-            opacity: 0.8;
         }
 
-        /* Module Switcher */
         .module-switcher {
             display: flex;
             border-bottom: var(--border);
-            background: transparent;
         }
 
         .module-tab {
@@ -73,35 +74,19 @@
             font-family: var(--font-mono);
             font-size: 9px;
             text-align: center;
-            text-transform: uppercase;
             opacity: 0.3;
-            transition: opacity 0.3s ease;
         }
 
         .module-tab.active {
             opacity: 1;
-            letter-spacing: 1px;
-        }
-
-        /* Main Content */
-        .main-section {
-            width: 100%;
-            position: relative;
-            z-index: 5;
-        }
-
-        .module-content {
-            display: none;
-            width: 100%;
-        }
-
-        .module-content.active {
-            display: block;
+            border-bottom: 2px solid #FFF;
         }
 
         .canvas-container {
-            height: 300px;
+            height: 250px;
             width: 100%;
+            position: relative;
+            border-bottom: var(--border);
         }
 
         #niagara-canvas {
@@ -109,46 +94,107 @@
             height: 100%;
         }
 
-        /* Simplified Mobile View */
-        .placeholder-view {
-            padding: 40px 25px;
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-        }
-
-        .video-box {
-            width: 100%;
-            aspect-ratio: 16/9;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #000;
-        }
-
-        .video-desc-block {
-            text-align: left;
-        }
-
-        .desc-title {
-            font-family: var(--font-header);
-            font-size: 14px;
-            margin-bottom: 10px;
-            letter-spacing: 2px;
-        }
-
-        .desc-body {
+        .goal-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             font-family: var(--font-mono);
             font-size: 10px;
-            line-height: 1.8;
-            color: rgba(255,255,255,0.5);
-            margin-bottom: 30px;
+            color: #FFF;
+            background: #000;
+            padding: 5px 10px;
+            border: 1px solid #FFF;
+            animation: blink 0.5s infinite;
+            display: none;
+            pointer-events: none;
         }
 
-        /* High-Frequency Time Display */
+        .details-panel {
+            background: var(--ue-bg);
+            padding-bottom: 40px;
+        }
+
+        .details-header {
+            background: #222;
+            padding: 8px 15px;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: #AAA;
+            border-bottom: 1px solid #333;
+        }
+
+        .category-header {
+            background: #2A2A2A;
+            padding: 10px 15px;
+            font-family: var(--font-mono);
+            font-size: 9px;
+            font-weight: bold;
+            color: #EEE;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid #111;
+        }
+
+        .detail-row {
+            padding: 10px 15px;
+        }
+
+        .detail-label {
+            font-family: var(--font-mono);
+            font-size: 8px;
+            color: #888;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            background: #000;
+            border: 1px solid #333;
+            margin-bottom: 5px;
+        }
+
+        .input-prefix {
+            font-family: var(--font-mono);
+            font-size: 8px;
+            padding: 0 6px;
+            color: #555;
+            border-right: 1px solid #333;
+        }
+
+        .detail-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: #FFF;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            padding: 8px;
+            outline: none;
+        }
+
+        .detail-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 1px;
+            background: #444;
+            outline: none;
+            margin: 10px 0;
+        }
+
+        .detail-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 20px;
+            background: #FFF;
+            cursor: pointer;
+        }
+
         .time-display {
-            padding: 20px 25px;
+            padding: 15px 20px;
             border-top: var(--border);
             display: flex;
             justify-content: space-between;
@@ -159,46 +205,12 @@
             font-family: var(--font-mono);
             font-size: 8px;
             color: rgba(255,255,255,0.3);
-            letter-spacing: 1px;
         }
 
         .time-value {
             font-family: var(--font-mono);
-            font-size: 16px;
+            font-size: 14px;
             color: #FFFFFF;
-        }
-
-        /* Terminal Feed */
-        .terminal-section {
-            padding: 25px;
-            flex-grow: 1;
-            background: transparent;
-        }
-
-        .panel-title {
-            font-family: var(--font-header);
-            font-size: 8px;
-            color: rgba(255,255,255,0.2);
-            margin-bottom: 15px;
-            letter-spacing: 2px;
-        }
-
-        #diag-terminal {
-            font-family: var(--font-mono);
-            font-size: 9px;
-            color: rgba(255,255,255,0.4);
-            white-space: pre-wrap;
-            line-height: 1.6;
-        }
-
-        footer {
-            border-top: var(--border);
-            padding: 20px 25px;
-            font-family: var(--font-mono);
-            font-size: 8px;
-            color: rgba(255,255,255,0.2);
-            text-align: center;
-            letter-spacing: 1px;
         }
     </style>
 </head>
@@ -209,77 +221,105 @@
     </header>
 
     <nav class="module-switcher">
-        <div class="module-tab active" onclick="switchModule('01')">LAB_01</div>
-        <div class="module-tab" onclick="switchModule('02')">VFX_02</div>
+        <div class="module-tab active">LAB_01</div>
+        <div class="module-tab">VFX_02</div>
     </nav>
 
-    <section class="main-section">
-        <div id="content-01" class="module-content active">
-            <div class="canvas-container">
-                <canvas id="niagara-canvas"></canvas>
-            </div>
-        </div>
-        <div id="content-02" class="module-content">
-            <div class="placeholder-view">
-                <div class="video-box">
-                    <div style="font-family: var(--font-mono); font-size: 9px; opacity: 0.2;">[ PENDING_SIGNAL ]</div>
-                </div>
-                <div class="video-desc-block">
-                    <div class="desc-title">NS_FOUNTAIN</div>
-                    <div class="desc-body">
-                        NIAGARA PARTICLE SYSTEM. HLSL INTEGRATION. DYNAMIC ALPHA CURVE VISUALIZATION.
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    <div class="canvas-container">
+        <canvas id="niagara-canvas"></canvas>
+        <div id="goal-notification" class="goal-text">GOAL_REACHED: [LEVEL_01_CLEARED]</div>
+    </div>
 
     <div class="time-display">
         <div class="time-label">UTC_TELEMETRY</div>
         <div class="time-value" id="live-clock">00:00:00:00</div>
     </div>
 
-    <section class="terminal-section">
-        <div class="panel-title">DIAGNOSTICS_FEED</div>
-        <div id="diag-terminal"></div>
+    <section class="details-panel">
+        <div class="details-header">Details</div>
+        <div class="category-header">TRANSFORM</div>
+        
+        <div class="detail-row">
+            <div class="detail-label">Position X</div>
+            <div class="input-group">
+                <span class="input-prefix">X</span>
+                <input type="number" id="posX" class="detail-input" value="150">
+            </div>
+            <input type="range" id="posX-slider" class="detail-slider" min="0" max="400" value="150">
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">Position Y</div>
+            <div class="input-group">
+                <span class="input-prefix">Y</span>
+                <input type="number" id="posY" class="detail-input" value="150">
+            </div>
+            <input type="range" id="posY-slider" class="detail-slider" min="0" max="300" value="150">
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">Rotation</div>
+            <div class="input-group">
+                <span class="input-prefix">D</span>
+                <input type="number" id="rot" class="detail-input" value="45">
+            </div>
+            <input type="range" id="rot-slider" class="detail-slider" min="0" max="360" value="45">
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">Scale X</div>
+            <div class="input-group">
+                <span class="input-prefix">X</span>
+                <input type="number" id="scaleX" class="detail-input" value="60">
+            </div>
+            <input type="range" id="scaleX-slider" class="detail-slider" min="10" max="200" value="60">
+        </div>
     </section>
 
-    <footer>
-        STRICT_0PX_B_RADIUS // UE_5.2.4
-    </footer>
-
     <script>
-        function switchModule(id) {
-            document.querySelectorAll('.module-tab').forEach(el => el.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-            document.querySelectorAll('.module-content').forEach(el => el.classList.remove('active'));
-            document.getElementById('content-' + id).classList.add('active');
-        }
-
-        const terminal = document.getElementById('diag-terminal');
-        const logs = [
-            "[SYS] CORE_INIT...",
-            "[VFX] NS_FOUNTAIN_LOAD...",
-            "[GPU] SHADERS_OK...",
-            "[MEM] BUFFER_ALLOC..."
-        ];
-
-        function addLog() {
-            const log = logs[Math.floor(Math.random() * logs.length)];
-            const time = new Date().toLocaleTimeString('en-GB', { hour12: false });
-            const lines = terminal.innerHTML.split('\n');
-            terminal.innerHTML += `[${time}] ${log}\n`;
-            if (lines.length > 8) terminal.innerHTML = lines.slice(lines.length - 8).join('\n');
-        }
-        setInterval(addLog, 2500);
-
         const canvas = document.getElementById('niagara-canvas');
         const ctx = canvas.getContext('2d');
+        const goalNotif = document.getElementById('goal-notification');
+        
         let particles = [];
+        let deflector = { x: 150, y: 150, rotation: 45 * Math.PI / 180, length: 60 };
+        const goalZone = { x: 250, y: 180, w: 50, h: 50 };
+        let goalHits = 0;
+
+        const inputs = {
+            posX: document.getElementById('posX'),
+            posY: document.getElementById('posY'),
+            rot: document.getElementById('rot'),
+            scaleX: document.getElementById('scaleX'),
+            posX_s: document.getElementById('posX-slider'),
+            posY_s: document.getElementById('posY-slider'),
+            rot_s: document.getElementById('rot-slider'),
+            scaleX_s: document.getElementById('scaleX-slider')
+        };
+
+        function syncUI(source) {
+            if (source.includes('slider')) {
+                inputs.posX.value = deflector.x = parseInt(inputs.posX_s.value);
+                inputs.posY.value = deflector.y = parseInt(inputs.posY_s.value);
+                inputs.rot.value = parseInt(inputs.rot_s.value);
+                deflector.rotation = inputs.rot.value * Math.PI / 180;
+                inputs.scaleX.value = deflector.length = parseInt(inputs.scaleX_s.value);
+            } else {
+                deflector.x = inputs.posX_s.value = parseInt(inputs.posX.value);
+                deflector.y = inputs.posY_s.value = parseInt(inputs.posY.value);
+                inputs.rot_s.value = parseInt(inputs.rot.value);
+                deflector.rotation = inputs.rot.value * Math.PI / 180;
+                deflector.length = inputs.scaleX_s.value = parseInt(inputs.scaleX.value);
+            }
+        }
+
+        Object.keys(inputs).forEach(k => inputs[k].addEventListener('input', () => syncUI(k)));
 
         function resize() {
             canvas.width = canvas.offsetWidth;
             canvas.height = canvas.offsetHeight;
+            inputs.posX_s.max = canvas.width;
+            inputs.posY_s.max = canvas.height;
         }
         window.addEventListener('resize', resize);
         resize();
@@ -287,31 +327,71 @@
         class Particle {
             constructor() { this.reset(); }
             reset() {
-                this.x = Math.random() * canvas.width;
-                this.y = canvas.height + 10;
-                this.vx = (Math.random() - 0.5) * 1;
-                this.vy = -Math.random() * 2 - 1;
-                this.life = 1;
-                this.decay = Math.random() * 0.015 + 0.005;
+                this.x = 20;
+                this.y = 20;
+                this.vx = 1.5 + Math.random();
+                this.vy = 0.5 + Math.random();
             }
             update() {
-                this.x += this.vx; this.y += this.vy;
-                this.life -= this.decay;
-                if (this.life <= 0) this.reset();
+                this.x += this.vx;
+                this.y += this.vy;
+                this.vy += 0.05;
+
+                const dx = this.x - deflector.x;
+                const dy = this.y - deflector.y;
+                const cos = Math.cos(-deflector.rotation);
+                const sin = Math.sin(-deflector.rotation);
+                const localX = dx * cos - dy * sin;
+                const localY = dx * sin + dy * cos;
+
+                if (Math.abs(localY) < 5 && Math.abs(localX) < deflector.length / 2) {
+                    const nx = Math.sin(deflector.rotation);
+                    const ny = -Math.cos(deflector.rotation);
+                    const dot = this.vx * nx + this.vy * ny;
+                    this.vx -= 2 * dot * nx;
+                    this.vy -= 2 * dot * ny;
+                }
+
+                if (this.x > goalZone.x && this.x < goalZone.x + goalZone.w && 
+                    this.y > goalZone.y && this.y < goalZone.y + goalZone.h) {
+                    goalHits++;
+                    this.reset();
+                }
+
+                if (this.y > canvas.height || this.x > canvas.width || this.x < 0) this.reset();
             }
             draw() {
-                ctx.fillStyle = `rgba(255, 255, 255, ${this.life * 0.6})`;
+                ctx.fillStyle = "#FFF";
                 ctx.fillRect(this.x, this.y, 1, 1);
             }
         }
 
-        for (let i = 0; i < 80; i++) particles.push(new Particle());
+        for (let i = 0; i < 30; i++) particles.push(new Particle());
 
         function animate() {
-            if (document.getElementById('content-01').classList.contains('active')) {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                particles.forEach(p => { p.update(); p.draw(); });
+            ctx.fillStyle = 'rgba(5,5,5,0.3)';
+            ctx.fillRect(0,0,canvas.width, canvas.height);
+            
+            ctx.setLineDash([2, 2]);
+            ctx.strokeStyle = "rgba(255,255,255,0.5)";
+            ctx.strokeRect(goalZone.x, goalZone.y, goalZone.w, goalZone.h);
+            ctx.setLineDash([]);
+
+            ctx.save();
+            ctx.translate(deflector.x, deflector.y);
+            ctx.rotate(deflector.rotation);
+            ctx.fillStyle = "#FFF";
+            ctx.fillRect(-deflector.length/2, -1, deflector.length, 2);
+            ctx.restore();
+
+            particles.forEach(p => { p.update(); p.draw(); });
+
+            if (goalHits > 10) {
+                goalNotif.style.display = 'block';
+            } else {
+                goalNotif.style.display = 'none';
             }
+            if (goalHits > 0) goalHits -= 0.1;
             requestAnimationFrame(animate);
         }
         animate();
