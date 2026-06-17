@@ -64,7 +64,7 @@
             letter-spacing: 4px;
         }
 
-        /* Telemetry Panel */
+        /* Module Switcher / Left Panel */
         .panel-left {
             grid-column: 1;
             grid-row: 2;
@@ -74,7 +74,7 @@
             background: rgba(5,5,5,0.8);
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 15px;
         }
 
         .panel-title {
@@ -86,31 +86,53 @@
             color: rgba(255,255,255,0.5);
         }
 
-        .metric-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .metric-label {
+        .module-item {
             font-family: var(--font-mono);
-            font-size: 9px;
+            font-size: 11px;
+            padding: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+            cursor: pointer;
+            transition: all 0.2s ease;
             text-transform: uppercase;
-            color: rgba(255,255,255,0.4);
         }
 
-        .metric-value {
-            font-family: var(--font-mono);
-            font-size: 12px;
-            word-break: break-all;
+        .module-item:hover {
+            border-color: #FFFFFF;
+            background: rgba(255,255,255,0.05);
         }
 
-        /* Center Piece */
+        .module-item.active {
+            border-color: #FFFFFF;
+            background: #FFFFFF;
+            color: #050505;
+        }
+
+        .module-item.locked {
+            opacity: 0.4;
+            cursor: not-allowed;
+            border-style: dashed;
+        }
+
+        /* Center Viewport */
         .main-view {
             grid-column: 2;
             grid-row: 2;
             position: relative;
             z-index: 5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .module-content {
+            width: 100%;
+            height: 100%;
+            display: none;
+        }
+
+        .module-content.active {
+            display: block;
         }
 
         #niagara-canvas {
@@ -118,7 +140,31 @@
             height: 100%;
         }
 
-        /* Logs Panel */
+        .placeholder-card {
+            width: 80%;
+            height: 80%;
+            border: 1px solid #FFFFFF;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            text-align: center;
+            background: rgba(5,5,5,0.9);
+        }
+
+        .locked-view {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            font-family: var(--font-header);
+            font-size: 14px;
+            letter-spacing: 2px;
+        }
+
+        /* Right Panel / Info */
         .panel-right {
             grid-column: 3;
             grid-row: 2;
@@ -127,6 +173,14 @@
             z-index: 10;
             background: rgba(5,5,5,0.8);
             overflow-y: auto;
+        }
+
+        .info-section {
+            display: none;
+        }
+
+        .info-section.active {
+            display: block;
         }
 
         .log-entry {
@@ -145,7 +199,7 @@
             color: rgba(255,255,255,0.8);
         }
 
-        /* Footer / Terminal */
+        /* Footer */
         footer {
             grid-column: 1 / -1;
             grid-row: 3;
@@ -168,7 +222,7 @@
         .terminal-content {
             font-family: var(--font-mono);
             font-size: 11px;
-            color: #00FF00; /* Subtle matrix green for the terminal text */
+            color: #00FF00;
             opacity: 0.8;
         }
 
@@ -185,64 +239,84 @@
     <div class="grid-overlay"></div>
 
     <header>
-        <h1>LAB-0 // REDESIGN_CMD_CENTER</h1>
-        <div class="status-badge">SYSTEM: ACTIVE</div>
+        <h1>LAB-0 // PORTFOLIO_SYSTEM_v1.0</h1>
+        <div class="status-badge">OS: STABLE</div>
     </header>
 
     <aside class="panel-left">
-        <div class="metric-group">
-            <div class="panel-title">HARDWARE TELEMETRY</div>
-            <div class="metric-label">GPU STATE</div>
-            <div class="metric-value">NVIDIA RTX 4060 Laptop</div>
-            <div class="metric-label">MODE</div>
-            <div class="metric-value" style="color: #FF4400;">DISCRETE OVERRIDE ACTIVE / HIGH PERFORMANCE</div>
-        </div>
-
-        <div class="metric-group">
-            <div class="panel-title">ENVIRONMENT</div>
-            <div class="metric-label">ACTIVE PROJECT</div>
-            <div class="metric-value">LAB_TEST (Unreal Engine 5.2.4)</div>
-            <div class="metric-label">CURRENT MODULE</div>
-            <div class="metric-value">NIAGARA SPARK SYSTEM (NS_Fountain)</div>
-        </div>
-
-        <div class="metric-group">
-            <div class="panel-title">AUTOMATION</div>
-            <div class="metric-label">7-DAY DIRECTION FILTER</div>
-            <div class="metric-value">Day 1: Completed</div>
-            <div class="metric-value">Day 2: Force/Collision</div>
-        </div>
-
-        <div class="metric-group">
-            <div class="panel-title">SECURITY</div>
-            <div class="metric-label">COGNITIVE EVASION SHIELD</div>
-            <div class="metric-value">100%</div>
-        </div>
-
-        <div class="metric-group">
-            <div class="panel-title">SYSTEM TIME</div>
-            <div class="metric-value" id="live-clock">00:00:00:00</div>
-        </div>
+        <div class="panel-title">PROJECTS / MODULES</div>
+        <div class="module-item active" onclick="switchModule('01')">MODULE_01 // LAB-0 (PWA)</div>
+        <div class="module-item" onclick="switchModule('02')">MODULE_02 // NS_FOUNTAIN</div>
+        <div class="module-item locked" onclick="switchModule('03')">MODULE_03 // [LOCKED]</div>
+        <div class="module-item locked" onclick="switchModule('04')">MODULE_04 // [LOCKED]</div>
+        
+        <div class="panel-title" style="margin-top:20px;">SYSTEM TIME</div>
+        <div style="font-family: var(--font-mono); font-size: 14px;" id="live-clock">00:00:00:00</div>
     </aside>
 
     <main class="main-view">
-        <canvas id="niagara-canvas"></canvas>
+        <!-- Module 01: Telemetry Canvas -->
+        <div id="content-01" class="module-content active">
+            <canvas id="niagara-canvas"></canvas>
+        </div>
+
+        <!-- Module 02: Niagara Sparks -->
+        <div id="content-02" class="module-content">
+            <div class="placeholder-card">
+                <div class="log-header" style="font-size: 18px; margin-bottom: 20px;">NS_FOUNTAIN // VISUALIZER</div>
+                <div style="width: 100%; aspect-ratio: 16/9; border: 1px solid #FFFFFF; display: flex; align-items: center; justify-content: center; background: #000;">
+                    <div class="log-body" style="font-family: var(--font-mono); font-size: 12px; opacity: 0.5;">[ DROP RECORDING HERE ]<br>OR<br>VIEW TECHNICAL BREAKDOWN -></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Module 03: Locked -->
+        <div id="content-03" class="module-content">
+            <div class="locked-view">
+                <div>SYSTEM OFFLINE</div>
+                <div style="font-size: 10px; opacity: 0.5; border: 1px solid #FFFFFF; padding: 5px 10px;">DAY 2: FORCE & COLLISION REQ</div>
+            </div>
+        </div>
+
+        <!-- Module 04: Locked -->
+        <div id="content-04" class="module-content">
+            <div class="locked-view">
+                <div>SYSTEM OFFLINE</div>
+                <div style="font-size: 10px; opacity: 0.5; border: 1px solid #FFFFFF; padding: 5px 10px;">DAY 3: BLUEPRINT TRIGGER REQ</div>
+            </div>
+        </div>
     </main>
 
     <aside class="panel-right">
-        <div class="panel-title">SYSTEM LOGS</div>
-        <div class="log-entry">
-            <div class="log-header">LAB_TEST</div>
-            <div class="log-body">Initializing virtualized buffer environment for Niagara spark simulations. Shader compilation synchronized across 8 threads.</div>
+        <!-- Info 01 -->
+        <div id="info-01" class="info-section active">
+            <div class="panel-title">TELEMETRY_LOGS</div>
+            <div class="log-entry">
+                <div class="log-header">LAB-0 (PWA)</div>
+                <div class="log-body">Monochrome interface deployment. 1px grid alignment. Particle simulation synchronized to mouse drag.</div>
+            </div>
+            <div class="log-entry">
+                <div class="log-header">HARDWARE</div>
+                <div class="log-body">NVIDIA RTX 4060 Laptop detected. High performance discrete override enabled.</div>
+            </div>
         </div>
-        <div class="log-entry">
-            <div class="log-header">NS_Fountain</div>
-            <div class="log-body">Emitter initialized. Force/Collision logic for Day 2 sequence injected. Particle lifecycle set to 2.4s.</div>
+
+        <!-- Info 02 -->
+        <div id="info-02" class="info-section">
+            <div class="panel-title">TECHNICAL_BREAKDOWN</div>
+            <div class="log-entry">
+                <div class="log-header">SCALE COLOR</div>
+                <div class="log-body">Scale Factor: 1.5. Alpha Curve: Linear Fade-out over 2.4s lifecycle. Color gradient: #FF4400 -> #FFFFFF.</div>
+            </div>
+            <div class="log-entry">
+                <div class="log-header">CONTENT DRAWER</div>
+                <div class="log-body">Path: /Game/VFX/Niagara/NS_Fountain. Shortcut: Ctrl+Space -> Filter: Niagara Systems.</div>
+            </div>
         </div>
-        <div class="log-entry">
-            <div class="log-header">LAB-0 Redesign</div>
-            <div class="log-body">Pure monochrome interface deployment. Applying strict 1px grid alignment. Fasting data module purged per user constraint.</div>
-        </div>
+
+        <!-- Info 03/04 -->
+        <div id="info-03" class="info-section"><div class="panel-title">ENCRYPTED</div><div class="log-body" style="font-family: var(--font-mono); font-size: 11px;">[ DATA_NOT_FOUND ]</div></div>
+        <div id="info-04" class="info-section"><div class="panel-title">ENCRYPTED</div><div class="log-body" style="font-family: var(--font-mono); font-size: 11px;">[ DATA_NOT_FOUND ]</div></div>
     </aside>
 
     <footer>
@@ -251,14 +325,33 @@
             <span id="sys-res">RES: 1920x1080</span>
         </div>
         <div class="terminal-content" id="terminal-lines">
-            > Initializing core... DONE<br>
-            > Loading assets/LAB-0.png... DONE<br>
-            > Synchronizing with ephemeralgaze/LAB-0... OK<br>
-            > Device: DESKTOP_OVERRIDE_ACTIVE
+            > Initializing portfolio systems... OK<br>
+            > Module selection synchronized... OK<br>
+            > Current module: MODULE_01
         </div>
     </footer>
 
     <script>
+        function switchModule(id) {
+            // Update active state in menu
+            document.querySelectorAll('.module-item').forEach(el => el.classList.remove('active'));
+            const clickedItem = event.currentTarget;
+            clickedItem.classList.add('active');
+
+            // Switch Content
+            document.querySelectorAll('.module-content').forEach(el => el.classList.remove('active'));
+            document.getElementById('content-' + id).classList.add('active');
+
+            // Switch Info
+            document.querySelectorAll('.info-section').forEach(el => el.classList.remove('active'));
+            document.getElementById('info-' + id).classList.add('active');
+
+            // Update terminal
+            const lines = document.getElementById('terminal-lines');
+            lines.innerHTML += `<br>> Switching to MODULE_${id}... OK`;
+            lines.scrollTop = lines.scrollHeight;
+        }
+
         // Niagara Spark Simulation
         const canvas = document.getElementById('niagara-canvas');
         const ctx = canvas.getContext('2d');
@@ -280,20 +373,16 @@
         });
 
         class Particle {
-            constructor() {
-                this.reset();
-            }
+            constructor() { this.reset(); }
             reset() {
                 this.x = Math.random() * canvas.width;
                 this.y = canvas.height + 10;
                 this.vx = (Math.random() - 0.5) * 2;
                 this.vy = -Math.random() * 4 - 2;
-                this.size = 1;
                 this.life = 1;
                 this.decay = Math.random() * 0.01 + 0.005;
             }
             update() {
-                // Drag repulsion from mouse
                 if (mouse.x !== null) {
                     const dx = this.x - mouse.x;
                     const dy = this.y - mouse.y;
@@ -304,9 +393,7 @@
                         this.vy += (dy / dist) * force * 2;
                     }
                 }
-
-                this.x += this.vx;
-                this.y += this.vy;
+                this.x += this.vx; this.y += this.vy;
                 this.life -= this.decay;
                 if (this.life <= 0 || this.y < -10) this.reset();
             }
@@ -319,16 +406,14 @@
         for (let i = 0; i < 200; i++) particles.push(new Particle());
 
         function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => {
-                p.update();
-                p.draw();
-            });
+            if (document.getElementById('content-01').classList.contains('active')) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => { p.update(); p.draw(); });
+            }
             requestAnimationFrame(animate);
         }
         animate();
 
-        // Live Clock
         function updateClock() {
             const now = new Date();
             const h = String(now.getHours()).padStart(2, '0');
