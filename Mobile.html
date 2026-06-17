@@ -33,17 +33,14 @@
             overflow-x: hidden;
             display: flex;
             flex-direction: column;
-        }
-
-        .grid-overlay {
-            position: fixed;
-            inset: 0;
+            /* Checkered Grid Background */
             background-image: 
-                linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px);
-            background-size: 20px 20px;
-            pointer-events: none;
-            z-index: 1;
+                linear-gradient(45deg, #0a0a0a 25%, transparent 25%), 
+                linear-gradient(-45deg, #0a0a0a 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, #0a0a0a 75%), 
+                linear-gradient(-45deg, transparent 75%, #0a0a0a 75%);
+            background-size: 40px 40px;
+            background-position: 0 0, 0 20px, 20px -20px, -20px 0px;
         }
 
         header {
@@ -100,7 +97,7 @@
             border-bottom: var(--border);
             position: relative;
             z-index: 5;
-            background: var(--bg);
+            background: rgba(5,5,5,0.4);
         }
 
         .module-content {
@@ -124,12 +121,13 @@
 
         /* Placeholder View */
         .placeholder-view {
-            padding: 40px 20px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 15px;
             align-items: center;
             text-align: center;
+            background: rgba(5,5,5,0.8);
         }
 
         .video-box {
@@ -142,12 +140,33 @@
             background: #000;
         }
 
+        .video-desc-block {
+            width: 100%;
+            border: 1px solid #FFFFFF;
+            padding: 15px;
+            text-align: left;
+        }
+
+        .desc-title {
+            font-family: var(--font-header);
+            font-size: 14px;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .desc-body {
+            font-family: var(--font-mono);
+            font-size: 9px;
+            line-height: 1.4;
+            color: rgba(255,255,255,0.7);
+        }
+
         /* Protocols Section */
         .protocols-section {
             padding: 20px;
             border-bottom: var(--border);
             z-index: 10;
-            background: var(--bg);
+            background: rgba(5,5,5,0.85);
         }
 
         .panel-title {
@@ -179,7 +198,7 @@
         /* Terminal Section */
         .terminal-section {
             padding: 20px;
-            background: var(--bg);
+            background: rgba(5,5,5,0.85);
             z-index: 10;
             flex-grow: 1;
             display: flex;
@@ -208,8 +227,6 @@
     </style>
 </head>
 <body>
-    <div class="grid-overlay"></div>
-
     <header>
         <h1>LAB-0 // MOBILE_CMD</h1>
         <div class="status-badge">ACTIVE</div>
@@ -228,13 +245,19 @@
         </div>
         <div id="content-02" class="module-content">
             <div class="placeholder-view">
-                <div style="font-family: var(--font-header); font-size: 10px;">NS_FOUNTAIN // VISUALIZER</div>
                 <div class="video-box">
                     <div style="font-family: var(--font-mono); font-size: 10px; opacity: 0.3;">[ VIDEO_NOT_FOUND ]</div>
                 </div>
+                <div class="video-desc-block">
+                    <div class="panel-title" style="border:none; margin-bottom:5px;">视频简介 // VIDEO DESCRIPTION</div>
+                    <div class="desc-title">NS_FOUNTAIN</div>
+                    <div class="desc-body">
+                        NIAGARA PARTICLE FOUNTAIN SYSTEM. IMPLEMENTS ADVANCED SCALE COLOR MODULES WITH DYNAMIC ALPHA CURVE FADING OVER A 2.4S LIFECYCLE. OPTIMIZED FOR HIGH-CONTRAST TELEMETRY VISUALIZATION. CORE SIMULATION DRIVEN BY HLSL VERTEX SHADERS.
+                    </div>
+                </div>
             </div>
         </div>
-    </section>
+    </nav>
 
     <section class="protocols-section">
         <div class="panel-title">CORE SYSTEM PROTOCOLS</div>
