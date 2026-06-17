@@ -43,21 +43,23 @@
         #dot-matrix-canvas {
             position: fixed;
             inset: 0;
-            z-index: 1; /* Above body background */
+            z-index: 1;
             pointer-events: none;
             display: block;
+            width: 100%;
+            height: 100%;
         }
 
         #bg-overlay {
             position: fixed;
             inset: 0;
             background: var(--overlay-bg);
-            opacity: 0.85; /* Precision opacity for depth */
+            opacity: 0.85;
             z-index: 2;
             pointer-events: none;
         }
 
-        /* --- Boot Sequence (Independent Logo) --- */
+        /* --- Boot Sequence --- */
         #boot-screen-bg {
             position: fixed;
             inset: 0;
@@ -88,7 +90,7 @@
 
         #boot-lab { 
             display: inline-block;
-            margin-right: -0.1em; /* Tighten the LAB- and 0 gap per Kyungsoo */
+            margin-right: -0.1em;
         }
         
         #boot-variant { 
@@ -97,7 +99,7 @@
             text-align: left;
         }
 
-        /* --- Layout HUD --- */
+        /* --- HUD --- */
         header {
             grid-column: 1 / -1;
             padding: 0 40px;
@@ -293,10 +295,8 @@
 
     <canvas id="dot-matrix-canvas"></canvas>
     <div id="bg-overlay"></div>
-
     <div id="boot-screen-bg"></div>
 
-    <!-- Independent Logo stays above HUD and Boot BG -->
     <div class="boot-logo-container" id="logo-main">
         <span id="boot-lab">LAB-</span>
         <div id="boot-variant"><span id="char-target">0</span></div>
@@ -344,7 +344,7 @@
             3: { title: "LEVEL_03 // WIND", desc: "INTEGRATION OF DIRECTIONAL WIND FIELDS...", video: "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" }
         };
 
-        // --- Verbatim Particle Implementation ---
+        // --- Verbatim Particle Implementation from Media ID 42e02494-82a2-5292-b9fe-0a02c2dde9b8 ---
         const canvas = document.getElementById('dot-matrix-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -391,6 +391,7 @@
             }
             requestAnimationFrame(animate);
         }
+        // --- End of Verbatim Particle Code ---
 
         function scrambleText(element, finalString, duration, callback) {
             const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ#$';
@@ -418,7 +419,6 @@
             const logo = document.getElementById('logo-main');
             const targetChar = document.getElementById('char-target');
             const anchor = document.getElementById('logo-placeholder');
-            
             const bootText = window.innerWidth <= 768 ? 'MOBILE' : 'DESKTOP';
 
             await sleep(600);
@@ -438,7 +438,6 @@
 
             await sleep(1000);
             bg.style.opacity = '0';
-            
             document.getElementById('hud-header').classList.add('visible');
             document.getElementById('hud-left').classList.add('visible');
             document.getElementById('hud-center').classList.add('visible');
@@ -496,7 +495,6 @@
             container.style.opacity = '0'; title.style.opacity = '0'; desc.style.opacity = '0';
             closeBtn.classList.remove('active');
             canvas.style.opacity = '1.0';
-
             document.querySelectorAll('.project-item').forEach(i => i.classList.remove('active', 'shift-up', 'shift-down'));
             video.pause();
 
