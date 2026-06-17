@@ -75,7 +75,11 @@
             text-transform: uppercase;
         }
 
-        #boot-lab { transform: translateX(0); transition: transform var(--transition-smooth); }
+        #boot-lab { 
+            transform: translate(0, 0) scale(1); 
+            transition: transform var(--transition-smooth); 
+            display: inline-block;
+        }
         #boot-variant { 
             position: relative; 
             display: inline-block;
@@ -102,7 +106,7 @@
 
         header h1 {
             font-family: var(--font-header);
-            font-size: 14px;
+            font-size: 16px;
             letter-spacing: 6px;
             font-weight: 700;
         }
@@ -135,7 +139,7 @@
             padding: 20px 0;
             cursor: pointer;
             color: var(--muted);
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all var(--transition-smooth);
             position: relative;
             text-transform: uppercase;
         }
@@ -171,7 +175,9 @@
             position: relative;
             display: none;
             flex-direction: column;
-            overflow: hidden;
+            overflow: visible;
+            opacity: 0;
+            transition: opacity var(--transition-smooth);
         }
 
         #main-video {
@@ -232,6 +238,7 @@
             display: flex;
             flex-direction: column;
             gap: 24px;
+            position: relative;
         }
 
         #project-title {
@@ -241,6 +248,8 @@
             line-height: 1.2;
             text-transform: uppercase;
             display: none;
+            opacity: 0;
+            transition: opacity var(--transition-smooth);
         }
 
         #project-desc {
@@ -249,6 +258,36 @@
             line-height: 1.8;
             color: var(--muted);
             display: none;
+            opacity: 0;
+            transition: opacity var(--transition-smooth);
+        }
+
+        /* --- Close Button --- */
+        #close-trigger {
+            position: absolute;
+            top: -30px;
+            right: 0;
+            background: transparent;
+            border: none;
+            color: var(--fg);
+            font-family: var(--font-mono);
+            font-size: 10px;
+            cursor: pointer;
+            letter-spacing: 2px;
+            opacity: 0;
+            transition: opacity var(--transition-smooth);
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #close-trigger.active {
+            opacity: 0.6;
+            pointer-events: auto;
+        }
+        #close-trigger:hover {
+            opacity: 1;
         }
 
         /* --- Utilities --- */
@@ -283,6 +322,7 @@
 
     <main class="main-stage" id="hud-center">
         <div id="video-container">
+            <button id="close-trigger" onclick="closeProject()">CLOSE [X]</button>
             <video id="main-video" playsinline crossorigin="anonymous">
                 <source id="video-src" src="" type="video/mp4">
             </video>
@@ -381,10 +421,14 @@
 
             await sleep(1500);
 
-            // Stage 3: LAB- slides to corner, Desktop fades
+            // Stage 3: LAB- slides to corner + scale down smoothly
             target.style.opacity = '0';
             const rect = lab.getBoundingClientRect();
-            lab.style.transform = `translate(-${rect.left - 40}px, -${rect.top - 30}px)`;
+            
+            // Final target: ~40px left, ~32px top. Final scale: ~16px / 64px = 0.25
+            const finalX = -(rect.left - 40);
+            const finalY = -(rect.top - 32);
+            lab.style.transform = `translate(${finalX}px, ${finalY}px) scale(0.25)`;
 
             await sleep(800);
             overlay.style.opacity = '0';
@@ -406,6 +450,7 @@
             const desc = document.getElementById('project-desc');
             const video = document.getElementById('main-video');
             const source = document.getElementById('video-src');
+            const closeBtn = document.getElementById('close-trigger');
 
             // Handle HUD interactions
             items.forEach((item, index) => {
@@ -429,12 +474,51 @@
             
             // Show Content
             canvas.style.opacity = '0.1';
+            
             container.style.display = 'flex';
             title.style.display = 'block';
             desc.style.display = 'block';
             
+            // Trigger Fade-in
+            setTimeout(() => {
+                container.style.opacity = '1';
+                title.style.opacity = '1';
+                desc.style.opacity = '1';
+                closeBtn.classList.add('active');
+            }, 50);
+            
             video.load();
             video.play();
+            playBtn.innerText = '[PAUSE]';
+        }
+
+        function closeProject() {
+            const items = document.querySelectorAll('.project-item');
+            const container = document.getElementById('video-container');
+            const title = document.getElementById('project-title');
+            const desc = document.getElementById('project-desc');
+            const video = document.getElementById('main-video');
+            const closeBtn = document.getElementById('close-trigger');
+
+            // Fade out
+            container.style.opacity = '0';
+            title.style.opacity = '0';
+            desc.style.opacity = '0';
+            closeBtn.classList.remove('active');
+            canvas.style.opacity = '1.0';
+
+            // Reset List
+            items.forEach(item => {
+                item.classList.remove('active', 'shift-up', 'shift-down');
+            });
+
+            video.pause();
+
+            setTimeout(() => {
+                container.style.display = 'none';
+                title.style.display = 'none';
+                desc.style.display = 'none';
+            }, 800);
         }
 
         // --- Video Player Functions ---
