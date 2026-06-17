@@ -20,7 +20,7 @@
   --bg-color: #050505;
   --overlay-bg: rgba(5, 5, 5, 0.7);
   --white: #ffffff;
-  --grid-color: #ffffff;
+  --grid-color: rgba(255, 255, 255, 0.1);
   --font-header: "Syncopate", sans-serif;
   --font-body: "Space Grotesk", sans-serif;
   --font-mono: "Space Mono", monospace;
@@ -30,7 +30,7 @@
 @media (dynamic-range: high) or (color-gamut: p3) {
   :root {
     --white: color(display-p3 1 1 1);
-    --grid-color: #ffffff;
+    --grid-color: color(display-p3 1 1 1 / 0.1);
   }
 }
 
@@ -72,7 +72,7 @@ body, html {
 .ui-grid {
   position: fixed;
   inset: 0;
-  border: 1px solid #ffffff;
+  border: none;
   margin: 10px;
   pointer-events: none;
   opacity: 0;
@@ -225,7 +225,7 @@ body, html {
   width: 100%;
   height: 1px;
   background-color: var(--white);
-  border-radius: 0 !important;
+  border-radius: 0;
   transition: transform 0.4s var(--ease), opacity 0.4s var(--ease);
 }
 
@@ -261,6 +261,7 @@ body, html {
   text-transform: uppercase;
   opacity: 0.6;
   transition: opacity 0.3s ease;
+  cursor: pointer;
 }
 
 .mobile-menu-item.active { opacity: 1; }
@@ -291,7 +292,7 @@ body, html {
 .overlay-frame {
   position: absolute;
   inset: 20px;
-  border: 1px solid #ffffff;
+  border: none;
   pointer-events: none;
 }
 
@@ -299,19 +300,19 @@ body, html {
   position: absolute;
   font-family: var(--font-mono);
   font-size: 10px;
-  color: #ffffff;
+  color: rgba(255, 255, 255, 0.4);
   letter-spacing: 0.1em;
 }
 @media (dynamic-range: high) or (color-gamut: p3) {
-  .coord { color: #ffffff; }
+  .coord { color: color(display-p3 1 1 1 / 0.4); }
 }
 .coord-tl { top: -20px; left: 0; }
 .coord-br { bottom: -20px; right: 0; }
 
 .content-grid {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
   width: 100%;
   padding: 114px 30px 60px;
   pointer-events: auto;
@@ -323,27 +324,32 @@ body, html {
   align-items: center;
   justify-content: center;
   gap: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 30px;
+}
+@media (dynamic-range: high) or (color-gamut: p3) {
+  .col-left { border-bottom: 1px solid color(display-p3 1 1 1 / 0.05); }
 }
 
 .avatar {
   width: 120px;
   height: 120px;
-  border-radius: 0 !important;
-  border: 1px solid #ffffff;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 6px;
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.05);
 }
 @media (dynamic-range: high) or (color-gamut: p3) {
   .avatar {
-    border: 1px solid #ffffff;
-    background: #ffffff;
+    border: 1px solid color(display-p3 1 1 1 / 0.2);
+    background: color(display-p3 1 1 1 / 0.05);
   }
 }
 
 .avatar img {
   width: 100%;
   height: 100%;
-  border-radius: 0 !important;
+  border-radius: 50%;
   object-fit: cover;
 }
 
@@ -363,20 +369,233 @@ body, html {
   font-family: var(--font-mono);
 }
 
+#projects-overlay .content-grid {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+}
+
+.project-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.project-entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);
+  cursor: pointer;
+  opacity: 0.5;
+}
+@media (dynamic-range: high) or (color-gamut: p3) {
+  .project-entry { border-bottom: 1px solid color(display-p3 1 1 1 / 0.05); }
+}
+
+.project-entry.selected {
+  opacity: 1;
+  transform: scale(1.02);
+}
+
+.project-entry:last-child { border-bottom: none; }
+
+.project-info {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.project-id {
+  font-size: 0.55rem;
+  color: rgba(255, 255, 255, 0.3);
+}
+@media (dynamic-range: high) or (color-gamut: p3) {
+  .project-id { color: color(display-p3 1 1 1 / 0.3); }
+}
+
+.project-name {
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  transition: font-size 0.4s var(--ease);
+}
+
+.project-entry.selected .project-name { font-size: 0.95rem; }
+
+.status-tag {
+  font-size: 0.55rem;
+  padding: 2px 6px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.7);
+}
+@media (dynamic-range: high) or (color-gamut: p3) {
+  .status-tag {
+    border: 1px solid color(display-p3 1 1 1 / 0.2);
+    color: color(display-p3 1 1 1 / 0.7);
+  }
+}
+
+.spec-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.no-signal-overlay {
+  position: absolute;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  background: rgba(5, 5, 5, 0.9);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  pointer-events: none;
+}
+@media (dynamic-range: high) or (color-gamut: p3) {
+  .no-signal-overlay { color: color(display-p3 1 1 1 / 0.6); }
+}
+.no-signal-overlay.active { display: flex; }
+.no-signal-box {
+  padding: 15px 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.blink-text { animation: signal-blink 1.5s steps(1) infinite; }
+@keyframes signal-blink { 
+  0%, 100% { opacity: 1; } 
+  50% { opacity: 0; } 
+}
+
+.video-container {
+  width: 100%;
+  aspect-ratio: 16/9;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative; overflow: hidden;
+  background: #050505;
+  z-index: 10;
+  isolation: isolate;
+}
+@media (dynamic-range: high) or (color-gamut: p3) {
+  .video-container { border: 1px solid color(display-p3 1 1 1 / 0.1); }
+}
+
+.video-container video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+@media (dynamic-range: high) or (color-gamut: p3) {
+  .video-container video {
+    filter: none !important;
+    background: transparent !important;
+  }
+}
+
+.playback-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+@media (dynamic-range: high) or (color-gamut: p3) {
+  .playback-bar {
+    border-top: 1px solid color(display-p3 1 1 1 / 0.05);
+    border-bottom: 1px solid color(display-p3 1 1 1 / 0.05);
+  }
+}
+
+.p-btn {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.5);
+  font-family: var(--font-mono);
+  font-size: 0.45rem;
+  padding: 6px 4px;
+  cursor: pointer;
+  transition: all 0.3s var(--ease);
+  letter-spacing: 0.05em;
+  border-radius: 0;
+  min-width: 34px;
+}
+@media (dynamic-range: high) or (color-gamut: p3) {
+  .p-btn {
+    border: 1px solid color(display-p3 1 1 1 / 0.1);
+    color: color(display-p3 1 1 1 / 0.5);
+  }
+}
+
+.p-btn:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+  color: var(--white);
+}
+
+.p-btn.play-pause {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  min-width: 34px;
+}
+
+.play-pause svg {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+  transition: transform 0.4s var(--ease);
+}
+
+.play-pause .pause-icon { display: none; }
+.play-pause.playing .play-icon { display: none; }
+.play-pause.playing .pause-icon { display: block; }
+
+.spec-details {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 8px;
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+@media (dynamic-range: high) or (color-gamut: p3) {
+  .spec-details { color: color(display-p3 1 1 1 / 0.5); }
+}
+
+.spec-label { color: rgba(255, 255, 255, 0.3); }
+@media (dynamic-range: high) or (color-gamut: p3) {
+  .spec-label { color: color(display-p3 1 1 1 / 0.3); }
+}
+.spec-value { color: var(--white); }
+
 .info-item {
   display: flex;
   align-items: flex-start;
   gap: 15px;
-  color: #ffffff;
+  color: rgba(255, 255, 255, 0.7);
   font-size: 0.75rem;
   letter-spacing: 0.1em;
   padding: 10px 0;
-  border-bottom: 1px solid #ffffff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 @media (dynamic-range: high) or (color-gamut: p3) {
   .info-item {
-    color: #ffffff;
-    border-bottom: 1px solid #ffffff;
+    color: color(display-p3 1 1 1 / 0.7);
+    border-bottom: 1px solid color(display-p3 1 1 1 / 0.1);
   }
 }
 
@@ -390,11 +609,11 @@ body, html {
 .info-label {
   width: 80px;
   font-size: 0.55rem;
-  color: #ffffff;
+  color: rgba(255, 255, 255, 0.3);
   text-transform: uppercase;
 }
 @media (dynamic-range: high) or (color-gamut: p3) {
-  .info-label { color: #ffffff; }
+  .info-label { color: color(display-p3 1 1 1 / 0.3); }
 }
 
 .info-value {
@@ -409,92 +628,54 @@ body, html {
   text-decoration: none;
   word-break: break-all;
   transition: opacity 0.3s ease;
+  text-decoration: underline;
 }
 
 .mail-link:hover {
   opacity: 0.8;
 }
 
-
 @media (orientation: landscape) and (max-height: 500px) {
- 
-  #mobile-header.active {
-    opacity: 0 !important;
-    visibility: hidden !important;
-    pointer-events: none !important;
-  }
-
-  
-  #projects-overlay.active ~ .stage #wordmark.docked,
-  #about-overlay.active ~ .stage #wordmark.docked {
-    transform: translate(-200%, -50%) scale(0.8) !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
-  }
-
- 
-  .hamburger {
-    top: 20px !important;
-    right: 30px;
-    height: 24px;
-    transition: transform 0.4s var(--ease), right 0.4s var(--ease), opacity 0.4s ease !important;
-    z-index: 10005;
-  }
-  #projects-overlay.active ~ #hamburger,
-  #about-overlay.active ~ #hamburger {
-    right: 12px !important;
-  }
-
-
-  #projects-overlay.active ~ #hamburger span:nth-child(1),
-  #about-overlay.active ~ #hamburger span:nth-child(1) {
-    transform: translate(-3px, 3px) rotate(-45deg) scaleX(0.55) !important;
-    transform-origin: left center !important;
-  }
-  
-
-  #projects-overlay.active ~ #hamburger span:nth-child(2),
-  #about-overlay.active ~ #hamburger span:nth-child(2) {
-    opacity: 0 !important;
-    transform: scaleX(0) !important;
-  }
-  
-
-  #projects-overlay.active ~ #hamburger span:nth-child(3),
-  #about-overlay.active ~ #hamburger span:nth-child(3) {
-    transform: translate(-3px, -3px) rotate(45deg) scaleX(0.55) !important;
-    transform-origin: left center !important;
-  }
-
-
   #projects-overlay .content-grid {
-    padding: 20px 55px 20px 20px !important; 
-    height: 100vh !important;
-    align-items: center !important;
-    box-sizing: border-box !important;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 20px;
+    padding: 60px 30px 20px;
+    align-items: start;
   }
 
- 
-  #about-overlay .content-grid {
-    grid-template-columns: 1fr 1fr !important;
-    gap: 40px !important;
-    padding: 20px 55px 20px 20px !important;
-    height: 100vh !important;
-    align-items: center !important;
+  #projects-overlay .col-left {
+    border-bottom: none;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 0;
+    padding-right: 20px;
   }
-  #about-overlay .col-left {
-    border-bottom: none !important;
-    padding-bottom: 0 !important;
-    border-right: 1px solid #ffffff !important;
-    padding-right: 20px !important;
+  @media (dynamic-range: high) or (color-gamut: p3) {
+    #projects-overlay .col-left { border-right: 1px solid color(display-p3 1 1 1 / 0.05); }
   }
-  #about-overlay .avatar {
-    width: 100px !important;
-    height: 100px !important;
+
+  #projects-overlay .video-container {
+    max-height: 40vh;
+    background: #000;
+  }
+
+  #projects-overlay .spec-panel {
+    gap: 8px;
+  }
+
+  #projects-overlay .playback-bar {
+    padding: 4px 0;
+  }
+
+  #projects-overlay .spec-details {
+    grid-template-columns: 70px 1fr;
+    font-size: 0.65rem;
   }
 }
 
-.mail-link { text-decoration: underline; }
+.p-btn.playing, .p-btn.active {
+  border-color: rgba(255, 255, 255, 0.4);
+  color: var(--white);
+}
 </style>
     <link rel="icon" type="image/png" href="assets/LAB-0.png?v=20260612">
     <link rel="apple-touch-icon" href="LAB-0.png?v=20260612">
@@ -522,7 +703,7 @@ body, html {
 
 <div class="stage">
 <div id="wordmark">
-<a id="nav-home" class="menu-item" style="font-family:inherit; font-size:inherit; letter-spacing:inherit; margin:0; padding:0; text-transform: none; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; color: inherit; text-decoration: none;">
+<a id="nav-home" class="menu-item" style="font-family:inherit; font-size:inherit; letter-spacing:inherit; margin:0; padding:0; text-transform: none; display: flex; align-items: center; justify-content: center;">
   <span class="l-char">L</span><span class="ab0-reveal">AB-<svg class="mobile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
     <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
     <line x1="12" y1="18" x2="12" y2="18"></line>
@@ -576,7 +757,86 @@ body, html {
 <span class="coord coord-tl">[1111, 1111]</span>
 </div>
 <div class="content-grid">
-  <!-- Projects container cleared per minimalist zero-options specification -->
+  <div class="col-left" style="align-items: flex-start; justify-content: flex-start; padding: 15px;">
+    <div class="project-list" id="p-list">
+      <div class="project-entry selected" data-project="V1">
+        <div class="project-info">
+          <span class="project-id">[01]</span>
+          <span class="project-name">Stack it,Stack it,Go up</span>
+        </div>
+        <span class="status-tag">CONCERT</span>
+      </div>
+      <div class="project-entry" data-project="V2">
+        <div class="project-info">
+          <span class="project-id">[02]</span>
+          <span class="project-name">Atmos</span>
+        </div>
+        <span class="status-tag">M/V</span>
+      </div>
+      <div class="project-entry" data-project="V3">
+        <div class="project-info">
+          <span class="project-id">[03]</span>
+          <span class="project-name">Pineapple Slice</span>
+        </div>
+        <span class="status-tag">M/V</span>
+      </div>
+      <div class="project-entry" data-project="V4">
+        <div class="project-info">
+          <span class="project-id">[04]</span>
+          <span class="project-name">Ephemeral Gaze</span>
+        </div>
+        <span class="status-tag">CONCERT</span>
+      </div>
+      <div class="project-entry" data-project="V5">
+        <div class="project-info">
+          <span class="project-id">[05]</span>
+          <span class="project-name">All I Got</span>
+        </div>
+        <span class="status-tag">MUSIC</span>
+      </div>
+    </div>
+  </div>
+  <div class="col-right">
+    <div class="spec-panel">
+      <div class="video-container" id="v-container">
+        <video id="p-video" playsinline muted loop></video>
+        <div class="no-signal-overlay" id="no-signal">
+          <div class="no-signal-box">
+            <span class="blink-text">[ NO SIGNAL ]</span>
+            <span style="font-size: 0.6rem; opacity: 0.5;">WAITING FOR DATA...</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 0;">
+        <div id="current-time" style="font-family: \'Space Mono\', monospace; font-size: 0.6rem; color: #ffffff; width: 35px;">--:--</div>
+        <div style="flex-grow: 1; height: 1px; background: rgba(255,255,255,0.1); position: relative;">
+          <div id="p-progress" style="position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: #ffffff;"></div>
+        </div>
+        <div id="duration-time" style="font-family: \'Space Mono\', monospace; font-size: 0.6rem; color: #ffffff; width: 35px; text-align: right;">--:--</div>
+      </div>
+
+      <div class="playback-bar" id="playback-bar">
+        <button class="p-btn" id="p-volume-toggle">VOL</button>
+        <button class="p-btn" id="p-back-1s">-1S</button>
+        <button class="p-btn" id="p-back-1f">-1F</button>
+        <button class="p-btn play-pause" id="play-pause">
+          <svg class="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          <svg class="pause-icon" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+        </button>
+        <button class="p-btn" id="p-fwd-1f">+1F</button>
+        <button class="p-btn" id="p-fwd-1s">+1S</button>
+        <button class="p-btn" id="p-fs-toggle">FS</button>
+      </div>
+
+      <div class="spec-details" id="p-specs">
+        <span class="spec-label">Pipeline:</span><span class="spec-value" id="s-pipeline">---</span>
+        <span class="spec-label">Complexity:</span><span class="spec-value" id="s-complexity">---</span>
+        <span class="spec-label">Buffers:</span><span class="spec-value" id="s-buffers">---</span>
+        <span class="spec-label">Status:</span><span class="spec-value" id="s-status">---</span>
+      </div>
+    </div>
+  </div>
 </div>
 </div>
 
@@ -649,59 +909,236 @@ document.addEventListener("DOMContentLoaded", function() {
   var mAboutTrigger = document.getElementById("m-about-trigger");
   var mobileHeader = document.getElementById("mobile-header");
 
+  var pVideo = document.getElementById("p-video");
+  var noSignal = document.getElementById("no-signal");
+  var playBtn = document.getElementById("play-pause");
+  var curTimeTxt = document.getElementById("current-time");
+  var durTimeTxt = document.getElementById("duration-time");
+  var pProgress = document.getElementById("p-progress");
+  
+  var sPipeline = document.getElementById("s-pipeline");
+  var sComplexity = document.getElementById("s-complexity");
+  var sBuffers = document.getElementById("s-buffers");
+  var sStatus = document.getElementById("s-status");
+
+  var projectData = {
+    V1: {
+      video: "BackitUp.mov",
+      pipeline: "HLSL / Compute",
+      complexity: "12.4M Particles",
+      buffers: "Structured / UAV",
+      status: "STABLE"
+    },
+    V2: {
+      video: "Atmos.MOV",
+      pipeline: "GLSL / Vertex",
+      complexity: "Lorenz / 60FPS",
+      buffers: "VBO / VAO",
+      status: "OPTIMIZING"
+    },
+    V3: {
+      video: "",
+      pipeline: "PBR / Raycast",
+      complexity: "Dynamic SDF",
+      buffers: "GBuffer / Depth",
+      status: "STANDBY"
+    },
+    V4: {
+      video: "",
+      pipeline: "VFX / Compute",
+      complexity: "Q-Field Sim",
+      buffers: "Atomic / SSBO",
+      status: "ACTIVE"
+    },
+    V5: {
+      video: "",
+      pipeline: "Post / Kernel",
+      complexity: "Multi-Pass LUT",
+      buffers: "Ping-Pong / FBO",
+      status: "DRAFT"
+    }
+  };
+
+  function formatTime(s) {
+    var m = Math.floor(s / 60);
+    var sec = Math.floor(s % 60);
+    return (m < 10 ? "0" + m : m) + ":" + (sec < 10 ? "0" + sec : sec);
+  }
+
+  var updateProjectMedia = function(projectId) {
+    var data = projectData[projectId];
+    if (!data) return;
+    
+    if (pVideo && noSignal) {
+      pVideo.pause();
+      playBtn.classList.remove("playing");
+      if (pProgress) pProgress.style.width = "0%";
+      if (data.video && data.video !== "") {
+        if (curTimeTxt) curTimeTxt.innerText = "00:00";
+        if (durTimeTxt) durTimeTxt.innerText = "00:00";
+        noSignal.classList.remove("active");
+        pVideo.src = data.video + "#t=0.001";
+        pVideo.load();
+      } else {
+        if (curTimeTxt) curTimeTxt.innerText = "--:--";
+        if (durTimeTxt) durTimeTxt.innerText = "--:--";
+        pVideo.src = "";
+        noSignal.classList.add("active");
+      }
+    }
+    
+    if (sPipeline) sPipeline.innerText = data.pipeline;
+    if (sComplexity) sComplexity.innerText = data.complexity;
+    if (sBuffers) sBuffers.innerText = data.buffers;
+    if (sStatus) sStatus.innerText = data.status;
+  };
+
   setTimeout(function() { 
+    if (hamburger) hamburger.classList.add("ui-visible");
     if (wordmark) wordmark.classList.add("docked");
   }, 3500);
 
   if (wordmark) {
     wordmark.addEventListener("transitionend", function(e) {
       if (e.propertyName === "top" || e.propertyName === "transform") {
-        if (wordmark.classList.contains("docked") && !wordmark.classList.contains("docked-final")) {
-          if (grid) grid.classList.add("ui-visible");
-          if (hamburger) hamburger.classList.add("ui-visible");
-          wordmark.classList.add("docked-final");
-        }
+        if (wordmark) wordmark.classList.add("docked-final");
       }
     });
   }
-
-  var navItems = [navHome, mNavHome, mProjectsTrigger, mAboutTrigger];
-
-  var setActiveNav = function(activeEl) {
-    navItems.forEach(function(item) { if (item) item.classList.remove("active"); });
-    if (activeEl) activeEl.classList.add("active");
-  };
-
-  setActiveNav(navHome);
-
-  var switchPage = function(pageId, triggerEl) {
-    setActiveNav(triggerEl);
-    if (aboutOverlay) aboutOverlay.classList.remove("active");
-    if (projectsOverlay) projectsOverlay.classList.remove("active");
-    if (mobileHeader) mobileHeader.classList.remove("active");
-
-    if (pageId === "about") {
-      if (aboutOverlay) aboutOverlay.classList.add("active");
-      if (mobileHeader) mobileHeader.classList.add("active");
-    } else if (pageId === "projects") {
-      if (projectsOverlay) projectsOverlay.classList.add("active");
-      if (mobileHeader) mobileHeader.classList.add("active");
-    }
-    if (hamburger) hamburger.classList.remove("open");
-    if (mobileNav) mobileNav.classList.remove("open");
-  };
 
   if (hamburger) {
     hamburger.addEventListener("click", function() {
       hamburger.classList.toggle("open");
       mobileNav.classList.toggle("open");
+      mobileHeader.classList.toggle("active");
     });
   }
 
-  if (navHome) navHome.addEventListener("click", function(e) { e.stopPropagation(); switchPage("home", navHome); });
-  if (mAboutTrigger) mAboutTrigger.addEventListener("click", function() { switchPage("about", mAboutTrigger); });
-  if (mProjectsTrigger) mProjectsTrigger.addEventListener("click", function() { switchPage("projects", mProjectsTrigger); });
-  if (mNavHome) mNavHome.addEventListener("click", function() { switchPage("home", mNavHome); });
+  if (mProjectsTrigger) {
+    mProjectsTrigger.addEventListener("click", function() {
+      hamburger.classList.remove("open");
+      mobileNav.classList.remove("open");
+      mobileHeader.classList.remove("active");
+      aboutOverlay.classList.remove("active");
+      projectsOverlay.classList.add("active");
+      var selectedEntry = document.querySelector(".project-entry.selected");
+      if (selectedEntry) {
+        updateProjectMedia(selectedEntry.getAttribute("data-project"));
+      }
+    });
+  }
+
+  if (mAboutTrigger) {
+    mAboutTrigger.addEventListener("click", function() {
+      hamburger.classList.remove("open");
+      mobileNav.classList.remove("open");
+      mobileHeader.classList.remove("active");
+      projectsOverlay.classList.remove("active");
+      aboutOverlay.classList.add("active");
+      pVideo.pause();
+      playBtn.classList.remove("playing");
+    });
+  }
+
+  if (mNavHome) {
+    mNavHome.addEventListener("click", function() {
+      hamburger.classList.remove("open");
+      mobileNav.classList.remove("open");
+      mobileHeader.classList.remove("active");
+      projectsOverlay.classList.remove("active");
+      aboutOverlay.classList.remove("active");
+      pVideo.pause();
+      playBtn.classList.remove("playing");
+    });
+  }
+
+  if (navHome) {
+    navHome.addEventListener("click", function() {
+      projectsOverlay.classList.remove("active");
+      aboutOverlay.classList.remove("active");
+      pVideo.pause();
+      playBtn.classList.remove("playing");
+    });
+  }
+
+  var projectEntries = document.querySelectorAll(".project-entry");
+  projectEntries.forEach(function(entry) {
+    entry.addEventListener("click", function() {
+      projectEntries.forEach(function(e) { e.classList.remove("selected"); });
+      entry.classList.add("selected");
+      updateProjectMedia(entry.getAttribute("data-project"));
+    });
+  });
+
+  if (playBtn) playBtn.addEventListener("click", function() {
+    if (pVideo.paused) { pVideo.play(); playBtn.classList.add("playing"); }
+    else { pVideo.pause(); playBtn.classList.remove("playing"); }
+  });
+
+  if (pVideo) {
+    pVideo.addEventListener("timeupdate", function() {
+      if (!isNaN(pVideo.duration) && pVideo.duration > 0) {
+        var v = (pVideo.currentTime / pVideo.duration) * 100;
+        if (pProgress) pProgress.style.width = v + "%";
+        if (curTimeTxt) curTimeTxt.innerText = formatTime(pVideo.currentTime);
+      }
+    });
+    pVideo.addEventListener("loadedmetadata", function() {
+      if (durTimeTxt) durTimeTxt.innerText = formatTime(pVideo.duration);
+    });
+  }
+
+  var pBarContainer = document.querySelector("div[style*=\'flex-grow\']");
+  if (pProgress && pBarContainer && pBarContainer.parentElement) {
+    pBarContainer.parentElement.addEventListener("click", function(e) {
+      if (!isNaN(pVideo.duration) && pVideo.duration > 0) {
+        var rect = pBarContainer.getBoundingClientRect();
+        var x = e.clientX - rect.left;
+        var pct = x / rect.width;
+        if (pct < 0) pct = 0;
+        if (pct > 1) pct = 1;
+        pVideo.currentTime = pct * pVideo.duration;
+      }
+    });
+  }
+
+  function syncPause() { if (!pVideo.paused) { pVideo.pause(); playBtn.classList.remove("playing"); } }
+  var backBtn1s = document.getElementById("p-back-1s");
+  var backBtn1f = document.getElementById("p-back-1f");
+  var fwdBtn1f = document.getElementById("p-fwd-1f");
+  var fwdBtn1s = document.getElementById("p-fwd-1s");
+  if (backBtn1s) backBtn1s.addEventListener("click", function() { syncPause(); pVideo.currentTime -= 1; });
+  if (fwdBtn1s) fwdBtn1s.addEventListener("click", function() { syncPause(); pVideo.currentTime += 1; });
+  if (backBtn1f) backBtn1f.addEventListener("click", function() { syncPause(); pVideo.currentTime -= (1/60); });
+  if (fwdBtn1f) fwdBtn1f.addEventListener("click", function() { syncPause(); pVideo.currentTime += (1/60); });
+  
+  var volBtn = document.getElementById("p-volume-toggle");
+  if (volBtn) {
+    volBtn.addEventListener("click", function() {
+      if (pVideo.muted) {
+        pVideo.muted = false;
+        pVideo.volume = 1.0;
+        volBtn.innerText = "VOL";
+      } else if (pVideo.volume > 0) {
+        pVideo.volume = 0;
+        pVideo.muted = true;
+        volBtn.innerText = "VOL";
+      } else {
+        pVideo.muted = false;
+        pVideo.volume = 1.0;
+        volBtn.innerText = "VOL";
+      }
+    });
+  }
+
+  var fsBtn = document.getElementById("p-fs-toggle");
+  if (fsBtn) {
+    fsBtn.addEventListener("click", function() {
+      if (pVideo.requestFullscreen) pVideo.requestFullscreen();
+      else if (pVideo.webkitRequestFullscreen) pVideo.webkitRequestFullscreen();
+      else if (pVideo.msRequestFullscreen) pVideo.msRequestFullscreen();
+    });
+  }
 });
 </script>
 </body>
