@@ -11,7 +11,7 @@
         :root {
             --bg: #050505;
             --fg: #FFFFFF;
-            --border: 1px solid #FFFFFF;
+            --border: 1px solid rgba(255, 255, 255, 0.15);
             --font-header: 'Syncopate', sans-serif;
             --font-body: 'Space Grotesk', sans-serif;
             --font-mono: 'Space Mono', monospace;
@@ -32,16 +32,16 @@
             height: 100vh;
             overflow: hidden;
             display: grid;
-            grid-template-columns: 350px 1fr 350px;
-            grid-template-rows: 60px 1fr 200px;
-            /* Checkered Grid Background */
+            grid-template-columns: 320px 1fr 320px;
+            grid-template-rows: 60px 1fr 160px;
+            /* Subtle Checkered Grid Background */
             background-image: 
-                linear-gradient(45deg, #0a0a0a 25%, transparent 25%), 
-                linear-gradient(-45deg, #0a0a0a 25%, transparent 25%), 
-                linear-gradient(45deg, transparent 75%, #0a0a0a 75%), 
-                linear-gradient(-45deg, transparent 75%, #0a0a0a 75%);
-            background-size: 40px 40px;
-            background-position: 0 0, 0 20px, 20px -20px, -20px 0px;
+                linear-gradient(45deg, rgba(255,255,255,0.02) 25%, transparent 25%), 
+                linear-gradient(-45deg, rgba(255,255,255,0.02) 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.02) 75%), 
+                linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.02) 75%);
+            background-size: 60px 60px;
+            background-position: 0 0, 0 30px, 30px -30px, -30px 0px;
         }
 
         header {
@@ -49,61 +49,72 @@
             border-bottom: var(--border);
             display: flex;
             align-items: center;
-            padding: 0 20px;
+            padding: 0 30px;
             z-index: 10;
-            background: var(--bg);
+            background: rgba(5,5,5,0.8);
         }
 
         header h1 {
             font-family: var(--font-header);
-            font-size: 14px;
-            letter-spacing: 4px;
+            font-size: 12px;
+            letter-spacing: 5px;
+            opacity: 0.9;
         }
 
-        /* Left Panel */
+        /* Panels */
+        .panel {
+            padding: 30px;
+            z-index: 10;
+            background: transparent;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
         .panel-left {
             grid-column: 1;
             grid-row: 2;
             border-right: var(--border);
-            padding: 20px;
-            z-index: 10;
-            background: rgba(5,5,5,0.85);
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
+        }
+
+        .panel-right {
+            grid-column: 3;
+            grid-row: 2;
+            border-left: var(--border);
+            overflow: hidden;
         }
 
         .panel-title {
             font-family: var(--font-header);
-            font-size: 10px;
-            border-bottom: var(--border);
-            padding-bottom: 5px;
+            font-size: 8px;
+            letter-spacing: 2px;
+            color: rgba(255,255,255,0.3);
+            text-transform: uppercase;
             margin-bottom: 10px;
-            color: rgba(255,255,255,0.5);
         }
 
         .module-item {
             font-family: var(--font-mono);
-            font-size: 11px;
-            padding: 12px;
-            border: 1px solid rgba(255,255,255,0.1);
+            font-size: 10px;
+            padding: 10px 0;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
             text-transform: uppercase;
+            opacity: 0.4;
+            border-bottom: 1px solid transparent;
         }
 
         .module-item:hover {
-            border-color: #FFFFFF;
-            background: rgba(255,255,255,0.05);
+            opacity: 0.8;
         }
 
         .module-item.active {
-            border-color: #FFFFFF;
-            background: #FFFFFF;
-            color: #050505;
+            opacity: 1;
+            color: #FFFFFF;
+            letter-spacing: 1px;
         }
 
-        /* Center Viewport */
+        /* Main Viewport */
         .main-view {
             grid-column: 2;
             grid-row: 2;
@@ -113,7 +124,6 @@
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            background: rgba(5,5,5,0.4);
         }
 
         .module-content {
@@ -131,22 +141,23 @@
             height: 100%;
         }
 
-        /* Placeholder Styles */
+        /* Simplified Video Description Overlay */
         .placeholder-card {
-            width: 85%;
+            width: 90%;
             height: 90%;
             display: flex;
             flex-direction: column;
-            gap: 20px;
-            padding: 20px;
-            background: rgba(5,5,5,0.9);
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
             margin: auto;
         }
 
         .video-box {
             width: 100%;
-            flex-grow: 1;
-            border: 1px solid #FFFFFF;
+            max-width: 800px;
+            aspect-ratio: 16/9;
+            border: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -154,123 +165,96 @@
         }
 
         .video-desc-block {
-            border: 1px solid #FFFFFF;
-            padding: 15px;
-            text-align: left;
-            position: relative;
+            max-width: 600px;
+            text-align: center;
         }
 
         .desc-title {
             font-family: var(--font-header);
-            font-size: 18px;
-            margin-bottom: 8px;
-            letter-spacing: 2px;
+            font-size: 16px;
+            margin-bottom: 15px;
+            letter-spacing: 4px;
         }
 
         .desc-body {
             font-family: var(--font-mono);
             font-size: 10px;
-            line-height: 1.4;
-            color: rgba(255,255,255,0.7);
-            margin-bottom: 15px;
-        }
-
-        .time-box {
-            border-top: 1px solid rgba(255,255,255,0.2);
-            padding-top: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .time-label {
-            font-family: var(--font-mono);
-            font-size: 8px;
-            color: rgba(255,255,255,0.4);
-            text-transform: uppercase;
-        }
-
-        .time-value {
-            font-family: var(--font-mono);
-            font-size: 16px;
-            color: #FFFFFF;
-        }
-
-        /* Right Panel - Terminal */
-        .panel-right {
-            grid-column: 3;
-            grid-row: 2;
-            border-left: var(--border);
-            padding: 20px;
-            z-index: 10;
-            background: rgba(5,5,5,0.85);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
+            line-height: 1.8;
+            color: rgba(255,255,255,0.5);
+            letter-spacing: 0.5px;
         }
 
         #diag-terminal {
             flex-grow: 1;
             font-family: var(--font-mono);
-            font-size: 11px;
-            color: #FFFFFF;
+            font-size: 10px;
+            color: rgba(255,255,255,0.6);
             overflow-y: auto;
             white-space: pre-wrap;
-            line-height: 1.4;
-            padding-right: 10px;
+            line-height: 1.6;
         }
 
-        #diag-terminal::-webkit-scrollbar { width: 4px; }
-        #diag-terminal::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); }
+        #diag-terminal::-webkit-scrollbar { width: 0px; }
 
         /* Footer */
         footer {
             grid-column: 1 / -1;
             grid-row: 3;
             border-top: var(--border);
-            background: var(--bg);
+            background: rgba(5,5,5,0.8);
             z-index: 10;
-            padding: 15px 20px;
+            padding: 0 30px;
             display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .terminal-header {
-            font-family: var(--font-header);
-            font-size: 9px;
-            display: flex;
+            align-items: center;
             justify-content: space-between;
         }
 
-        .status-badge {
-            display: inline-block;
-            padding: 2px 6px;
-            border: 1px solid #FFFFFF;
+        .footer-info {
+            font-family: var(--font-mono);
             font-size: 9px;
-            margin-left: 10px;
+            color: rgba(255,255,255,0.3);
+            text-transform: uppercase;
+        }
+
+        .status-badge {
+            font-family: var(--font-mono);
+            font-size: 9px;
+            color: #00FF00;
+            opacity: 0.7;
+        }
+
+        .time-value {
+            font-family: var(--font-mono);
+            font-size: 14px;
+            color: #FFFFFF;
+            letter-spacing: 1px;
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>LAB-0 // PORTFOLIO_CMD_CENTER</h1>
-        <div class="status-badge">OS: STABLE</div>
+        <h1>LAB-0 // COMMAND_TELEMETRY</h1>
     </header>
 
-    <aside class="panel-left">
-        <div class="panel-title">SYSTEM TIME // UTC</div>
-        <div style="font-family: var(--font-mono); font-size: 18px; letter-spacing: 1px; margin-bottom: 20px;" id="live-clock-left">00:00:00:00</div>
+    <aside class="panel panel-left">
+        <div>
+            <div class="panel-title">LIVE_TELEMETRY</div>
+            <div class="time-value" id="live-clock-left">00:00:00:00</div>
+        </div>
 
-        <div class="panel-title">MODULE SELECTION</div>
-        <div class="module-item active" onclick="switchModule('01')">MODULE_01 // LAB-0</div>
-        <div class="module-item" onclick="switchModule('02')">MODULE_02 // NS_FOUNTAIN</div>
-        
-        <div class="panel-title" style="margin-top:20px;">SYSTEM STATUS</div>
-        <div style="font-family: var(--font-mono); font-size: 10px; color: rgba(255,255,255,0.5);">
-            > CPU: STABLE<br>
-            > GPU: OVERRIDE_ACTIVE<br>
-            > NET: ENCRYPTED
+        <div>
+            <div class="panel-title">SYSTEM_MODULES</div>
+            <div class="module-item active" onclick="switchModule('01')">01 // CORE_LAB</div>
+            <div class="module-item" onclick="switchModule('02')">02 // NS_FOUNTAIN</div>
+        </div>
+
+        <div style="margin-top: auto;">
+            <div class="panel-title">ENGINE_STATUS</div>
+            <div class="footer-info">
+                UNREAL ENGINE 5.2.4<br>
+                GPU OVERRIDE: ACTIVE<br>
+                NIAGARA_VFX: STABLE
+            </div>
         </div>
     </aside>
 
@@ -281,81 +265,57 @@
         <div id="content-02" class="module-content">
             <div class="placeholder-card">
                 <div class="video-box">
-                    <div style="font-family: var(--font-mono); font-size: 12px; opacity: 0.5; color: #FFF;">[ DROP RECORDING HERE ]<br>OR<br>VIEW TECHNICAL BREAKDOWN -></div>
+                    <div style="font-family: var(--font-mono); font-size: 10px; opacity: 0.2;">[ VIDEO_SIGNAL_PENDING ]</div>
                 </div>
                 <div class="video-desc-block">
-                    <div class="panel-title" style="border:none; margin-bottom:5px;">视频简介 // VIDEO DESCRIPTION</div>
                     <div class="desc-title">NS_FOUNTAIN</div>
                     <div class="desc-body">
-                        NIAGARA PARTICLE FOUNTAIN SYSTEM. IMPLEMENTS ADVANCED SCALE COLOR MODULES WITH DYNAMIC ALPHA CURVE FADING OVER A 2.4S LIFECYCLE. OPTIMIZED FOR HIGH-CONTRAST TELEMETRY VISUALIZATION. CORE SIMULATION DRIVEN BY HLSL VERTEX SHADERS.
-                    </div>
-                    <div class="time-box">
-                        <div class="time-label">SYS_TIME // RUNNING</div>
-                        <div class="time-value" id="live-clock">00:00:00:00</div>
+                        ADVANCED NIAGARA PARTICLE SYSTEM. DYNAMIC ALPHA CURVE INTEGRATION VIA HLSL. OPTIMIZED FOR HIGH-CONTRAST INDUSTRIAL TELEMETRY.
                     </div>
                 </div>
             </div>
         </div>
     </main>
 
-    <aside class="panel-right">
-        <div class="panel-title">SYSTEM DIAGNOSTICS LOG</div>
+    <aside class="panel panel-right">
+        <div class="panel-title">DIAGNOSTICS_FEED</div>
         <div id="diag-terminal"></div>
     </aside>
 
     <footer>
-        <div class="terminal-header">
-            <span>CORE_PORTFOLIO_OUTPUT</span>
-            <span id="sys-res">RES: 1920x1080</span>
-        </div>
-        <div style="font-family: var(--font-mono); font-size: 11px; color: #00FF00; opacity: 0.8;">
-            > Initializing Lab-0 Portfolios... OK<br>
-            > Tech Stack: Unreal Engine 5.2.4 Verified
-        </div>
+        <div class="footer-info">DEVICE: PORTFOLIO_STATION_01</div>
+        <div class="status-badge">SYSTEM_ONLINE</div>
+        <div class="footer-info" id="sys-res">RES: ---</div>
     </footer>
 
     <script>
         function switchModule(id) {
             document.querySelectorAll('.module-item').forEach(el => el.classList.remove('active'));
-            const clickedItem = event.currentTarget;
-            clickedItem.classList.add('active');
+            event.currentTarget.classList.add('active');
             document.querySelectorAll('.module-content').forEach(el => el.classList.remove('active'));
             document.getElementById('content-' + id).classList.add('active');
         }
 
-        // Terminal Diagnostics Logic
         const terminal = document.getElementById('diag-terminal');
         const logs = [
-            "[INIT] Core engine initialized...",
-            "[RENDER] High performance discrete GPU override: ACTIVE",
-            "[NIAGARA] Loading asset database: NS_Fountain...",
-            "[SHADER] Compiling 2,246 global shaders...",
-            "[SHADER] 512 / 2,246 shaders compiled...",
-            "[SHADER] 1,120 / 2,246 shaders compiled...",
-            "[SHADER] 1,840 / 2,246 shaders compiled...",
-            "[SHADER] 2,246 / 2,246 shaders compiled. SUCCESS.",
-            "[NIAGARA] Binding parameter: ScaleColor.Alpha to float curve",
-            "[SYSTEM] System protocol v1.0.4 active.",
-            "[MEM] Allocating virtual buffers: 1024MB",
-            "[NIAGARA] Particle count stable: 1.2M",
-            "[VIEWPORT] Synchronizing viewport stats...",
-            "[UI] Applying strict 1px border constraints..."
+            "[INIT] CORE ENGINE...",
+            "[VFX] LOADING NS_FOUNTAIN...",
+            "[GPU] SHADER COMPILATION...",
+            "[SYS] PROTOCOL STABLE...",
+            "[MEM] BUFFER ALLOCATION...",
+            "[UI] BORDER_RADIUS: 0PX"
         ];
 
         function addLog() {
             const log = logs[Math.floor(Math.random() * logs.length)];
-            const time = new Date().toLocaleTimeString('en-GB', { hour12: false }) + '.' + String(new Date().getMilliseconds()).padStart(3, '0');
+            const time = new Date().toLocaleTimeString('en-GB', { hour12: false });
             terminal.innerHTML += `[${time}] ${log}\n`;
             terminal.scrollTop = terminal.scrollHeight;
-            
             const lines = terminal.innerHTML.split('\n');
-            if (lines.length > 50) {
-                terminal.innerHTML = lines.slice(lines.length - 50).join('\n');
-            }
+            if (lines.length > 30) terminal.innerHTML = lines.slice(lines.length - 30).join('\n');
         }
-        setInterval(addLog, 1200);
+        setInterval(addLog, 2000);
 
-        // Niagara Spark Simulation
         const canvas = document.getElementById('niagara-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -380,8 +340,8 @@
             reset() {
                 this.x = Math.random() * canvas.width;
                 this.y = canvas.height + 10;
-                this.vx = (Math.random() - 0.5) * 2;
-                this.vy = -Math.random() * 4 - 2;
+                this.vx = (Math.random() - 0.5) * 1.5;
+                this.vy = -Math.random() * 3 - 1;
                 this.life = 1;
                 this.decay = Math.random() * 0.01 + 0.005;
             }
@@ -392,8 +352,8 @@
                     const dist = Math.sqrt(dx * dx + dy * dy);
                     if (dist < 100) {
                         const force = (100 - dist) / 100;
-                        this.vx += (dx / dist) * force * 2;
-                        this.vy += (dy / dist) * force * 2;
+                        this.vx += (dx / dist) * force * 1.5;
+                        this.vy += (dy / dist) * force * 1.5;
                     }
                 }
                 this.x += this.vx; this.y += this.vy;
@@ -401,12 +361,12 @@
                 if (this.life <= 0 || this.y < -10) this.reset();
             }
             draw() {
-                ctx.fillStyle = `rgba(255, 255, 255, ${this.life})`;
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.life * 0.8})`;
                 ctx.fillRect(this.x, this.y, 1, 1);
             }
         }
 
-        for (let i = 0; i < 200; i++) particles.push(new Particle());
+        for (let i = 0; i < 150; i++) particles.push(new Particle());
 
         function animate() {
             if (document.getElementById('content-01').classList.contains('active')) {
@@ -424,7 +384,6 @@
             const s = String(now.getSeconds()).padStart(2, '0');
             const ms = String(now.getMilliseconds()).padStart(3, '0').slice(0, 2);
             const timeStr = `${h}:${m}:${s}:${ms}`;
-            document.getElementById('live-clock').innerText = timeStr;
             document.getElementById('live-clock-left').innerText = timeStr;
         }
         setInterval(updateClock, 50);
