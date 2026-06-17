@@ -16,7 +16,7 @@
             --font-header: 'Syncopate', sans-serif;
             --font-mono: 'Space Mono', monospace;
             --font-body: 'Space Grotesk', sans-serif;
-            --transition-smooth: 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            --transition-smooth: 1.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         * {
@@ -74,22 +74,25 @@
             font-size: 64px;
             letter-spacing: 12px;
             text-transform: uppercase;
-            transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: transform var(--transition-smooth);
+            transform-origin: center center;
+            white-space: nowrap;
         }
 
         #boot-lab { 
             display: inline-block;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
+        
         #boot-variant { 
             position: relative; 
             display: inline-block;
             min-width: 40px;
-            text-align: center;
+            text-align: left;
         }
         
         .variant-char {
             display: inline-block;
-            transition: transform var(--transition-smooth), opacity var(--transition-smooth);
         }
 
         /* --- Layout HUD --- */
@@ -148,7 +151,7 @@
             color: var(--fg);
             font-weight: 700;
             transform: scale(1.1);
-            padding: 40px 0; /* Breathing slot */
+            padding: 40px 0;
         }
 
         .project-item.shift-up { transform: translateY(-15px); }
@@ -399,50 +402,88 @@
             requestAnimationFrame(drawParticles);
         }
 
+        // --- Glitch Utility ---
+        function scrambleText(element, finalString, duration, callback) {
+            const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_@#$';
+            const originalText = element.innerText;
+            const start = performance.now();
+            
+            function update(time) {
+                const elapsed = time - start;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                let current = '';
+                const finalLength = finalString.length;
+                const currentLength = Math.round(originalText.length + (finalLength - originalText.length) * progress);
+                
+                for (let i = 0; i < currentLength; i++) {
+                    if (Math.random() < progress) {
+                        current += finalString[i] || '';
+                    } else {
+                        current += chars[Math.floor(Math.random() * chars.length)];
+                    }
+                }
+                
+                element.innerText = current;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                } else {
+                    element.innerText = finalString;
+                    if (callback) callback();
+                }
+            }
+            requestAnimationFrame(update);
+        }
+
         // --- Boot Sequence Logic ---
         async function runBootSequence() {
             const overlay = document.getElementById('boot-overlay');
             const container = document.querySelector('.boot-logo-container');
+            const lab = document.getElementById('boot-lab');
             const target = document.getElementById('char-target');
             const headerLogo = document.getElementById('permanent-logo');
             
-            // Stage 1: Display "LAB-0" (Default state)
-            await sleep(1000);
+            // 1. Detection
+            const width = window.innerWidth;
+            const isMobile = width <= 768 || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+            const targetText = isMobile ? 'Mobile' : 'Desktop';
 
-            // Stage 2: 0 slides up/out, Desktop slides in (Machine Recognition Phase)
-            target.style.transform = 'translateY(-20px)';
-            target.style.opacity = '0';
+            // Start State
+            await sleep(800);
+
+            // 3. Recognition Anim
+            lab.style.transform = 'translateX(-40px)';
+            scrambleText(target, targetText, 800);
             
-            await sleep(400);
-            target.innerText = 'Desktop';
-            target.style.transform = 'translateY(20px)';
-            await sleep(50);
-            target.style.transform = 'translateY(0px)';
-            target.style.opacity = '1';
+            await sleep(1800);
 
-            await sleep(1500);
-
-            // Stage 3: Seamless One-Take Transition to Top-Left
-            // Revert Desktop back to 0 for the final "LAB-0" state
-            target.style.opacity = '0';
-            await sleep(200);
-            target.innerText = '0';
-            target.style.opacity = '1';
-
+            // 4. One-Take Sliding-Scale Reversion
             const targetRect = headerLogo.getBoundingClientRect();
             const currentRect = container.getBoundingClientRect();
 
-            // Calculate exact distance to final header position
-            const deltaX = targetRect.left - currentRect.left;
-            const deltaY = targetRect.top - currentRect.top;
+            // Transform origin: center so movement logic is simpler
+            container.style.transformOrigin = "center center";
+            
+            // Calculate center points for delta
+            const targetCenterX = targetRect.left + (targetRect.width * 0.5);
+            const targetCenterY = targetRect.top + (targetRect.height * 0.5);
+            const currentCenterX = currentRect.left + (currentRect.width * 0.5);
+            const currentCenterY = currentRect.top + (currentRect.height * 0.5);
 
-            // Smoothly slide the whole container to its final destination
-            container.style.transformOrigin = "top left";
+            const deltaX = targetCenterX - currentCenterX;
+            const deltaY = targetCenterY - currentCenterY;
+
+            // Start scramble back to 0 as we move
+            scrambleText(target, '0', 1200);
+            lab.style.transform = 'translateX(0px)';
+            
+            // Smoothly slide and scale
             container.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(0.25)`;
 
-            await sleep(1200);
+            await sleep(1300);
             
-            // Reveal HUD elements
+            // 5. Landing
             overlay.style.opacity = '0';
             document.getElementById('hud-header').classList.add('visible');
             document.getElementById('hud-left').classList.add('visible');
@@ -463,34 +504,24 @@
             const source = document.getElementById('video-src');
             const closeBtn = document.getElementById('close-trigger');
 
-            // Handle HUD interactions
             items.forEach((item, index) => {
                 const itemId = parseInt(item.getAttribute('data-id'));
                 item.classList.remove('active', 'shift-up', 'shift-down');
-                
-                if (itemId === id) {
-                    item.classList.add('active');
-                } else if (itemId < id) {
-                    item.classList.add('shift-up');
-                } else if (itemId > id) {
-                    item.classList.add('shift-down');
-                }
+                if (itemId === id) { item.classList.add('active'); }
+                else if (itemId < id) { item.classList.add('shift-up'); }
+                else if (itemId > id) { item.classList.add('shift-down'); }
             });
 
-            // Update Content
             const data = projects[id];
             title.innerText = data.title;
             desc.innerText = data.desc;
             source.src = data.video;
             
-            // Show Content
             canvas.style.opacity = '0.1';
-            
             container.style.display = 'flex';
             title.style.display = 'block';
             desc.style.display = 'block';
             
-            // Trigger Fade-in
             setTimeout(() => {
                 container.style.opacity = '1';
                 title.style.opacity = '1';
@@ -511,18 +542,13 @@
             const video = document.getElementById('main-video');
             const closeBtn = document.getElementById('close-trigger');
 
-            // Fade out
             container.style.opacity = '0';
             title.style.opacity = '0';
             desc.style.opacity = '0';
             closeBtn.classList.remove('active');
             canvas.style.opacity = '1.0';
 
-            // Reset List
-            items.forEach(item => {
-                item.classList.remove('active', 'shift-up', 'shift-down');
-            });
-
+            items.forEach(item => { item.classList.remove('active', 'shift-up', 'shift-down'); });
             video.pause();
 
             setTimeout(() => {
@@ -532,7 +558,7 @@
             }, 800);
         }
 
-        // --- Video Player Functions ---
+        // --- Video Player ---
         const video = document.getElementById('main-video');
         const playBtn = document.getElementById('play-pause');
         const muteBtn = document.getElementById('mute-toggle');
@@ -572,7 +598,6 @@
             return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
         }
 
-        // --- Lifecycle ---
         function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
         window.onload = () => {
