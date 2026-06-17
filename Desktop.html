@@ -10,6 +10,7 @@
     <style>
         :root {
             --bg: #000000;
+            --overlay-bg: #050505;
             --fg: #FFFFFF;
             --muted: #666666;
             --border: 1px solid #FFFFFF;
@@ -42,68 +43,61 @@
         #dot-matrix-canvas {
             position: fixed;
             inset: 0;
-            z-index: 2; /* Next: above body background */
+            z-index: 1; /* Above body background */
             pointer-events: none;
-            width: 100%;
-            height: 100%;
-            transition: opacity var(--transition-smooth);
+            display: block;
         }
 
         #bg-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.8); /* Next: Semi-transparent overlay */
-            z-index: 5;
+            background: var(--overlay-bg);
+            opacity: 0.85; /* Precision opacity for depth */
+            z-index: 2;
             pointer-events: none;
         }
 
-        /* --- Boot Sequence (Highest) --- */
-        #boot-overlay {
+        /* --- Boot Sequence (Independent Logo) --- */
+        #boot-screen-bg {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
+            inset: 0;
             background: var(--bg);
             z-index: 2000;
+            transition: opacity 1.2s var(--transition-smooth);
+            pointer-events: none;
+        }
+
+        #logo-main {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: opacity 0.8s ease;
-        }
-
-        .boot-logo-container {
-            position: fixed; /* Fixed for one-take move */
-            display: flex;
-            align-items: center;
             font-family: var(--font-header);
             font-weight: 700;
             font-size: 64px;
-            letter-spacing: 12px;
+            letter-spacing: 0px;
             text-transform: uppercase;
-            transition: transform var(--transition-smooth), letter-spacing var(--transition-smooth), opacity 0.5s ease;
-            transform-origin: center center;
-            white-space: nowrap;
             z-index: 2100;
+            white-space: nowrap;
+            transition: transform var(--transition-smooth), font-size var(--transition-smooth), letter-spacing var(--transition-smooth);
+            will-change: transform, font-size;
         }
 
         #boot-lab { 
             display: inline-block;
-            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            margin-right: -0.1em; /* Tighten the LAB- and 0 gap per Kyungsoo */
         }
         
         #boot-variant { 
-            position: relative; 
             display: inline-block;
-            min-width: 40px;
+            min-width: 0.8em;
             text-align: left;
         }
-        
-        .variant-char {
-            display: inline-block;
-        }
 
-        /* --- Layout HUD (Highest UI) --- */
+        /* --- Layout HUD --- */
         header {
             grid-column: 1 / -1;
             padding: 0 40px;
@@ -115,12 +109,11 @@
             transition: opacity var(--transition-smooth);
         }
 
-        header h1 {
+        #logo-placeholder {
             font-family: var(--font-header);
             font-size: 16px;
             letter-spacing: 6px;
             font-weight: 700;
-            opacity: 0; /* Initially hidden, becomes target for logo move */
             visibility: hidden;
         }
 
@@ -142,7 +135,6 @@
             list-style: none;
             display: flex;
             flex-direction: column;
-            gap: 0;
         }
 
         .project-item {
@@ -152,7 +144,6 @@
             cursor: pointer;
             color: var(--muted);
             transition: all var(--transition-smooth);
-            position: relative;
             text-transform: uppercase;
         }
 
@@ -183,11 +174,10 @@
             max-width: 960px;
             aspect-ratio: 16/9;
             background: #050505;
-            box-shadow: 0 0 0 1px #ffffff; /* Sharp 1px border */
+            box-shadow: 0 0 0 1px #ffffff;
             position: relative;
             display: none;
             flex-direction: column;
-            overflow: visible;
             opacity: 0;
             transition: opacity var(--transition-smooth);
         }
@@ -249,7 +239,6 @@
             display: flex;
             flex-direction: column;
             gap: 24px;
-            position: relative;
         }
 
         #project-title {
@@ -296,12 +285,8 @@
             opacity: 0.6;
             pointer-events: auto;
         }
-        #close-trigger:hover {
-            opacity: 1;
-        }
 
         .visible { opacity: 1 !important; }
-
     </style>
 </head>
 <body>
@@ -309,22 +294,20 @@
     <canvas id="dot-matrix-canvas"></canvas>
     <div id="bg-overlay"></div>
 
-    <div id="boot-overlay">
-        <!-- THE ONLY LOGO ELEMENT -->
-        <div class="boot-logo-container" id="logo-main">
-            <span id="boot-lab">LAB-</span>
-            <div id="boot-variant">
-                <span id="char-target" class="variant-char">0</span>
-            </div>
-        </div>
+    <div id="boot-screen-bg"></div>
+
+    <!-- Independent Logo stays above HUD and Boot BG -->
+    <div class="boot-logo-container" id="logo-main">
+        <span id="boot-lab">LAB-</span>
+        <div id="boot-variant"><span id="char-target">0</span></div>
     </div>
 
     <header id="hud-header">
-        <h1 id="logo-target">LAB-0</h1>
+        <h1 id="logo-placeholder">LAB-0</h1>
     </header>
 
     <aside class="sidebar sidebar-left" id="hud-left">
-        <ul class="project-list" id="project-list">
+        <ul class="project-list">
             <li class="project-item" data-id="1" onclick="selectProject(1)">[01] LEVEL_01</li>
             <li class="project-item" data-id="2" onclick="selectProject(2)">[02] LEVEL_02</li>
             <li class="project-item" data-id="3" onclick="selectProject(3)">[03] LEVEL_03</li>
@@ -355,26 +338,13 @@
     </aside>
 
     <script>
-        // --- Configuration & Data ---
         const projects = {
-            1: {
-                title: "LEVEL_01 // NIAGARA",
-                desc: "INITIAL PARTICLE COLLISION TESTS. EXPLORING REAL-TIME VECTOR FIELD MANIPULATION WITHIN THE UNREAL ENGINE NIAGARA SYSTEM. FOCUS ON FLUID DYNAMICS AND COLLISION STABILITY.",
-                video: "https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-            },
-            2: {
-                title: "LEVEL_02 // GRAVITY",
-                desc: "STRESS TESTING POINT-GRAVITY NODES. SIMULATING MASSIVE PARTICLE ATTRACTION AND RELEVANT LIGHTING CALCULATIONS ACROSS 1,000,000 INDIVIDUAL GPU-CALCULATED SPRITES.",
-                video: "https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
-            },
-            3: {
-                title: "LEVEL_03 // WIND",
-                desc: "INTEGRATION OF DIRECTIONAL WIND FIELDS WITH DYNAMIC TURBULENCE. ANALYSIS OF VOLUMETRIC NOISE IMPACT ON PARTICLE LIFESPAN AND COLOR-OVER-LIFE TRANSITIONS.",
-                video: "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
-            }
+            1: { title: "LEVEL_01 // NIAGARA", desc: "INITIAL PARTICLE COLLISION TESTS...", video: "https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" },
+            2: { title: "LEVEL_02 // GRAVITY", desc: "STRESS TESTING POINT-GRAVITY NODES...", video: "https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" },
+            3: { title: "LEVEL_03 // WIND", desc: "INTEGRATION OF DIRECTIONAL WIND FIELDS...", video: "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" }
         };
 
-        // --- Verbatim Particle Implementation from Reference ---
+        // --- Verbatim Particle Implementation ---
         const canvas = document.getElementById('dot-matrix-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -422,92 +392,62 @@
             requestAnimationFrame(animate);
         }
 
-        // --- Glitch Utility ---
         function scrambleText(element, finalString, duration, callback) {
-            const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_@#$';
+            const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ#$';
             const originalText = element.innerText;
             const start = performance.now();
-            
             function update(time) {
                 const elapsed = time - start;
                 const progress = Math.min(elapsed / duration, 1);
-                
                 let current = '';
                 const finalLength = finalString.length;
                 const currentLength = Math.round(originalText.length + (finalLength - originalText.length) * progress);
-                
                 for (let i = 0; i < currentLength; i++) {
-                    if (Math.random() < progress) {
-                        current += finalString[i] || '';
-                    } else {
-                        current += chars[Math.floor(Math.random() * chars.length)];
-                    }
+                    if (Math.random() < progress) current += finalString[i] || '';
+                    else current += chars[Math.floor(Math.random() * chars.length)];
                 }
-                
                 element.innerText = current;
-                
-                if (progress < 1) {
-                    requestAnimationFrame(update);
-                } else {
-                    element.innerText = finalString;
-                    if (callback) callback();
-                }
+                if (progress < 1) requestAnimationFrame(update);
+                else { element.innerText = finalString; if (callback) callback(); }
             }
             requestAnimationFrame(update);
         }
 
-        // --- Boot Sequence: One-Take Logo Placement ---
         async function runBootSequence() {
-            const overlay = document.getElementById('boot-overlay');
+            const bg = document.getElementById('boot-screen-bg');
             const logo = document.getElementById('logo-main');
-            const lab = document.getElementById('boot-lab');
             const targetChar = document.getElementById('char-target');
-            const targetEl = document.getElementById('logo-target');
+            const anchor = document.getElementById('logo-placeholder');
             
-            const width = window.innerWidth;
-            const isMobile = width <= 768;
-            const bootText = isMobile ? 'MOBILE' : 'DESKTOP';
+            const bootText = window.innerWidth <= 768 ? 'MOBILE' : 'DESKTOP';
 
-            await sleep(800);
-
-            // Scramble to variant
-            lab.style.transform = 'translateX(-40px)';
+            await sleep(600);
             scrambleText(targetChar, bootText, 800);
-            
             await sleep(1800);
 
-            // Move to final position
-            const targetRect = targetEl.getBoundingClientRect();
-            const currentRect = logo.getBoundingClientRect();
+            const rect = anchor.getBoundingClientRect();
+            const targetX = rect.left + (rect.width / 2);
+            const targetY = rect.top + (rect.height / 2);
+            const deltaX = targetX - (window.innerWidth / 2);
+            const deltaY = targetY - (window.innerHeight / 2);
 
-            const targetCenterX = targetRect.left + (targetRect.width * 0.5);
-            const targetCenterY = targetRect.top + (targetRect.height * 0.5);
-            const currentCenterX = currentRect.left + (currentRect.width * 0.5);
-            const currentCenterY = currentRect.top + (currentRect.height * 0.5);
-
-            const deltaX = targetCenterX - currentCenterX;
-            const deltaY = targetCenterY - currentCenterY;
-
-            scrambleText(targetChar, '0', 1200);
-            lab.style.transform = 'translateX(0px)';
-            
+            scrambleText(targetChar, '0', 1000);
             logo.style.letterSpacing = '6px';
-            logo.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(0.25)`;
+            logo.style.fontSize = '16px';
+            logo.style.transform = `translate(calc(-50% + ${deltaX}px), calc(-50% + ${deltaY}px))`;
 
-            await sleep(1300);
+            await sleep(1000);
+            bg.style.opacity = '0';
             
-            // Lock position permanently
-            overlay.style.opacity = '0';
             document.getElementById('hud-header').classList.add('visible');
             document.getElementById('hud-left').classList.add('visible');
             document.getElementById('hud-center').classList.add('visible');
             document.getElementById('hud-right').classList.add('visible');
 
-            await sleep(800);
-            overlay.style.display = 'none';
+            await sleep(1200);
+            bg.style.display = 'none';
         }
 
-        // --- Selection Logic ---
         function selectProject(id) {
             const items = document.querySelectorAll('.project-item');
             const container = document.getElementById('video-container');
@@ -517,12 +457,12 @@
             const source = document.getElementById('video-src');
             const closeBtn = document.getElementById('close-trigger');
 
-            items.forEach((item) => {
+            items.forEach(item => {
                 const itemId = parseInt(item.getAttribute('data-id'));
                 item.classList.remove('active', 'shift-up', 'shift-down');
-                if (itemId === id) { item.classList.add('active'); }
-                else if (itemId < id) { item.classList.add('shift-up'); }
-                else if (itemId > id) { item.classList.add('shift-down'); }
+                if (itemId === id) item.classList.add('active');
+                else if (itemId < id) item.classList.add('shift-up');
+                else item.classList.add('shift-down');
             });
 
             const data = projects[id];
@@ -530,7 +470,7 @@
             desc.innerText = data.desc;
             source.src = data.video;
             
-            canvas.style.opacity = '0.1';
+            canvas.style.opacity = '0.2';
             container.style.display = 'flex';
             title.style.display = 'block';
             desc.style.display = 'block';
@@ -542,42 +482,33 @@
                 closeBtn.classList.add('active');
             }, 50);
             
-            video.load();
-            video.play();
-            playBtn.innerText = '[PAUSE]';
+            video.load(); video.play();
+            document.getElementById('play-pause').innerText = '[PAUSE]';
         }
 
         function closeProject() {
-            const items = document.querySelectorAll('.project-item');
             const container = document.getElementById('video-container');
             const title = document.getElementById('project-title');
             const desc = document.getElementById('project-desc');
             const video = document.getElementById('main-video');
             const closeBtn = document.getElementById('close-trigger');
 
-            container.style.opacity = '0';
-            title.style.opacity = '0';
-            desc.style.opacity = '0';
+            container.style.opacity = '0'; title.style.opacity = '0'; desc.style.opacity = '0';
             closeBtn.classList.remove('active');
             canvas.style.opacity = '1.0';
 
-            items.forEach(item => { item.classList.remove('active', 'shift-up', 'shift-down'); });
+            document.querySelectorAll('.project-item').forEach(i => i.classList.remove('active', 'shift-up', 'shift-down'));
             video.pause();
 
             setTimeout(() => {
-                container.style.display = 'none';
-                title.style.display = 'none';
-                desc.style.display = 'none';
+                container.style.display = 'none'; title.style.display = 'none'; desc.style.display = 'none';
             }, 800);
         }
 
-        // --- Video Player ---
         const video = document.getElementById('main-video');
         const playBtn = document.getElementById('play-pause');
         const muteBtn = document.getElementById('mute-toggle');
         const seekFill = document.getElementById('seekbar-fill');
-        const timeCur = document.getElementById('time-cur');
-        const timeTotal = document.getElementById('time-total');
 
         function togglePlay() {
             if (video.paused) { video.play(); playBtn.innerText = '[PAUSE]'; }
@@ -592,26 +523,24 @@
         video.addEventListener('timeupdate', () => {
             const pct = (video.currentTime / video.duration) * 100;
             seekFill.style.width = `${pct}%`;
-            timeCur.innerText = formatTime(video.currentTime);
+            document.getElementById('time-cur').innerText = formatTime(video.currentTime);
         });
 
         video.addEventListener('loadedmetadata', () => {
-            timeTotal.innerText = formatTime(video.duration);
+            document.getElementById('time-total').innerText = formatTime(video.duration);
         });
 
         function seek(e) {
             const rect = document.getElementById('seekbar-root').getBoundingClientRect();
-            const pos = (e.clientX - rect.left) / rect.width;
-            video.currentTime = pos * video.duration;
+            video.currentTime = ((e.clientX - rect.left) / rect.width) * video.duration;
         }
 
         function formatTime(s) {
-            const m = Math.floor(s / 60);
-            const sec = Math.floor(s % 60);
+            const m = Math.floor(s / 60); const sec = Math.floor(s % 60);
             return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
         }
 
-        function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+        function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
         window.onload = () => {
             initParticles();
@@ -619,7 +548,11 @@
             runBootSequence();
         };
 
-        window.onresize = initParticles;
+        window.onresize = () => { 
+            canvas.width = window.innerWidth; 
+            canvas.height = window.innerHeight; 
+            initParticles();
+        };
     </script>
 </body>
 </html>
