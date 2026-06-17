@@ -45,9 +45,19 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            z-index: 0;
+            z-index: 2;
             pointer-events: none;
             transition: opacity var(--transition-smooth);
+        }
+
+        #bg-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 5, 5, 0.7);
+            z-index: 1;
+            pointer-events: none;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
         }
 
         /* --- Boot Sequence --- */
@@ -74,9 +84,10 @@
             font-size: 64px;
             letter-spacing: 12px;
             text-transform: uppercase;
-            transition: transform var(--transition-smooth);
+            transition: transform var(--transition-smooth), letter-spacing var(--transition-smooth);
             transform-origin: center center;
             white-space: nowrap;
+            z-index: 2100;
         }
 
         #boot-lab { 
@@ -112,6 +123,7 @@
             font-size: 16px;
             letter-spacing: 6px;
             font-weight: 700;
+            visibility: hidden; /* Reference only, boot container becomes the logo */
         }
 
         .sidebar {
@@ -169,6 +181,7 @@
             transition: opacity var(--transition-smooth);
         }
 
+        /* --- Modified for Responsive Video Container --- */
         #video-container {
             width: 100%;
             max-width: 960px;
@@ -301,6 +314,7 @@
 <body>
 
     <canvas id="particle-canvas"></canvas>
+    <div id="bg-overlay"></div>
 
     <div id="boot-overlay">
         <div class="boot-logo-container">
@@ -393,8 +407,13 @@
             particles.forEach(p => {
                 p.x += p.vx;
                 p.y += p.vy;
-                if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
-                if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
+                
+                // Wrap around motion
+                if(p.x < 0) p.x = canvas.width;
+                if(p.x > canvas.width) p.x = 0;
+                if(p.y < 0) p.y = canvas.height;
+                if(p.y > canvas.height) p.y = 0;
+                
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
                 ctx.fill();
@@ -477,6 +496,10 @@
             // Start scramble back to 0 as we move
             scrambleText(target, '0', 1200);
             lab.style.transform = 'translateX(0px)';
+            
+            // Interpolate spacing: transition from compact to spaced-out look
+            // Spacing in header is 6px, so we need 6 / 0.25 = 24px relative spacing
+            container.style.letterSpacing = '24px';
             
             // Smoothly slide and scale
             container.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(0.25)`;
