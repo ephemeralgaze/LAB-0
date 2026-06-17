@@ -143,6 +143,44 @@
             height: 100%;
         }
 
+        /* Placeholder Styles */
+        .placeholder-card {
+            width: 80%;
+            height: 80%;
+            border: 1px solid #FFFFFF;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            text-align: center;
+            background: rgba(5,5,5,0.9);
+            margin: auto;
+        }
+
+        .log-header {
+            font-family: var(--font-header);
+            font-size: 11px;
+            margin-bottom: 8px;
+        }
+
+        .video-box {
+            width: 100%;
+            aspect-ratio: 16/9;
+            border: 1px solid #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+        }
+
+        .log-body {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            opacity: 0.5;
+            color: rgba(255,255,255,0.8);
+        }
+
         /* Right Panel - Terminal */
         .panel-right {
             grid-column: 3;
@@ -243,10 +281,10 @@
             <canvas id="niagara-canvas"></canvas>
         </div>
         <div id="content-02" class="module-content">
-            <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
-                <div style="width: 80%; border: 1px solid #FFFFFF; padding: 40px; text-align: center; font-family: var(--font-header); font-size: 12px;">
-                    NIAGARA_SIMULATION // ACTIVE
-                    <div style="font-family: var(--font-mono); font-size: 10px; margin-top: 20px; opacity: 0.5;">[ PENDING VISUAL ASSET LOAD ]</div>
+            <div class="placeholder-card">
+                <div class="log-header" style="font-size: 18px; margin-bottom: 20px;">NS_FOUNTAIN // VISUALIZER</div>
+                <div class="video-box">
+                    <div class="log-body">[ DROP RECORDING HERE ]<br>OR<br>VIEW TECHNICAL BREAKDOWN -></div>
                 </div>
             </div>
         </div>
@@ -301,7 +339,6 @@
             terminal.innerHTML += `[${time}] ${log}\n`;
             terminal.scrollTop = terminal.scrollHeight;
             
-            // Trim old logs to prevent memory bloat
             const lines = terminal.innerHTML.split('\n');
             if (lines.length > 50) {
                 terminal.innerHTML = lines.slice(lines.length - 50).join('\n');
