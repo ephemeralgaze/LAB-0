@@ -130,11 +130,11 @@
             border-right: 1px solid rgba(255,255,255,0.1);
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 15px; /* Tighter gap */
         }
 
-        /* --- Accordion Projects Section --- */
-        .category-header {
+        /* --- Menu Items --- */
+        .category-header, .about-link {
             display: flex;
             align-items: center;
             gap: 12px;
@@ -145,13 +145,14 @@
             letter-spacing: 2px;
             text-transform: uppercase;
             color: var(--fg);
-            padding: 10px 0;
+            padding: 8px 0; /* Tighter padding */
             transition: color 0.3s ease;
             position: relative;
             z-index: 20;
+            text-decoration: none;
         }
 
-        .category-header:hover {
+        .category-header:hover, .about-link:hover {
             color: var(--muted);
         }
 
@@ -181,7 +182,7 @@
         .project-item {
             font-family: var(--font-mono);
             font-size: 12px;
-            padding: 12px 0;
+            padding: 6px 0; /* Tighter spacing */
             cursor: pointer;
             color: var(--muted);
             transition: 
@@ -217,7 +218,7 @@
             color: var(--muted);
             padding: 0;
             /* Sit directly beneath "Projects" header */
-            transform: translateY(-40px);
+            transform: translateY(-30px); /* Adjusted for tighter spacing */
         }
 
         /* Expanded State: All items return to list layout */
@@ -375,7 +376,7 @@
     </header>
 
     <aside class="sidebar sidebar-left" id="hud-left">
-        <div class="category-header expanded" onclick="toggleCategory(this)">
+        <div class="category-header" onclick="toggleCategory(this)">
             <svg class="arrow-icon" viewBox="0 0 10 10">
                 <path d="M2 1 L8 5 L2 9 Z" />
             </svg>
@@ -388,6 +389,10 @@
                 <li class="project-item" data-id="3" onclick="selectProject(3)">[03] LEVEL_03</li>
             </ul>
         </div>
+        <a href="#" class="about-link" onclick="handleAboutClick(event)">
+            <svg style="width:10px; height:10px; visibility:hidden;"></svg> <!-- Placeholder for alignment -->
+            <span>About</span>
+        </a>
     </aside>
 
     <main class="main-stage" id="hud-center">
@@ -469,6 +474,12 @@
 
         function toggleCategory(header) {
             header.classList.toggle('expanded');
+        }
+
+        function handleAboutClick(e) {
+            e.preventDefault();
+            closeProject();
+            // Logic for "About" content can be added here
         }
 
         function scrambleText(element, finalString, duration, callback) {
