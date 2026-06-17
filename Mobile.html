@@ -98,7 +98,8 @@
             document.querySelectorAll('.module-content').forEach(m => m.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById('module-' + id).classList.add('active');
-            event.currentTarget.classList.add('active'); if(id === '01') resize();
+            if(event) event.currentTarget.classList.add('active'); 
+            if(id === '01') resize();
         }
         const canvas = document.getElementById('niagara-canvas'); const ctx = canvas.getContext('2d');
         let particles = []; let goalHits = 0; let activeObjKey = 'deflector'; let paused = false;
@@ -113,8 +114,8 @@
         function syncUIFromState() { 
             const obj = gameState[activeObjKey]; 
             if(!obj) return;
-            ui.posX.value = ui.posXs.value = Math.round(obj.x); 
-            ui.posY.value = ui.posYs.value = Math.round(obj.y); 
+            if(ui.posX) ui.posX.value = ui.posXs.value = Math.round(obj.x); 
+            if(ui.posY) ui.posY.value = ui.posYs.value = Math.round(obj.y); 
             if(ui.rot) ui.rot.value = ui.rots.value = Math.round(obj.rotation || 0);
             if(ui.scale) ui.scale.value = ui.scales.value = obj.scale || 1;
         }
@@ -147,17 +148,22 @@
             syncUIFromState();
         });
 
-        function resetLevel() { particles = []; for (let i = 0; i < 30; i++) particles.push(new Particle()); goalHits = 0; syncUIFromState(); }
+        function resetLevel() { 
+            particles = []; for (let i = 0; i < 30; i++) particles.push(new Particle()); 
+            goalHits = 0; 
+            if(canvas) gameState.goal = { x: canvas.width - 70, y: canvas.height - 70, w: 50, h: 50 };
+            syncUIFromState(); 
+        }
         class Particle {
             constructor() { this.reset(); }
             reset() { this.x = 20; this.y = 20; this.vx = 1.5 + Math.random(); this.vy = 0.5 + Math.random(); }
-            update() { if(paused) return; this.x += this.vx; this.y += this.vy; this.vy += 0.05; if (this.y > canvas.height || this.x > canvas.width || this.x < 0) this.reset(); }
-            draw() { ctx.fillStyle = "#FFF"; ctx.fillRect(this.x, this.y, 1, 1); }
+            update() { if(paused) return; this.x += this.vx; this.y += this.vy; this.vy += 0.05; if (this.y > (canvas ? canvas.height : 500) || this.x > (canvas ? canvas.width : 400) || this.x < 0) this.reset(); }
+            draw() { if(ctx) { ctx.fillStyle = "#FFF"; ctx.fillRect(this.x, this.y, 1, 1); } }
         }
         function resize() { if(document.getElementById('module-01').classList.contains('active')) { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; resetLevel(); } }
         window.addEventListener('resize', resize);
         function animate() {
-            if(document.getElementById('module-01').classList.contains('active')) {
+            if(document.getElementById('module-01').classList.contains('active') && ctx) {
                 ctx.fillStyle = 'rgba(5,5,5,0.4)'; ctx.fillRect(0,0,canvas.width, canvas.height);
                 ctx.strokeStyle = goalHits > 15 ? "#00FF00" : "#FFF"; ctx.strokeRect(gameState.goal.x, gameState.goal.y, gameState.goal.w, gameState.goal.h);
                 particles.forEach(p => { p.update(); p.draw(); });

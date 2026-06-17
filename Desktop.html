@@ -33,7 +33,7 @@
             height: 100vh;
             overflow: hidden;
             display: grid;
-            grid-template-columns: 300px 1fr 320px;
+            grid-template-columns: 300px 1fr;
             grid-template-rows: 60px 1fr;
         }
 
@@ -68,11 +68,13 @@
         }
 
         .panel-right {
-            grid-column: 3;
+            grid-column: 2;
             border-right: none;
             border-left: var(--border);
             padding: 0;
             background: var(--ue-bg);
+            width: 320px;
+            height: 100%;
         }
 
         .panel-title {
@@ -175,9 +177,10 @@
         }
 
         .main-view {
-            grid-column: 2;
+            flex: 1;
             position: relative;
             background: #000;
+            min-width: 0;
         }
 
         #niagara-canvas { width: 100%; height: 100%; cursor: crosshair; }
@@ -227,7 +230,7 @@
             color: #FFF;
             border-color: #777;
         }
-        .module-content { display: none; width: 100%; height: 100%; }
+        .module-content { display: none; width: 100%; height: 100%; grid-column: 2; }
         .module-content.active { display: block; }
     </style>
 </head>
@@ -248,7 +251,7 @@
     </aside>
 
     <main id="module-01" class="module-content active">
-        <div style="display: grid; grid-template-columns: 1fr 320px; height: 100%;">
+        <div style="display: flex; height: 100%;">
             <div class="main-view">
                 <canvas id="niagara-canvas" tabindex="0"></canvas>
                 <div id="goal-notification" class="goal-text">MISSION_SUCCESS: GOAL_REACHED</div>
@@ -257,45 +260,52 @@
                     CLICK OBJECT TO SELECT | TABS TO SWITCH LEVELS
                 </div>
             </div>
-            <aside class="panel panel-right"><div class="level-tabs">
-        <div class="level-tab active" onclick="setLevel(1)">[LEVEL_01]</div>
-        <div class="level-tab" onclick="setLevel(2)">[LEVEL_02]</div>
-        <div class="level-tab" onclick="setLevel(3)">[LEVEL_03]</div>
-    </div><div class="details-header">Details</div><div class="category-header">SELECTION</div><div class="object-toggle"><div id="btn-deflector" class="obj-btn active" onclick="selectObject('deflector')">DEFLECTOR</div><div id="btn-gravity" class="obj-btn" onclick="selectObject('gravity')" style="display:none">GRAVITY_WELL</div></div>
-        <div class="category-header">TRANSFORM</div>
-        <div class="detail-row">
-            <div class="detail-label">Position</div>
-            <div style="display:flex; gap:5px">
-                <div class="input-group"><span class="input-prefix">X</span><input type="number" id="posX" class="detail-input"></div>
-                <div class="input-group"><span class="input-prefix">Y</span><input type="number" id="posY" class="detail-input"></div>
-            </div>
-        </div>
-        <div style="padding: 0 15px 5px;"><input type="range" id="posX-slider" class="detail-slider" min="0" max="800"><input type="range" id="posY-slider" class="detail-slider" min="0" max="600"></div>
-        
-        <div class="detail-row">
-            <div class="detail-label">Rotation</div>
-            <div class="input-group"><span class="input-prefix">Deg</span><input type="number" id="rotDeg" class="detail-input"></div>
-        </div>
-        <div style="padding: 0 15px 5px;"><input type="range" id="rot-slider" class="detail-slider" min="0" max="360"></div>
+            <aside class="panel panel-right">
+                <div class="level-tabs">
+                    <div class="level-tab active" onclick="setLevel(1)">[LEVEL_01]</div>
+                    <div class="level-tab" onclick="setLevel(2)">[LEVEL_02]</div>
+                    <div class="level-tab" onclick="setLevel(3)">[LEVEL_03]</div>
+                </div>
+                <div class="details-header">Details</div>
+                <div class="category-header">SELECTION</div>
+                <div class="object-toggle">
+                    <div id="btn-deflector" class="obj-btn active" onclick="selectObject('deflector')">DEFLECTOR</div>
+                    <div id="btn-gravity" class="obj-btn" onclick="selectObject('gravity')" style="display:none">GRAVITY_WELL</div>
+                </div>
+                <div class="category-header">TRANSFORM</div>
+                <div class="detail-row">
+                    <div class="detail-label">Position</div>
+                    <div style="display:flex; gap:5px">
+                        <div class="input-group"><span class="input-prefix">X</span><input type="number" id="posX" class="detail-input"></div>
+                        <div class="input-group"><span class="input-prefix">Y</span><input type="number" id="posY" class="detail-input"></div>
+                    </div>
+                </div>
+                <div style="padding: 0 15px 5px;"><input type="range" id="posX-slider" class="detail-slider" min="0" max="800"><input type="range" id="posY-slider" class="detail-slider" min="0" max="600"></div>
+                
+                <div class="detail-row">
+                    <div class="detail-label">Rotation</div>
+                    <div class="input-group"><span class="input-prefix">Deg</span><input type="number" id="rotDeg" class="detail-input"></div>
+                </div>
+                <div style="padding: 0 15px 5px;"><input type="range" id="rot-slider" class="detail-slider" min="0" max="360"></div>
 
-        <div class="detail-row">
-            <div class="detail-label">Scale</div>
-            <div class="input-group"><span class="input-prefix">X</span><input type="number" id="scaleX" class="detail-input" step="0.1"></div>
-        </div>
-        <div style="padding: 0 15px 10px;"><input type="range" id="scale-slider" class="detail-slider" min="0.1" max="3" step="0.1"></div>
-    </aside>
+                <div class="detail-row">
+                    <div class="detail-label">Scale</div>
+                    <div class="input-group"><span class="input-prefix">X</span><input type="number" id="scaleX" class="detail-input" step="0.1"></div>
+                </div>
+                <div style="padding: 0 15px 10px;"><input type="range" id="scale-slider" class="detail-slider" min="0.1" max="3" step="0.1"></div>
+            </aside>
         </div>
     </main>
 
     <main id="module-02" class="module-content">
-        <div id="module-02-view" style="display: grid; grid-template-columns: 1fr 320px; width: 100%; height: 100%; background: #000;">
-            <div class="video-viewport" style="display: flex; align-items: center; justify-content: center; border-right: var(--border);">
+        <div id="module-02-view" style="display: flex; width: 100%; height: 100%; background: #000;">
+            <div class="video-viewport" style="flex: 1; display: flex; align-items: center; justify-content: center; border-right: var(--border);">
                 <div class="placeholder-box" style="width: 70%; height: 50%; border: 1px dashed rgba(255,255,255,0.2); display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 10px; color: rgba(255,255,255,0.3); gap: 10px;">
                     <span>[ VIDEO_NOT_FOUND ]</span>
                     <span>[ DROP RECORDING HERE ]</span>
                 </div>
             </div>
-            <aside class="details-panel" style="background: #111; padding: 20px; display: flex; flex-direction: column; gap: 20px; border-left: var(--border);">
+            <aside class="details-panel" style="background: #111; padding: 20px; display: flex; flex-direction: column; gap: 20px; border-left: var(--border); width: 320px;">
                 <div style="border-bottom: 1px solid #333; padding-bottom: 10px;">
                     <h2 style="font-size: 14px; font-family: var(--font-header); letter-spacing: 2px;">NS_FOUNTAIN</h2>
                     <p style="font-size: 9px; color: #666; margin-top: 4px;">NIAGARA_SYSTEM_ASSET</p>
