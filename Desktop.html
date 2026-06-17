@@ -198,6 +198,7 @@
             height: 14px;
             background: #FFF;
             cursor: pointer;
+            border: 1px solid #000;
         }
 
         /* --- Right Sidebar --- */
@@ -236,6 +237,29 @@
         }
 
         /* Interactive Controls */
+        .level-tabs {
+            display: flex;
+            border-bottom: 1px solid #333;
+            margin-bottom: 10px;
+        }
+
+        .level-tab {
+            flex: 1;
+            padding: 10px;
+            font-size: 9px;
+            text-align: center;
+            cursor: pointer;
+            background: #111;
+            color: #888;
+            border-right: 1px solid #333;
+            font-family: var(--font-mono);
+        }
+
+        .level-tab.active {
+            background: #222;
+            color: #FFF;
+        }
+
         .control-group {
             display: flex;
             flex-direction: column;
@@ -328,6 +352,22 @@
             color: rgba(255,255,255,0.4);
             pointer-events: none;
         }
+
+        .goal-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 14px;
+            color: #00FF00;
+            background: #000;
+            padding: 10px 20px;
+            border: 1px solid #00FF00;
+            display: none;
+            pointer-events: none;
+            font-family: var(--font-mono);
+            z-index: 50;
+        }
     </style>
 </head>
 <body>
@@ -369,8 +409,9 @@
         <!-- Module 01: Game -->
         <div id="module-01" class="module-view active">
             <canvas id="niagara-canvas" tabindex="0"></canvas>
+            <div id="goal-notification" class="goal-text">MISSION_SUCCESS: GOAL_REACHED</div>
             <div class="game-controls-hint">
-                WASD: MOVE | Q/E: ROTATE | SPACE: PAUSE | R: RESET<br>
+                WASD: MOVE | Q/E: ROTATE/PARAM | SPACE: PAUSE | R: RESET<br>
                 PHYSICS_ENGINE: ACTIVE
             </div>
         </div>
@@ -403,8 +444,36 @@
         </div>
 
         <div id="game-controls-section" class="control-group">
-            <div class="category-label">PHYSICS_PARAMETERS</div>
+            <div class="level-tabs">
+                <div class="level-tab active" onclick="setLevel(1)">[LV_01]</div>
+                <div class="level-tab" onclick="setLevel(2)">[LV_02]</div>
+                <div class="level-tab" onclick="setLevel(3)">[LV_03]</div>
+            </div>
+
+            <div class="category-label" id="tool-label">DEFLECTOR_TRANSFORM</div>
             
+            <div class="control-item">
+                <div class="control-label">POS_X <span class="control-val" id="val-posX">400</span></div>
+                <input type="range" id="param-posX" class="control-slider" min="0" max="1000" step="1" value="400">
+            </div>
+
+            <div class="control-item">
+                <div class="control-label">POS_Y <span class="control-val" id="val-posY">300</span></div>
+                <input type="range" id="param-posY" class="control-slider" min="0" max="1000" step="1" value="300">
+            </div>
+
+            <div class="control-item" id="rot-section">
+                <div class="control-label">ROTATION <span class="control-val" id="val-rot">45</span></div>
+                <input type="range" id="param-rot" class="control-slider" min="0" max="360" step="1" value="45">
+            </div>
+
+            <div class="control-item" id="param-section" style="display:none">
+                <div class="control-label" id="param-label">STRENGTH <span class="control-val" id="val-param">2.0</span></div>
+                <input type="range" id="param-slider" class="control-slider" min="-10" max="10" step="0.1" value="2.0">
+            </div>
+
+            <div class="category-label">GLOBAL_PHYSICS</div>
+
             <div class="control-item">
                 <div class="control-label">GRAVITY <span class="control-val" id="val-gravity">0.05</span></div>
                 <input type="range" id="param-gravity" class="control-slider" min="0" max="0.2" step="0.01" value="0.05">
@@ -413,16 +482,6 @@
             <div class="control-item">
                 <div class="control-label">PARTICLE_COUNT <span class="control-val" id="val-count">100</span></div>
                 <input type="range" id="param-count" class="control-slider" min="10" max="500" step="1" value="100">
-            </div>
-
-            <div class="control-item">
-                <div class="control-label">DEFLECTOR_SIZE <span class="control-val" id="val-size">120</span></div>
-                <input type="range" id="param-size" class="control-slider" min="40" max="300" step="1" value="120">
-            </div>
-
-            <div class="control-item">
-                <div class="control-label">EMISSION_SPEED <span class="control-val" id="val-speed">2.0</span></div>
-                <input type="range" id="param-speed" class="control-slider" min="0.5" max="5.0" step="0.1" value="2.0">
             </div>
         </div>
     </aside>
@@ -433,7 +492,7 @@
             NAME: Kyungsoo Doh<br>
             AGE: 21<br>
             EDU: Heilongjiang Vocational College of Art (Animation Production Technology)<br>
-            MAIL: zgnx4ndcq5@privaterelay.appleid.com
+            MAIL: zgnx4ndcq5@priv2relay.appleid.com
         </div>
         <div class="close-card" onclick="toggleContact(false)">[CLOSE_WINDOW]</div>
     </div>
@@ -468,6 +527,7 @@
                 document.getElementById('asset-name').innerText = "NS_SYSTEM";
                 document.getElementById('asset-desc').innerText = "Niagara particle physics environment. Real-time collision and vector field simulation.";
                 gameControls.style.display = 'flex';
+                resize();
             } else {
                 document.getElementById('module-01').classList.remove('active');
                 document.getElementById('video-module').classList.add('active');
@@ -516,59 +576,124 @@
         // --- Particle Engine (Module 01) ---
         const canvas = document.getElementById('niagara-canvas');
         const ctx = canvas.getContext('2d');
+        const goalNotif = document.getElementById('goal-notification');
+        
         let particles = [];
         let paused = false;
+        let currentLevel = 1;
+        let goalHits = 0;
         
-        // Physics Params
         let config = {
             gravity: 0.05,
-            particleCount: 100,
-            deflectorSize: 120,
-            emissionSpeed: 2.0
+            particleCount: 100
         };
 
-        let deflector = { x: 400, y: 300, rotation: 45, length: config.deflectorSize };
+        let gameState = {
+            deflector: { x: 400, y: 300, rotation: 45, length: 120 },
+            gravity: { x: 400, y: 300, strength: 2.0, radius: 150 },
+            wind: { x: 400, y: 300, rotation: 0, strength: 0.2, w: 200, h: 200 },
+            goal: { x: 700, y: 500, w: 80, h: 80 }
+        };
 
         // UI Hookup
-        const params = {
+        const ui = {
+            posX: document.getElementById('param-posX'),
+            posY: document.getElementById('param-posY'),
+            rot: document.getElementById('param-rot'),
+            param: document.getElementById('param-slider'),
             gravity: document.getElementById('param-gravity'),
-            count: document.getElementById('param-count'),
-            size: document.getElementById('param-size'),
-            speed: document.getElementById('param-speed')
+            count: document.getElementById('param-count')
         };
 
         const displays = {
+            posX: document.getElementById('val-posX'),
+            posY: document.getElementById('val-posY'),
+            rot: document.getElementById('val-rot'),
+            param: document.getElementById('val-param'),
             gravity: document.getElementById('val-gravity'),
-            count: document.getElementById('val-count'),
-            size: document.getElementById('val-size'),
-            speed: document.getElementById('val-speed')
+            count: document.getElementById('val-count')
         };
 
-        params.gravity.addEventListener('input', (e) => {
-            config.gravity = parseFloat(e.target.value);
+        function setLevel(lvl) {
+            currentLevel = lvl;
+            document.querySelectorAll('.level-tab').forEach((t, i) => {
+                t.classList.toggle('active', i + 1 === lvl);
+            });
+            
+            const toolLabel = document.getElementById('tool-label');
+            const rotSection = document.getElementById('rot-section');
+            const paramSection = document.getElementById('param-section');
+            const paramLabel = document.getElementById('param-label');
+
+            if (lvl === 1) {
+                toolLabel.innerText = "DEFLECTOR_TRANSFORM";
+                rotSection.style.display = 'block';
+                paramSection.style.display = 'none';
+            } else if (lvl === 2) {
+                toolLabel.innerText = "GRAVITY_WELL_TRANSFORM";
+                rotSection.style.display = 'none';
+                paramSection.style.display = 'block';
+                paramLabel.innerHTML = 'STRENGTH <span class="control-val" id="val-param">' + gameState.gravity.strength.toFixed(1) + '</span>';
+                ui.param.min = -10; ui.param.max = 10; ui.param.step = 0.1;
+                ui.param.value = gameState.gravity.strength;
+            } else if (lvl === 3) {
+                toolLabel.innerText = "WIND_FIELD_TRANSFORM";
+                rotSection.style.display = 'block';
+                paramSection.style.display = 'block';
+                paramLabel.innerHTML = 'SPEED <span class="control-val" id="val-param">' + gameState.wind.strength.toFixed(2) + '</span>';
+                ui.param.min = 0; ui.param.max = 2; ui.param.step = 0.01;
+                ui.param.value = gameState.wind.strength;
+            }
+
+            resetLevel();
+            syncUIFromState();
+        }
+
+        function syncUIFromState() {
+            let obj = currentLevel === 1 ? gameState.deflector : (currentLevel === 2 ? gameState.gravity : gameState.wind);
+            ui.posX.value = Math.round(obj.x);
+            ui.posY.value = Math.round(obj.y);
+            displays.posX.innerText = Math.round(obj.x);
+            displays.posY.innerText = Math.round(obj.y);
+            
+            if (obj.rotation !== undefined) {
+                ui.rot.value = Math.round(obj.rotation);
+                displays.rot.innerText = Math.round(obj.rotation);
+            }
+            
+            if (obj.strength !== undefined) {
+                ui.param.value = obj.strength;
+                document.getElementById('val-param').innerText = currentLevel === 3 ? obj.strength.toFixed(2) : obj.strength.toFixed(1);
+            }
+        }
+
+        function syncStateFromUI() {
+            let obj = currentLevel === 1 ? gameState.deflector : (currentLevel === 2 ? gameState.gravity : gameState.wind);
+            obj.x = parseInt(ui.posX.value);
+            obj.y = parseInt(ui.posY.value);
+            if (obj.rotation !== undefined) obj.rotation = parseInt(ui.rot.value);
+            if (obj.strength !== undefined) obj.strength = parseFloat(ui.param.value);
+            
+            config.gravity = parseFloat(ui.gravity.value);
+            config.particleCount = parseInt(ui.count.value);
+            
             displays.gravity.innerText = config.gravity.toFixed(2);
-        });
-
-        params.count.addEventListener('input', (e) => {
-            config.particleCount = parseInt(e.target.value);
             displays.count.innerText = config.particleCount;
-            initParticles();
-        });
+            
+            syncUIFromState();
+        }
 
-        params.size.addEventListener('input', (e) => {
-            config.deflectorSize = parseInt(e.target.value);
-            deflector.length = config.deflectorSize;
-            displays.size.innerText = config.deflectorSize;
-        });
-
-        params.speed.addEventListener('input', (e) => {
-            config.emissionSpeed = parseFloat(e.target.value);
-            displays.speed.innerText = config.emissionSpeed.toFixed(1);
-        });
+        Object.values(ui).forEach(el => el.addEventListener('input', () => {
+            if (el === ui.count) { initParticles(); }
+            syncStateFromUI();
+        }));
 
         function resize() {
             canvas.width = canvas.offsetWidth;
             canvas.height = canvas.offsetHeight;
+            ui.posX.max = canvas.width;
+            ui.posY.max = canvas.height;
+            gameState.goal = { x: canvas.width - 120, y: canvas.height - 120, w: 80, h: 80 };
         }
         window.addEventListener('resize', resize);
         resize();
@@ -578,36 +703,52 @@
             reset() { 
                 this.x = 50; 
                 this.y = 50; 
-                this.vx = config.emissionSpeed + Math.random() * config.emissionSpeed; 
-                this.vy = (config.emissionSpeed / 2) + Math.random() * (config.emissionSpeed / 2); 
+                this.vx = 2 + Math.random() * 2; 
+                this.vy = 1 + Math.random() * 2; 
             }
             update() {
                 if (paused) return;
                 this.vy += config.gravity;
                 
-                // Collision with deflector
-                const dx = this.x - deflector.x;
-                const dy = this.y - deflector.y;
-                const rad = deflector.rotation * Math.PI / 180;
-                const cos = Math.cos(-rad);
-                const sin = Math.sin(-rad);
-                const lx = dx * cos - dy * sin;
-                const ly = dx * sin + dy * cos;
-                
-                if (Math.abs(ly) < 5 && Math.abs(lx) < deflector.length / 2) {
-                    const nx = Math.sin(rad); 
-                    const ny = -Math.cos(rad);
-                    const dot = this.vx * nx + this.vy * ny;
-                    this.vx -= 2 * dot * nx; 
-                    this.vy -= 2 * dot * ny;
-                    // Push out slightly to avoid sticking
-                    this.x += nx * 5;
-                    this.y += ny * 5;
+                if (currentLevel === 1) {
+                    const d = gameState.deflector;
+                    const dx = this.x - d.x; const dy = this.y - d.y;
+                    const rad = d.rotation * Math.PI / 180;
+                    const cos = Math.cos(-rad); const sin = Math.sin(-rad);
+                    const lx = dx * cos - dy * sin; const ly = dx * sin + dy * cos;
+                    if (Math.abs(ly) < 5 && Math.abs(lx) < d.length / 2) {
+                        const nx = Math.sin(rad); const ny = -Math.cos(rad);
+                        const dot = this.vx * nx + this.vy * ny;
+                        this.vx -= 2 * dot * nx; this.vy -= 2 * dot * ny;
+                        this.x += nx * 5; this.y += ny * 5;
+                    }
+                } else if (currentLevel === 2) {
+                    const g = gameState.gravity;
+                    const dx = g.x - this.x; const dy = g.y - this.y;
+                    const distSq = dx*dx + dy*dy;
+                    if (distSq < g.radius * g.radius && distSq > 25) {
+                        const dist = Math.sqrt(distSq);
+                        const force = (g.strength * 100) / distSq;
+                        this.vx += (dx / dist) * force;
+                        this.vy += (dy / dist) * force;
+                    }
+                } else if (currentLevel === 3) {
+                    const w = gameState.wind;
+                    if (this.x > w.x - w.w/2 && this.x < w.x + w.w/2 &&
+                        this.y > w.y - w.h/2 && this.y < w.y + w.h/2) {
+                        const rad = w.rotation * Math.PI / 180;
+                        this.vx += Math.cos(rad) * w.strength;
+                        this.vy += Math.sin(rad) * w.strength;
+                    }
                 }
+
+                this.x += this.vx; this.y += this.vy;
                 
-                this.x += this.vx; 
-                this.y += this.vy;
-                
+                if (this.x > gameState.goal.x && this.x < gameState.goal.x + gameState.goal.w && 
+                    this.y > gameState.goal.y && this.y < gameState.goal.y + gameState.goal.h) {
+                    goalHits++; this.reset();
+                }
+
                 if (this.y > canvas.height || this.x > canvas.width || this.x < 0 || this.y < 0) {
                     this.reset();
                 }
@@ -624,39 +765,59 @@
                 particles.push(new Particle());
             }
         }
-        initParticles();
+        function resetLevel() {
+            initParticles();
+            goalHits = 0;
+        }
 
         function animate() {
             if (document.getElementById('module-01').classList.contains('active')) {
                 ctx.fillStyle = 'rgba(0,0,0,0.3)';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 
-                ctx.save();
-                ctx.translate(deflector.x, deflector.y);
-                ctx.rotate(deflector.rotation * Math.PI / 180);
-                ctx.fillStyle = "#FFF";
-                ctx.fillRect(-deflector.length / 2, -1, deflector.length, 2);
-                ctx.restore();
+                // Goal
+                ctx.strokeStyle = goalHits > 30 ? "#00FF00" : "rgba(255,255,255,0.2)";
+                ctx.strokeRect(gameState.goal.x, gameState.goal.y, gameState.goal.w, gameState.goal.h);
+
+                if (currentLevel === 1) {
+                    const d = gameState.deflector;
+                    ctx.save(); ctx.translate(d.x, d.y); ctx.rotate(d.rotation * Math.PI / 180);
+                    ctx.fillStyle = "#FFF"; ctx.fillRect(-d.length / 2, -1, d.length, 2);
+                    ctx.restore();
+                } else if (currentLevel === 2) {
+                    const g = gameState.gravity;
+                    ctx.beginPath(); ctx.arc(g.x, g.y, g.radius, 0, Math.PI * 2);
+                    ctx.strokeStyle = "rgba(255,255,255,0.05)"; ctx.stroke();
+                    ctx.beginPath(); ctx.arc(g.x, g.y, 4, 0, Math.PI * 2);
+                    ctx.fillStyle = g.strength >= 0 ? "#FFF" : "#F00"; ctx.fill();
+                } else if (currentLevel === 3) {
+                    const w = gameState.wind;
+                    ctx.strokeStyle = "rgba(255,255,255,0.1)";
+                    ctx.strokeRect(w.x - w.w/2, w.y - w.h/2, w.w, w.h);
+                }
 
                 particles.forEach(p => { p.update(); p.draw(); });
+                goalNotif.style.display = goalHits > 30 ? 'block' : 'none';
             }
             requestAnimationFrame(animate);
         }
         animate();
 
         window.addEventListener('keydown', (e) => {
-            const step = 10;
-            if (e.key === 'w') deflector.y -= step;
-            if (e.key === 's') deflector.y += step;
-            if (e.key === 'a') deflector.x -= step;
-            if (e.key === 'd') deflector.x += step;
-            if (e.key === 'q') deflector.rotation -= 5;
-            if (e.key === 'e') deflector.rotation += 5;
-            if (e.key === ' ') {
-                e.preventDefault();
-                paused = !paused;
+            if (document.activeElement.tagName === 'INPUT') return;
+            const obj = currentLevel === 1 ? gameState.deflector : (currentLevel === 2 ? gameState.gravity : gameState.wind);
+            const step = e.shiftKey ? 10 : 2;
+            if (e.key === 'w') obj.y -= step;
+            if (e.key === 's') obj.y += step;
+            if (e.key === 'a') obj.x -= step;
+            if (e.key === 'd') obj.x += step;
+            if (e.key === 'q' || e.key === 'e') {
+                if (obj.rotation !== undefined) obj.rotation += (e.key === 'q' ? -5 : 5);
+                else if (obj.strength !== undefined) obj.strength += (e.key === 'q' ? -0.1 : 0.1);
             }
-            if (e.key === 'r') initParticles();
+            if (e.key === ' ') { e.preventDefault(); paused = !paused; }
+            if (e.key === 'r') resetLevel();
+            syncUIFromState();
         });
     </script>
 </body>
