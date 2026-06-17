@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAB-0 | MOBILE TELEMETRY</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&family=Space+Mono:wght@400;700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #050505;
+            --fg: #FFFFFF;
+            --border: 1px solid rgba(255, 255, 255, 0.15);
+            --font-header: 'Syncopate', sans-serif;
+            --font-body: 'Space Grotesk', sans-serif;
+            --font-mono: 'Space Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            border-radius: 0 !important;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--fg);
+            font-family: var(--font-body);
+            width: 100vw;
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            /* Subtle Checkered Grid Background */
+            background-image: 
+                linear-gradient(45deg, rgba(255,255,255,0.01) 25%, transparent 25%), 
+                linear-gradient(-45deg, rgba(255,255,255,0.01) 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.01) 75%), 
+                linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.01) 75%);
+            background-size: 40px 40px;
+            background-position: 0 0, 0 20px, 20px -20px, -20px 0px;
+        }
+
+        header {
+            border-bottom: var(--border);
+            padding: 25px;
+            z-index: 10;
+            background: rgba(5,5,5,0.8);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-family: var(--font-header);
+            font-size: 9px;
+            letter-spacing: 3px;
+            opacity: 0.8;
+        }
+
+        /* Module Switcher */
+        .module-switcher {
+            display: flex;
+            border-bottom: var(--border);
+            background: transparent;
+        }
+
+        .module-tab {
+            flex: 1;
+            padding: 15px;
+            font-family: var(--font-mono);
+            font-size: 9px;
+            text-align: center;
+            text-transform: uppercase;
+            opacity: 0.3;
+            transition: opacity 0.3s ease;
+        }
+
+        .module-tab.active {
+            opacity: 1;
+            letter-spacing: 1px;
+        }
+
+        /* Main Content */
+        .main-section {
+            width: 100%;
+            position: relative;
+            z-index: 5;
+        }
+
+        .module-content {
+            display: none;
+            width: 100%;
+        }
+
+        .module-content.active {
+            display: block;
+        }
+
+        .canvas-container {
+            height: 300px;
+            width: 100%;
+        }
+
+        #niagara-canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Simplified Mobile View */
+        .placeholder-view {
+            padding: 40px 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .video-box {
+            width: 100%;
+            aspect-ratio: 16/9;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+        }
+
+        .video-desc-block {
+            text-align: left;
+        }
+
+        .desc-title {
+            font-family: var(--font-header);
+            font-size: 14px;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .desc-body {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            line-height: 1.8;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 30px;
+        }
+
+        /* High-Frequency Time Display */
+        .time-display {
+            padding: 20px 25px;
+            border-top: var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .time-label {
+            font-family: var(--font-mono);
+            font-size: 8px;
+            color: rgba(255,255,255,0.3);
+            letter-spacing: 1px;
+        }
+
+        .time-value {
+            font-family: var(--font-mono);
+            font-size: 16px;
+            color: #FFFFFF;
+        }
+
+        /* Terminal Feed */
+        .terminal-section {
+            padding: 25px;
+            flex-grow: 1;
+            background: transparent;
+        }
+
+        .panel-title {
+            font-family: var(--font-header);
+            font-size: 8px;
+            color: rgba(255,255,255,0.2);
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+        }
+
+        #diag-terminal {
+            font-family: var(--font-mono);
+            font-size: 9px;
+            color: rgba(255,255,255,0.4);
+            white-space: pre-wrap;
+            line-height: 1.6;
+        }
+
+        footer {
+            border-top: var(--border);
+            padding: 20px 25px;
+            font-family: var(--font-mono);
+            font-size: 8px;
+            color: rgba(255,255,255,0.2);
+            text-align: center;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>LAB-0 // MOBILE_TELEMETRY</h1>
+        <div style="font-size: 8px; color: #00FF00; opacity: 0.5;">LIVE</div>
+    </header>
+
+    <nav class="module-switcher">
+        <div class="module-tab active" onclick="switchModule('01')">LAB_01</div>
+        <div class="module-tab" onclick="switchModule('02')">VFX_02</div>
+    </nav>
+
+    <section class="main-section">
+        <div id="content-01" class="module-content active">
+            <div class="canvas-container">
+                <canvas id="niagara-canvas"></canvas>
+            </div>
+        </div>
+        <div id="content-02" class="module-content">
+            <div class="placeholder-view">
+                <div class="video-box">
+                    <div style="font-family: var(--font-mono); font-size: 9px; opacity: 0.2;">[ PENDING_SIGNAL ]</div>
+                </div>
+                <div class="video-desc-block">
+                    <div class="desc-title">NS_FOUNTAIN</div>
+                    <div class="desc-body">
+                        NIAGARA PARTICLE SYSTEM. HLSL INTEGRATION. DYNAMIC ALPHA CURVE VISUALIZATION.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="time-display">
+        <div class="time-label">UTC_TELEMETRY</div>
+        <div class="time-value" id="live-clock">00:00:00:00</div>
+    </div>
+
+    <section class="terminal-section">
+        <div class="panel-title">DIAGNOSTICS_FEED</div>
+        <div id="diag-terminal"></div>
+    </section>
+
+    <footer>
+        STRICT_0PX_B_RADIUS // UE_5.2.4
+    </footer>
+
+    <script>
+        function switchModule(id) {
+            document.querySelectorAll('.module-tab').forEach(el => el.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            document.querySelectorAll('.module-content').forEach(el => el.classList.remove('active'));
+            document.getElementById('content-' + id).classList.add('active');
+        }
+
+        const terminal = document.getElementById('diag-terminal');
+        const logs = [
+            "[SYS] CORE_INIT...",
+            "[VFX] NS_FOUNTAIN_LOAD...",
+            "[GPU] SHADERS_OK...",
+            "[MEM] BUFFER_ALLOC..."
+        ];
+
+        function addLog() {
+            const log = logs[Math.floor(Math.random() * logs.length)];
+            const time = new Date().toLocaleTimeString('en-GB', { hour12: false });
+            const lines = terminal.innerHTML.split('\n');
+            terminal.innerHTML += `[${time}] ${log}\n`;
+            if (lines.length > 8) terminal.innerHTML = lines.slice(lines.length - 8).join('\n');
+        }
+        setInterval(addLog, 2500);
+
+        const canvas = document.getElementById('niagara-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resize() {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() { this.reset(); }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height + 10;
+                this.vx = (Math.random() - 0.5) * 1;
+                this.vy = -Math.random() * 2 - 1;
+                this.life = 1;
+                this.decay = Math.random() * 0.015 + 0.005;
+            }
+            update() {
+                this.x += this.vx; this.y += this.vy;
+                this.life -= this.decay;
+                if (this.life <= 0) this.reset();
+            }
+            draw() {
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.life * 0.6})`;
+                ctx.fillRect(this.x, this.y, 1, 1);
+            }
+        }
+
+        for (let i = 0; i < 80; i++) particles.push(new Particle());
+
+        function animate() {
+            if (document.getElementById('content-01').classList.contains('active')) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => { p.update(); p.draw(); });
+            }
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        function updateClock() {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            const s = String(now.getSeconds()).padStart(2, '0');
+            const ms = String(now.getMilliseconds()).padStart(3, '0').slice(0, 2);
+            document.getElementById('live-clock').innerText = `${h}:${m}:${s}:${ms}`;
+        }
+        setInterval(updateClock, 50);
+    </script>
+</body>
+</html>
