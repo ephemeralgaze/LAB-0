@@ -29,22 +29,70 @@
         .detail-input { width: 100%; background: transparent; border: none; color: #FFF; font-family: var(--font-mono); font-size: 11px; padding: 8px; outline: none; }
         .detail-slider { -webkit-appearance: none; width: 100%; height: 1px; background: #444; outline: none; margin: 10px 0; }
         .detail-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 20px; background: #FFF; }
-        .obj-toggle { display: flex; padding: 10px; gap: 5px; }
-        .obj-btn { flex: 1; padding: 8px; font-size: 8px; background: #222; border: 1px solid #333; color: #777; text-align: center; }
-        .obj-btn.active { color: #FFF; background: #333; border-color: #555; }
-        .video-placeholder { height: 180px; border: 1px dashed rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 9px; color: rgba(255,255,255,0.3); }
-        .goal-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 10px; color: var(--terminal-green); background: #000; border: 1px solid var(--terminal-green); padding: 5px 10px; display: none; pointer-events: none; }
+        .level-tabs { display: flex; background: #222; }
+        .level-tab { flex: 1; padding: 10px; font-size: 8px; text-align: center; color: #555; border-right: 1px solid #333; }
+        .level-tab.active { background: #111; color: #FFF; }
     </style>
 </head>
 <body>
     <header><h1>LAB-0 // MOBILE</h1><div id="sim-status" style="font-size: 8px; color: #00FF00;">READY</div></header>
     <div class="nav-scroller"><div class="nav-item active" onclick="switchModule('01')">Module 01</div><div class="nav-item" onclick="switchModule('02')">Module 02</div></div>
+    
     <div id="module-01" class="module-content active">
         <div class="canvas-container"><canvas id="niagara-canvas"></canvas><div id="goal-notification" class="goal-text">GOAL_REACHED</div></div>
-        <div class="obj-toggle"><div id="btn-deflector" class="obj-btn active" onclick="selectObject('deflector')">DEFLECTOR</div></div>
-        <section class="details-panel"><div class="category-header">TRANSFORM</div><div class="detail-row"><div class="detail-label">Position X</div><div class="input-group"><span class="input-prefix">X</span><input type="number" id="posX" class="detail-input"></div><input type="range" id="posX-slider" class="detail-slider" min="0" max="400"></div><div class="detail-row"><div class="detail-label">Position Y</div><div class="input-group"><span class="input-prefix">Y</span><input type="number" id="posY" class="detail-input"></div><input type="range" id="posY-slider" class="detail-slider" min="0" max="300"></div></section>
+        <section class="details-panel"><div class="level-tabs" style="display:flex; background:#222;"><div class="level-tab active" style="flex:1; padding:10px; font-size:8px; text-align:center;">[LVL_01]</div><div class="level-tab" style="flex:1; padding:10px; font-size:8px; text-align:center; color:#555;">[LVL_02]</div><div class="level-tab" style="flex:1; padding:10px; font-size:8px; text-align:center; color:#555;">[LVL_03]</div></div>
+            <div class="category-header">TRANSFORM</div>
+            <div class="detail-row">
+                <div class="detail-label">Position X</div>
+                <div class="input-group"><span class="input-prefix">X</span><input type="number" id="posX" class="detail-input"></div>
+                <input type="range" id="posX-slider" class="detail-slider" min="0" max="400">
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Position Y</div>
+                <div class="input-group"><span class="input-prefix">Y</span><input type="number" id="posY" class="detail-input"></div>
+                <input type="range" id="posY-slider" class="detail-slider" min="0" max="500">
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Rotation</div>
+                <div class="input-group"><span class="input-prefix">Deg</span><input type="number" id="rotDeg" class="detail-input"></div>
+                <input type="range" id="rot-slider" class="detail-slider" min="0" max="360">
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Scale</div>
+                <div class="input-group"><span class="input-prefix">X</span><input type="number" id="scaleX" class="detail-input" step="0.1"></div>
+                <input type="range" id="scale-slider" class="detail-slider" min="0.1" max="3" step="0.1">
+            </div>
+        </section>
     </div>
-    <div id="module-02" class="module-content"><div style="padding:20px;"><div class="video-placeholder">[ VIDEO_NOT_FOUND ]</div><div class="category-header">NIAGARA_TECH</div><p style="font-size:9px; color:#888;">Emitter: NS_Fountain_01</p></div></div>
+
+    <div id="module-02" class="module-content">
+        <div style="display: flex; flex-direction: column; height: 100%; background: #000;">
+            <div class="video-viewport" style="flex: 1; min-height: 250px; display: flex; align-items: center; justify-content: center; border-bottom: var(--border); padding: 20px;">
+                <div class="placeholder-box" style="width: 100%; height: 100%; border: 1px dashed rgba(255,255,255,0.2); display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 9px; color: rgba(255,255,255,0.3); gap: 8px;">
+                    <span>[ VIDEO_NOT_FOUND ]</span>
+                    <span>[ DROP RECORDING HERE ]</span>
+                </div>
+            </div>
+            <section class="details-panel" style="padding: 20px; background: #111; display: flex; flex-direction: column; gap: 15px;">
+                <div>
+                    <h2 style="font-size: 12px; letter-spacing: 1px;">NS_FOUNTAIN</h2>
+                    <p style="font-size: 8px; color: #666;">NIAGARA_SYSTEM_ASSET</p>
+                </div>
+                <div>
+                    <div class="category-header" style="margin: 0 -20px 10px; background: #2A2A2A; padding: 8px 20px; font-size: 8px;">TECHNICAL_BRIEF</div>
+                    <p style="font-size: 9px; color: #AAA; line-height: 1.4;">GPU-accelerated particle simulation with vector field integration and dynamic gravity scaling.</p>
+                </div>
+                <div style="margin-top: 10px;">
+                    <div class="category-header" style="margin: 0 -20px 10px; background: #2A2A2A; padding: 8px 20px; font-size: 8px;">AUDIO_OUTPUT</div>
+                    <div style="display: flex; align-items: center; gap: 15px; padding-top: 10px;">
+                        <span style="font-size: 8px; color: #888;">VOL</span>
+                        <input type="range" class="detail-slider" min="0" max="100" value="75" style="flex: 1; height: 1px; background: #444; -webkit-appearance: none;">
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
     <script>
         function switchModule(id) {
             document.querySelectorAll('.module-content').forEach(m => m.classList.remove('active'));
@@ -52,24 +100,58 @@
             document.getElementById('module-' + id).classList.add('active');
             event.currentTarget.classList.add('active'); if(id === '01') resize();
         }
-        const canvas = document.getElementById('niagara-canvas'); const ctx = canvas.getContext('2d'); const goalNotif = document.getElementById('goal-notification');
-        let particles = []; let goalHits = 0; let activeObjKey = 'deflector';
-        let gameState = { deflector: { x: 150, y: 100 }, goal: { x: 250, y: 180, w: 50, h: 50 } };
-        const ui = { posX: document.getElementById('posX'), posY: document.getElementById('posY'), posXs: document.getElementById('posX-slider'), posYs: document.getElementById('posY-slider') };
-        function selectObject(key) { activeObjKey = key; syncUIFromState(); }
-        function syncUIFromState() { const obj = gameState[activeObjKey]; ui.posX.value = ui.posXs.value = Math.round(obj.x); ui.posY.value = ui.posYs.value = Math.round(obj.y); }
+        const canvas = document.getElementById('niagara-canvas'); const ctx = canvas.getContext('2d');
+        let particles = []; let goalHits = 0; let activeObjKey = 'deflector'; let paused = false;
+        let gameState = { deflector: { x: 150, y: 100, rotation: 45, length: 60, scale: 1 }, goal: { x: 250, y: 180, w: 50, h: 50 } };
+        
+        const ui = { 
+            posX: document.getElementById('posX'), posY: document.getElementById('posY'), 
+            posXs: document.getElementById('posX-slider'), posYs: document.getElementById('posY-slider'),
+            rot: document.getElementById('rotDeg'), rots: document.getElementById('rot-slider'),
+            scale: document.getElementById('scaleX'), scales: document.getElementById('scale-slider')
+        };
+        function syncUIFromState() { 
+            const obj = gameState[activeObjKey]; 
+            if(!obj) return;
+            ui.posX.value = ui.posXs.value = Math.round(obj.x); 
+            ui.posY.value = ui.posYs.value = Math.round(obj.y); 
+            if(ui.rot) ui.rot.value = ui.rots.value = Math.round(obj.rotation || 0);
+            if(ui.scale) ui.scale.value = ui.scales.value = obj.scale || 1;
+        }
         function syncStateFromUI(source) {
             const obj = gameState[activeObjKey];
-            if (source.includes('s')) { obj.x = parseInt(ui.posXs.value); obj.y = parseInt(ui.posYs.value); }
-            else { obj.x = parseInt(ui.posX.value) || 0; obj.y = parseInt(ui.posY.value) || 0; }
+            if(!obj) return;
+            if (source === 'posXs') obj.x = parseInt(ui.posXs.value);
+            else if (source === 'posX') obj.x = parseInt(ui.posX.value) || 0;
+            else if (source === 'posYs') obj.y = parseInt(ui.posYs.value);
+            else if (source === 'posY') obj.y = parseInt(ui.posY.value) || 0;
+            else if (source === 'rots') obj.rotation = parseInt(ui.rots.value);
+            else if (source === 'rot') obj.rotation = parseInt(ui.rot.value) || 0;
+            else if (source === 'scales') obj.scale = parseFloat(ui.scales.value);
+            else if (source === 'scale') obj.scale = parseFloat(ui.scale.value) || 1;
             syncUIFromState();
         }
-        Object.keys(ui).forEach(k => ui[k].addEventListener('input', () => syncStateFromUI(k)));
+        Object.keys(ui).forEach(k => { if(ui[k]) ui[k].addEventListener('input', () => syncStateFromUI(k)); });
+        
+        window.addEventListener('keydown', (e) => {
+            if (document.activeElement.tagName === 'INPUT') return;
+            const obj = gameState[activeObjKey];
+            if(!obj) return;
+            const step = e.shiftKey ? 10 : 2;
+            if (e.key === 'ArrowLeft' || e.key === 'a') obj.x -= step;
+            if (e.key === 'ArrowRight' || e.key === 'd') obj.x += step;
+            if (e.key === 'ArrowUp' || e.key === 'w') obj.y -= step;
+            if (e.key === 'ArrowDown' || e.key === 's') obj.y += step;
+            if (e.key === 'q' || e.key === 'r') obj.rotation = ((obj.rotation || 0) + (e.key === 'q' ? -step : step)) % 360;
+            if (e.key === ' ') { paused = !paused; const simStatus = document.getElementById('sim-status'); if(simStatus) simStatus.innerText = paused ? "SIMULATION: PAUSED" : "SIMULATION: ACTIVE"; }
+            syncUIFromState();
+        });
+
         function resetLevel() { particles = []; for (let i = 0; i < 30; i++) particles.push(new Particle()); goalHits = 0; syncUIFromState(); }
         class Particle {
             constructor() { this.reset(); }
             reset() { this.x = 20; this.y = 20; this.vx = 1.5 + Math.random(); this.vy = 0.5 + Math.random(); }
-            update() { this.x += this.vx; this.y += this.vy; this.vy += 0.05; if (this.y > canvas.height || this.x > canvas.width || this.x < 0) this.reset(); }
+            update() { if(paused) return; this.x += this.vx; this.y += this.vy; this.vy += 0.05; if (this.y > canvas.height || this.x > canvas.width || this.x < 0) this.reset(); }
             draw() { ctx.fillStyle = "#FFF"; ctx.fillRect(this.x, this.y, 1, 1); }
         }
         function resize() { if(document.getElementById('module-01').classList.contains('active')) { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; resetLevel(); } }
