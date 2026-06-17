@@ -433,9 +433,9 @@
             </div>
             <div class="viewport-control-bar">
                 <button class="v-btn" id="play-pause-btn" onclick="togglePlay()">PLAY</button>
-                <div class="v-time" id="cur-time">00:00</div>
+                <div class="v-time" id="cur-time">--:--</div>
                 <input type="range" class="v-seekbar" id="v-seek" min="0" max="100" value="0" step="0.1">
-                <div class="v-time" id="total-dur">03:00</div>
+                <div class="v-time" id="total-dur">--:--</div>
                 <button class="v-btn" id="mute-btn" onclick="toggleMute()">MUTE</button>
             </div>
         </div>
@@ -554,6 +554,8 @@
         const playBtn = document.getElementById('play-pause-btn');
         const muteBtn = document.getElementById('mute-btn');
         const seek = document.getElementById('v-seek');
+        const curTimeDisplay = document.getElementById('cur-time');
+        const totalDurDisplay = document.getElementById('total-dur');
 
         function togglePlay() {
             if (video.paused) video.play(); else video.pause();
@@ -566,16 +568,17 @@
         video.addEventListener('pause', () => playBtn.innerText = 'PLAY');
         video.addEventListener('timeupdate', () => {
             if (!seek.dragging) seek.value = video.currentTime;
-            document.getElementById('cur-time').innerText = formatVTime(video.currentTime);
+            curTimeDisplay.innerText = formatVTime(video.currentTime);
         });
         video.addEventListener('loadedmetadata', () => {
             seek.max = video.duration;
-            document.getElementById('total-dur').innerText = formatVTime(video.duration);
+            totalDurDisplay.innerText = formatVTime(video.duration);
         });
         seek.addEventListener('input', () => { seek.dragging = true; video.currentTime = seek.value; });
         seek.addEventListener('change', () => { seek.dragging = false; });
 
         function formatVTime(s) {
+            if (isNaN(s) || s === Infinity || s === null) return "--:--";
             const m = Math.floor(s / 60);
             const sec = Math.floor(s % 60);
             return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
