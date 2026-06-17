@@ -64,7 +64,7 @@
             letter-spacing: 4px;
         }
 
-        /* Module Switcher / Left Panel */
+        /* Left Panel */
         .panel-left {
             grid-column: 1;
             grid-row: 2;
@@ -107,11 +107,14 @@
             color: #050505;
         }
 
-        .module-item.locked {
-            opacity: 0.4;
-            cursor: not-allowed;
-            border-style: dashed;
+        .stack-item {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            margin-bottom: 10px;
         }
+
+        .stack-label { color: rgba(255,255,255,0.4); text-transform: uppercase; margin-bottom: 2px; }
+        .stack-value { color: #FFFFFF; }
 
         /* Center Viewport */
         .main-view {
@@ -140,31 +143,7 @@
             height: 100%;
         }
 
-        .placeholder-card {
-            width: 80%;
-            height: 80%;
-            border: 1px solid #FFFFFF;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 40px;
-            text-align: center;
-            background: rgba(5,5,5,0.9);
-        }
-
-        .locked-view {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            font-family: var(--font-header);
-            font-size: 14px;
-            letter-spacing: 2px;
-        }
-
-        /* Right Panel / Info */
+        /* Right Panel - Terminal */
         .panel-right {
             grid-column: 3;
             grid-row: 2;
@@ -172,32 +151,24 @@
             padding: 20px;
             z-index: 10;
             background: rgba(5,5,5,0.8);
-            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
 
-        .info-section {
-            display: none;
-        }
-
-        .info-section.active {
-            display: block;
-        }
-
-        .log-entry {
-            margin-bottom: 25px;
-        }
-
-        .log-header {
-            font-family: var(--font-header);
+        #diag-terminal {
+            flex-grow: 1;
+            font-family: var(--font-mono);
             font-size: 11px;
-            margin-bottom: 8px;
+            color: #FFFFFF;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            line-height: 1.4;
+            padding-right: 10px;
         }
 
-        .log-body {
-            font-size: 13px;
-            line-height: 1.5;
-            color: rgba(255,255,255,0.8);
-        }
+        #diag-terminal::-webkit-scrollbar { width: 4px; }
+        #diag-terminal::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); }
 
         /* Footer */
         footer {
@@ -219,13 +190,6 @@
             justify-content: space-between;
         }
 
-        .terminal-content {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            color: #00FF00;
-            opacity: 0.8;
-        }
-
         .status-badge {
             display: inline-block;
             padding: 2px 6px;
@@ -239,118 +203,111 @@
     <div class="grid-overlay"></div>
 
     <header>
-        <h1>LAB-0 // PORTFOLIO_SYSTEM_v1.0</h1>
+        <h1>LAB-0 // PORTFOLIO_CMD_CENTER</h1>
         <div class="status-badge">OS: STABLE</div>
     </header>
 
     <aside class="panel-left">
-        <div class="panel-title">PROJECTS / MODULES</div>
-        <div class="module-item active" onclick="switchModule('01')">MODULE_01 // LAB-0 (PWA)</div>
+        <div class="panel-title">CORE SYSTEM PROTOCOLS</div>
+        <div class="stack-item">
+            <div class="stack-label">CORE ENGINE</div>
+            <div class="stack-value">UNREAL ENGINE 5.2.4 [ONLINE]</div>
+        </div>
+        <div class="stack-item">
+            <div class="stack-label">COMPILER</div>
+            <div class="stack-value">MSBUILD / C# LOGIC [STABLE]</div>
+        </div>
+        <div class="stack-item">
+            <div class="stack-label">VFX SYSTEM</div>
+            <div class="stack-value">NIAGARA SIMULATION [ACTIVE]</div>
+        </div>
+        <div class="stack-item">
+            <div class="stack-label">LANGUAGE</div>
+            <div class="stack-value">HLSL & C# [INITIALIZING]</div>
+        </div>
+        <div class="stack-item">
+            <div class="stack-label">INTERFACE DESIGN</div>
+            <div class="stack-value">STRICT 0PX BORDER_RADIUS [LOCKED]</div>
+        </div>
+
+        <div class="panel-title" style="margin-top:20px;">MODULE SELECTION</div>
+        <div class="module-item active" onclick="switchModule('01')">MODULE_01 // LAB-0</div>
         <div class="module-item" onclick="switchModule('02')">MODULE_02 // NS_FOUNTAIN</div>
-        <div class="module-item locked" onclick="switchModule('03')">MODULE_03 // [LOCKED]</div>
-        <div class="module-item locked" onclick="switchModule('04')">MODULE_04 // [LOCKED]</div>
         
         <div class="panel-title" style="margin-top:20px;">SYSTEM TIME</div>
         <div style="font-family: var(--font-mono); font-size: 14px;" id="live-clock">00:00:00:00</div>
     </aside>
 
     <main class="main-view">
-        <!-- Module 01: Telemetry Canvas -->
         <div id="content-01" class="module-content active">
             <canvas id="niagara-canvas"></canvas>
         </div>
-
-        <!-- Module 02: Niagara Sparks -->
         <div id="content-02" class="module-content">
-            <div class="placeholder-card">
-                <div class="log-header" style="font-size: 18px; margin-bottom: 20px;">NS_FOUNTAIN // VISUALIZER</div>
-                <div style="width: 100%; aspect-ratio: 16/9; border: 1px solid #FFFFFF; display: flex; align-items: center; justify-content: center; background: #000;">
-                    <div class="log-body" style="font-family: var(--font-mono); font-size: 12px; opacity: 0.5;">[ DROP RECORDING HERE ]<br>OR<br>VIEW TECHNICAL BREAKDOWN -></div>
+            <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                <div style="width: 80%; border: 1px solid #FFFFFF; padding: 40px; text-align: center; font-family: var(--font-header); font-size: 12px;">
+                    NIAGARA_SIMULATION // ACTIVE
+                    <div style="font-family: var(--font-mono); font-size: 10px; margin-top: 20px; opacity: 0.5;">[ PENDING VISUAL ASSET LOAD ]</div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Module 03: Locked -->
-        <div id="content-03" class="module-content">
-            <div class="locked-view">
-                <div>SYSTEM OFFLINE</div>
-                <div style="font-size: 10px; opacity: 0.5; border: 1px solid #FFFFFF; padding: 5px 10px;">DAY 2: FORCE & COLLISION REQ</div>
-            </div>
-        </div>
-
-        <!-- Module 04: Locked -->
-        <div id="content-04" class="module-content">
-            <div class="locked-view">
-                <div>SYSTEM OFFLINE</div>
-                <div style="font-size: 10px; opacity: 0.5; border: 1px solid #FFFFFF; padding: 5px 10px;">DAY 3: BLUEPRINT TRIGGER REQ</div>
             </div>
         </div>
     </main>
 
     <aside class="panel-right">
-        <!-- Info 01 -->
-        <div id="info-01" class="info-section active">
-            <div class="panel-title">TELEMETRY_LOGS</div>
-            <div class="log-entry">
-                <div class="log-header">LAB-0 (PWA)</div>
-                <div class="log-body">Monochrome interface deployment. 1px grid alignment. Particle simulation synchronized to mouse drag.</div>
-            </div>
-            <div class="log-entry">
-                <div class="log-header">HARDWARE</div>
-                <div class="log-body">NVIDIA RTX 4060 Laptop detected. High performance discrete override enabled.</div>
-            </div>
-        </div>
-
-        <!-- Info 02 -->
-        <div id="info-02" class="info-section">
-            <div class="panel-title">TECHNICAL_BREAKDOWN</div>
-            <div class="log-entry">
-                <div class="log-header">SCALE COLOR</div>
-                <div class="log-body">Scale Factor: 1.5. Alpha Curve: Linear Fade-out over 2.4s lifecycle. Color gradient: #FF4400 -> #FFFFFF.</div>
-            </div>
-            <div class="log-entry">
-                <div class="log-header">CONTENT DRAWER</div>
-                <div class="log-body">Path: /Game/VFX/Niagara/NS_Fountain. Shortcut: Ctrl+Space -> Filter: Niagara Systems.</div>
-            </div>
-        </div>
-
-        <!-- Info 03/04 -->
-        <div id="info-03" class="info-section"><div class="panel-title">ENCRYPTED</div><div class="log-body" style="font-family: var(--font-mono); font-size: 11px;">[ DATA_NOT_FOUND ]</div></div>
-        <div id="info-04" class="info-section"><div class="panel-title">ENCRYPTED</div><div class="log-body" style="font-family: var(--font-mono); font-size: 11px;">[ DATA_NOT_FOUND ]</div></div>
+        <div class="panel-title">SYSTEM DIAGNOSTICS LOG</div>
+        <div id="diag-terminal"></div>
     </aside>
 
     <footer>
         <div class="terminal-header">
-            <span>TERMINAL_OUTPUT</span>
+            <span>CORE_PORTFOLIO_OUTPUT</span>
             <span id="sys-res">RES: 1920x1080</span>
         </div>
-        <div class="terminal-content" id="terminal-lines">
-            > Initializing portfolio systems... OK<br>
-            > Module selection synchronized... OK<br>
-            > Current module: MODULE_01
+        <div style="font-family: var(--font-mono); font-size: 11px; color: #00FF00; opacity: 0.8;">
+            > Initializing Lab-0 Portfolios... OK<br>
+            > Tech Stack: Unreal Engine 5.2.4 Verified
         </div>
     </footer>
 
     <script>
         function switchModule(id) {
-            // Update active state in menu
             document.querySelectorAll('.module-item').forEach(el => el.classList.remove('active'));
-            const clickedItem = event.currentTarget;
-            clickedItem.classList.add('active');
-
-            // Switch Content
+            event.currentTarget.classList.add('active');
             document.querySelectorAll('.module-content').forEach(el => el.classList.remove('active'));
             document.getElementById('content-' + id).classList.add('active');
-
-            // Switch Info
-            document.querySelectorAll('.info-section').forEach(el => el.classList.remove('active'));
-            document.getElementById('info-' + id).classList.add('active');
-
-            // Update terminal
-            const lines = document.getElementById('terminal-lines');
-            lines.innerHTML += `<br>> Switching to MODULE_${id}... OK`;
-            lines.scrollTop = lines.scrollHeight;
         }
+
+        // Terminal Diagnostics Logic
+        const terminal = document.getElementById('diag-terminal');
+        const logs = [
+            "[INIT] Core engine initialized...",
+            "[RENDER] High performance discrete GPU override: ACTIVE",
+            "[NIAGARA] Loading asset database: NS_Fountain...",
+            "[SHADER] Compiling 2,246 global shaders...",
+            "[SHADER] 512 / 2,246 shaders compiled...",
+            "[SHADER] 1,120 / 2,246 shaders compiled...",
+            "[SHADER] 1,840 / 2,246 shaders compiled...",
+            "[SHADER] 2,246 / 2,246 shaders compiled. SUCCESS.",
+            "[NIAGARA] Binding parameter: ScaleColor.Alpha to float curve",
+            "[SYSTEM] System protocol v1.0.4 active.",
+            "[MEM] Allocating virtual buffers: 1024MB",
+            "[NIAGARA] Particle count stable: 1.2M",
+            "[VIEWPORT] Synchronizing viewport stats...",
+            "[UI] Applying strict 1px border constraints..."
+        ];
+
+        function addLog() {
+            const log = logs[Math.floor(Math.random() * logs.length)];
+            const time = new Date().toLocaleTimeString('en-GB', { hour12: false }) + '.' + String(new Date().getMilliseconds()).padStart(3, '0');
+            terminal.innerHTML += `[${time}] ${log}\n`;
+            terminal.scrollTop = terminal.scrollHeight;
+            
+            // Trim old logs to prevent memory bloat
+            const lines = terminal.innerHTML.split('\n');
+            if (lines.length > 50) {
+                terminal.innerHTML = lines.slice(lines.length - 50).join('\n');
+            }
+        }
+        setInterval(addLog, 1200);
 
         // Niagara Spark Simulation
         const canvas = document.getElementById('niagara-canvas');
