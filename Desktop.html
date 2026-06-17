@@ -103,15 +103,6 @@
             color: #050505;
         }
 
-        .stack-item {
-            font-family: var(--font-mono);
-            font-size: 10px;
-            margin-bottom: 10px;
-        }
-
-        .stack-label { color: rgba(255,255,255,0.4); text-transform: uppercase; margin-bottom: 2px; }
-        .stack-value { color: #FFFFFF; }
-
         /* Center Viewport */
         .main-view {
             grid-column: 2;
@@ -166,11 +157,12 @@
             border: 1px solid #FFFFFF;
             padding: 15px;
             text-align: left;
+            position: relative;
         }
 
         .desc-title {
             font-family: var(--font-header);
-            font-size: 16px;
+            font-size: 18px;
             margin-bottom: 8px;
             letter-spacing: 2px;
         }
@@ -180,6 +172,28 @@
             font-size: 10px;
             line-height: 1.4;
             color: rgba(255,255,255,0.7);
+            margin-bottom: 15px;
+        }
+
+        .time-box {
+            border-top: 1px solid rgba(255,255,255,0.2);
+            padding-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .time-label {
+            font-family: var(--font-mono);
+            font-size: 8px;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase;
+        }
+
+        .time-value {
+            font-family: var(--font-mono);
+            font-size: 16px;
+            color: #FFFFFF;
         }
 
         /* Right Panel - Terminal */
@@ -245,34 +259,19 @@
     </header>
 
     <aside class="panel-left">
-        <div class="panel-title">CORE SYSTEM PROTOCOLS</div>
-        <div class="stack-item">
-            <div class="stack-label">CORE ENGINE</div>
-            <div class="stack-value">UNREAL ENGINE 5.2.4 [ONLINE]</div>
-        </div>
-        <div class="stack-item">
-            <div class="stack-label">COMPILER</div>
-            <div class="stack-value">MSBUILD / C# LOGIC [STABLE]</div>
-        </div>
-        <div class="stack-item">
-            <div class="stack-label">VFX SYSTEM</div>
-            <div class="stack-value">NIAGARA SIMULATION [ACTIVE]</div>
-        </div>
-        <div class="stack-item">
-            <div class="stack-label">LANGUAGE</div>
-            <div class="stack-value">HLSL & C# [INITIALIZING]</div>
-        </div>
-        <div class="stack-item">
-            <div class="stack-label">INTERFACE DESIGN</div>
-            <div class="stack-value">STRICT 0PX BORDER_RADIUS [LOCKED]</div>
-        </div>
+        <div class="panel-title">SYSTEM TIME // UTC</div>
+        <div style="font-family: var(--font-mono); font-size: 18px; letter-spacing: 1px; margin-bottom: 20px;" id="live-clock-left">00:00:00:00</div>
 
-        <div class="panel-title" style="margin-top:20px;">MODULE SELECTION</div>
+        <div class="panel-title">MODULE SELECTION</div>
         <div class="module-item active" onclick="switchModule('01')">MODULE_01 // LAB-0</div>
         <div class="module-item" onclick="switchModule('02')">MODULE_02 // NS_FOUNTAIN</div>
         
-        <div class="panel-title" style="margin-top:20px;">SYSTEM TIME</div>
-        <div style="font-family: var(--font-mono); font-size: 14px;" id="live-clock">00:00:00:00</div>
+        <div class="panel-title" style="margin-top:20px;">SYSTEM STATUS</div>
+        <div style="font-family: var(--font-mono); font-size: 10px; color: rgba(255,255,255,0.5);">
+            > CPU: STABLE<br>
+            > GPU: OVERRIDE_ACTIVE<br>
+            > NET: ENCRYPTED
+        </div>
     </aside>
 
     <main class="main-view">
@@ -289,6 +288,10 @@
                     <div class="desc-title">NS_FOUNTAIN</div>
                     <div class="desc-body">
                         NIAGARA PARTICLE FOUNTAIN SYSTEM. IMPLEMENTS ADVANCED SCALE COLOR MODULES WITH DYNAMIC ALPHA CURVE FADING OVER A 2.4S LIFECYCLE. OPTIMIZED FOR HIGH-CONTRAST TELEMETRY VISUALIZATION. CORE SIMULATION DRIVEN BY HLSL VERTEX SHADERS.
+                    </div>
+                    <div class="time-box">
+                        <div class="time-label">SYS_TIME // RUNNING</div>
+                        <div class="time-value" id="live-clock">00:00:00:00</div>
                     </div>
                 </div>
             </div>
@@ -420,7 +423,9 @@
             const m = String(now.getMinutes()).padStart(2, '0');
             const s = String(now.getSeconds()).padStart(2, '0');
             const ms = String(now.getMilliseconds()).padStart(3, '0').slice(0, 2);
-            document.getElementById('live-clock').innerText = `${h}:${m}:${s}:${ms}`;
+            const timeStr = `${h}:${m}:${s}:${ms}`;
+            document.getElementById('live-clock').innerText = timeStr;
+            document.getElementById('live-clock-left').innerText = timeStr;
         }
         setInterval(updateClock, 50);
     </script>
