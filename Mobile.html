@@ -175,12 +175,7 @@ body, html {
 }
 
 .project-tag {
-  font-family: var(--font-mono);
-  font-size: 7px;
-  padding: 2px 6px;
-  border: 1px solid #222;
-  color: #444;
-  letter-spacing: 0.1em;
+  display: none;
 }
 
 /* About Section */
@@ -280,26 +275,15 @@ body, html {
   align-items: center;
   justify-content: center;
   margin-top: 10px;
+  cursor: pointer;
 }
 
-.drag-bar {
-  width: 32px;
-  height: 2px;
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.close-player-btn {
-  position: absolute;
-  top: 25px;
-  right: 25px;
-  background: none;
-  border: none;
-  color: #333;
-  font-family: var(--font-mono);
-  font-size: 9px;
-  letter-spacing: 0.2em;
-  z-index: 1100;
-  text-transform: uppercase;
+.chevron-down {
+  width: 24px;
+  height: 24px;
+  stroke: rgba(255, 255, 255, 0.4);
+  stroke-width: 1.5;
+  fill: none;
 }
 
 .player-content {
@@ -336,16 +320,11 @@ body, html {
   font-weight: 700;
   font-size: 16px;
   letter-spacing: 0.15em;
-  margin-bottom: 8px;
   text-transform: uppercase;
 }
 
 .player-subtitle {
-  font-family: var(--font-mono);
-  font-size: 9px;
-  color: #555;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
+  display: none;
 }
 
 .player-controls {
@@ -421,20 +400,17 @@ body, html {
 
   <section id="section-playlist" class="section">
     <div class="project-list">
-      <div class="project-item" onclick="openPlayer('LEVEL_01 // INTRO', 'STACK IT, GO UP', 'CONCERT', 'https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4')">
+      <div class="project-item" onclick="openPlayer('INTRO', '', '', 'https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4')">
         <span class="project-id">01</span>
-        <span class="project-name">LEVEL_01 // INTRO</span>
-        <span class="project-tag">CONCERT</span>
+        <span class="project-name">INTRO</span>
       </div>
-      <div class="project-item" onclick="openPlayer('LEVEL_02 // GRAVITY', 'ATMOS', 'M/V', 'https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4')">
+      <div class="project-item" onclick="openPlayer('GRAVITY', '', '', 'https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4')">
         <span class="project-id">02</span>
-        <span class="project-name">LEVEL_02 // GRAVITY</span>
-        <span class="project-tag">M/V</span>
+        <span class="project-name">GRAVITY</span>
       </div>
-      <div class="project-item" onclick="openPlayer('LEVEL_03 // COLLISION', 'PINEAPPLE SLICE', 'M/V', 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4')">
+      <div class="project-item" onclick="openPlayer('COLLISION', '', '', 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4')">
         <span class="project-id">03</span>
-        <span class="project-name">LEVEL_03 // COLLISION</span>
-        <span class="project-tag">M/V</span>
+        <span class="project-name">COLLISION</span>
       </div>
     </div>
   </section>
@@ -476,9 +452,8 @@ body, html {
 </nav>
 
 <div id="player-modal" class="player-modal">
-  <button class="close-player-btn" onclick="closePlayer()">[ DISMISS ]</button>
   <div class="drag-bar-container" id="modal-drag" onclick="closePlayer()">
-    <div class="drag-bar"></div>
+    <svg class="chevron-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" /></svg>
   </div>
   <div class="player-content">
     <div class="video-container">
