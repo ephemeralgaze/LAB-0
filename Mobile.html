@@ -41,7 +41,7 @@ body, html {
   inset: 0;
   display: flex;
   flex-direction: column;
-  padding-bottom: 80px; /* Space for bottom nav */
+  padding-bottom: 80px; 
   transition: transform 0.6s var(--player-ease), opacity 0.6s var(--player-ease);
 }
 
@@ -53,7 +53,6 @@ body, html {
 .view-container.modal-open .col-left { transform: translateX(-30px); }
 .view-container.modal-open .col-right { transform: translateX(30px); }
 
-/* Headers */
 .view-header {
   padding: 40px 20px 10px;
 }
@@ -123,17 +122,85 @@ body, html {
   flex-direction: column;
 }
 
-/* Home - Dot Matrix */
+/* Home - Pure Dot Matrix */
 #section-home {
   padding: 0;
   background: #000;
   position: relative;
+  overflow: hidden;
 }
 
 #dot-matrix-canvas {
   width: 100%;
   height: 100%;
   display: block;
+}
+
+/* About Section Styles */
+.profile-card {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-bottom: 20px;
+}
+
+.avatar-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.avatar {
+  width: 64px;
+  height: 64px;
+  border: 1px solid var(--fg);
+  object-fit: cover;
+}
+
+.profile-names {
+  display: flex;
+  flex-direction: column;
+}
+
+.p-name {
+  font-family: var(--font-header);
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+
+.p-handle {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: #888;
+}
+
+.spec-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.spec-item {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  padding-bottom: 8px;
+}
+
+.spec-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: #666;
+  text-transform: uppercase;
+}
+
+.spec-value {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--fg);
+  text-align: right;
+  max-width: 60%;
 }
 
 /* Playlist / Library */
@@ -167,69 +234,17 @@ body, html {
   font-size: 16px;
 }
 
-.project-tag {
-  font-family: var(--font-mono);
-  font-size: 9px;
-  padding: 2px 6px;
-  border: 1px solid #333;
-  color: #888;
-}
-
-/* About / Technical Bio */
-.about-content {
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-}
-
-.bio-card {
-  border: 1px solid var(--border-color);
-  padding: 20px;
-}
-
-.bio-header {
-  font-family: var(--font-header);
-  font-size: 14px;
-  margin-bottom: 15px;
-  letter-spacing: 2px;
-}
-
-.spec-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.spec-item {
-  display: flex;
-  justify-content: space-between;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-  padding-bottom: 8px;
-}
-
-.spec-label {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  color: #666;
-  text-transform: uppercase;
-}
-
-.spec-value {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  color: var(--fg);
-}
-
 /* Player Modal */
 .player-modal {
   position: fixed;
   inset: 0;
   background: #000;
-  z-index: 200;
+  z-index: 1000;
   display: flex;
   flex-direction: column;
   transform: translateY(100%);
   transition: transform 0.6s var(--player-ease);
+  pointer-events: auto;
 }
 
 .player-modal.open {
@@ -241,12 +256,27 @@ body, html {
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 }
 
 .drag-bar {
   width: 40px;
   height: 4px;
   background: rgba(255, 255, 255, 0.3);
+}
+
+.close-player-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  color: #FFF;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  padding: 10px;
+  z-index: 1100;
+  cursor: pointer;
 }
 
 .player-content {
@@ -260,7 +290,7 @@ body, html {
 
 .video-container {
   width: 100%;
-  aspect-ratio: 1/1; /* Square for Apple Music feel */
+  aspect-ratio: 1/1;
   background: #111;
   border: 1px solid var(--border-color);
   position: relative;
@@ -339,31 +369,12 @@ body, html {
   border: none;
   color: var(--fg);
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .btn-play-pause {
   width: 64px;
   height: 64px;
 }
-
-.btn-skip {
-  width: 32px;
-  height: 32px;
-}
-
-.hud-overlay {
-  width: 100%;
-  padding: 15px;
-  border: 1px solid rgba(255,255,255,0.05);
-  font-family: var(--font-mono);
-  font-size: 8px;
-  color: rgba(255,255,255,0.4);
-  line-height: 1.5;
-}
-
 </style>
 </head>
 <body>
@@ -373,25 +384,23 @@ body, html {
     <h1>LAB-0</h1>
   </div>
 
-  <!-- HOME SECTION -->
-  <section id="section-home" class="section active col-right">
+  <section id="section-home" class="section active">
     <canvas id="dot-matrix-canvas"></canvas>
   </section>
 
-  <!-- PLAYLIST SECTION -->
-  <section id="section-playlist" class="section">
+  <section id="section-playlist" class="section col-right">
     <div class="project-list">
-      <div class="project-item" onclick="openPlayer('LEVEL_01', 'STACK IT, GO UP', 'CONCERT')">
+      <div class="project-item" onclick="openPlayer('LEVEL_01', 'STACK IT, GO UP', 'CONCERT', 'https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4')">
         <span class="project-id">01</span>
         <span class="project-name">LEVEL_01</span>
         <span class="project-tag">CONCERT</span>
       </div>
-      <div class="project-item" onclick="openPlayer('LEVEL_02', 'ATMOS', 'M/V')">
+      <div class="project-item" onclick="openPlayer('LEVEL_02', 'ATMOS', 'M/V', 'https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4')">
         <span class="project-id">02</span>
         <span class="project-name">LEVEL_02</span>
         <span class="project-tag">M/V</span>
       </div>
-      <div class="project-item" onclick="openPlayer('LEVEL_03', 'PINEAPPLE SLICE', 'M/V')">
+      <div class="project-item" onclick="openPlayer('LEVEL_03', 'PINEAPPLE SLICE', 'M/V', 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4')">
         <span class="project-id">03</span>
         <span class="project-name">LEVEL_03</span>
         <span class="project-tag">M/V</span>
@@ -399,28 +408,42 @@ body, html {
     </div>
   </section>
 
-  <!-- ABOUT SECTION -->
-  <section id="section-about" class="section">
-    <div class="about-content">
-      <div class="bio-card">
-        <div class="bio-header">SYSTEM_INFO</div>
-        <div class="spec-list">
-          <div class="spec-item"><span class="spec-label">Processor</span><span class="spec-value">13th Gen Intel i7</span></div>
-          <div class="spec-item"><span class="spec-label">Graphics</span><span class="spec-value">RTX 4060</span></div>
-          <div class="spec-item"><span class="spec-label">Timezone</span><span class="spec-value">Harbin (GMT+8)</span></div>
-          <div class="spec-item"><span class="spec-label">Status</span><span class="spec-value">LAB_ACTIVE</span></div>
+  <section id="section-about" class="section col-right">
+    <div class="profile-card">
+      <div class="avatar-row">
+        <img class="avatar" src="https://github.com/ephemeralgaze.png" alt="Avatar">
+        <div class="profile-names">
+          <span class="p-name">Kyungsoo</span>
+          <span class="p-handle">Ephemeral Gaze</span>
         </div>
       </div>
       
-      <div class="bio-card">
-        <div class="bio-header">BIOMETRICS</div>
-        <p style="font-size: 14px; line-height: 1.6; color: #AAA;">Undergraduate developer focusing on real-time particle simulations and GPU-accelerated graphics. Currently exploring high-density vector field integrations.</p>
+      <div class="spec-list">
+        <div class="spec-item">
+          <span class="spec-label">Education</span>
+          <span class="spec-value">Animation Production Technology</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-label">College</span>
+          <span class="spec-value">Heilongjiang Vocational College of Art</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-label">Age</span>
+          <span class="spec-value">21</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-label">Contact</span>
+          <span class="spec-value">a3445886718@gmail.com</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-label">Status</span>
+          <span class="spec-value">LAB_ACTIVE</span>
+        </div>
       </div>
     </div>
   </section>
 </div>
 
-<!-- BOTTOM NAV -->
 <nav class="bottom-nav">
   <div class="nav-btn active" onclick="switchSection('home')">
     <svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
@@ -436,69 +459,47 @@ body, html {
   </div>
 </nav>
 
-<!-- PLAYER MODAL -->
 <div id="player-modal" class="player-modal">
-  <div class="drag-bar-container" id="modal-drag">
+  <button class="close-player-btn" onclick="closePlayer()">CLOSE [X]</button>
+  <div class="drag-bar-container" id="modal-drag" onclick="closePlayer()">
     <div class="drag-bar"></div>
   </div>
   <div class="player-content">
     <div class="video-container">
       <video id="player-video" playsinline loop muted>
-        <source src="https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
+        <source src="" type="video/mp4">
       </video>
     </div>
-    
     <div class="player-info">
-      <div id="p-title" class="player-title">LEVEL_01</div>
-      <div id="p-subtitle" class="player-subtitle">STACK IT, GO UP</div>
+      <div id="p-title" class="player-title">--</div>
+      <div id="p-subtitle" class="player-subtitle">--</div>
     </div>
-
     <div class="player-controls">
       <div class="scrubber-container">
         <input type="range" id="p-scrubber" class="scrubber" value="0" min="0" step="0.1">
-        <div class="time-row">
-          <span id="p-current">0:00</span>
-          <span id="p-duration">0:00</span>
-        </div>
+        <div class="time-row"><span id="p-current">0:00</span><span id="p-duration">0:00</span></div>
       </div>
-
       <div class="transport-controls">
-        <button class="control-btn btn-skip">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"></path></svg>
-        </button>
         <button id="p-play" class="control-btn btn-play-pause">
           <svg id="svg-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg>
           <svg id="svg-pause" style="display:none" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path></svg>
         </button>
-        <button class="control-btn btn-skip">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"></path></svg>
-        </button>
       </div>
-    </div>
-
-    <div class="hud-overlay">
-      PIPELINE: GPU_ACCELERATED / DX12<br>
-      KERNEL: PBD_SOLVER_V4<br>
-      STATUS: OPTIMIZING_KERNELS...<br>
-      BUFFER_SIZE: 124.0MB
     </div>
   </div>
 </div>
 
 <script>
-// --- NAVIGATION LOGIC ---
 function switchSection(id) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  
   document.getElementById('section-' + id).classList.add('active');
   const btns = document.querySelectorAll('.nav-btn');
   if (id === 'home') btns[0].classList.add('active');
-  if (id === 'playlist') btns[1].classList.add('active');
-  if (id === 'about') btns[2].classList.add('active');
+  else if (id === 'playlist') btns[1].classList.add('active');
+  else if (id === 'about') btns[2].classList.add('active');
 }
 
-// --- DOT MATRIX ANIMATION ---
 (function() {
   const canvas = document.getElementById("dot-matrix-canvas");
   const ctx = canvas.getContext("2d");
@@ -511,24 +512,14 @@ function switchSection(id) {
     dpr = window.devicePixelRatio || 1;
     width = canvas.parentElement.clientWidth;
     height = canvas.parentElement.clientHeight;
-    canvas.width = width * dpr;
-    canvas.height = height * dpr;
-    canvas.style.width = width + "px";
-    canvas.style.height = height + "px";
+    canvas.width = width * dpr; canvas.height = height * dpr;
+    canvas.style.width = width + "px"; canvas.style.height = height + "px";
     ctx.scale(dpr, dpr);
-    
     dots = [];
-    const cols = Math.ceil(width / GRID_SIZE);
-    const rows = Math.ceil(height / GRID_SIZE);
+    const cols = Math.ceil(width / GRID_SIZE), rows = Math.ceil(height / GRID_SIZE);
     for (let i = 0; i < cols; i++) {
       for (let j = 0; j < rows; j++) {
-        dots.push({
-          x: i * GRID_SIZE + GRID_SIZE / 2,
-          y: j * GRID_SIZE + GRID_SIZE / 2,
-          phase: Math.random() * Math.PI * 2,
-          freq: 0.02 + Math.random() * 0.03,
-          maxOpacity: 0.02 + Math.random() * 0.28
-        });
+        dots.push({ x: i * GRID_SIZE + GRID_SIZE / 2, y: j * GRID_SIZE + GRID_SIZE / 2, phase: Math.random() * Math.PI * 2, freq: 0.02 + Math.random() * 0.03, maxOpacity: 0.02 + Math.random() * 0.28 });
       }
     }
   }
@@ -538,43 +529,25 @@ function switchSection(id) {
       ctx.clearRect(0, 0, width, height);
       dots.forEach(dot => {
         const opacity = (Math.sin(time * 0.001 * dot.freq * 100 + dot.phase) * 0.5 + 0.5) * dot.maxOpacity;
-        ctx.beginPath();
-        ctx.arc(dot.x, dot.y, DOT_RADIUS, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(255, 255, 255, " + opacity.toFixed(3) + ")";
-        ctx.fill();
+        ctx.beginPath(); ctx.arc(dot.x, dot.y, DOT_RADIUS, 0, Math.PI * 2); ctx.fillStyle = "rgba(255, 255, 255, " + opacity.toFixed(3) + ")"; ctx.fill();
       });
     }
     requestAnimationFrame(draw);
   }
-
-  window.addEventListener("resize", init);
-  init();
-  requestAnimationFrame(draw);
+  window.addEventListener("resize", init); init(); requestAnimationFrame(draw);
 })();
 
-// --- PLAYER MODAL LOGIC ---
 const playerModal = document.getElementById('player-modal');
 const mainView = document.getElementById('main-view');
 const playerVideo = document.getElementById('player-video');
-const playBtn = document.getElementById('p-play');
 const scrubber = document.getElementById('p-scrubber');
-const curTimeTxt = document.getElementById('p-current');
-const durTimeTxt = document.getElementById('p-duration');
 
-function formatTime(s) {
-  const m = Math.floor(s / 60);
-  const sec = Math.floor(s % 60);
-  return m + ":" + (sec < 10 ? "0" + sec : sec);
-}
-
-function openPlayer(title, subtitle, tag) {
+function openPlayer(title, subtitle, tag, url) {
   document.getElementById('p-title').innerText = title;
   document.getElementById('p-subtitle').innerText = subtitle;
-  
+  playerVideo.src = url;
   playerModal.classList.add('open');
   mainView.classList.add('modal-open');
-  
-  playerVideo.currentTime = 0;
   playerVideo.play();
 }
 
@@ -582,73 +555,45 @@ function closePlayer() {
   playerModal.classList.remove('open');
   mainView.classList.remove('modal-open');
   playerVideo.pause();
+  playerVideo.src = "";
+  playerModal.style.transform = '';
 }
 
-// Play/Pause
-playBtn.addEventListener('click', () => {
-  if (playerVideo.paused) {
-    playerVideo.play();
-    document.getElementById('svg-play').style.display = 'none';
-    document.getElementById('svg-pause').style.display = 'block';
-  } else {
-    playerVideo.pause();
-    document.getElementById('svg-play').style.display = 'block';
-    document.getElementById('svg-pause').style.display = 'none';
-  }
+document.getElementById('p-play').addEventListener('click', () => {
+  if (playerVideo.paused) { playerVideo.play(); document.getElementById('svg-play').style.display = 'none'; document.getElementById('svg-pause').style.display = 'block'; }
+  else { playerVideo.pause(); document.getElementById('svg-play').style.display = 'block'; document.getElementById('svg-pause').style.display = 'none'; }
 });
 
-// Scrubber
 playerVideo.addEventListener('timeupdate', () => {
   if (!scrubber.dragging) {
     scrubber.value = playerVideo.currentTime;
-    curTimeTxt.innerText = formatTime(playerVideo.currentTime);
+    document.getElementById('p-current').innerText = Math.floor(playerVideo.currentTime / 60) + ":" + String(Math.floor(playerVideo.currentTime % 60)).padStart(2, '0');
   }
 });
 
 playerVideo.addEventListener('loadedmetadata', () => {
   scrubber.max = playerVideo.duration;
-  durTimeTxt.innerText = formatTime(playerVideo.duration);
+  document.getElementById('p-duration').innerText = Math.floor(playerVideo.duration / 60) + ":" + String(Math.floor(playerVideo.duration % 60)).padStart(2, '0');
 });
 
-scrubber.addEventListener('input', () => {
-  scrubber.dragging = true;
-  playerVideo.currentTime = scrubber.value;
-});
+scrubber.addEventListener('input', () => { scrubber.dragging = true; playerVideo.currentTime = scrubber.value; });
+scrubber.addEventListener('change', () => { scrubber.dragging = false; });
 
-scrubber.addEventListener('change', () => {
-  scrubber.dragging = false;
-});
-
-// Drag to Dismiss
-let startY = 0;
-let currentY = 0;
+let startY = 0, currentY = 0;
 const dragBar = document.getElementById('modal-drag');
-
-dragBar.addEventListener('touchstart', (e) => {
-  startY = e.touches[0].clientY;
-});
-
+dragBar.addEventListener('touchstart', (e) => { startY = e.touches[0].clientY; });
 dragBar.addEventListener('touchmove', (e) => {
   currentY = e.touches[0].clientY;
   const diff = currentY - startY;
-  if (diff > 0) {
-    playerModal.style.transform = `translateY(${diff}px)`;
-    playerModal.style.transition = 'none';
-  }
+  if (diff > 0) { playerModal.style.transform = `translateY(${diff}px)`; playerModal.style.transition = 'none'; }
 });
-
 dragBar.addEventListener('touchend', () => {
   const diff = currentY - startY;
   playerModal.style.transition = 'transform 0.6s var(--player-ease)';
-  if (diff > 150) {
-    closePlayer();
-  } else {
-    playerModal.style.transform = 'translateY(0)';
-  }
-  startY = 0;
-  currentY = 0;
+  if (diff > 150) closePlayer();
+  else playerModal.style.transform = 'translateY(0)';
+  startY = 0; currentY = 0;
 });
-
 </script>
 </body>
 </html>
