@@ -23,15 +23,6 @@
             --font-body: 'Space Grotesk', sans-serif;
             --transition-smooth: 1.2s cubic-bezier(0.16, 1, 0.3, 1);
             --ease-outliner: cubic-bezier(0.16, 1, 0.3, 1);
-            
-            /* Aggressive Sharp Rendering */
-            --logo-rendering: {
-                text-rendering: optimizeLegibility;
-                -webkit-font-smoothing: antialiased;
-                -moz-osx-font-smoothing: grayscale;
-                font-weight: 700;
-                text-transform: uppercase;
-            }
         }
 
         * {
@@ -92,14 +83,12 @@
             font-family: var(--font-header);
             font-weight: 700;
             font-size: 84px;
-            letter-spacing: -0.05em; /* Tight, aggressive tracking */
+            letter-spacing: -0.05em;
             text-transform: uppercase;
             z-index: 2100;
             white-space: nowrap;
             transition: transform var(--transition-smooth), font-size var(--transition-smooth), letter-spacing var(--transition-smooth);
             will-change: transform, font-size;
-            
-            /* Sharp rendering */
             text-rendering: optimizeLegibility;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
@@ -123,12 +112,10 @@
         #logo-placeholder {
             font-family: var(--font-header);
             font-size: 20px;
-            letter-spacing: -0.02em; /* Sharp header tracking */
+            letter-spacing: -0.02em;
             font-weight: 700;
             text-transform: uppercase;
             visibility: hidden;
-            
-            /* Sharp rendering */
             text-rendering: optimizeLegibility;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
@@ -142,8 +129,14 @@
             flex-direction: column;
             z-index: 10;
             opacity: 0;
-            transition: opacity var(--transition-smooth);
+            transform: translateX(-40px); /* Initial state for entrance animation */
+            transition: opacity var(--transition-smooth), transform var(--transition-smooth);
             overflow: hidden;
+        }
+
+        .sidebar-left.entrance {
+            opacity: 1;
+            transform: translateX(0);
         }
 
         .outliner-toolbar {
@@ -226,7 +219,6 @@
             font-family: var(--font-mono);
         }
 
-        /* Hierarchy Indentation */
         .indent-1 { padding-left: 20px; }
         .indent-2 { padding-left: 44px; }
 
@@ -263,12 +255,13 @@
             max-width: 1280px;
             aspect-ratio: 16/9;
             background: #000;
-            border: var(--border-dim);
+            border: 1px solid #FFFFFF; /* Mandatory White Border */
             position: relative;
             display: none;
             opacity: 0;
             transition: opacity var(--transition-smooth);
             flex-direction: column;
+            overflow: hidden;
         }
 
         #main-video { flex: 1; width: 100%; height: 100%; object-fit: cover; }
@@ -378,7 +371,6 @@
             <span class="outliner-label">Outliner</span>
         </div>
         <div class="outliner-content">
-            <!-- Projects Folder -->
             <div id="projects-header" class="outliner-row indent-1 expanded" onclick="toggleOutlinerNode(this)">
                 <svg class="arrow-icon" viewBox="0 0 10 10"><path d="M2 1 L8 5 L2 9 Z" /></svg>
                 <svg class="row-icon" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
@@ -405,7 +397,6 @@
                 </div>
             </div>
 
-            <!-- System Node -->
             <div class="outliner-row indent-1" id="about-btn" onclick="handleAboutClick(event)">
                 <svg class="arrow-icon" style="visibility:hidden" viewBox="0 0 10 10"><path d="M2 1 L8 5 L2 9 Z" /></svg>
                 <svg class="row-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
@@ -417,7 +408,7 @@
 
     <main class="main-stage" id="hud-center">
         <div id="video-container">
-            <video id="main-video" playsinline crossorigin="anonymous">
+            <video id="main-video" playsinline muted crossorigin="anonymous">
                 <source id="video-src" src="" type="video/mp4">
             </video>
             <div class="player-controls">
@@ -426,7 +417,7 @@
                     <div id="scrubber-fill"></div>
                 </div>
                 <span class="p-time" id="time-display">00:00 / 00:00</span>
-                <button class="p-btn" id="mute-toggle" onclick="toggleMute()">Mute</button>
+                <button class="p-btn" id="mute-toggle" onclick="toggleMute()">Unmute</button>
             </div>
         </div>
     </main>
@@ -519,8 +510,10 @@
             source.src = projects[id].video;
             container.style.display = 'flex';
             setTimeout(() => { container.style.opacity = '1'; }, 50);
-            video.load(); video.play();
-            document.getElementById('play-pause').innerText = '[Pause]';
+            video.load();
+            // Default to paused state per specifications
+            video.pause();
+            updateUIState();
         }
 
         function closeProject() {
@@ -536,15 +529,22 @@
         const playBtn = document.getElementById('play-pause');
         const timeDisplay = document.getElementById('time-display');
         const fill = document.getElementById('scrubber-fill');
+        const muteBtn = document.getElementById('mute-toggle');
 
         function togglePlay() {
-            if (video.paused) { video.play(); playBtn.innerText = '[Pause]'; }
-            else { video.pause(); playBtn.innerText = '[Play]'; }
+            if (video.paused) video.play();
+            else video.pause();
+            updateUIState();
         }
 
         function toggleMute() {
             video.muted = !video.muted;
-            document.getElementById('mute-toggle').innerText = video.muted ? 'Unmute' : 'Mute';
+            updateUIState();
+        }
+
+        function updateUIState() {
+            playBtn.innerText = video.paused ? '[Play]' : '[Pause]';
+            muteBtn.innerText = video.muted ? 'Unmute' : 'Mute';
         }
 
         video.addEventListener('timeupdate', () => {
@@ -604,16 +604,23 @@
             logo.style.transform = `translate(calc(-50% + ${deltaX}px), calc(-50% + ${deltaY}px))`;
             await sleep(1000);
             bg.style.opacity = '0';
+            
+            // Sequential Reveal: Header and Center first
             document.getElementById('hud-header').classList.add('visible');
-            document.getElementById('hud-left').classList.add('visible');
             document.getElementById('hud-center').classList.add('visible');
             document.getElementById('hud-right').classList.add('visible');
+            
+            // Outliner entrance animation starts after logo settles
+            setTimeout(() => {
+                document.getElementById('hud-left').classList.add('entrance');
+            }, 300);
+
             await sleep(1200);
             bg.style.display = 'none';
         }
 
         function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-        window.onload = () => { init(); requestAnimationFrame(animate); runBootSequence(); };
+        window.onload = () => { init(); requestAnimationFrame(animate); runBootSequence(); updateUIState(); };
         window.onresize = () => { init(); };
     </script>
 </body>
