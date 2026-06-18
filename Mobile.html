@@ -45,7 +45,7 @@ body, html {
   align-items: center;
   justify-content: center;
   transition: opacity 1s var(--player-ease);
-  pointer-events: none; /* Allow interaction through once faded */
+  pointer-events: none; /* Crucial: Allow interaction through once faded */
 }
 
 #boot-logo {
@@ -427,9 +427,8 @@ body, html {
 </head>
 <body>
 
-<div id="boot-screen">
-  <div id="boot-logo">LAB-<span id="boot-char">0</span></div>
-</div>
+<div id="boot-screen"></div>
+<div id="boot-logo">LAB-<span id="boot-char">0</span></div>
 
 <div class="view-container" id="main-view">
   <div class="view-header">
@@ -497,7 +496,7 @@ body, html {
 </nav>
 
 <div id="player-modal" class="player-modal">
-  <div class="drag-bar-container" id="modal-drag">
+  <div class="drag-bar-container" id="modal-drag" onclick="closePlayer()">
     <svg class="chevron-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" /></svg>
   </div>
   <div class="player-content">
@@ -582,15 +581,14 @@ async function runBootSequence() {
         scrambleText(targetChar, '0', 600);
     }, 200);
 
-    await sleep(800);
+    await sleep(1000);
     
     // 5. Fade boot screen and reveal app
     mainView.style.opacity = '1';
     bg.style.opacity = '0';
     
-    // Keep the logo permanently by making the boot screen ignore pointer events
-    // and letting it stay at its transition end state.
-    // We don't hide or display:none the logo.
+    // Logo remains permanently at target coordinates because we never hide it or change its transform.
+    // The boot-screen overlay fades but stays at z-index 2000, pointer-events: none ensures interaction.
 }
 
 function switchSection(id) {
