@@ -44,7 +44,8 @@ body, html {
   display: flex;
   align-items: center;
   justify-content: center;
-  pointer-events: none;
+  transition: opacity 1s var(--player-ease);
+  pointer-events: none; /* Allow interaction through once faded */
 }
 
 #boot-logo {
@@ -70,7 +71,7 @@ body, html {
   flex-direction: column;
   padding-bottom: 84px; 
   opacity: 0;
-  transition: opacity 0.6s var(--player-ease);
+  transition: transform 0.6s var(--player-ease), opacity 0.6s var(--player-ease);
 }
 
 .view-container.modal-open {
@@ -298,23 +299,29 @@ body, html {
 }
 
 .drag-bar-container {
-  height: 30px;
+  height: 60px; /* Increased hit area */
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-top: 10px;
-  z-index: 1010;
+  z-index: 1050;
+  cursor: pointer;
+  pointer-events: auto !important; /* Force interactive */
 }
 
-.drag-bar {
-  width: 36px;
-  height: 4px;
-  background: rgba(255, 255, 255, 0.2);
+.chevron-down {
+  width: 32px;
+  height: 32px;
+  stroke: rgba(255, 255, 255, 0.5);
+  stroke-width: 1.5;
+  fill: none;
+  pointer-events: none;
 }
 
 .player-content {
   flex: 1;
-  padding: 30px 40px;
+  padding: 10px 40px 40px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -420,8 +427,9 @@ body, html {
 </head>
 <body>
 
-<div id="boot-screen"></div>
-<div id="boot-logo">LAB-<span id="boot-char">0</span></div>
+<div id="boot-screen">
+  <div id="boot-logo">LAB-<span id="boot-char">0</span></div>
+</div>
 
 <div class="view-container" id="main-view">
   <div class="view-header">
@@ -489,8 +497,8 @@ body, html {
 </nav>
 
 <div id="player-modal" class="player-modal">
-  <div class="drag-bar-container" id="modal-drag" onclick="closePlayer()">
-    <div class="drag-bar"></div>
+  <div class="drag-bar-container" id="modal-drag">
+    <svg class="chevron-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" /></svg>
   </div>
   <div class="player-content">
     <div class="video-container">
@@ -520,25 +528,27 @@ body, html {
 <script>
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-function scrambleText(element, finalString, duration, callback) {
-    const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ#$';
-    const originalText = element.innerText;
-    const start = performance.now();
-    function update(time) {
-        const elapsed = time - start;
-        const progress = Math.min(elapsed / duration, 1);
-        let current = '';
-        const finalLength = finalString.length;
-        const currentLength = Math.round(originalText.length + (finalLength - originalText.length) * progress);
-        for (let i = 0; i < currentLength; i++) {
-            if (Math.random() < progress) current += finalString[i] || '';
-            else current += chars[Math.floor(Math.random() * chars.length)];
+function scrambleText(element, finalString, duration) {
+    return new Promise(resolve => {
+        const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ#$';
+        const originalText = element.innerText;
+        const start = performance.now();
+        function update(time) {
+            const elapsed = time - start;
+            const progress = Math.min(elapsed / duration, 1);
+            let current = '';
+            const finalLength = finalString.length;
+            const currentLength = Math.round(originalText.length + (finalLength - originalText.length) * progress);
+            for (let i = 0; i < currentLength; i++) {
+                if (Math.random() < progress) current += finalString[i] || '';
+                else current += chars[Math.floor(Math.random() * chars.length)];
+            }
+            element.innerText = current;
+            if (progress < 1) requestAnimationFrame(update);
+            else { element.innerText = finalString; resolve(); }
         }
-        element.innerText = current;
-        if (progress < 1) requestAnimationFrame(update);
-        else { element.innerText = finalString; if (callback) callback(); }
-    }
-    requestAnimationFrame(update);
+        requestAnimationFrame(update);
+    });
 }
 
 async function runBootSequence() {
@@ -546,43 +556,41 @@ async function runBootSequence() {
     const logo = document.getElementById('boot-logo');
     const targetChar = document.getElementById('boot-char');
     const anchor = document.getElementById('logo-placeholder');
+    const mainView = document.getElementById('main-view');
 
     await sleep(600);
-    // 1. Start at screen center and scramble text until it resolves to 'MOBILE'
-    await new Promise(resolve => scrambleText(targetChar, 'MOBILE', 800, resolve));
-
-    // 2. Stay at center showing 'MOBILE' for exactly 0.3 seconds
+    // 1. Scramble to 'MOBILE'
+    await scrambleText(targetChar, 'MOBILE', 800);
+    
+    // 2. Pause for 0.3s
     await sleep(300);
 
-    // Calculate translation target
+    // 3. Calculate anchor
     const rect = anchor.getBoundingClientRect();
     const targetX = rect.left + (rect.width / 2);
     const targetY = rect.top + (rect.height / 2);
     const deltaX = targetX - (window.innerWidth / 2);
     const deltaY = targetY - (window.innerHeight / 2);
 
-    // 3. Start relative anchor translation and change text from 'MOBILE' to '0' during transition
+    // 4. Slide to top-left WHILE changing to '0'
     logo.style.letterSpacing = '2px';
     logo.style.fontSize = '1.4rem';
     logo.style.transform = `translate(calc(-50% + ${deltaX}px), calc(-50% + ${deltaY}px))`;
     
-    // Smoothly resolve text to '0' during the movement
-    scrambleText(targetChar, '0', 1000);
+    // Smooth text swap during transition
+    setTimeout(() => {
+        scrambleText(targetChar, '0', 600);
+    }, 200);
 
-    // Show main view while logo is moving
-    const mainView = document.getElementById('main-view');
+    await sleep(800);
+    
+    // 5. Fade boot screen and reveal app
     mainView.style.opacity = '1';
-
-    await sleep(1200);
-    // 4. Logo remains in place, boot screen fades out
-    bg.style.transition = 'opacity 0.6s ease-out';
     bg.style.opacity = '0';
     
-    setTimeout(() => {
-        bg.style.display = 'none';
-        // Ensure z-index allows interaction with the rest of the app
-        logo.style.zIndex = '50';
-    }, 600);
+    // Keep the logo permanently by making the boot screen ignore pointer events
+    // and letting it stay at its transition end state.
+    // We don't hide or display:none the logo.
 }
 
 function switchSection(id) {
@@ -651,6 +659,7 @@ function closePlayer() {
   mainView.classList.remove('modal-open');
   playerVideo.pause();
   playerVideo.src = "";
+  playerModal.style.transform = '';
 }
 
 document.getElementById('p-play').addEventListener('click', () => {
@@ -673,15 +682,20 @@ playerVideo.addEventListener('loadedmetadata', () => {
 scrubber.addEventListener('input', () => { scrubber.dragging = true; playerVideo.currentTime = scrubber.value; });
 scrubber.addEventListener('change', () => { scrubber.dragging = false; });
 
+const modalDrag = document.getElementById('modal-drag');
+modalDrag.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closePlayer();
+});
+
 let startY = 0, currentY = 0;
-const dragBar = document.getElementById('modal-drag');
-dragBar.addEventListener('touchstart', (e) => { startY = e.touches[0].clientY; });
-dragBar.addEventListener('touchmove', (e) => {
+modalDrag.addEventListener('touchstart', (e) => { startY = e.touches[0].clientY; });
+modalDrag.addEventListener('touchmove', (e) => {
   currentY = e.touches[0].clientY;
   const diff = currentY - startY;
   if (diff > 0) { playerModal.style.transform = `translateY(${diff}px)`; playerModal.style.transition = 'none'; }
 });
-dragBar.addEventListener('touchend', () => {
+modalDrag.addEventListener('touchend', () => {
   const diff = currentY - startY;
   playerModal.style.transition = 'transform 0.6s var(--player-ease)';
   if (diff > 150) closePlayer();
