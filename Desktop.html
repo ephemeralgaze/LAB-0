@@ -23,6 +23,15 @@
             --font-body: 'Space Grotesk', sans-serif;
             --transition-smooth: 1.2s cubic-bezier(0.16, 1, 0.3, 1);
             --ease-outliner: cubic-bezier(0.16, 1, 0.3, 1);
+            
+            /* Aggressive Sharp Rendering */
+            --logo-rendering: {
+                text-rendering: optimizeLegibility;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+                font-weight: 700;
+                text-transform: uppercase;
+            }
         }
 
         * {
@@ -40,8 +49,8 @@
             height: 100vh;
             overflow: hidden;
             display: grid;
-            grid-template-columns: 380px 1fr 380px; /* Increased sidebar widths */
-            grid-template-rows: 80px 1fr; /* Increased header height */
+            grid-template-columns: 380px 1fr 380px;
+            grid-template-rows: 80px 1fr;
         }
 
         #dot-matrix-canvas {
@@ -82,16 +91,21 @@
             justify-content: center;
             font-family: var(--font-header);
             font-weight: 700;
-            font-size: 84px; /* Increased size */
-            letter-spacing: 0px;
+            font-size: 84px;
+            letter-spacing: -0.05em; /* Tight, aggressive tracking */
             text-transform: uppercase;
             z-index: 2100;
             white-space: nowrap;
             transition: transform var(--transition-smooth), font-size var(--transition-smooth), letter-spacing var(--transition-smooth);
             will-change: transform, font-size;
+            
+            /* Sharp rendering */
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
-        #boot-lab { display: inline-block; margin-right: -0.1em; }
+        #boot-lab { display: inline-block; margin-right: -0.05em; }
         #boot-variant { display: inline-block; min-width: 0.8em; text-align: left; }
 
         header {
@@ -108,10 +122,16 @@
 
         #logo-placeholder {
             font-family: var(--font-header);
-            font-size: 20px; /* Increased size */
-            letter-spacing: 6px;
+            font-size: 20px;
+            letter-spacing: -0.02em; /* Sharp header tracking */
             font-weight: 700;
+            text-transform: uppercase;
             visibility: hidden;
+            
+            /* Sharp rendering */
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         /* --- UE-Style Outliner Sidebar --- */
@@ -127,7 +147,7 @@
         }
 
         .outliner-toolbar {
-            height: 48px; /* Increased height */
+            height: 48px;
             border-bottom: var(--border-dim);
             display: flex;
             align-items: center;
@@ -137,7 +157,7 @@
 
         .outliner-label {
             font-family: var(--font-mono);
-            font-size: 11px; /* Increased size */
+            font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 2px;
             color: #555;
@@ -150,7 +170,7 @@
         }
 
         .outliner-row {
-            height: 42px; /* Increased height */
+            height: 42px;
             display: flex;
             align-items: center;
             padding: 0 20px;
@@ -190,7 +210,7 @@
 
         .row-text {
             font-family: var(--font-mono);
-            font-size: 13px; /* Increased size */
+            font-size: 13px;
             letter-spacing: 0.8px;
             color: #ccc;
             text-transform: uppercase;
@@ -201,7 +221,7 @@
         }
 
         .row-type {
-            font-size: 9px; /* Increased size */
+            font-size: 9px;
             color: #444;
             font-family: var(--font-mono);
         }
@@ -240,7 +260,7 @@
 
         #video-container {
             width: 100%;
-            max-width: 1280px; /* Increased max-width */
+            max-width: 1280px;
             aspect-ratio: 16/9;
             background: #000;
             border: var(--border-dim);
@@ -579,7 +599,7 @@
             const deltaX = targetX - (window.innerWidth / 2);
             const deltaY = targetY - (window.innerHeight / 2);
             scrambleText(targetChar, '0', 1000);
-            logo.style.letterSpacing = '6px';
+            logo.style.letterSpacing = '-0.02em';
             logo.style.fontSize = '20px';
             logo.style.transform = `translate(calc(-50% + ${deltaX}px), calc(-50% + ${deltaY}px))`;
             await sleep(1000);
