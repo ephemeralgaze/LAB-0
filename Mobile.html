@@ -11,7 +11,7 @@
 :root {
   --bg: #000000;
   --fg: #FFFFFF;
-  --border-color: rgba(255, 255, 255, 0.1);
+  --border-color: rgba(255, 255, 255, 0.08);
   --font-header: "Syncopate", sans-serif;
   --font-body: "Space Grotesk", sans-serif;
   --font-mono: "Space Mono", monospace;
@@ -33,6 +33,7 @@ body, html {
   color: var(--fg);
   overflow: hidden;
   font-family: var(--font-body);
+  font-weight: 300;
 }
 
 /* Base View Layout */
@@ -42,25 +43,26 @@ body, html {
   display: flex;
   flex-direction: column;
   padding-bottom: 80px; 
-  transition: transform 0.6s var(--player-ease), opacity 0.6s var(--player-ease);
+  transition: transform 0.6s var(--player-ease), opacity 0.6s var(--player-ease), filter 0.6s var(--player-ease);
 }
 
 .view-container.modal-open {
-  opacity: 0;
+  opacity: 0.5;
+  filter: scale(0.95);
   pointer-events: none;
 }
 
-.view-container.modal-open .col-left { transform: translateX(-30px); }
-.view-container.modal-open .col-right { transform: translateX(30px); }
-
 .view-header {
-  padding: 40px 20px 10px;
+  padding: 50px 25px 20px;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .view-header h1 {
   font-family: var(--font-header);
-  font-size: 1.8rem;
-  letter-spacing: -1px;
+  font-size: 1.4rem;
+  letter-spacing: 2px;
+  font-weight: 700;
+  text-transform: uppercase;
 }
 
 /* Bottom Nav */
@@ -69,13 +71,14 @@ body, html {
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 80px;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  height: 84px;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
   border-top: 1px solid var(--border-color);
   display: flex;
   z-index: 100;
+  padding-bottom: 15px; /* iOS home bar safe area approx */
 }
 
 .nav-btn {
@@ -84,11 +87,11 @@ body, html {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  color: #888;
+  gap: 6px;
+  color: #666;
   text-decoration: none;
   cursor: pointer;
-  transition: color 0.3s ease;
+  transition: color 0.4s var(--player-ease);
 }
 
 .nav-btn.active {
@@ -96,17 +99,18 @@ body, html {
 }
 
 .nav-icon {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   stroke: currentColor;
-  stroke-width: 2;
+  stroke-width: 1.5;
   fill: none;
 }
 
 .nav-label {
-  font-size: 10px;
+  font-size: 9px;
   font-family: var(--font-mono);
   text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 /* Sections */
@@ -114,7 +118,7 @@ body, html {
   display: none;
   flex: 1;
   overflow-y: auto;
-  padding: 20px;
+  padding: 0;
 }
 
 .section.active {
@@ -124,7 +128,6 @@ body, html {
 
 /* Home - Pure Dot Matrix */
 #section-home {
-  padding: 0;
   background: #000;
   position: relative;
   overflow: hidden;
@@ -136,102 +139,121 @@ body, html {
   display: block;
 }
 
-/* About Section Styles */
-.profile-card {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  padding-bottom: 20px;
-}
-
-.avatar-row {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.avatar {
-  width: 64px;
-  height: 64px;
-  border: 1px solid var(--fg);
-  object-fit: cover;
-}
-
-.profile-names {
-  display: flex;
-  flex-direction: column;
-}
-
-.p-name {
-  font-family: var(--font-header);
-  font-size: 14px;
-  letter-spacing: 1px;
-}
-
-.p-handle {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  color: #888;
-}
-
-.spec-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-top: 10px;
-}
-
-.spec-item {
-  display: flex;
-  justify-content: space-between;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-  padding-bottom: 8px;
-}
-
-.spec-label {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  color: #666;
-  text-transform: uppercase;
-}
-
-.spec-value {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  color: var(--fg);
-  text-align: right;
-  max-width: 60%;
-}
-
 /* Playlist / Library */
 .project-list {
   display: flex;
   flex-direction: column;
-  gap: 1px;
-  background: var(--border-color);
 }
 
 .project-item {
-  background: var(--bg);
-  padding: 15px 0;
+  padding: 20px 25px;
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 20px;
   cursor: pointer;
+  border-bottom: 1px solid var(--border-color);
+  transition: background 0.2s ease;
+}
+
+.project-item:active {
+  background: rgba(255,255,255,0.05);
 }
 
 .project-id {
   font-family: var(--font-mono);
-  font-size: 12px;
-  color: #555;
-  width: 30px;
+  font-size: 11px;
+  color: #444;
+  width: 20px;
 }
 
 .project-name {
   flex: 1;
   font-family: var(--font-body);
   font-weight: 500;
+  font-size: 17px;
+  letter-spacing: -0.2px;
+}
+
+.project-tag {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  padding: 3px 8px;
+  border: 1px solid #333;
+  color: #666;
+  letter-spacing: 1px;
+}
+
+/* About Section */
+#section-about {
+  padding: 30px 25px;
+}
+
+.profile-card {
+  display: flex;
+  flex-direction: column;
+  gap: 35px;
+}
+
+.avatar-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.avatar {
+  width: 80px;
+  height: 80px;
+  border: 1px solid var(--fg);
+  object-fit: cover;
+  padding: 3px;
+}
+
+.profile-names {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.p-name {
+  font-family: var(--font-header);
   font-size: 16px;
+  letter-spacing: 1px;
+  font-weight: 700;
+}
+
+.p-handle {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.spec-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.spec-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.spec-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: #444;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.spec-value {
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--fg);
+  font-weight: 400;
 }
 
 /* Player Modal */
@@ -244,7 +266,6 @@ body, html {
   flex-direction: column;
   transform: translateY(100%);
   transition: transform 0.6s var(--player-ease);
-  pointer-events: auto;
 }
 
 .player-modal.open {
@@ -252,49 +273,50 @@ body, html {
 }
 
 .drag-bar-container {
-  height: 40px;
+  height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
+  margin-top: 10px;
 }
 
 .drag-bar {
-  width: 40px;
+  width: 36px;
   height: 4px;
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px !important;
 }
 
 .close-player-btn {
   position: absolute;
-  top: 15px;
-  right: 15px;
+  top: 25px;
+  right: 25px;
   background: none;
   border: none;
-  color: #FFF;
+  color: #444;
   font-family: var(--font-mono);
-  font-size: 14px;
-  padding: 10px;
+  font-size: 10px;
+  letter-spacing: 2px;
   z-index: 1100;
-  cursor: pointer;
 }
 
 .player-content {
   flex: 1;
-  padding: 20px;
+  padding: 30px 40px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 30px;
+  justify-content: center;
+  gap: 40px;
 }
 
 .video-container {
   width: 100%;
   aspect-ratio: 1/1;
-  background: #111;
+  background: #050505;
   border: 1px solid var(--border-color);
-  position: relative;
   overflow: hidden;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.5);
 }
 
 .video-container video {
@@ -305,27 +327,31 @@ body, html {
 
 .player-info {
   width: 100%;
-  text-align: left;
+  text-align: center;
 }
 
 .player-title {
-  font-family: var(--font-body);
+  font-family: var(--font-header);
   font-weight: 700;
-  font-size: 22px;
-  margin-bottom: 4px;
+  font-size: 20px;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+  text-transform: uppercase;
 }
 
 .player-subtitle {
-  font-family: var(--font-body);
-  font-size: 16px;
-  color: #888;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 2px;
 }
 
 .player-controls {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 35px;
 }
 
 .scrubber-container {
@@ -335,33 +361,32 @@ body, html {
 .scrubber {
   -webkit-appearance: none;
   width: 100%;
-  height: 4px;
-  background: rgba(255,255,255,0.1);
+  height: 3px;
+  background: #1a1a1a;
   outline: none;
 }
 
 .scrubber::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 12px;
-  height: 12px;
+  width: 8px;
+  height: 8px;
   background: #FFF;
 }
 
 .time-row {
   display: flex;
   justify-content: space-between;
-  margin-top: 8px;
+  margin-top: 12px;
   font-family: var(--font-mono);
-  font-size: 10px;
-  color: #666;
+  font-size: 9px;
+  color: #333;
 }
 
 .transport-controls {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 40px;
-  padding: 20px 0;
+  gap: 60px;
 }
 
 .control-btn {
@@ -369,18 +394,23 @@ body, html {
   border: none;
   color: var(--fg);
   cursor: pointer;
+  opacity: 0.9;
+}
+
+.control-btn:active {
+  opacity: 0.4;
 }
 
 .btn-play-pause {
-  width: 64px;
-  height: 64px;
+  width: 50px;
+  height: 50px;
 }
 </style>
 </head>
 <body>
 
 <div class="view-container" id="main-view">
-  <div class="view-header col-left">
+  <div class="view-header">
     <h1>LAB-0</h1>
   </div>
 
@@ -388,7 +418,7 @@ body, html {
     <canvas id="dot-matrix-canvas"></canvas>
   </section>
 
-  <section id="section-playlist" class="section col-right">
+  <section id="section-playlist" class="section">
     <div class="project-list">
       <div class="project-item" onclick="openPlayer('LEVEL_01', 'STACK IT, GO UP', 'CONCERT', 'https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4')">
         <span class="project-id">01</span>
@@ -408,7 +438,7 @@ body, html {
     </div>
   </section>
 
-  <section id="section-about" class="section col-right">
+  <section id="section-about" class="section">
     <div class="profile-card">
       <div class="avatar-row">
         <img class="avatar" src="https://github.com/ephemeralgaze.png" alt="Avatar">
@@ -419,26 +449,11 @@ body, html {
       </div>
       
       <div class="spec-list">
-        <div class="spec-item">
-          <span class="spec-label">Education</span>
-          <span class="spec-value">Animation Production Technology</span>
-        </div>
-        <div class="spec-item">
-          <span class="spec-label">College</span>
-          <span class="spec-value">Heilongjiang Vocational College of Art</span>
-        </div>
-        <div class="spec-item">
-          <span class="spec-label">Age</span>
-          <span class="spec-value">21</span>
-        </div>
-        <div class="spec-item">
-          <span class="spec-label">Contact</span>
-          <span class="spec-value">a3445886718@gmail.com</span>
-        </div>
-        <div class="spec-item">
-          <span class="spec-label">Status</span>
-          <span class="spec-value">LAB_ACTIVE</span>
-        </div>
+        <div class="spec-item"><span class="spec-label">Education</span><span class="spec-value">Animation Production Technology</span></div>
+        <div class="spec-item"><span class="spec-label">College</span><span class="spec-value">Heilongjiang Vocational College of Art</span></div>
+        <div class="spec-item"><span class="spec-label">Age</span><span class="spec-value">21</span></div>
+        <div class="spec-item"><span class="spec-label">Contact</span><span class="spec-value">a3445886718@gmail.com</span></div>
+        <div class="spec-item"><span class="spec-label">System</span><span class="spec-value">LAB_ACTIVE // STABLE</span></div>
       </div>
     </div>
   </section>
@@ -451,16 +466,16 @@ body, html {
   </div>
   <div class="nav-btn" onclick="switchSection('playlist')">
     <svg class="nav-icon" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
-    <span class="nav-label">Playlist</span>
+    <span class="nav-label">Library</span>
   </div>
   <div class="nav-btn" onclick="switchSection('about')">
     <svg class="nav-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-    <span class="nav-label">About</span>
+    <span class="nav-label">System</span>
   </div>
 </nav>
 
 <div id="player-modal" class="player-modal">
-  <button class="close-player-btn" onclick="closePlayer()">CLOSE [X]</button>
+  <button class="close-player-btn" onclick="closePlayer()">[ DISMISS ]</button>
   <div class="drag-bar-container" id="modal-drag" onclick="closePlayer()">
     <div class="drag-bar"></div>
   </div>
@@ -506,7 +521,7 @@ function switchSection(id) {
   let dots = [];
   let width, height, dpr;
   const GRID_SIZE = 30;
-  const DOT_RADIUS = 1.2;
+  const DOT_RADIUS = 1.0;
 
   function init() {
     dpr = window.devicePixelRatio || 1;
@@ -519,7 +534,7 @@ function switchSection(id) {
     const cols = Math.ceil(width / GRID_SIZE), rows = Math.ceil(height / GRID_SIZE);
     for (let i = 0; i < cols; i++) {
       for (let j = 0; j < rows; j++) {
-        dots.push({ x: i * GRID_SIZE + GRID_SIZE / 2, y: j * GRID_SIZE + GRID_SIZE / 2, phase: Math.random() * Math.PI * 2, freq: 0.02 + Math.random() * 0.03, maxOpacity: 0.02 + Math.random() * 0.28 });
+        dots.push({ x: i * GRID_SIZE + GRID_SIZE / 2, y: j * GRID_SIZE + GRID_SIZE / 2, phase: Math.random() * Math.PI * 2, freq: 0.02 + Math.random() * 0.03, maxOpacity: 0.02 + Math.random() * 0.22 });
       }
     }
   }
