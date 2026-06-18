@@ -12,6 +12,7 @@
   --bg: #000000;
   --fg: #FFFFFF;
   --border-color: rgba(255, 255, 255, 0.08);
+  --border-nav: rgba(255, 255, 255, 0.4); /* Significantly brighter divider */
   --font-header: "Syncopate", sans-serif;
   --font-body: "Space Grotesk", sans-serif;
   --font-mono: "Space Mono", monospace;
@@ -36,6 +37,27 @@ body, html {
   font-weight: 300;
 }
 
+/* Boot Sequence Styles */
+#boot-screen {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 1.2s var(--player-ease);
+}
+
+#boot-logo {
+  font-family: var(--font-header);
+  font-weight: 700;
+  font-size: 32px;
+  letter-spacing: 0px;
+  text-transform: uppercase;
+  transition: transform 1.2s var(--player-ease), font-size 1.2s var(--player-ease);
+}
+
 /* Base View Layout */
 .view-container {
   position: absolute;
@@ -43,12 +65,13 @@ body, html {
   display: flex;
   flex-direction: column;
   padding-bottom: 48px; 
-  transition: transform 0.6s var(--player-ease), opacity 0.6s var(--player-ease), filter 0.6s var(--player-ease);
+  transition: transform 0.8s var(--player-ease), opacity 0.8s var(--player-ease), filter 0.8s var(--player-ease);
+  opacity: 0; /* Hidden until boot finishes */
 }
 
 .view-container.modal-open {
-  opacity: 0.5;
-  filter: scale(0.95);
+  opacity: 0.3;
+  transform: scale(0.92) translateY(-20px);
   pointer-events: none;
 }
 
@@ -63,6 +86,7 @@ body, html {
   letter-spacing: 0.15em;
   font-weight: 700;
   text-transform: uppercase;
+  transition: letter-spacing 0.8s var(--player-ease);
 }
 
 /* Bottom Nav */
@@ -72,12 +96,13 @@ body, html {
   left: 0;
   width: 100%;
   height: 48px;
-  background: rgba(0, 0, 0, 0.85);
+  background: rgba(0, 0, 0, 0.9);
   backdrop-filter: blur(25px);
   -webkit-backdrop-filter: blur(25px);
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid var(--border-nav); /* Prominent divider */
   display: flex;
   z-index: 100;
+  transition: transform 0.8s var(--player-ease), opacity 0.8s var(--player-ease);
 }
 
 .nav-btn {
@@ -90,7 +115,7 @@ body, html {
   color: #444;
   text-decoration: none;
   cursor: pointer;
-  transition: color 0.4s var(--player-ease);
+  transition: color 0.4s var(--player-ease), transform 0.2s var(--player-ease);
 }
 
 .nav-btn.active {
@@ -151,11 +176,12 @@ body, html {
   gap: 20px;
   cursor: pointer;
   border-bottom: 1px solid var(--border-color);
-  transition: background 0.2s ease;
+  transition: background 0.3s var(--player-ease), transform 0.3s var(--player-ease);
 }
 
 .project-item:active {
   background: rgba(255,255,255,0.05);
+  transform: scale(0.98);
 }
 
 .project-id {
@@ -172,10 +198,6 @@ body, html {
   font-size: 16px;
   letter-spacing: 0.02em;
   text-transform: uppercase;
-}
-
-.project-tag {
-  display: none;
 }
 
 /* About Section */
@@ -262,7 +284,7 @@ body, html {
   display: flex;
   flex-direction: column;
   transform: translateY(100%);
-  transition: transform 0.6s var(--player-ease);
+  transition: transform 0.8s var(--player-ease);
 }
 
 .player-modal.open {
@@ -270,7 +292,7 @@ body, html {
 }
 
 .drag-bar-container {
-  height: 30px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -284,6 +306,7 @@ body, html {
   stroke: rgba(255, 255, 255, 0.4);
   stroke-width: 1.5;
   fill: none;
+  transition: transform 0.3s var(--player-ease);
 }
 
 .player-content {
@@ -323,10 +346,6 @@ body, html {
   text-transform: uppercase;
 }
 
-.player-subtitle {
-  display: none;
-}
-
 .player-controls {
   width: 100%;
   display: flex;
@@ -348,8 +367,8 @@ body, html {
 
 .scrubber::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
   background: #FFF;
 }
 
@@ -375,10 +394,11 @@ body, html {
   color: var(--fg);
   cursor: pointer;
   opacity: 0.9;
+  transition: transform 0.2s var(--player-ease);
 }
 
 .control-btn:active {
-  opacity: 0.4;
+  transform: scale(0.9);
 }
 
 .btn-play-pause {
@@ -389,9 +409,14 @@ body, html {
 </head>
 <body>
 
+<!-- Ported Desktop Boot Sequence -->
+<div id="boot-screen">
+  <div id="boot-logo">LAB-<span id="boot-char">0</span></div>
+</div>
+
 <div class="view-container" id="main-view">
   <div class="view-header">
-    <h1>LAB-0</h1>
+    <h1 id="mobile-logo">LAB-0</h1>
   </div>
 
   <section id="section-home" class="section active">
@@ -436,7 +461,7 @@ body, html {
   </section>
 </div>
 
-<nav class="bottom-nav">
+<nav class="bottom-nav" id="bottom-dock">
   <div class="nav-btn active" onclick="switchSection('home')">
     <svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
     <span class="nav-label">Home</span>
@@ -463,7 +488,6 @@ body, html {
     </div>
     <div class="player-info">
       <div id="p-title" class="player-title">--</div>
-      <div id="p-subtitle" class="player-subtitle">--</div>
     </div>
     <div class="player-controls">
       <div class="scrubber-container">
@@ -481,6 +505,59 @@ body, html {
 </div>
 
 <script>
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function scrambleText(element, finalString, duration) {
+  const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ#$';
+  const originalText = element.innerText;
+  const start = performance.now();
+  function update(time) {
+    const elapsed = time - start;
+    const progress = Math.min(elapsed / duration, 1);
+    let current = '';
+    const finalLength = finalString.length;
+    const currentLength = Math.round(originalText.length + (finalLength - originalText.length) * progress);
+    for (let i = 0; i < currentLength; i++) {
+      if (Math.random() < progress) current += finalString[i] || '';
+      else current += chars[Math.floor(Math.random() * chars.length)];
+    }
+    element.innerText = current;
+    if (progress < 1) requestAnimationFrame(update);
+    else element.innerText = finalString;
+  }
+  requestAnimationFrame(update);
+}
+
+async function runBootSequence() {
+  const bootScreen = document.getElementById('boot-screen');
+  const bootChar = document.getElementById('boot-char');
+  const mainView = document.getElementById('main-view');
+  const mobileLogo = document.getElementById('mobile-logo');
+  
+  await sleep(600);
+  scrambleText(bootChar, 'MOBILE', 800);
+  await sleep(1800);
+  scrambleText(bootChar, '0', 1000);
+  
+  // Get positions for "One-Take" transition
+  const logoRect = document.getElementById('boot-logo').getBoundingClientRect();
+  const targetRect = mobileLogo.getBoundingClientRect();
+  
+  const deltaX = targetRect.left - logoRect.left;
+  const deltaY = targetRect.top - logoRect.top;
+  const scale = targetRect.height / logoRect.height;
+  
+  document.getElementById('boot-logo').style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${scale})`;
+  document.getElementById('boot-logo').style.letterSpacing = '0.15em';
+  
+  await sleep(800);
+  bootScreen.style.opacity = '0';
+  mainView.style.opacity = '1';
+  
+  await sleep(1200);
+  bootScreen.style.display = 'none';
+}
+
 function switchSection(id) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -535,7 +612,6 @@ const scrubber = document.getElementById('p-scrubber');
 
 function openPlayer(title, subtitle, tag, url) {
   document.getElementById('p-title').innerText = title;
-  document.getElementById('p-subtitle').innerText = subtitle;
   playerVideo.src = url;
   playerModal.classList.add('open');
   mainView.classList.add('modal-open');
@@ -581,11 +657,15 @@ dragBar.addEventListener('touchmove', (e) => {
 });
 dragBar.addEventListener('touchend', () => {
   const diff = currentY - startY;
-  playerModal.style.transition = 'transform 0.6s var(--player-ease)';
+  playerModal.style.transition = 'transform 0.8s var(--player-ease)';
   if (diff > 150) closePlayer();
   else playerModal.style.transform = 'translateY(0)';
   startY = 0; currentY = 0;
 });
+
+window.onload = () => {
+  runBootSequence();
+};
 </script>
 </body>
 </html>
