@@ -100,7 +100,7 @@ body, html {
   background: rgba(0, 0, 0, 0.9);
   backdrop-filter: blur(25px);
   -webkit-backdrop-filter: blur(25px);
-  border-top: 1px solid var(--border-nav); 
+  border-top: 1px solid #FFFFFF; 
   display: flex;
   z-index: 100;
 }
@@ -307,6 +307,7 @@ body, html {
   justify-content: center;
   margin-top: 10px;
   cursor: pointer;
+  z-index: 1010;
 }
 
 .chevron-down {
@@ -315,6 +316,7 @@ body, html {
   stroke: rgba(255, 255, 255, 0.4);
   stroke-width: 1.5;
   fill: none;
+  pointer-events: none;
 }
 
 .player-content {
@@ -477,16 +479,16 @@ body, html {
   </div>
   <div class="nav-btn" onclick="switchSection('playlist')">
     <svg class="nav-icon" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
-    <span class="nav-label">Library</span>
+    <span class="nav-label">Playlist</span>
   </div>
   <div class="nav-btn" onclick="switchSection('about')">
     <svg class="nav-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-    <span class="nav-label">System</span>
+    <span class="nav-label">About</span>
   </div>
 </nav>
 
 <div id="player-modal" class="player-modal">
-  <div class="drag-bar-container" id="modal-drag" onclick="closePlayer()">
+  <div class="drag-bar-container" id="modal-drag">
     <svg class="chevron-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" /></svg>
   </div>
   <div class="player-content">
@@ -552,10 +554,8 @@ async function runBootSequence() {
   await sleep(600);
   await scrambleText(bootChar, 'MOBILE', 800);
   await sleep(1800);
-  // This scramble returns character to '0' before moving
   await scrambleText(bootChar, '0', 1000);
   
-  // Wait a small beat at stable 'LAB-0' before moving
   await sleep(400);
 
   const logoRect = bootLogo.getBoundingClientRect();
@@ -670,8 +670,12 @@ playerVideo.addEventListener('loadedmetadata', () => {
 scrubber.addEventListener('input', () => { scrubber.dragging = true; playerVideo.currentTime = scrubber.value; });
 scrubber.addEventListener('change', () => { scrubber.dragging = false; });
 
-let startY = 0, currentY = 0;
 const dragBar = document.getElementById('modal-drag');
+dragBar.addEventListener('click', () => {
+  closePlayer();
+});
+
+let startY = 0, currentY = 0;
 dragBar.addEventListener('touchstart', (e) => { startY = e.touches[0].clientY; });
 dragBar.addEventListener('touchmove', (e) => {
   currentY = e.touches[0].clientY;
