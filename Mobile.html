@@ -517,24 +517,29 @@ body, html {
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
 function scrambleText(element, finalString, duration) {
-  const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ#$';
-  const originalText = element.innerText;
-  const start = performance.now();
-  function update(time) {
-    const elapsed = time - start;
-    const progress = Math.min(elapsed / duration, 1);
-    let current = '';
-    const finalLength = finalString.length;
-    const currentLength = Math.round(originalText.length + (finalLength - originalText.length) * progress);
-    for (let i = 0; i < currentLength; i++) {
-      if (Math.random() < progress) current += finalString[i] || '';
-      else current += chars[Math.floor(Math.random() * chars.length)];
+  return new Promise(resolve => {
+    const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ#$';
+    const originalText = element.innerText;
+    const start = performance.now();
+    function update(time) {
+      const elapsed = time - start;
+      const progress = Math.min(elapsed / duration, 1);
+      let current = '';
+      const finalLength = finalString.length;
+      const currentLength = Math.round(originalText.length + (finalLength - originalText.length) * progress);
+      for (let i = 0; i < currentLength; i++) {
+        if (Math.random() < progress) current += finalString[i] || '';
+        else current += chars[Math.floor(Math.random() * chars.length)];
+      }
+      element.innerText = current;
+      if (progress < 1) requestAnimationFrame(update);
+      else {
+        element.innerText = finalString;
+        resolve();
+      }
     }
-    element.innerText = current;
-    if (progress < 1) requestAnimationFrame(update);
-    else element.innerText = finalString;
-  }
-  requestAnimationFrame(update);
+    requestAnimationFrame(update);
+  });
 }
 
 async function runBootSequence() {
@@ -545,10 +550,14 @@ async function runBootSequence() {
   const target = document.getElementById('mobile-logo-target');
   
   await sleep(600);
-  scrambleText(bootChar, 'MOBILE', 800);
+  await scrambleText(bootChar, 'MOBILE', 800);
   await sleep(1800);
-  scrambleText(bootChar, '0', 1000);
+  // This scramble returns character to '0' before moving
+  await scrambleText(bootChar, '0', 1000);
   
+  // Wait a small beat at stable 'LAB-0' before moving
+  await sleep(400);
+
   const logoRect = bootLogo.getBoundingClientRect();
   const targetRect = target.getBoundingClientRect();
   
@@ -616,7 +625,6 @@ function switchSection(id) {
     requestAnimationFrame(draw);
   }
   window.addEventListener("resize", init); 
-  // Initial check for size once DOM is settled
   setTimeout(init, 100);
   requestAnimationFrame(draw);
 })();
