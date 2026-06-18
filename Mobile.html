@@ -45,7 +45,7 @@ body, html {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: opacity 1.2s var(--player-ease);
+  transition: opacity 1s var(--player-ease);
 }
 
 #boot-logo {
@@ -54,7 +54,9 @@ body, html {
   font-size: 32px;
   letter-spacing: 0px;
   text-transform: uppercase;
-  transition: transform 1.2s var(--player-ease), font-size 1.2s var(--player-ease);
+  transition: transform 1.2s var(--player-ease), font-size 1.2s var(--player-ease), letter-spacing 1.2s var(--player-ease);
+  z-index: 2100;
+  will-change: transform;
 }
 
 .view-container {
@@ -86,6 +88,7 @@ body, html {
   letter-spacing: 0.15em;
   font-weight: 700;
   text-transform: uppercase;
+  visibility: hidden; /* Placeholder for boot-logo to slide into */
 }
 
 .bottom-nav {
@@ -134,7 +137,6 @@ body, html {
   letter-spacing: 0.1em;
 }
 
-/* Sections Transition System */
 .sections-wrapper {
   flex: 1;
   position: relative;
@@ -324,10 +326,11 @@ body, html {
 
 .video-container {
   width: 100%;
-  aspect-ratio: 1/1;
+  aspect-ratio: 16/9;
   background: #050505;
-  border: 1px solid var(--border-color);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   overflow: hidden;
+  height: auto;
 }
 
 .video-container video {
@@ -417,7 +420,7 @@ body, html {
 
 <div class="view-container" id="main-view">
   <div class="view-header">
-    <h1 id="mobile-logo">LAB-0</h1>
+    <h1 id="mobile-logo-target">LAB-0</h1>
   </div>
 
   <div class="sections-wrapper">
@@ -534,45 +537,44 @@ function scrambleText(element, finalString, duration) {
 async function runBootSequence() {
   const bootScreen = document.getElementById('boot-screen');
   const bootChar = document.getElementById('boot-char');
+  const bootLogo = document.getElementById('boot-logo');
   const mainView = document.getElementById('main-view');
-  const mobileLogo = document.getElementById('mobile-logo');
+  const target = document.getElementById('mobile-logo-target');
   
   await sleep(600);
   scrambleText(bootChar, 'MOBILE', 800);
   await sleep(1800);
   scrambleText(bootChar, '0', 1000);
   
-  const logoRect = document.getElementById('boot-logo').getBoundingClientRect();
-  const targetRect = mobileLogo.getBoundingClientRect();
+  // Get positions for "One-Take" transition
+  const logoRect = bootLogo.getBoundingClientRect();
+  const targetRect = target.getBoundingClientRect();
   
   const deltaX = targetRect.left - logoRect.left;
   const deltaY = targetRect.top - logoRect.top;
   const scale = targetRect.height / logoRect.height;
   
-  document.getElementById('boot-logo').style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${scale})`;
-  document.getElementById('boot-logo').style.letterSpacing = '0.15em';
+  // Continuous movement to target position
+  bootLogo.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${scale})`;
+  bootLogo.style.letterSpacing = '0.15em';
   
   await sleep(800);
   bootScreen.style.opacity = '0';
   mainView.style.opacity = '1';
   
-  await sleep(1200);
+  await sleep(1000);
+  // Seamlessly swap boot-logo with actual logo
+  target.style.visibility = 'visible';
+  bootLogo.style.display = 'none';
   bootScreen.style.display = 'none';
 }
 
 function switchSection(id) {
   const sections = document.querySelectorAll('.section');
   const btns = document.querySelectorAll('.nav-btn');
-  
-  sections.forEach(s => {
-    s.classList.remove('active');
-  });
-  
+  sections.forEach(s => s.classList.remove('active'));
   btns.forEach(b => b.classList.remove('active'));
-  
-  const targetSection = document.getElementById('section-' + id);
-  targetSection.classList.add('active');
-  
+  document.getElementById('section-' + id).classList.add('active');
   if (id === 'home') btns[0].classList.add('active');
   else if (id === 'playlist') btns[1].classList.add('active');
   else if (id === 'about') btns[2].classList.add('active');
@@ -633,7 +635,6 @@ function closePlayer() {
   mainView.classList.remove('modal-open');
   playerVideo.pause();
   playerVideo.src = "";
-  playerModal.style.transform = '';
 }
 
 document.getElementById('p-play').addEventListener('click', () => {
