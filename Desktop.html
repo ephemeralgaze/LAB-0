@@ -40,8 +40,8 @@
             height: 100vh;
             overflow: hidden;
             display: grid;
-            grid-template-columns: 300px 1fr 320px;
-            grid-template-rows: 60px 1fr;
+            grid-template-columns: 380px 1fr 380px; /* Increased sidebar widths */
+            grid-template-rows: 80px 1fr; /* Increased header height */
         }
 
         #dot-matrix-canvas {
@@ -82,7 +82,7 @@
             justify-content: center;
             font-family: var(--font-header);
             font-weight: 700;
-            font-size: 64px;
+            font-size: 84px; /* Increased size */
             letter-spacing: 0px;
             text-transform: uppercase;
             z-index: 2100;
@@ -96,7 +96,7 @@
 
         header {
             grid-column: 1 / -1;
-            padding: 0 20px;
+            padding: 0 40px;
             display: flex;
             align-items: center;
             border-bottom: var(--border-dim);
@@ -108,8 +108,8 @@
 
         #logo-placeholder {
             font-family: var(--font-header);
-            font-size: 14px;
-            letter-spacing: 4px;
+            font-size: 20px; /* Increased size */
+            letter-spacing: 6px;
             font-weight: 700;
             visibility: hidden;
         }
@@ -127,35 +127,35 @@
         }
 
         .outliner-toolbar {
-            height: 32px;
+            height: 48px; /* Increased height */
             border-bottom: var(--border-dim);
             display: flex;
             align-items: center;
-            padding: 0 12px;
+            padding: 0 20px;
             background: #111;
         }
 
         .outliner-label {
             font-family: var(--font-mono);
-            font-size: 9px;
+            font-size: 11px; /* Increased size */
             text-transform: uppercase;
-            letter-spacing: 1.5px;
+            letter-spacing: 2px;
             color: #555;
         }
 
         .outliner-content {
             flex: 1;
             overflow-y: auto;
-            padding: 4px 0;
+            padding: 10px 0;
         }
 
         .outliner-row {
-            height: 28px;
+            height: 42px; /* Increased height */
             display: flex;
             align-items: center;
-            padding: 0 12px;
+            padding: 0 20px;
             cursor: pointer;
-            gap: 8px;
+            gap: 12px;
             user-select: none;
             transition: background 0.15s ease;
         }
@@ -174,15 +174,15 @@
         }
 
         .arrow-icon {
-            width: 8px;
-            height: 8px;
+            width: 10px;
+            height: 10px;
             fill: #444;
             transition: transform 0.3s var(--ease-outliner);
         }
 
         .row-icon {
-            width: 12px;
-            height: 12px;
+            width: 16px;
+            height: 16px;
             stroke: #666;
             stroke-width: 1.5;
             fill: none;
@@ -190,8 +190,8 @@
 
         .row-text {
             font-family: var(--font-mono);
-            font-size: 11px;
-            letter-spacing: 0.5px;
+            font-size: 13px; /* Increased size */
+            letter-spacing: 0.8px;
             color: #ccc;
             text-transform: uppercase;
             flex: 1;
@@ -201,14 +201,14 @@
         }
 
         .row-type {
-            font-size: 8px;
-            color: #333;
+            font-size: 9px; /* Increased size */
+            color: #444;
             font-family: var(--font-mono);
         }
 
         /* Hierarchy Indentation */
-        .indent-1 { padding-left: 12px; }
-        .indent-2 { padding-left: 28px; }
+        .indent-1 { padding-left: 20px; }
+        .indent-2 { padding-left: 44px; }
 
         .child-wrapper {
             display: grid;
@@ -240,7 +240,7 @@
 
         #video-container {
             width: 100%;
-            max-width: 1024px;
+            max-width: 1280px; /* Increased max-width */
             aspect-ratio: 16/9;
             background: #000;
             border: var(--border-dim);
@@ -248,32 +248,70 @@
             display: none;
             opacity: 0;
             transition: opacity var(--transition-smooth);
+            flex-direction: column;
         }
 
-        #main-video { width: 100%; height: 100%; object-fit: cover; }
+        #main-video { flex: 1; width: 100%; height: 100%; object-fit: cover; }
 
-        #close-trigger {
-            position: absolute;
-            top: -30px;
-            right: 0;
-            background: transparent;
+        /* --- Player Controls --- */
+        .player-controls {
+            height: 60px;
+            background: #050505;
+            border-top: var(--border-dim);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            gap: 20px;
+        }
+
+        .p-btn {
+            background: none;
             border: none;
             color: var(--fg);
-            font-family: var(--font-mono);
-            font-size: 9px;
             cursor: pointer;
-            letter-spacing: 2px;
-            opacity: 0;
-            transition: opacity var(--transition-smooth);
-            pointer-events: none;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 5px 10px;
+            border: 1px solid transparent;
+            transition: border 0.2s ease;
         }
 
-        #close-trigger.active { opacity: 0.5; pointer-events: auto; }
+        .p-btn:hover {
+            border: 1px solid #333;
+        }
+
+        .scrubber-root {
+            flex: 1;
+            height: 2px;
+            background: #222;
+            position: relative;
+            cursor: pointer;
+        }
+
+        #scrubber-fill {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 0%;
+            background: var(--fg);
+        }
+
+        .p-time {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: #666;
+            min-width: 80px;
+            text-align: center;
+        }
 
         /* --- Right Sidebar --- */
         .sidebar-right {
+            background: var(--panel-bg);
             border-left: var(--border-dim);
-            padding: 40px;
+            padding: 50px;
             z-index: 10;
             opacity: 0;
             transition: opacity var(--transition-smooth);
@@ -290,12 +328,12 @@
             gap: 40px;
         }
 
-        .avatar { width: 100px; height: 100px; border: 1px solid #222; object-fit: cover; }
-        .p-name { font-family: var(--font-header); font-size: 16px; letter-spacing: 2px; text-transform: uppercase; }
-        .spec-grid { display: flex; flex-direction: column; gap: 20px; }
-        .spec-item { display: flex; flex-direction: column; gap: 4px; }
-        .spec-label { font-family: var(--font-mono); font-size: 8px; color: #333; text-transform: uppercase; letter-spacing: 2px; }
-        .spec-value { font-family: var(--font-body); font-size: 13px; color: #999; }
+        .avatar { width: 140px; height: 140px; border: 1px solid #222; object-fit: cover; }
+        .p-name { font-family: var(--font-header); font-size: 20px; letter-spacing: 3px; text-transform: uppercase; }
+        .spec-grid { display: flex; flex-direction: column; gap: 24px; }
+        .spec-item { display: flex; flex-direction: column; gap: 6px; }
+        .spec-label { font-family: var(--font-mono); font-size: 9px; color: #444; text-transform: uppercase; letter-spacing: 2px; }
+        .spec-value { font-family: var(--font-body); font-size: 15px; color: #999; }
 
         .visible { opacity: 1 !important; }
     </style>
@@ -359,10 +397,17 @@
 
     <main class="main-stage" id="hud-center">
         <div id="video-container">
-            <button id="close-trigger" onclick="closeProject()">CLOSE [X]</button>
             <video id="main-video" playsinline crossorigin="anonymous">
                 <source id="video-src" src="" type="video/mp4">
             </video>
+            <div class="player-controls">
+                <button class="p-btn" id="play-pause" onclick="togglePlay()">[Play]</button>
+                <div class="scrubber-root" id="seekbar-root" onclick="seek(event)">
+                    <div id="scrubber-fill"></div>
+                </div>
+                <span class="p-time" id="time-display">00:00 / 00:00</span>
+                <button class="p-btn" id="mute-toggle" onclick="toggleMute()">Mute</button>
+            </div>
         </div>
     </main>
 
@@ -453,8 +498,9 @@
             const source = document.getElementById('video-src');
             source.src = projects[id].video;
             container.style.display = 'flex';
-            setTimeout(() => { container.style.opacity = '1'; document.getElementById('close-trigger').classList.add('active'); }, 50);
+            setTimeout(() => { container.style.opacity = '1'; }, 50);
             video.load(); video.play();
+            document.getElementById('play-pause').innerText = '[Pause]';
         }
 
         function closeProject() {
@@ -462,9 +508,40 @@
             const video = document.getElementById('main-video');
             document.querySelectorAll('.project-item').forEach(r => r.classList.remove('active'));
             container.style.opacity = '0';
-            document.getElementById('close-trigger').classList.remove('active');
             video.pause();
             setTimeout(() => { container.style.display = 'none'; }, 800);
+        }
+
+        const video = document.getElementById('main-video');
+        const playBtn = document.getElementById('play-pause');
+        const timeDisplay = document.getElementById('time-display');
+        const fill = document.getElementById('scrubber-fill');
+
+        function togglePlay() {
+            if (video.paused) { video.play(); playBtn.innerText = '[Pause]'; }
+            else { video.pause(); playBtn.innerText = '[Play]'; }
+        }
+
+        function toggleMute() {
+            video.muted = !video.muted;
+            document.getElementById('mute-toggle').innerText = video.muted ? 'Unmute' : 'Mute';
+        }
+
+        video.addEventListener('timeupdate', () => {
+            const pct = (video.currentTime / video.duration) * 100;
+            fill.style.width = pct + '%';
+            timeDisplay.innerText = formatTime(video.currentTime) + ' / ' + formatTime(video.duration);
+        });
+
+        function seek(e) {
+            const rect = document.getElementById('seekbar-root').getBoundingClientRect();
+            video.currentTime = ((e.clientX - rect.left) / rect.width) * video.duration;
+        }
+
+        function formatTime(s) {
+            if (isNaN(s)) return "00:00";
+            const m = Math.floor(s / 60); const sec = Math.floor(s % 60);
+            return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
         }
 
         function scrambleText(element, finalString, duration, callback) {
@@ -502,8 +579,8 @@
             const deltaX = targetX - (window.innerWidth / 2);
             const deltaY = targetY - (window.innerHeight / 2);
             scrambleText(targetChar, '0', 1000);
-            logo.style.letterSpacing = '4px';
-            logo.style.fontSize = '14px';
+            logo.style.letterSpacing = '6px';
+            logo.style.fontSize = '20px';
             logo.style.transform = `translate(calc(-50% + ${deltaX}px), calc(-50% + ${deltaY}px))`;
             await sleep(1000);
             bg.style.opacity = '0';
