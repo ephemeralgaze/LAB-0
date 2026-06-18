@@ -14,6 +14,7 @@
             --fg: #FFFFFF;
             --muted: #666666;
             --border: 1px solid #FFFFFF;
+            --border-dim: 1px solid rgba(255, 255, 255, 0.1);
             --font-header: 'Syncopate', sans-serif;
             --font-mono: 'Space Mono', monospace;
             --font-body: 'Space Grotesk', sans-serif;
@@ -102,7 +103,7 @@
             padding: 0 40px;
             display: flex;
             align-items: center;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            border-bottom: var(--border-dim);
             z-index: 10;
             opacity: 0;
             transition: opacity var(--transition-smooth);
@@ -121,14 +122,15 @@
             z-index: 10;
             opacity: 0;
             transition: opacity var(--transition-smooth);
+            overflow-y: auto;
         }
 
         .sidebar-left {
-            border-right: 1px solid rgba(255,255,255,0.1);
+            border-right: var(--border-dim);
             display: flex;
             flex-direction: column;
             gap: 15px; 
-            overflow: visible; /* Prevent clipping during animation */
+            overflow: visible;
         }
 
         .category-header, .about-link {
@@ -149,7 +151,7 @@
             text-decoration: none;
         }
 
-        .category-header:hover, .about-link:hover {
+        .category-header:hover, .about-link:hover, .about-link.active {
             color: var(--muted);
         }
 
@@ -170,7 +172,7 @@
             display: grid;
             grid-template-rows: 0fr; 
             transition: grid-template-rows var(--transition-smooth);
-            overflow: visible; /* Crucial for unselected items animation */
+            overflow: visible;
         }
 
         .category-header.expanded ~ .project-list-wrapper {
@@ -258,25 +260,107 @@
 
         #main-video {
             width: 100%;
-            height: calc(100% - 40px);
+            height: 100%;
             object-fit: cover;
         }
 
-        .custom-controls {
-            height: 40px;
-            border-top: var(--border);
+        .sidebar-right {
+            border-left: var(--border-dim);
             display: flex;
-            align-items: center;
-            padding: 0 15px;
-            gap: 20px;
-            background: #000;
+            flex-direction: column;
+            gap: 40px;
         }
 
-        .sidebar-right {
-            border-left: 1px solid rgba(255,255,255,0.1);
+        /* --- About Section Styles --- */
+        #about-content {
+            display: none;
+            opacity: 0;
+            transition: opacity var(--transition-smooth);
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        .profile-header {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border: var(--border);
+            object-fit: cover;
+        }
+
+        .profile-identity {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .p-name {
+            font-family: var(--font-header);
+            font-size: 20px;
+            letter-spacing: 4px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .p-handle {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--muted);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .spec-grid {
             display: flex;
             flex-direction: column;
             gap: 24px;
+        }
+
+        .spec-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .spec-label {
+            font-family: var(--font-mono);
+            font-size: 9px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .spec-value {
+            font-family: var(--font-body);
+            font-size: 14px;
+            color: var(--fg);
+            letter-spacing: 1px;
+        }
+
+        #close-trigger {
+            position: absolute;
+            top: -30px;
+            right: 0;
+            background: transparent;
+            border: none;
+            color: var(--fg);
+            font-family: var(--font-mono);
+            font-size: 10px;
+            cursor: pointer;
+            letter-spacing: 2px;
+            opacity: 0;
+            transition: opacity var(--transition-smooth);
+            pointer-events: none;
+        }
+
+        #close-trigger.active {
+            opacity: 0.6;
+            pointer-events: auto;
         }
 
         .visible { opacity: 1 !important; }
@@ -313,7 +397,7 @@
                 </ul>
             </div>
         </div>
-        <a href="#" class="about-link" onclick="handleAboutClick(event)">
+        <a href="#" id="about-btn" class="about-link" onclick="handleAboutClick(event)">
             <svg style="width:10px; height:10px; visibility:hidden;"></svg> 
             <span>About</span>
         </a>
@@ -327,6 +411,27 @@
             </video>
         </div>
     </main>
+
+    <aside class="sidebar sidebar-right" id="hud-right">
+        <div id="about-content">
+            <div class="profile-header">
+                <img class="avatar" src="https://github.com/ephemeralgaze.png" alt="Avatar">
+                <div class="profile-identity">
+                    <span class="p-name">Kyungsoo</span>
+                    <span class="p-handle">Ephemeral Gaze</span>
+                </div>
+            </div>
+            
+            <div class="spec-grid">
+                <div class="spec-item"><span class="spec-label">Education</span><span class="spec-value">Animation Production Technology</span></div>
+                <div class="spec-item"><span class="spec-label">College</span><span class="spec-value">Heilongjiang Vocational College of Art</span></div>
+                <div class="spec-item"><span class="spec-label">Age</span><span class="spec-value">21</span></div>
+                <div class="spec-item"><span class="spec-label">Contact</span><span class="spec-value">a3445886718@gmail.com</span></div>
+                <div class="spec-item"><span class="spec-label">Identity</span><span class="spec-value">GITHUB // EPHEMERALGAZE</span></div>
+                <div class="spec-item"><span class="spec-label">Status</span><span class="spec-value">LAB_ACTIVE // STABLE</span></div>
+            </div>
+        </div>
+    </aside>
 
     <script>
         const projects = {
@@ -363,17 +468,44 @@
         }
 
         function toggleCategory(header) {
+            // If opening projects, hide About
+            if (!header.classList.contains('expanded')) {
+                hideAbout();
+            }
             header.classList.toggle('expanded');
         }
 
         function handleAboutClick(e) {
             e.preventDefault();
-            // Collapse projects if open
             const header = document.getElementById('projects-header');
-            if (header.classList.contains('expanded')) {
-                header.classList.remove('expanded');
+            const aboutBtn = document.getElementById('about-btn');
+            
+            if (aboutBtn.classList.contains('active')) {
+                hideAbout();
+            } else {
+                // Collapse projects if open
+                if (header.classList.contains('expanded')) {
+                    header.classList.remove('expanded');
+                }
+                closeProject();
+                showAbout();
             }
-            closeProject();
+        }
+
+        function showAbout() {
+            const content = document.getElementById('about-content');
+            const btn = document.getElementById('about-btn');
+            btn.classList.add('active');
+            content.style.display = 'flex';
+            setTimeout(() => { content.style.opacity = '1'; }, 50);
+        }
+
+        function hideAbout() {
+            const content = document.getElementById('about-content');
+            const btn = document.getElementById('about-btn');
+            btn.classList.remove('active');
+            content.style.opacity = '0';
+            setTimeout(() => { content.style.display = 'none'; }, 800);
         }
 
         function scrambleText(element, finalString, duration, callback) {
@@ -431,6 +563,7 @@
         }
 
         function selectProject(id) {
+            hideAbout();
             const items = document.querySelectorAll('.project-item');
             const container = document.getElementById('video-container');
             const video = document.getElementById('main-video');
@@ -446,7 +579,7 @@
             source.src = projects[id].video;
             container.style.display = 'flex';
             
-            setTimeout(() => { container.style.opacity = '1'; }, 50);
+            setTimeout(() => { container.style.opacity = '1'; document.getElementById('close-trigger').classList.add('active'); }, 50);
             video.load(); video.play();
         }
 
@@ -454,8 +587,10 @@
             const container = document.getElementById('video-container');
             const video = document.getElementById('main-video');
             const header = document.getElementById('projects-header');
+            const closeBtn = document.getElementById('close-trigger');
 
             container.style.opacity = '0';
+            closeBtn.classList.remove('active');
             document.querySelectorAll('.project-item').forEach(i => i.classList.remove('active'));
             header.classList.remove('has-selection');
             video.pause();
