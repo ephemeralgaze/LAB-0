@@ -44,6 +44,7 @@ body, html {
   display: flex;
   align-items: center;
   justify-content: center;
+  pointer-events: none;
 }
 
 #boot-logo {
@@ -69,7 +70,7 @@ body, html {
   flex-direction: column;
   padding-bottom: 84px; 
   opacity: 0;
-  transition: transform 0.6s var(--player-ease), opacity 0.6s var(--player-ease);
+  transition: opacity 0.6s var(--player-ease);
 }
 
 .view-container.modal-open {
@@ -311,19 +312,6 @@ body, html {
   background: rgba(255, 255, 255, 0.2);
 }
 
-.close-player-btn {
-  position: absolute;
-  top: 25px;
-  right: 25px;
-  background: none;
-  border: none;
-  color: #444;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 2px;
-  z-index: 1100;
-}
-
 .player-content {
   flex: 1;
   padding: 30px 40px;
@@ -432,9 +420,8 @@ body, html {
 </head>
 <body>
 
-<div id="boot-screen">
-  <div id="boot-logo">LAB-<span id="boot-char">0</span></div>
-</div>
+<div id="boot-screen"></div>
+<div id="boot-logo">LAB-<span id="boot-char">0</span></div>
 
 <div class="view-container" id="main-view">
   <div class="view-header">
@@ -561,29 +548,41 @@ async function runBootSequence() {
     const anchor = document.getElementById('logo-placeholder');
 
     await sleep(600);
-    scrambleText(targetChar, 'MOBILE', 800);
-    await sleep(1800);
+    // 1. Start at screen center and scramble text until it resolves to 'MOBILE'
+    await new Promise(resolve => scrambleText(targetChar, 'MOBILE', 800, resolve));
 
+    // 2. Stay at center showing 'MOBILE' for exactly 0.3 seconds
+    await sleep(300);
+
+    // Calculate translation target
     const rect = anchor.getBoundingClientRect();
     const targetX = rect.left + (rect.width / 2);
     const targetY = rect.top + (rect.height / 2);
     const deltaX = targetX - (window.innerWidth / 2);
     const deltaY = targetY - (window.innerHeight / 2);
 
-    scrambleText(targetChar, '0', 1000);
+    // 3. Start relative anchor translation and change text from 'MOBILE' to '0' during transition
     logo.style.letterSpacing = '2px';
     logo.style.fontSize = '1.4rem';
     logo.style.transform = `translate(calc(-50% + ${deltaX}px), calc(-50% + ${deltaY}px))`;
+    
+    // Smoothly resolve text to '0' during the movement
+    scrambleText(targetChar, '0', 1000);
 
-    await sleep(1000);
+    // Show main view while logo is moving
     const mainView = document.getElementById('main-view');
     mainView.style.opacity = '1';
+
+    await sleep(1200);
+    // 4. Logo remains in place, boot screen fades out
+    bg.style.transition = 'opacity 0.6s ease-out';
     bg.style.opacity = '0';
+    
     setTimeout(() => {
         bg.style.display = 'none';
-        anchor.style.visibility = 'visible';
-        logo.style.display = 'none';
-    }, 1200);
+        // Ensure z-index allows interaction with the rest of the app
+        logo.style.zIndex = '50';
+    }, 600);
 }
 
 function switchSection(id) {
